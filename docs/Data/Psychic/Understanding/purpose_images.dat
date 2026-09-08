@@ -1,0 +1,2 @@
+# Формат: ID|Target|MoodId|EmotionId|SituationId
+# Target: 1=повторение, 2=улучшение; MoodId/EmotionId/SituationId: параметры цели

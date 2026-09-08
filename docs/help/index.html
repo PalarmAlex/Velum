@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Справка Velum</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <div id="velum-nav" class="nav" data-base=""></div>
+    <div class="content">
+      <h1>Справка Velum</h1>
+      <p class="lead">Справка надстройки Velum для SOLIDWORKS. С ленты команд Velum — кнопка «Справка»; из диалогов — кнопка справки с иконкой рядом с действиями формы.</p>
+
+      <div class="warn">
+        <strong>Целевая платформа:</strong> адаптер Velum настроен и проверяется для <strong>SOLIDWORKS 2019</strong>.
+        На других версиях SOLIDWORKS полноценный функционал <strong>не гарантируется</strong>.
+      </div>
+
+      <div class="note">
+        Файлы: <code>%ProgramData%\VELUM\help</code> (обычно <code>C:\ProgramData\VELUM\help</code>).
+        Исходники в поставке/сборке — <code>docs\help</code> проекта; при сборке копируются в ProgramData.
+        Часть команд ленты требует уровень <code>admin</code> и контекст сборки/чертежа — см. <a href="ribbon.html">Ленту команд</a>.
+      </div>
+
+      <h2>Быстрый старт</h2>
+      <ol>
+        <li><a href="overview.html">Обзор</a> — что умеет Velum и когда нужен помощник.</li>
+        <li><a href="forms/assembly-registry.html">Реестр изделия</a> — типичная работа со сборкой (агент не обязателен).</li>
+        <li><a href="ribbon.html">Лента команд</a> — все команды и контекст (сборка / чертёж).</li>
+        <li><a href="forms/agent-taskpane.html">Панель «Агент»</a> — если пользуетесь помощником: зоны панели и «почему кнопка не сработала».</li>
+        <li><a href="platform.html">ISIDA и МВАП</a> — по желанию: адаптер Velum, ядро помощника и теория (со ссылками).</li>
+      </ol>
+      <p>Синтаксис фильтров таблиц: <a href="shared/list-filters.html">маски фильтров</a>.</p>
+
+      <h2>Работа с изделиями и экспортом</h2>
+      <ol class="toc-list">
+        <li><a href="forms/project-settings.html">Настройки проекта</a> (пути; остальное обычно не трогать)</li>
+        <li><a href="forms/assembly-registry.html">Реестр изделия</a>
+          <ul>
+            <li><a href="forms/assembly-columns.html">Настройки столбцов</a></li>
+            <li><a href="forms/assembly-reports.html">Отчёты</a></li>
+          </ul>
+        </li>
+        <li><a href="forms/product-registry.html">Реестр документов</a>
+          <ul>
+            <li><a href="forms/product-item.html">Карточка изделия</a></li>
+            <li><a href="forms/product-problems.html">Проблемы реестра</a></li>
+          </ul>
+        </li>
+        <li><a href="forms/tech-requirements.html">Технические требования</a></li>
+        <li><a href="forms/material-batch.html">Пакетное присвоение материалов</a></li>
+        <li><a href="forms/document-properties.html">Обновление свойств документов</a></li>
+        <li><a href="forms/dxf-batch.html">Пакетная диагностика DXF</a></li>
+        <li><a href="forms/dxf-export.html">Экспорт DXF</a>
+          <ul>
+            <li><a href="forms/dxf-suffixes.html">Суффиксы имени DXF</a></li>
+          </ul>
+        </li>
+        <li><a href="forms/pdf-batch.html">Пакетная диагностика PDF</a></li>
+        <li><a href="forms/pdf-export.html">Экспорт PDF</a></li>
+      </ol>
+
+      <h2>Панель помощника (по желанию)</h2>
+      <ol class="toc-list">
+        <li><a href="forms/agent-taskpane.html">Панель задач «Агент»</a></li>
+        <li><a href="forms/environment-metrics.html">Показатели на панели</a></li>
+        <li><a href="forms/operator-influences.html">Быстрые указания</a></li>
+        <li><a href="forms/sensor-buffer.html">Буфер новых команд и фраз</a></li>
+        <li><a href="forms/dialog-recipes.html">Диалоговые рецепты и моторные исходы</a></li>
+        <li><a href="platform.html">ISIDA и МВАП</a> — ядро, адаптер, теория</li>
+      </ol>
+    </div>
+  </div>
+  <script src="shared/nav.js"></script>
+</body>
+</html>

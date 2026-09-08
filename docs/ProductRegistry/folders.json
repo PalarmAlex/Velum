@@ -1,0 +1,47 @@
+{
+  "NextId": 60,
+  "Folders": [
+    {
+      "Id": 1,
+      "ParentId": 0,
+      "Name": "Изделия",
+      "Description": "",
+      "SortOrder": 0
+    },
+    {
+      "Id": 55,
+      "ParentId": 1,
+      "Name": "Сборки",
+      "Description": "",
+      "SortOrder": 0
+    },
+    {
+      "Id": 56,
+      "ParentId": 1,
+      "Name": "Детали",
+      "Description": "",
+      "SortOrder": 1
+    },
+    {
+      "Id": 57,
+      "ParentId": 1,
+      "Name": "Чертежи",
+      "Description": "",
+      "SortOrder": 2
+    },
+    {
+      "Id": 58,
+      "ParentId": 1,
+      "Name": "DXF",
+      "Description": "",
+      "SortOrder": 3
+    },
+    {
+      "Id": 59,
+      "ParentId": 1,
+      "Name": "PDF",
+      "Description": "",
+      "SortOrder": 4
+    }
+  ]
+}

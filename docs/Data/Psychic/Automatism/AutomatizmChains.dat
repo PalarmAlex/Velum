@@ -1,0 +1,13 @@
+# Формат файла цепочек автоматизмов
+# CHAIN|ID|Name|Description|TreeNodeId|StartAutomatizmId
+# LINK|LinkID|ActionsImageID|SuccessNext|FailureNext|Description|ChainUsefulness
+# ID: уникальный идентификатор цепочки
+# Name: наименование цепочки
+# TreeNodeId: ID узла дерева автоматизмов (0 если нет)
+# StartAutomatizmId: ID автоматизма, который запускает цепочку (0 если нет)
+# LinkID: уникальный идентификатор звена
+# ActionsImageID: ID образа действий
+# SuccessNext: ID следующего звена при успехе
+# FailureNext: ID следующего звена при неудаче
+# ChainUsefulness: оценка полезности звена цепочки
+

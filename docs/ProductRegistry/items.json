@@ -1,0 +1,268 @@
+{
+  "NextId": 427,
+  "Items": [
+    {
+      "Id": 411,
+      "FolderId": 55,
+      "Designation": "Сборка1",
+      "Name": "Балка",
+      "FilePath": "C:\\Users\\user_\\Desktop\\Новая папка\\Детали\\Сборка1.SLDASM",
+      "NeedDrawing": true,
+      "DrawingPath": "",
+      "PdfPath": "",
+      "ExportMetaConfigs": []
+    },
+    {
+      "Id": 412,
+      "FolderId": 55,
+      "Designation": "Сборка2",
+      "Name": "Балка",
+      "FilePath": "C:\\Users\\user_\\Desktop\\Новая папка\\Детали\\Сборка2.SLDASM",
+      "NeedDrawing": true,
+      "DrawingPath": "",
+      "PdfPath": "",
+      "ExportMetaConfigs": []
+    },
+    {
+      "Id": 413,
+      "FolderId": 56,
+      "Designation": "3",
+      "Name": "Стенка",
+      "FilePath": "C:\\Users\\user_\\Desktop\\Новая папка\\Детали\\3.SLDPRT",
+      "NeedDrawing": true,
+      "NeedDxf": true,
+      "DrawingPath": "",
+      "DxfPath": "C:\\Users\\user_\\Desktop\\Новая папка\\Детали",
+      "PdfPath": "",
+      "ExportMetaConfigs": [
+        {
+          "ConfigName": "1",
+          "DxfFileName": "3∶ Латунь",
+          "DxfProjectionView": "Front",
+          "DxfFileFingerprint": "639217102876677659|22654",
+          "DxfGeometryUpdateStamp": 268,
+          "DxfGeometryPendingStamp": 313
+        }
+      ]
+    },
+    {
+      "Id": 414,
+      "FolderId": 56,
+      "Designation": "Деталь1",
+      "Name": "Стенка",
+      "FilePath": "C:\\Users\\user_\\Desktop\\Новая папка\\Детали\\Деталь1.SLDPRT",
+      "NeedDrawing": true,
+      "NeedDxf": true,
+      "DrawingPath": "C:\\Users\\user_\\Desktop\\Новая папка\\Детали\\Деталь1.SLDDRW",
+      "DxfPath": "C:\\Users\\user_\\Desktop\\Новая папка\\Детали",
+      "PdfPath": "",
+      "ExportMetaConfigs": [
+        {
+          "ConfigName": "1",
+          "NeedDxf": false,
+          "DxfFileName": "Деталь1∶ Литая легированная сталь; 3 мм",
+          "DxfProjectionView": "Front",
+          "DxfFileFingerprint": "639221409108729670|22693",
+          "DxfGeometryUpdateStamp": 852
+        },
+        {
+          "ConfigName": "заг",
+          "NeedDxf": true,
+          "DxfFileName": "Деталь1",
+          "DxfProjectionView": "Front",
+          "DxfFileFingerprint": "639223218326220951|22873",
+          "DxfGeometryUpdateStamp": 852
+        }
+      ]
+    },
+    {
+      "Id": 415,
+      "FolderId": 56,
+      "Designation": "Деталь100",
+      "Name": "Стенка",
+      "FilePath": "C:\\Users\\user_\\Desktop\\Новая папка\\Детали\\Деталь100.sldprt",
+      "NeedDrawing": false,
+      "NeedDxf": true,
+      "DrawingPath": "",
+      "DxfPath": "C:\\Users\\user_\\Desktop\\Новая папка\\Детали",
+      "PdfPath": "",
+      "ExportMetaConfigs": [
+        {
+          "ConfigName": "1",
+          "DxfFileName": "Деталь100∶ Медь",
+          "DxfProjectionView": "Front",
+          "DxfFileFingerprint": "639216337781238577|22798",
+          "DxfGeometryUpdateStamp": 120
+        }
+      ]
+    },
+    {
+      "Id": 416,
+      "FolderId": 56,
+      "Designation": "Деталь2",
+      "Name": "Стенка",
+      "FilePath": "C:\\Users\\user_\\Desktop\\Новая папка\\Детали\\Деталь2.SLDPRT",
+      "NeedDrawing": true,
+      "NeedDxf": true,
+      "DrawingPath": "C:\\Users\\user_\\Desktop\\Новая папка\\Детали\\Деталь2.SLDDRW",
+      "DxfPath": "C:\\Users\\user_\\Desktop\\Новая папка",
+      "PdfPath": "",
+      "ExportMetaConfigs": [
+        {
+          "ConfigName": "1",
+          "DxfFileName": "Деталь2∶ Медь; 10 мм",
+          "DxfProjectionView": "Front",
+          "DxfFileFingerprint": "639217170138508653|22085",
+          "DxfGeometryUpdateStamp": 126
+        }
+      ]
+    },
+    {
+      "Id": 417,
+      "FolderId": 56,
+      "Designation": "Деталь3",
+      "Name": "Стенка",
+      "FilePath": "C:\\Users\\user_\\Desktop\\Новая папка\\Детали\\Деталь3.SLDPRT",
+      "NeedDrawing": true,
+      "NeedDxf": true,
+      "DrawingPath": "",
+      "DxfPath": "C:\\Users\\user_\\Desktop\\Новая папка\\Детали",
+      "PdfPath": "",
+      "ExportMetaConfigs": [
+        {
+          "ConfigName": "1",
+          "DxfFileName": "Деталь3∶ Литая легированная сталь",
+          "DxfProjectionView": "Front",
+          "DxfFileFingerprint": "639217110895919974|22790",
+          "DxfGeometryUpdateStamp": 494,
+          "DxfGeometryPendingStamp": 514
+        }
+      ]
+    },
+    {
+      "Id": 418,
+      "FolderId": 56,
+      "Designation": "Деталь4",
+      "Name": "Стенка",
+      "FilePath": "C:\\Users\\user_\\Desktop\\Новая папка\\Детали\\Деталь4.SLDPRT",
+      "NeedDrawing": true,
+      "NeedDxf": true,
+      "DrawingPath": "",
+      "DxfPath": "",
+      "PdfPath": "",
+      "ExportMetaConfigs": [
+        {
+          "ConfigName": "1",
+          "DxfFileName": "",
+          "DxfProjectionView": "",
+          "DxfFileFingerprint": "",
+          "DxfGeometryPendingStamp": 118
+        }
+      ]
+    },
+    {
+      "Id": 419,
+      "FolderId": 56,
+      "Designation": "Деталь5",
+      "Name": "Стенка",
+      "FilePath": "C:\\Users\\user_\\Desktop\\Новая папка\\Детали\\Деталь5.SLDPRT",
+      "NeedDrawing": true,
+      "NeedDxf": true,
+      "DrawingPath": "",
+      "DxfPath": "",
+      "PdfPath": "",
+      "ExportMetaConfigs": [
+        {
+          "ConfigName": "1",
+          "DxfFileName": "",
+          "DxfProjectionView": "",
+          "DxfFileFingerprint": ""
+        }
+      ]
+    },
+    {
+      "Id": 420,
+      "FolderId": 56,
+      "Designation": "Деталь6",
+      "Name": "Стенка",
+      "FilePath": "C:\\Users\\user_\\Desktop\\Новая папка\\Детали\\Деталь6.SLDPRT",
+      "NeedDrawing": false,
+      "NeedDxf": true,
+      "DrawingPath": "",
+      "DxfPath": "",
+      "PdfPath": "",
+      "ExportMetaConfigs": [
+        {
+          "ConfigName": "1",
+          "DxfFileName": "",
+          "DxfProjectionView": "",
+          "DxfFileFingerprint": "",
+          "DxfGeometryPendingStamp": 115
+        }
+      ]
+    },
+    {
+      "Id": 421,
+      "FolderId": 57,
+      "Designation": "Деталь1",
+      "Name": "Стенка",
+      "FilePath": "C:\\Users\\user_\\Desktop\\Новая папка\\Детали\\Деталь1.SLDDRW",
+      "NeedDrawing": true,
+      "DrawingPath": "",
+      "DxfPath": "",
+      "NeedPdf": true,
+      "PdfPath": "",
+      "ExportMetaConfigs": []
+    },
+    {
+      "Id": 422,
+      "FolderId": 57,
+      "Designation": "Деталь2",
+      "Name": "Стенка",
+      "FilePath": "C:\\Users\\user_\\Desktop\\Новая папка\\Детали\\Деталь2.SLDDRW",
+      "NeedDrawing": true,
+      "DrawingPath": "",
+      "DxfPath": "",
+      "NeedPdf": true,
+      "PdfPath": "C:\\Users\\user_\\Desktop\\Новая папка\\Детали\\Деталь2.pdf",
+      "PdfGeometryUpdateStamp": 129,
+      "ExportMetaConfigs": []
+    },
+    {
+      "Id": 423,
+      "FolderId": 58,
+      "Designation": "Деталь2∶ Медь",
+      "Name": "Стенка",
+      "FilePath": "C:\\Users\\user_\\Desktop\\Новая папка\\Деталь2∶ Медь.dxf",
+      "NeedDrawing": true,
+      "ExportMetaConfigs": []
+    },
+    {
+      "Id": 424,
+      "FolderId": 58,
+      "Designation": "Деталь2∶ Медь; 10 мм",
+      "Name": "Стенка",
+      "FilePath": "C:\\Users\\user_\\Desktop\\Новая папка\\Деталь2∶ Медь; 10 мм.dxf",
+      "NeedDrawing": true,
+      "ExportMetaConfigs": []
+    },
+    {
+      "Id": 425,
+      "FolderId": 58,
+      "Designation": "Деталь1∶ Литая легированная сталь; 3 мм",
+      "Name": "Стенка",
+      "FilePath": "C:\\Users\\user_\\Desktop\\Новая папка\\Детали\\Деталь1∶ Литая легированная сталь; 3 мм.dxf",
+      "NeedDrawing": true,
+      "ExportMetaConfigs": []
+    },
+    {
+      "Id": 426,
+      "FolderId": 59,
+      "Designation": "Деталь2",
+      "Name": "Стенка",
+      "FilePath": "C:\\Users\\user_\\Desktop\\Новая папка\\Детали\\Деталь2.pdf",
+      "NeedDrawing": true,
+      "ExportMetaConfigs": []
+    }
+  ]
+}

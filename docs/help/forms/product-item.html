@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta charset="utf-8" />
+  <title>Карточка изделия — Справка Velum</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <div id="velum-nav" class="nav" data-base="../"></div>
+    <div class="content">
+      <h1>Документ</h1>
+      <p class="lead">Карточка записи <a href="product-registry.html">реестра документов</a>: идентификатор, обозначение, наименование, виртуальный каталог и путь к файлу. Ключ учёта — полный путь к файлу.</p>
+      <p class="meta">Окно: «Новое изделие» / «Редактирование изделия» · раздел: <code>product-item</code></p>
+
+      <h2>Как открыть</h2>
+      <p>В реестре документов — <strong>Добавить</strong> или <strong>Редактировать</strong> запись списка (доступно администратору).</p>
+
+      <div class="figure">
+        <img src="../images/img_21.png" alt="Редактирование изделия — поля карточки" />
+        <p class="caption">Карточка записи: ID, обозначение, наименование, каталог и файл с кнопками «Обзор…»; внизу <strong>Применить</strong> / <strong>Закрыть</strong>.</p>
+      </div>
+
+      <h2>Поля и кнопки</h2>
+      <table>
+        <thead><tr><th>Элемент</th><th>Назначение</th></tr></thead>
+        <tbody>
+          <tr><td><strong>ID</strong></td><td>Внутренний идентификатор записи (при создании может назначаться автоматически).</td></tr>
+          <tr><td><strong>Обозначение</strong></td><td>Шифр/номер для поиска в списке и фильтрах (может совпадать у разных файлов).</td></tr>
+          <tr><td><strong>Наименование</strong></td><td>Текстовое имя документа. Для детали/сборки заполняется командой «Обновить свойства» из SOLIDWORKS; для чертежа, DXF и PDF копируется с одноименной детали/сборки.</td></tr>
+          <tr><td><strong>Каталог</strong> + <strong>Обзор…</strong></td><td>Виртуальный узел дерева реестра. «Обзор…» открывает выбор каталога.</td></tr>
+          <tr><td><strong>Файл</strong> + <strong>Обзор…</strong></td><td>Полный путь к файлу. Уникален в реестре: один путь — одна запись. От него зависит статус пути (<code>ok</code> / <code>NO</code> / <code>?</code>).</td></tr>
+          <tr><td><strong>Применить</strong></td><td>Сохранить карточку в хранилище реестра.</td></tr>
+          <tr><td><strong>Закрыть</strong></td><td>Закрыть окно (без «Применить» изменения не записываются).</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        После смены пути файла имеет смысл выполнить «Проверку путей» в основном окне реестра документов. Состав изделия смотрите в <a href="assembly-registry.html">реестре изделия</a>, а не размножением записей в каталоге документов.
+      </div>
+
+      <div class="seealso">
+        <h2>См. также</h2>
+        <ul>
+          <li><a href="product-registry.html">Реестр документов</a></li>
+          <li><a href="product-problems.html">Проблемы реестра</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <script src="../shared/nav.js"></script>
+</body>
+</html>

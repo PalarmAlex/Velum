@@ -1,0 +1,10 @@
+# Формат файла цепочек рефлексов
+# CHAIN|ID|Name|Description
+# LINK|LinkID|ActionID|SuccessNext|FailureNext|Description
+# ID: уникальный идентификатор цепочки
+# Name: наименование цепочки
+# LinkID: уникальный идентификатор звена
+# ActionID: ID действия для выполнения
+# SuccessNext: ID следующего звена при успехе
+# FailureNext: ID следующего звена при неудаче
+

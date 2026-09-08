@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta charset="utf-8" />
+  <title>Обзор — Справка Velum</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <div id="velum-nav" class="nav" data-base=""></div>
+    <div class="content">
+      <h1>Обзор надстройки Velum</h1>
+      <p class="lead">Velum — надстройка SOLIDWORKS для состава изделий, реестра документов, материалов, свойств и пакетного экспорта DXF/PDF. Дополнительно на боковой панели доступен помощник («Агент»): сводка по работе в CAD и короткие указания — для повседневных реестров и экспорта он не обязателен.</p>
+      <p class="meta">Раздел: <code>overview</code></p>
+
+      <div class="warn">
+        <strong>Целевая платформа:</strong> адаптер Velum настроен и проверяется для <strong>SOLIDWORKS 2019</strong>.
+        На других версиях SOLIDWORKS полноценный функционал <strong>не гарантируется</strong>.
+      </div>
+
+      <div class="figure">
+        <img src="images/img_1.png" alt="Меню Инструменты → Velum" />
+        <p class="caption">Команды Velum в меню <strong>Инструменты</strong> SOLIDWORKS (дублируют ленту). Подробнее — <a href="ribbon.html">Лента команд</a>.</p>
+      </div>
+
+      <h2>Два способа работы</h2>
+      <table>
+        <thead>
+          <tr><th>Задача</th><th>С чего начать</th><th>Нужен ли «Старт»</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Состав сборки, отчёты, DXF/PDF из реестра</td>
+            <td><a href="forms/assembly-registry.html">Реестр изделия</a> (открыта сборка)</td>
+            <td>Нет</td>
+          </tr>
+          <tr>
+            <td>Каталог файлов (ключ — полный путь) и виртуальные папки</td>
+            <td><a href="forms/product-registry.html">Реестр документов</a></td>
+            <td>Нет</td>
+          </tr>
+          <tr>
+            <td>Пакетные материалы, свойства; DXF/PDF по сборке</td>
+            <td>Команды на <a href="ribbon.html">ленте Velum</a> (для DXF/PDF — активная сборка, уровень admin)</td>
+            <td>Нет</td>
+          </tr>
+          <tr>
+            <td>Сводка на панели, сообщения помощнику, указания с панели</td>
+            <td><a href="forms/agent-taskpane.html">Панель «Агент»</a> → <strong>Старт</strong></td>
+            <td>Да</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        Кнопка <strong>Старт</strong> на ленте не «включает Velum». Она запускает цикл помощника. Реестры и пакетный экспорт работают и без неё. Пакетные команды и настройки доступны при уровне <code>admin</code> в <code>Settings.xml</code>.
+      </div>
+
+      <h2>Что входит в Velum</h2>
+      <ul>
+        <li><strong>Лента Velum</strong> — реестры, пакетные операции, настройки; также Старт / Стоп помощника.</li>
+        <li><strong>Диалоговые формы</strong> — реестры, экспорт, материалы, свойства, технические требования.</li>
+        <li><strong>Панель задач «Агент»</strong> — состояние, показатели, ввод сообщений и быстрые указания (по желанию).</li>
+      </ul>
+
+      <h2>Уровни доступа admin / user</h2>
+      <p>Параметр <code>ProductRegistryAccessLevel</code> в <code>%ProgramData%\VELUM\Settings\Settings.xml</code>:</p>
+      <ul>
+        <li><strong>admin</strong> (обычно по умолчанию) — полный функционал ленты и форм.</li>
+        <li><strong>user</strong> — реестр документов в режиме чтения, тех. требования, реестр изделия и справка; Старт, настройки и пакетные операции закрыты.</li>
+      </ul>
+      <p>Подробнее — в разделе <a href="ribbon.html">Лента команд</a>.</p>
+
+      <h2>Помощник: адаптер и ядро ISIDA</h2>
+      <p>Панель «Агент» — не отдельный «ИИ-конструктор», а <strong>второй пилот</strong>: Velum в SOLIDWORKS работает как оболочка и <strong>адаптер</strong> к ядру <strong>ISIDA</strong>. Реестры и пакетный экспорт от ядра не зависят.</p>
+      <ul>
+        <li>Ядро ISIDA: <a href="https://github.com/PalarmAlex/isida" target="_blank" rel="noopener">github.com/PalarmAlex/isida</a></li>
+        <li>Теоретическая основа (МВАП) и подробности слоёв: <a href="platform.html">ISIDA и МВАП</a></li>
+      </ul>
+
+      <h2>Быстрый старт (первый час)</h2>
+      <ol>
+        <li>Откройте сборку → лента Velum → <strong>Реестр изделия</strong> → при необходимости экспорт DXF/PDF из хаба окна.</li>
+        <li>При необходимости заведите записи в <strong>Реестре документов</strong> (обозначение, наименование, путь).</li>
+        <li>Пакетные операции: материалы и свойства — с ленты из каталога; DXF/PDF пакет — при открытой сборке (admin).</li>
+        <li>Помощник понадобится позже: откройте панель «Агент», нажмите <strong>Старт</strong>. Подробнее — <a href="forms/agent-taskpane.html">здесь</a>.</li>
+      </ol>
+
+      <h2>Как открыть справку</h2>
+      <ul>
+        <li>На формах Velum — кнопка с иконкой справки внизу (в ряду «Закрыть» / «Применить» или отдельной полосе).</li>
+        <li>На панели «Агент» — кнопка справки на шапке панели.</li>
+        <li>В окне справки — кнопки <strong>← Назад</strong> / <strong>Вперёд →</strong>, поле <strong>Поиск</strong> на панели сверху и дерево разделов слева.</li>
+        <li>Поиск: введите не менее 2 символов — список разделов с совпадениями; <kbd>Enter</kbd> открывает выбранный, <kbd>Ctrl</kbd>+<kbd>F</kbd> ставит фокус в поле, <kbd>Esc</kbd> очищает поиск (повторный <kbd>Esc</kbd> закрывает окно).</li>
+        <li>Закрытие окна справки — крестик заголовка или <kbd>Esc</kbd> (когда поиск уже очищен).</li>
+      </ul>
+      <div class="note">
+        Клавиша <kbd>F1</kbd> в SOLIDWORKS открывает штатную справку CAD, а не Velum.
+      </div>
+
+      <h2>Данные на диске</h2>
+      <p>Рабочие данные по умолчанию — в <code>%ProgramData%\VELUM</code>:</p>
+      <ul>
+        <li><code>Settings\Settings.xml</code> — пути, уровень доступа, суффиксы DXF, последние каталоги;</li>
+        <li><code>help\</code> — эта HTML-справка;</li>
+        <li><code>ProductRegistry\</code>, <code>AssemblyRegistry\</code>, <code>TechRequirements\</code>;</li>
+        <li><code>BootData\</code>, <code>Data\</code>, <code>Logs\</code>, отчёты сценариев.</li>
+      </ul>
+      <p>Профиль помощника для SOLIDWORKS отделён от других оболочек ISIDA. Надстройка — в каталоге установки (обычно <code>C:\Program Files\Velum</code>). Пути меняются в <a href="forms/project-settings.html">настройках проекта</a>.</p>
+
+      <div class="seealso">
+        <h2>См. также</h2>
+        <ul>
+          <li><a href="platform.html">ISIDA и МВАП</a></li>
+          <li><a href="ribbon.html">Лента команд</a></li>
+          <li><a href="forms/assembly-registry.html">Реестр изделия</a></li>
+          <li><a href="forms/agent-taskpane.html">Панель «Агент»</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <script src="shared/nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta charset="utf-8" />
+  <title>Геометрические штамбы — Справка Velum</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <div id="velum-nav" class="nav" data-base="../"></div>
+    <div class="content">
+      <h1>Геометрические штамбы (ModelGeometryStamp / PdfModelStampAtExport)</h1>
+      <p class="lead">Два поля реестра, которые хранят штамб геометрии модели в единой базе. По ним определяется устаревание PDF и чертежа при изменении геометрии детали.</p>
+      <p class="meta">Раздел: <code>geometry-stamps</code></p>
+
+      <h2>Зачем нужны</h2>
+      <p>
+        При изменении геометрии детали (перемещение линий, изменение размеров, добавление/удаление элементов)
+        соответствующие документы (PDF, чертёж) становятся устаревшими. Штамбы позволяют системе
+        автоматически обнаруживать такие изменения через реестр — без открытия документов.
+      </p>
+      <p>
+        <strong>Важно:</strong> штамбы хранятся <strong>только в реестре</strong>, а не в свойствах документов.
+        Это решает проблему «бесконечного» сигнала: при сохранении детали штамб обновляется из свойств (через ExportMetaSync),
+        а при экспорте PDF или пересохранении чертежа — <code>PdfModelStampAtExport</code> обновляется из реестра.
+        Никаких чужих свойств не трогаем.
+      </p>
+
+      <h2>Поля реестра</h2>
+      <table>
+        <thead><tr><th>Поле реестра</th><th>Где хранится</th><th>Назначение</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>ModelGeometryStamp</code></td>
+            <td>Запись <strong>детали</strong> (.sldprt / .sldasm)</td>
+            <td>
+              Текущий <code>GetUpdateStamp()</code> детали. Обновляется автоматически при открытии/сохранении детали
+              через <em>ExportMetaSync</em>. Это единая база «сколько раз геометрия менялась».
+            </td>
+          </tr>
+          <tr>
+            <td><code>PdfModelStampAtExport</code></td>
+            <td>Запись <strong>чертежа</strong> (.slddrw)</td>
+            <td>
+              Значение <code>ModelGeometryStamp</code> связанной детали на момент экспорта PDF
+              (или пересохранения чертежа). Если <code>ModelGeometryStamp</code> детали больше — PDF устарел.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Логика работы</h2>
+      <ol>
+        <li><strong>Открытие/сохранение детали.</strong> ExportMetaSync читает <code>GetUpdateStamp()</code> и записывает в реестр: <code>ModelGeometryStamp = GetUpdateStamp()</code>.</li>
+        <li><strong>Экспорт PDF.</strong> После успешного экспорта PDF берётся текущее <code>ModelGeometryStamp</code> детали из реестра и записывается в <code>PdfModelStampAtExport</code> чертежа.</li>
+        <li><strong>Пересохранение чертежа.</strong> При Ctrl+S на чертеже обновляется <code>PdfModelStampAtExport</code> чертежа тем же значением, что <code>ModelGeometryStamp</code> детали (чертёж «принял» изменения геометрии).</li>
+        <li><strong>Проверка устаревания.</strong> Если <code>ModelGeometryStamp (деталь) &gt; PdfModelStampAtExport (чертёж)</code> — PDF устарел.</li>
+      </ol>
+
+      <div class="note">
+        <strong>Переходный период:</strong> если <code>PdfModelStampAtExport</code> ещё не записан (старые записи), система автоматически сравнивает <code>ModelGeometryStamp</code> детали с <code>PdfGeometryUpdateStamp</code> чертежа. Это обеспечивает корректную работу и для старых, и для новых записей.
+      </div>
+
+      <div class="note">
+        <strong>Важно:</strong> штамбы не записываются в свойства документов.
+        Они живут только в реестре. При открытии детали ExportMetaSync синхронизирует
+        <code>ModelGeometryStamp</code> из свойств, а при экспорте PDF / пересохранении чертежа —
+        <code>PdfModelStampAtExport</code> обновляется в реестре.
+      </div>
+
+      <h2>Механизмы обнаружения устаревания PDF</h2>
+      <p>Система использует три независимых механизма:</p>
+
+      <h3>1. Реестр (приоритетный)</h3>
+      <p>
+        При открытии чертежа система сравнивает <code>ModelGeometryStamp</code> связанной детали
+        с <code>PdfModelStampAtExport</code> чертежа. Если геометрия модели изменилась —
+        <code>PdfGeometryPendingStamp</code> на чертеже обновляется → PDF помечается как устаревший.
+      </p>
+      <p>
+        При глобальном сканировании (когда документы закрыты) <em>PdfFleetScanner</em> проверяет
+        то же условие: <code>ModelGeometryStamp &gt; PdfModelStampAtExport</code>.
+        Также сохраняется существующая проверка по <code>PdfGeometryPendingStamp</code> чертежа
+        (для ручных правок на чертеже).
+      </p>
+
+      <h3>2. GetUpdateStamp чертежа (fallback)</h3>
+      <p>
+        Если чертёж <strong>не заведён в реестре</strong> — система использует fallback:
+        сравнивает текущий <code>GetUpdateStamp()</code> чертежа с <code>PdfGeometryUpdateStamp</code>.
+        Если чертёж перегенерировался (источник изменился) — <code>GetUpdateStamp()</code> растёт.
+      </p>
+      <p>
+        Это покрывает стадию проектирования, когда документы ещё не завезены в реестр.
+      </p>
+
+      <h3>3. Геометрия листа чертежа (пульс)</h3>
+      <p>
+        На каждом пульсе система проверяет токены эскизов и аннотаций на листе чертежа.
+        Если пользователь вручную дорисовал что-то на чертеже — это также считается
+        изменением и помечает PDF как устаревший.
+      </p>
+
+      <h2>Пример</h2>
+      <p>Сценарий: изменение геометрии детали и автоматическое обнаружение устаревания.</p>
+      <ol>
+        <li>Деталь <code>Кронштейн.sldprt</code> и чертёж завезены в реестр.</li>
+        <li>Штамбы: <code>ModelGeometryStamp = 10</code>, <code>PdfModelStampAtExport = 10</code> (PDF экспортирован).</li>
+        <li>Пользователь открывает деталь, меняет размер отверстия, сохраняет. ExportMetaSync обновляет: <code>ModelGeometryStamp = 12</code>.</li>
+        <li>Пользователь открывает чертёж. Система видит: <code>12 &gt; 10</code> → PDF устарел.</li>
+        <li>Глобальное сканирование: <code>12 &gt; 10</code> → PDF помечается как «Устарел».</li>
+        <li>Пользователь экспортирует новый PDF → <code>PdfModelStampAtExport = 12</code>.</li>
+        <li>Проблема устранена.</li>
+      </ol>
+
+      <h2>См. также</h2>
+      <ul>
+        <li><a href="product-problems.html">Проблемы реестра</a></li>
+        <li><a href="product-registry.html">Реестр документов</a></li>
+        <li><a href="pdf-batch.html">Пакетный PDF</a></li>
+      </ul>
+    </div>
+  </div>
+  <script src="../shared/nav.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,14 @@
+# Формат: ID|Level1|Level2|influence_action_ids|command_pattern_ids|Моторные действия|ReflexChainID
+# Level1: Интегральное базовое состояние гомеостаза: -1: 0: 1
+# Level2: Контексты реагирования: id1,id2,id3
+# influence_action_ids: воздействия с пульта оператора (InfluenceActions.dat), id1,id2,id3
+# command_pattern_ids: команды среды (CommandPhrases.dat), порядок важен: id1,id2,id3
+# Моторные действия: id1,id2,id3
+# ReflexChainID: ID цепочки рефлексов (0 если нет)
+1|-1|18|||38|0
+3|-1|20|72||40|0
+4|-1|22|64||42|0
+5|-1|22|65||43|0
+7|-1|22|73||45|0
+8|-1|24|70||46|0
+9|-1|22|71||47|0

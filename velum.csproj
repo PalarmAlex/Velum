@@ -1,0 +1,806 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{78C94B32-5ED2-4EC5-AA87-7FE068490347}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Velum</RootNamespace>
+    <AssemblyName>velum</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <LangVersion>7.3</LangVersion>
+    <NuGetPackageImportStamp />
+    <XCadRegDll>false</XCadRegDll>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\velum.xml</DocumentationFile>
+    <WarningsAsErrors>1591</WarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\velum.xml</DocumentationFile>
+    <WarningsAsErrors>1591</WarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>velum.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="SolidWorks.Interop.sldworks, Version=32.0.1.4, Culture=neutral, PublicKeyToken=7c4797c3e4eeac03, processorArchitecture=MSIL">
+      <HintPath>packages\Xarial.XCad.SolidWorks.0.8.1\lib\net461\SolidWorks.Interop.sldworks.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SolidWorks.Interop.swconst, Version=32.0.1.4, Culture=neutral, PublicKeyToken=19f43e188e4269d8, processorArchitecture=MSIL">
+      <HintPath>packages\Xarial.XCad.SolidWorks.0.8.1\lib\net461\SolidWorks.Interop.swconst.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SolidWorks.Interop.swpublished, Version=32.0.1.4, Culture=neutral, PublicKeyToken=89a97bdc5284e6d8, processorArchitecture=MSIL">
+      <HintPath>packages\Xarial.XCad.SolidWorks.0.8.1\lib\net461\SolidWorks.Interop.swpublished.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Xarial.XCad, Version=0.8.1.5169, Culture=neutral, PublicKeyToken=60dcaf351d4060db, processorArchitecture=MSIL">
+      <HintPath>packages\Xarial.XCad.0.8.1\lib\net461\Xarial.XCad.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xarial.XCad.SolidWorks, Version=0.8.1.5169, Culture=neutral, PublicKeyToken=60dcaf351d4060db, processorArchitecture=MSIL">
+      <HintPath>packages\Xarial.XCad.SolidWorks.0.8.1\lib\net461\Xarial.XCad.SolidWorks.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xarial.XCad.Toolkit, Version=0.8.1.5169, Culture=neutral, PublicKeyToken=60dcaf351d4060db, processorArchitecture=MSIL">
+      <HintPath>packages\Xarial.XCad.Toolkit.0.8.1\lib\net461\Xarial.XCad.Toolkit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="isida">
+      <HintPath>..\..\ISIDA\Programms\isida\bin\$(Configuration)\isida.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\ISIDA\Programms\isida\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SymbiontEnv.Contract">
+      <HintPath>..\..\ISIDA\Programms\app\SymbiontEnv.Contract\bin\$(Configuration)\SymbiontEnv.Contract.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Configuration\VelumAppConfig.cs" />
+    <Compile Include="Configuration\VelumAdapterPackage.cs" />
+    <Compile Include="ReactiveCore\VelumSolidDocumentKind.cs" />
+    <Compile Include="ReactiveCore\SolidWorksSessionSnapshot.cs" />
+    <Compile Include="ReactiveCore\ISolidWorksSessionProbe.cs" />
+    <Compile Include="ReactiveCore\VelumSolidWorksSessionProbe.cs" />
+    <Compile Include="ReactiveCore\RecipeArgsParser.cs" />
+    <Compile Include="ReactiveCore\RecipeStepExecutionContext.cs" />
+    <Compile Include="ReactiveCore\RecipeStepHandlerRegistry.cs" />
+    <Compile Include="ReactiveCore\RecipeExecutorHandlers.cs" />
+    <Compile Include="ReactiveCore\RecipeExecutorHandlersExport.cs" />
+    <Compile Include="ReactiveCore\RecipeExecutorHandlersBlankSize.cs" />
+    <Compile Include="ReactiveCore\RecipeExecutorHandlersRegistry.cs" />
+    <Compile Include="ReactiveCore\RecipeExecutorHandlersBomExport.cs" />
+    <Compile Include="ReactiveCore\Export\VelumDxfProjectionView.cs" />
+    <Compile Include="ReactiveCore\Export\VelumSolidSheetMetalHelper.cs" />
+    <Compile Include="ReactiveCore\Export\VelumDxfPartGeometryHelper.cs" />
+    <Compile Include="ReactiveCore\Export\VelumDxfSketchGeometryWriter.cs" />
+    <Compile Include="ReactiveCore\Export\VelumDxfSketchExportHelper.cs" />
+    <Compile Include="ReactiveCore\Export\VelumDxfFilePostProcessor.cs" />
+    <Compile Include="ReactiveCore\Export\VelumDxfStandardViewHelper.cs" />
+    <Compile Include="ReactiveCore\Export\VelumDxfFileNameHelper.cs" />
+    <Compile Include="ReactiveCore\Export\VelumDxfFileNamePatternResolver.cs" />
+    <Compile Include="ReactiveCore\Export\VelumDxfFileNameSuffixRegistry.cs" />
+    <Compile Include="ReactiveCore\Export\VelumDxfQuantityToken.cs" />
+    <Compile Include="ReactiveCore\Export\VelumDxfQuantityRenameHelper.cs" />
+    <Compile Include="ReactiveCore\Export\VelumDxfProjectionExportHelper.cs" />
+    <Compile Include="ReactiveCore\Export\VelumDxfExportService.cs" />
+    <Compile Include="ReactiveCore\Export\VelumExportDeliveryHelper.cs" />
+    <Compile Include="ReactiveCore\Export\VelumDxfDeliveryFolderGuard.cs" />
+    <Compile Include="ReactiveCore\Export\VelumDxfDeliveryQuantityDiagnostics.cs" />
+    <Compile Include="ReactiveCore\Export\VelumDxfThicknessDeliveryFolder.cs" />
+    <Compile Include="ReactiveCore\Export\VelumDxfFinalizeService.cs" />
+    <Compile Include="ReactiveCore\Export\VelumDxfNeedFlagResolver.cs" />
+    <Compile Include="ReactiveCore\Export\VelumDxfArtifactResolver.cs" />
+    <Compile Include="ReactiveCore\VelumMaterialBatchScanner.cs" />
+    <Compile Include="ReactiveCore\VelumDocumentPropertyBatchHelper.cs" />
+    <Compile Include="ReactiveCore\Export\VelumDxfBatchScanner.cs" />
+    <Compile Include="ReactiveCore\Export\VelumDxfBatchDocumentHelper.cs" />
+    <Compile Include="ReactiveCore\Export\VelumDxfExportDialogHost.cs" />
+    <Compile Include="ReactiveCore\Export\VelumPdfFileNameHelper.cs" />
+    <Compile Include="ReactiveCore\Export\VelumDrawingPathPropertyHelper.cs" />
+    <Compile Include="ReactiveCore\Export\VelumDrawingPathSavePropagator.cs" />
+    <Compile Include="ReactiveCore\Export\VelumPdfArtifactResolver.cs" />
+    <Compile Include="ReactiveCore\Export\VelumPdfBatchScanner.cs" />
+    <Compile Include="ReactiveCore\Export\VelumPdfBatchDocumentHelper.cs" />
+    <Compile Include="ReactiveCore\Export\VelumPdfExportService.cs" />
+    <Compile Include="ReactiveCore\Export\VelumPdfExportDialogHost.cs" />
+    <Compile Include="ReactiveCore\VelumExportDocumentationProperties.cs" />
+    <Compile Include="ReactiveCore\VelumNeedDrawingPropertyWriter.cs" />
+    <Compile Include="ReactiveCore\VelumBlankSizeProperties.cs" />
+    <Compile Include="ReactiveCore\VelumBlankSizePropertyLinksService.cs" />
+    <Compile Include="ReactiveCore\VelumExportDocumentationGeometryStampHelper.cs" />
+    <Compile Include="ReactiveCore\RecipeStepDefinition.cs" />
+    <Compile Include="ReactiveCore\RecipeDefinition.cs" />
+    <Compile Include="ReactiveCore\RecipeCatalogLoadResult.cs" />
+    <Compile Include="ReactiveCore\EnvironmentContractMapper.cs" />
+    <Compile Include="ReactiveCore\EnvironmentCatalogFileIo.cs" />
+    <Compile Include="ReactiveCore\RecipeCatalog.cs" />
+    <Compile Include="ReactiveCore\RecipeExecutionResult.cs" />
+    <Compile Include="ReactiveCore\RecipeStepExecutionResult.cs" />
+    <Compile Include="ReactiveCore\VelumEnginePulseBridge.cs" />
+    <Compile Include="ReactiveCore\VelumRecipeSeqAllocator.cs" />
+    <Compile Include="ReactiveCore\VelumRecipeTemplateResolver.cs" />
+    <Compile Include="ReactiveCore\VelumRecipeSolidWorksCustomProperties.cs" />
+    <Compile Include="ReactiveCore\VelumSolidCustomPropertyTypes.cs" />
+    <Compile Include="ReactiveCore\RecipeExecutor.cs" />
+    <Compile Include="ReactiveCore\RecipeDispatchCooldownTracker.cs" />
+    <Compile Include="ReactiveCore\RecipeDispatchEpisodeTracker.cs" />
+    <Compile Include="ReactiveCore\RecipeDispatcher.cs" />
+    <Compile Include="ReactiveCore\RecipeMotorOutcomeNotifier.cs" />
+    <Compile Include="ReactiveCore\VelumReactiveCoreBootstrap.cs" />
+    <Compile Include="Isida\VelumIsidaHost.cs" />
+    <Compile Include="Isida\VelumProblemContextHint.cs" />
+    <Compile Include="Isida\VelumAgentRuntimePreferences.cs" />
+    <Compile Include="Isida\VelumAgentStimulusSender.cs" />
+    <Compile Include="Isida\VelumPulseController.cs" />
+    <Compile Include="Isida\VelumAdapterSleepReset.cs" />
+    <Compile Include="Isida\VelumSensorPrimariesBuffer.cs" />
+    <Compile Include="SolidHomeostasis\VelumSolidEnvironmentInfluenceCatalog.cs" />
+    <Compile Include="SolidHomeostasis\MetricProbes\VelumSolidMetricProbeThresholds.cs" />
+    <Compile Include="SolidHomeostasis\VelumSolidMetricParameterRelease.cs" />
+    <Compile Include="SolidHomeostasis\VelumSolidMetricCumulativePressureTarget.cs" />
+    <Compile Include="SolidHomeostasis\VelumSolidMetricPressureEngageRegistry.cs" />
+    <Compile Include="SolidHomeostasis\VelumSolidMetricPressureReset.cs" />
+    <Compile Include="SolidHomeostasis\VelumSolidMetricLatchedBadValue.cs" />
+    <Compile Include="SolidHomeostasis\VelumSolidMetricLatchRegistry.cs" />
+    <Compile Include="SolidHomeostasis\VelumSolidMetricPressureOrchestrator.cs" />
+    <Compile Include="SolidHomeostasis\VelumSolidMetricPressurePauseRegistry.cs" />
+    <Compile Include="SolidHomeostasis\VelumSolidMetricPressureHostWrites.cs" />
+    <Compile Include="SolidHomeostasis\MetricProbes\VelumSolidProbeCategory.cs" />
+    <Compile Include="SolidHomeostasis\MetricProbes\VelumSolidProbeCategoryPolicy.cs" />
+    <Compile Include="SolidHomeostasis\MetricProbes\VelumSolidDocumentEditContext.cs" />
+    <Compile Include="SolidHomeostasis\MetricProbes\VelumSolidDocumentEditContextResolver.cs" />
+    <Compile Include="SolidHomeostasis\MetricProbes\VelumSolidProbeRefreshPlanner.cs" />
+    <Compile Include="SolidHomeostasis\VelumSolidEnvironmentBridge.cs" />
+    <Compile Include="SolidHomeostasis\VelumSolidEnvironmentGate.cs" />
+    <Compile Include="SolidHomeostasis\VelumCadDegradedModeSync.cs" />
+    <Compile Include="SolidHomeostasis\VelumSolidSessionHealth.cs" />
+    <Compile Include="SolidHomeostasis\VelumSolidEnvironmentInfluenceComposer.cs" />
+    <Compile Include="SolidHomeostasis\MetricProbes\VelumSolidPulseMetricCompare.cs" />
+    <Compile Include="SolidHomeostasis\VelumSolidDocumentEpisodeReset.cs" />
+    <Compile Include="SolidHomeostasis\VelumSolidDiagLog.cs" />
+    <Compile Include="SolidHomeostasis\MetricProbes\VelumSolidProbeContext.cs" />
+    <Compile Include="SolidHomeostasis\VelumSolidComDispatchHelper.cs" />
+    <Compile Include="SolidHomeostasis\MetricProbes\VelumSolidExportDocumentationProbe.cs" />
+    <Compile Include="SolidHomeostasis\MetricProbes\VelumSolidBlankSizeProbe.cs" />
+    <Compile Include="SolidHomeostasis\VelumDxfBatchDiagnosticsSession.cs" />
+    <Compile Include="SolidHomeostasis\VelumPdfBatchDiagnosticsSession.cs" />
+    <Compile Include="SolidHomeostasis\VelumMaterialBatchRow.cs" />
+    <Compile Include="SolidHomeostasis\VelumDocumentPropertyBatchRow.cs" />
+    <Compile Include="SolidHomeostasis\MetricProbes\VelumSolidWorksHomeostasisMetrics.cs" />
+    <Compile Include="SolidHomeostasis\VelumOperatorStimulusCodec.cs" />
+    <Compile Include="SolidHomeostasis\VelumSolidCommandBuffer.cs" />
+    <Compile Include="SolidHomeostasis\VelumCommandIdleFlusher.cs" />
+    <Compile Include="SolidHomeostasis\VelumSolidWorksSaveFileNameHelper.cs" />
+    <Compile Include="SolidHomeostasis\VelumFileNameSequenceState.cs" />
+    <Compile Include="SolidHomeostasis\VelumMaterialSequenceState.cs" />
+    <Compile Include="SolidHomeostasis\VelumMaterialAssignOnSaveCoordinator.cs" />
+    <Compile Include="SolidHomeostasis\VelumBlankSizeLinksOnSaveCoordinator.cs" />
+    <Compile Include="SolidHomeostasis\VelumNeedDrawingOnSaveCoordinator.cs" />
+    <Compile Include="SolidHomeostasis\VelumSolidWorksEventsConnector.cs" />
+    <Compile Include="SolidHomeostasis\MetricProbes\VelumSolidWorksMetricsCache.cs" />
+    <Compile Include="SolidHomeostasis\VelumSolidWorksModelDocHelper.cs" />
+    <Compile Include="SolidHomeostasis\MetricProbes\VelumSolidWorksMaterialComHelper.cs" />
+    <Compile Include="Common\EvolutionStageListItem.cs" />
+    <Compile Include="Common\VelumAdminAccess.cs" />
+    <Compile Include="Common\VelumProjectSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\VelumProjectSettingsForm.Designer.cs">
+      <DependentUpon>VelumProjectSettingsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\VelumAgentTaskPane.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Common\VelumAgentTaskPane.Designer.cs">
+      <DependentUpon>VelumAgentTaskPane.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\VelumAgentTaskPane.Metrics.cs">
+      <DependentUpon>VelumAgentTaskPane.cs</DependentUpon>
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Common\VelumListFilterHelper.cs" />
+    <Compile Include="Common\VelumListViewCellFilterMenu.cs" />
+    <Compile Include="Common\VelumHelp.cs" />
+    <Compile Include="Common\VelumFormHelp.cs" />
+    <Compile Include="Common\VelumFormIcon.cs" />
+    <Compile Include="Common\VelumHelpViewerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\VelumListFilterHelpForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\VelumListFilterHelpForm.Designer.cs">
+      <DependentUpon>VelumListFilterHelpForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\VelumEnvironmentMetricsPickerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\VelumEnvironmentMetricsPickerForm.Designer.cs">
+      <DependentUpon>VelumEnvironmentMetricsPickerForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\VelumOperatorInfluencesPickerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\VelumOperatorInfluencesPickerForm.Designer.cs">
+      <DependentUpon>VelumOperatorInfluencesPickerForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\Export\VelumDxfExportDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\VelumConditionedReflexForbidHelper.cs" />
+    <Compile Include="Common\Export\VelumDxfExportDialog.Designer.cs">
+      <DependentUpon>VelumDxfExportDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\VelumBatchFormFolderBootstrap.cs" />
+    <Compile Include="Common\VelumFolderBrowser.cs" />
+    <Compile Include="Common\Export\VelumDxfBatchDiagnosticsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\Export\VelumDxfBatchDiagnosticsForm.Designer.cs">
+      <DependentUpon>VelumDxfBatchDiagnosticsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\Export\VelumDxfBatchDiagnosticsFormHost.cs" />
+    <Compile Include="Common\Export\VelumBomLaunchContext.cs" />
+    <Compile Include="Common\Export\VelumPdfExportDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\Export\VelumPdfExportDialog.Designer.cs">
+      <DependentUpon>VelumPdfExportDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\Export\VelumPdfBatchDiagnosticsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\Export\VelumPdfBatchDiagnosticsForm.Designer.cs">
+      <DependentUpon>VelumPdfBatchDiagnosticsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\Export\VelumPdfBatchDiagnosticsFormHost.cs" />
+    <Compile Include="Common\Material\VelumMaterialDatabaseManager.cs" />
+    <Compile Include="Common\Material\VelumMaterialTreeView.cs" />
+    <Compile Include="Common\Material\VelumMaterialBatchForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\Material\VelumMaterialBatchForm.Designer.cs">
+      <DependentUpon>VelumMaterialBatchForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\Material\VelumMaterialBatchFormHost.cs" />
+    <Compile Include="Common\DocumentProperties\VelumDocumentPropertyTemplateGridHelper.cs" />
+    <Compile Include="Common\DocumentProperties\VelumDocumentPropertyBatchForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\DocumentProperties\VelumDocumentPropertyBatchForm.Designer.cs">
+      <DependentUpon>VelumDocumentPropertyBatchForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\DocumentProperties\VelumDocumentPropertyBatchFormHost.cs" />
+    <Compile Include="Common\TechRequirements\VelumTechRequirementsModels.cs" />
+    <Compile Include="Common\TechRequirements\VelumTechRequirementsStore.cs" />
+    <Compile Include="Common\TechRequirements\VelumTechRequirementsListHelper.cs" />
+    <Compile Include="Common\TechRequirements\VelumTechRequirementsInputForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\TechRequirements\VelumTechRequirementsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\TechRequirements\VelumTechRequirementsForm.Designer.cs">
+      <DependentUpon>VelumTechRequirementsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\TechRequirements\VelumTechRequirementsFormHost.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistryModels.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistrySectionPath.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistryPropertyReader.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistryColumnStore.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistryColumnFormula.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistryColumnResolver.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistryReportHtmlBuilder.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistryColumnTotals.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistrySectionMutator.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistryWalker.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistryForm.ExportHub.cs">
+      <DependentUpon>VelumAssemblyRegistryForm.cs</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistryForm.Designer.cs">
+      <DependentUpon>VelumAssemblyRegistryForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistryBomDiagnostics.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistryPrintDrawingsService.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistryPrintDrawingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistryPrintDrawingsForm.Designer.cs">
+      <DependentUpon>VelumAssemblyRegistryPrintDrawingsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistryFolderPickerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistryFolderPickerForm.Designer.cs">
+      <DependentUpon>VelumAssemblyRegistryFolderPickerForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistryColumnSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistryColumnSettingsForm.Designer.cs">
+      <DependentUpon>VelumAssemblyRegistryColumnSettingsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistryTemplatesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistryTemplatesForm.Designer.cs">
+      <DependentUpon>VelumAssemblyRegistryTemplatesForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistryFormulaHelperForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistryFormulaHelperForm.Designer.cs">
+      <DependentUpon>VelumAssemblyRegistryFormulaHelperForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistryReportsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistryReportsForm.Designer.cs">
+      <DependentUpon>VelumAssemblyRegistryReportsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistryFormHost.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyBomMirrorStore.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyBomTrackedPropertiesConfig.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyBomMirrorCoordinator.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyBomDiffProbe.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumBomExchangeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\AssemblyRegistry\VelumBomExchangeForm.Designer.cs">
+      <DependentUpon>VelumBomExchangeForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\AssemblyRegistry\VelumBomExchangeFormHost.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumBomTrackedPropertiesEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\AssemblyRegistry\VelumBomTrackedPropertiesEditForm.Designer.cs">
+      <DependentUpon>VelumBomTrackedPropertiesEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryModels.cs" />
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryStore.cs" />
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryPathStatus.cs" />
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryPathChecker.cs" />
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryPrintDrawingsHelper.cs" />
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryNameSyncHelper.cs" />
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryNameSync.cs" />
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryOpenPropertyCache.cs" />
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryRelatedNameCopy.cs" />
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryExportMetaSync.cs" />
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryExportMetaCopy.cs" />
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryIndexTrace.cs" />
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryFolderAutoNames.cs" />
+    <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryProblemKind.cs" />
+    <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryProblemKindPriority.cs" />
+    <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryProblemEntry.cs" />
+    <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryProblemCache.cs" />
+    <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryMatchKey.cs" />
+    <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryIntegrityRules.cs" />
+    <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryBrokenLinkScanner.cs" />
+    <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryMissingDrawingScanner.cs" />
+    <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryDxfFleetScanner.cs" />
+    <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryPdfFleetScanner.cs" />
+    <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryNeedDrawingCommands.cs" />
+    <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryIntegrityScheduler.cs" />
+    <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryOpenDocumentsScope.cs" />
+    <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryMissingEntryScanner.cs" />
+    <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryIntegrityProbes.cs" />
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryProblemsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryProblemsForm.Designer.cs">
+      <DependentUpon>VelumProductRegistryProblemsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryProblemsFormHost.cs" />
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryForm.Designer.cs">
+      <DependentUpon>VelumProductRegistryForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryFormHost.cs" />
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryItemForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryItemForm.Designer.cs">
+      <DependentUpon>VelumProductRegistryItemForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryFolderDescriptionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryFolderDescriptionForm.Designer.cs">
+      <DependentUpon>VelumProductRegistryFolderDescriptionForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryFolderAutoNamesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryFolderAutoNamesForm.Designer.cs">
+      <DependentUpon>VelumProductRegistryFolderAutoNamesForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryFolderPickerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryFolderPickerForm.Designer.cs">
+      <DependentUpon>VelumProductRegistryFolderPickerForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryReportHtmlBuilder.cs" />
+    <Compile Include="Common\VelumDocumentPropertyPickerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\VelumDocumentPropertyPickerForm.Designer.cs">
+      <DependentUpon>VelumDocumentPropertyPickerForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\Export\VelumDxfFileNameSuffixPickerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\Export\VelumDxfFileNameSuffixPickerForm.Designer.cs">
+      <DependentUpon>VelumDxfFileNameSuffixPickerForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\VelumAgentBrickDetailForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\VelumAgentBrickDetailForm.Designer.cs">
+      <DependentUpon>VelumAgentBrickDetailForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\VelumSensorPrimariesBufferForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\VelumSensorPrimariesBufferForm.Designer.cs">
+      <DependentUpon>VelumSensorPrimariesBufferForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VelumAddIn.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Common\AssemblyRegistry\VelumAssemblyRegistryPrintDrawingsForm.resx">
+      <DependentUpon>VelumAssemblyRegistryPrintDrawingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\AssemblyRegistry\VelumBomExchangeForm.resx">
+      <DependentUpon>VelumBomExchangeForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\AssemblyRegistry\VelumBomTrackedPropertiesEditForm.resx">
+      <DependentUpon>VelumBomTrackedPropertiesEditForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\TechRequirements\VelumTechRequirementsInputForm.resx">
+      <DependentUpon>VelumTechRequirementsInputForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\VelumAgentBrickDetailForm.resx">
+      <DependentUpon>VelumAgentBrickDetailForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\VelumDocumentPropertyPickerForm.resx">
+      <DependentUpon>VelumDocumentPropertyPickerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\Export\VelumDxfFileNameSuffixPickerForm.resx">
+      <DependentUpon>VelumDxfFileNameSuffixPickerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\VelumHelpViewerForm.resx">
+      <DependentUpon>VelumHelpViewerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\VelumListFilterHelpForm.resx">
+      <DependentUpon>VelumListFilterHelpForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\VelumEnvironmentMetricsPickerForm.resx">
+      <DependentUpon>VelumEnvironmentMetricsPickerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\VelumOperatorInfluencesPickerForm.resx">
+      <DependentUpon>VelumOperatorInfluencesPickerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\ProductRegistry\VelumProductRegistryFolderAutoNamesForm.resx">
+      <DependentUpon>VelumProductRegistryFolderAutoNamesForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\ProductRegistry\VelumProductRegistryFolderPickerForm.resx">
+      <DependentUpon>VelumProductRegistryFolderPickerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\VelumSensorPrimariesBufferForm.resx">
+      <DependentUpon>VelumSensorPrimariesBufferForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\VelumAgentTaskPane.resx">
+      <DependentUpon>VelumAgentTaskPane.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\VelumProjectSettingsForm.resx">
+      <DependentUpon>VelumProjectSettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\Export\VelumDxfExportDialog.resx">
+      <DependentUpon>VelumDxfExportDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\Export\VelumDxfBatchDiagnosticsForm.resx">
+      <DependentUpon>VelumDxfBatchDiagnosticsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\Export\VelumPdfExportDialog.resx">
+      <DependentUpon>VelumPdfExportDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\Export\VelumPdfBatchDiagnosticsForm.resx">
+      <DependentUpon>VelumPdfBatchDiagnosticsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\Material\VelumMaterialBatchForm.resx">
+      <DependentUpon>VelumMaterialBatchForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\DocumentProperties\VelumDocumentPropertyBatchForm.resx">
+      <DependentUpon>VelumDocumentPropertyBatchForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\TechRequirements\VelumTechRequirementsForm.resx">
+      <DependentUpon>VelumTechRequirementsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\AssemblyRegistry\VelumAssemblyRegistryForm.resx">
+      <DependentUpon>VelumAssemblyRegistryForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\AssemblyRegistry\VelumAssemblyRegistryFolderPickerForm.resx">
+      <DependentUpon>VelumAssemblyRegistryFolderPickerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\AssemblyRegistry\VelumAssemblyRegistryColumnSettingsForm.resx">
+      <DependentUpon>VelumAssemblyRegistryColumnSettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\AssemblyRegistry\VelumAssemblyRegistryTemplatesForm.resx">
+      <DependentUpon>VelumAssemblyRegistryTemplatesForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\AssemblyRegistry\VelumAssemblyRegistryFormulaHelperForm.resx">
+      <DependentUpon>VelumAssemblyRegistryFormulaHelperForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\AssemblyRegistry\VelumAssemblyRegistryReportsForm.resx">
+      <DependentUpon>VelumAssemblyRegistryReportsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\ProductRegistry\VelumProductRegistryForm.resx">
+      <DependentUpon>VelumProductRegistryForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\ProductRegistry\VelumProductRegistryProblemsForm.resx">
+      <DependentUpon>VelumProductRegistryProblemsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\ProductRegistry\VelumProductRegistryItemForm.resx">
+      <DependentUpon>VelumProductRegistryItemForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\ProductRegistry\VelumProductRegistryFolderDescriptionForm.resx">
+      <DependentUpon>VelumProductRegistryFolderDescriptionForm.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="icons\Abort.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Add.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\agent.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Anchor.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Assemblies.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Copy.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Database.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Delete.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Diam.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Down.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\EditPage.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\editselectall.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Erase.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Export.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\ExportDXF.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\ExportPDF.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\ExportXLS.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Fall.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Folder.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Grad.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Graf.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Help.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Help_32.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Kat.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Kwad.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\List.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Load.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Material.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Modify.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\No.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\OK.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\open_folder.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Parts.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\PlusMin.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Print.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\pulse_start16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\pulse_stop16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Razw.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Remove.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\robot.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Scenario.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Script.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\settings.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Text.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Thumbs down.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Thumbs up.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\toolbox.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Up.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Update.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\velum.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icons\Yes.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="velum.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="packages\Xarial.XCad.SolidWorks.0.8.1\build\Xarial.XCad.SolidWorks.targets" Condition="Exists('packages\Xarial.XCad.SolidWorks.0.8.1\build\Xarial.XCad.SolidWorks.targets')" />
+  <Target Name="EnsureIsidaBuilt" BeforeTargets="PrepareForBuild">
+    <Error Condition="!Exists('..\..\ISIDA\Programms\isida\bin\$(Configuration)\isida.dll')" Text="Отсутствует сборка isida: ..\..\ISIDA\Programms\isida\bin\$(Configuration)\isida.dll. Соберите проект isida (конфигурация $(Configuration))." />
+  </Target>
+  <Target Name="EnsureSymbiontEnvContractBuilt" BeforeTargets="PrepareForBuild">
+    <Error Condition="!Exists('..\..\ISIDA\Programms\app\SymbiontEnv.Contract\bin\$(Configuration)\SymbiontEnv.Contract.dll')" Text="Отсутствует SymbiontEnv.Contract.dll: ..\..\ISIDA\Programms\app\SymbiontEnv.Contract\bin\$(Configuration)\. Соберите SymbiontEnv.Contract.csproj (конфигурация $(Configuration))." />
+  </Target>
+  <Target Name="CopyIsidaRuntimeAssemblies" AfterTargets="CopyFilesToOutputDirectory">
+    <ItemGroup>
+      <_IsidaBinaries Include="..\..\ISIDA\Programms\isida\bin\$(Configuration)\*.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_IsidaBinaries)" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" Condition="Exists('..\..\ISIDA\Programms\isida\bin\$(Configuration)\isida.dll')" />
+  </Target>
+  <Target Name="CopyAdapterPackage" AfterTargets="CopyFilesToOutputDirectory">
+    <ItemGroup>
+      <_AdapterPackageFiles Include="adapter-package\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_AdapterPackageFiles)" DestinationFiles="@(_AdapterPackageFiles->'$(OutputPath)adapter-package\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" Condition="Exists('adapter-package\manifest.json')" />
+    <Delete Files="$(OutputPath)adapter-package\schema\expression-pattern-catalog.json" Condition="Exists('$(OutputPath)adapter-package\schema\expression-pattern-catalog.json')" />
+    <Delete Files="$(OutputPath)adapter-package\schema\trigger-detect.json" Condition="Exists('$(OutputPath)adapter-package\schema\trigger-detect.json')" />
+    <Delete Files="$(OutputPath)adapter-package\schema\trigger-catalog.json" Condition="Exists('$(OutputPath)adapter-package\schema\trigger-catalog.json')" />
+    <Delete Files="$(OutputPath)adapter-package\BootData\Environment\EnvironmentTriggers.yaml" Condition="Exists('$(OutputPath)adapter-package\BootData\Environment\EnvironmentTriggers.yaml')" />
+  </Target>
+  <Target Name="CopyVelumHelp" AfterTargets="CopyFilesToOutputDirectory">
+    <PropertyGroup>
+      <_VelumHelpProgramData>$(ALLUSERSPROFILE)\VELUM\help</_VelumHelpProgramData>
+    </PropertyGroup>
+    <ItemGroup>
+      <_VelumHelpFiles Include="docs\help\**\*" />
+    </ItemGroup>
+    <!-- Рядом с dll (отладка) и в %ProgramData%\VELUM\help (как у установщика). -->
+    <Copy SourceFiles="@(_VelumHelpFiles)" DestinationFiles="@(_VelumHelpFiles->'$(OutputPath)help\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" Condition="Exists('docs\help\index.html')" />
+    <MakeDir Directories="$(_VelumHelpProgramData)" Condition="Exists('docs\help\index.html')" />
+    <Copy SourceFiles="@(_VelumHelpFiles)" DestinationFiles="@(_VelumHelpFiles->'$(_VelumHelpProgramData)\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" Condition="Exists('docs\help\index.html')" />
+  </Target>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Отсутствует пакет NuGet. Выполните восстановление: nuget restore или откройте решение в Visual Studio. Отсутствует: {0}</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\Xarial.XCad.SolidWorks.0.8.1\build\Xarial.XCad.SolidWorks.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xarial.XCad.SolidWorks.0.8.1\build\Xarial.XCad.SolidWorks.targets'))" />
+  </Target>
+</Project>

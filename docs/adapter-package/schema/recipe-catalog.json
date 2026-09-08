@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "3.2",
+  "recipes": [
+    {
+      "id": "kb_prefill_designation",
+      "label": "Подготовить имя по КБ",
+      "description": "Подставить обозначение в имя файла до Save (SetTitle2)"
+    },
+    {
+      "id": "kb_apply_properties_saved",
+      "label": "Свойства КБ после сохранения",
+      "description": "Обозначение, «Нужен dxf»/«Путь dxf» (SLDPRT, if_empty)"
+    },
+    {
+      "id": "material_assign_session_learned",
+      "label": "Назначить выученный материал",
+      "description": "Материал последнего Save Part в каталоге документа; только пустая конфигурация"
+    },
+    {
+      "id": "export_documentation_dialog",
+      "label": "Диагностика экспортной документации",
+      "description": "Модальный диалог экспорта детали в DXF"
+    },
+    {
+      "id": "export_drawing_pdf_dialog",
+      "label": "Экспорт чертежа в PDF",
+      "description": "Модальный диалог — выбор каталога и сохранение PDF чертежа"
+    },
+    {
+      "id": "finalize_dxf_metadata_dialog",
+      "label": "Обновить штамп DXF",
+      "description": "Фиксация пути/имени/вида/штампа после ручной выгрузки DXF"
+    },
+    {
+      "id": "ensure_blank_size_links",
+      "label": "Ссылки Толщина/Длина/Ширина (лист)",
+      "description": "Живые ссылки габарита заготовки для листовой детали (repair)"
+    },
+    {
+      "id": "product_registry_show_problems",
+      "label": "Показать проблемы реестра",
+      "description": "Список битых ссылок и отсутствующих чертежей реестра изделий"
+    },
+    {
+      "id": "bom_exchange_show_dialog",
+      "label": "Обмен BOM с 1С",
+      "description": "Диалог формирования CSV-файла обмена с 1С (расхождения состава и свойств)"
+    }
+  ]
+}

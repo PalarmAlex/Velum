@@ -1,0 +1,21 @@
+# Настройки системы условных рефлексов
+# LearningRate: коэффициент обучения α (0.1-0.3)
+# DecayRate: η для сенсорных ассоциаций CS→CS (0.95-0.99)
+# ActivationThreshold: порог активации γ (0.5-0.7)
+# MinAssociationStrength: минимальная крепость C_min (0.01-0.3)
+# TimeWindowPulses: временное окно корреляции в пульсах (1-10)
+# InitialLifetimePulses: начальный лимит простоя УР; при активации удваивается (3600-604800)
+# ActiveExtinctionRate: α_ext активного угасания при CS без US (0.01-0.2)
+# HigherOrderStrengthReductionCoefficient: коэфф. понижения крепости вторичных (1.2-3.0)
+# CompetitionStrengthRatioThreshold: порог отношения крепостей θ_comp для конкурентного подавления (0.5-0.9)
+# TieBreakPreferSmallerReflexId: при равной крепости — меньший ID у-рефлекса (true/false)
+LearningRate=0,2
+DecayRate=0,98
+ActivationThreshold=0,6
+MinAssociationStrength=0,1
+TimeWindowPulses=5
+InitialLifetimePulses=86400
+ActiveExtinctionRate=0,05
+HigherOrderStrengthReductionCoefficient=1,5
+CompetitionStrengthRatioThreshold=0,8
+TieBreakPreferSmallerReflexId=True

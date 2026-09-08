@@ -1,0 +1,10 @@
+{
+  "id": "velum",
+  "displayName": "Velum — SolidWorks / Reactive Core",
+  "version": "1.0.0",
+  "contractVersion": "3.2",
+  "schemaVersion": "3.2",
+  "author": "VELUM",
+  "bootDataRelativePath": "BootData",
+  "description": "Адаптер SolidWorks для симбионта ISIDA: G_AD dispatch, Command idle-flush, pressure rules (contract 3.2)."
+}

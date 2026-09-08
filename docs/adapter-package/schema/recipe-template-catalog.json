@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "3.2",
+  "placeholders": [
+    {
+      "token": "$PRP:\"SW-File Name\"",
+      "label": "Имя без расширения",
+      "description": "Ссылка на штатную переменную SolidWorks"
+    },
+    {
+      "token": "$PRP:\"SW-Created Date\"",
+      "label": "Дата создания",
+      "description": "Ссылка на штатную переменную SolidWorks"
+    },
+    {
+      "token": "$PRP:\"SW-Last Saved Date\"",
+      "label": "Дата последнего сохранения",
+      "description": "Ссылка на штатную переменную SolidWorks"
+    },
+    {
+      "token": "\"SW-Mass@$PRP:\"SW-File Name\".SLDPRT\"",
+      "label": "Масса объекта",
+      "description": "Масса активной конфигурации; SLDPRT замените на SLDASM для сборки"
+    },
+    {
+      "token": "\"SW-Volume@$PRP:\"SW-File Name\".SLDPRT\"",
+      "label": "Объём объекта",
+      "description": "Объём активной конфигурации; SLDPRT замените на SLDASM для сборки"
+    },
+    {
+      "token": "\"SW-SurfaceArea@$PRP:\"SW-File Name\".SLDPRT\"",
+      "label": "Площадь поверхности",
+      "description": "Площадь поверхности активной конфигурации; SLDPRT замените на SLDASM для сборки"
+    },
+    {
+      "token": "\"SW-Material@$PRP:\"SW-File Name\".SLDPRT\"",
+      "label": "Материал объекта",
+      "description": "Материал активной конфигурации; SLDPRT замените на SLDASM для сборки"
+    },
+    {
+      "token": "{DISCIPLINE}",
+      "label": "Дисциплина КБ",
+      "description": "Код дисциплины: имя каталога на два уровня выше файла документа (например ТХ, СБ, КМ); подставляется плагином Velum"
+    },
+    {
+      "token": "{SEQ}",
+      "label": "Порядковый номер",
+      "description": "Счётчик SEQ в контексте исполнения рецепта, целое число без дополнения нулями (по умолчанию 1); подставляется плагином Velum"
+    },
+    {
+      "token": "{SEQ:4}",
+      "label": "Порядковый номер с нулями",
+      "description": "SEQ с ведущими нулями: {SEQ:n}, где n — ширина поля (1…31); пример: 0001, 0042; подставляется плагином Velum"
+    },
+    {
+      "token": "{DOCUMENT_PATH}",
+      "label": "Путь к файлу",
+      "description": "Полный путь к сохранённому файлу документа SolidWorks на диске; подставляется плагином Velum"
+    },
+    {
+      "token": "{FILE_NAME}",
+      "label": "Имя файла",
+      "description": "Имя файла документа с расширением (например Корпус.SLDPRT); подставляется плагином Velum"
+    },
+    {
+      "token": "Yes",
+      "label": "Да",
+      "description": "Логическое True"
+    },
+    {
+      "token": "No",
+      "label": "Нет",
+      "description": "Логическое False"
+    }
+  ],
+  "propertyNames": [
+    {
+      "name": "Обозначение",
+      "label": "Обозначение",
+      "description": "Шифр/обозначение детали или сборки по корпоративной базе (custom property SolidWorks)"
+    },
+    {
+      "name": "Наименование",
+      "label": "Наименование",
+      "description": "Полное наименование изделия для спецификации и чертежа"
+    },
+    {
+      "name": "Материал",
+      "label": "Материал",
+      "description": "Материал активной конфигурации детали"
+    },
+    {
+      "name": "Разработал",
+      "label": "Разработал",
+      "description": "ФИО или код разработчика в штампе"
+    },
+    {
+      "name": "Проверил",
+      "label": "Проверил",
+      "description": "ФИО или код проверяющего в штампе"
+    },
+    {
+      "name": "Нужен pdf",
+      "label": "Нужен pdf",
+      "description": "Флаг КБ: требуется сопроводительный PDF (Да/Нет); по умолчанию Да при Save Part"
+    },
+    {
+      "name": "Нужен dxf",
+      "label": "Нужен dxf",
+      "description": "Флаг КБ: требуется сопроводительный DXF (Да/Нет); по умолчанию Да при Save Part"
+    },
+    {
+      "name": "Путь pdf",
+      "label": "Путь pdf",
+      "description": "Путь к сопроводительному PDF на диске"
+    },
+    {
+      "name": "Путь dxf",
+      "label": "Путь dxf",
+      "description": "Путь к сопроводительному DXF на диске"
+    }
+  ]
+}

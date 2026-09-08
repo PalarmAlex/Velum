@@ -1,0 +1,11 @@
+# ID|Level1|Level2|Level3|AssociationStrength|LastActivation|BirthTime|SourceGeneticReflexId|ToneId|MoodId|SourceConditionedReflexId|Order|LifetimePulses|ExpiresAt
+# Level1: -1:Плохо, 0:Норма, 1:Хорошо
+# Level2: id1,id2,id3 (ID стилей поведения)
+# Level3: ID образа пускового стимула
+# AssociationStrength: крепость связи C_ij ∈ [0,1]
+# ToneId: -1=Вялый, 0=Нормальный, 1=Повышенный
+# MoodId: 0=Нормальное, 1=Хорошее, 2=Плохое, 3=Игривое, 4=Учитель, 5=Агрессивное, 6=Защитное, 7=Протест
+# SourceConditionedReflexId: ID родительского условного рефлекса (0 для первичных)
+# Order: порядок рефлекса (1=первичный, 2=вторичный, 3=третичный)
+# LifetimePulses|ExpiresAt: лимит простоя и абсолютный Lifetime протухания
+1|0|22|20|0,4164006|24842|24736|4|0|0|0|1|691200|716042

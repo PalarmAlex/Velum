@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta charset="utf-8" />
+  <title>Диалоговые рецепты (Motor Outcomes) — Справка Velum</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <div id="velum-nav" class="nav" data-base="../"></div>
+    <div class="content">
+      <h1>Диалоговые рецепты — оценка ответом среды</h1>
+      <p class="lead">На стадии обучения (Stage 2) помощник запускает моторные действия (рецепты). После завершения мотора оценка полезности автоматизма выполняется <strong>ответом среды</strong> — по изменению состояния гомеостаза, а не по кнопкам формы.</p>
+      <p class="meta">Раздел: <code>dialog-recipes</code> · Механизм: Stage 2 Motor Outcomes</p>
+
+      <h2>Как работает оценка</h2>
+      <p>Когда помощник запускает мотор (через рецепт — диалог SW, макрос и т.п.), последовательность такова:</p>
+      <ol>
+        <li><strong>Мотор</strong> — рецепт выполняется целиком (открытие диалога SW, настройка параметров, нажатие OK в SW и т.д.).</li>
+        <li><strong>Завершение мотора</strong> — Velum сообщает ISIDA: <code>NotifyMotorCompleted(actionId)</code>. ISIDA переснимает «до»-состояние гомеостаза и перезапускает таймер ожидания.</li>
+        <li><strong>Ожидание</strong> — появляется форма-индикатор с обратным отсчётом. Симбионт ждёт изменения состояния среды.</li>
+        <li><strong>Оценка</strong> — при истечении таймера ISIDA сравнивает состояние «до» и «после»: улучшение → полезность растёт, ухудшение → падает, без изменения → нейтрально + рефрактерность.</li>
+      </ol>
+
+      <div class="note">
+        Оценка по кнопкам формы (Apply / Forbid / Cancel) <strong>удалена</strong> — она противоречила архитектуре: кнопки нажимались до изменения состояния, а оценка не может быть раньше эффекта действия.
+      </div>
+
+      <h2>Форма-индикатор ожидания</h2>
+      <p>После завершения мотора появляется небольшое немодальное окно с обратным отсчётом:</p>
+      <pre><code>┌────────────────────────────────────────────┐
+│  Действие: Захватить деталь (ID: 42)      │
+│                                            │
+│  Осталось пульсов: 12                      │
+└────────────────────────────────────────────┘</code></pre>
+      <ul>
+        <li>Нет кнопок оценки — только индикация.</li>
+        <li>Показывает, что симбионт ждёт ответа среды.</li>
+        <li>Эффект действия оператора в этом окне интерпретируется как оценка.</li>
+        <li>Скрывается при истечении таймера или смене документа.</li>
+      </ul>
+
+      <h2>Пульт Поощрить / Наказать</h2>
+      <p>Кнопки пульта (Поощрить / Наказать) остаются как <strong>дополнительный канал</strong> — принудительное перебивание оценки. Если оператор нажал Поощрить в окне ожидания, это перебивает оценку среды:</p>
+      <table>
+        <thead><tr><th>Действие</th><th>Эффект</th></tr></thead>
+        <tbody>
+          <tr><td>Поощрить</td><td>Полезность принудительно +</td></tr>
+          <tr><td>Наказать</td><td>Полезность принудительно −</td></tr>
+          <tr><td>Нет ответа (истечение таймера)</td><td>Оценка по дельте состояния среды</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Запрет у-рефлекса (dual-use)</h2>
+      <p>Если мотор запущен от условного рефлекса и открывает диалоговую форму SW (например, экспорт DXF/PDF), на форме может быть кнопка <strong>«Запрет»</strong>. Эта кнопка понижает крепость <em>рефлекса</em>, а не оценивает автоматизм:</p>
+      <ul>
+        <li>Кнопка активна только если мотор запущен от у-рефлекса.</li>
+        <li>Нажатие → <code>ResetAssociationStrengthToInitial</code> — сброс крепости у-рефлекса.</li>
+        <li>Оценка автоматизма при этом идёт отдельно — ответом среды.</li>
+      </ul>
+
+      <h2>Архитектура контура</h2>
+      <div class="figure">
+        <pre><code>RecipeDispatcher
+  ├→ RecipeExecutor.TryExecute(recipe)     — мотор выполнен
+  ├→ AdaptiveActionsSystem.NotifyMotorCompleted(actionId)
+  │    └→ AutomatismResultTracker.NotifyMotorCompleted(atmzId)
+  │         ├→ StateBeforeOperatorImpact = CurrentOverallState
+  │         ├→ CaptureOperatorEvaluationParameterSnapshot()
+  │         └→ StartWaitingForOperatorEvaluation(atmzId)
+  └→ VelumWaitingIndicatorForm.Show()       — плашка с отсчётом
+       │
+       └→ истечение таймера (ответ среды)
+            └→ PsychicSystem.ResetAutomatizmWaitingState
+                 └→ FinishTracking → AnalyzeResult
+                      ├→ PreviousState vs CurrentState
+                      └→ UsefulnessDelta → AfterAutomatizmUsefulnessUpdated</code></pre>
+        <p class="caption">Архитектура оценки ответом среды.</p>
+      </div>
+
+      <h2>Три таймера</h2>
+      <table>
+        <thead><tr><th>Таймер</th><th>Назначение</th><th>Значение по умолчанию</th></tr></thead>
+        <tbody>
+          <tr><td><strong>A (Waiting)</strong></td><td>Ожидание ответа среды после завершения мотора.</td><td><code>WaitingPeriodForActionsVal</code> пульсов</td></tr>
+          <tr><td><strong>B (Post-motor)</strong></td><td>Пост-моторный wait в сессии наблюдения (OperatorMotorObservationSession).</td><td>Конфигурируется в IsidaConfig</td></tr>
+          <tr><td><strong>C (Refractory)</strong></td><td>Период рефрактерности после нейтрального исхода (без изменения состояния).</td><td>30 пульсов</td></tr>
+        </tbody>
+      </table>
+
+      <div class="seealso">
+        <h2>См. также</h2>
+        <ul>
+          <li><a href="operator-influences.html">Быстрые указания</a></li>
+          <li><a href="project-settings.html">Настройки проекта</a></li>
+          <li><a href="environment-metrics.html">Метрики среды</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <script src="../shared/nav.js"></script>
+</body>
+</html>

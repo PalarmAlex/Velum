@@ -1,0 +1,238 @@
+{
+  "TemplateNames": [
+    "По умолчанию",
+    "Новая сводка"
+  ],
+  "Templates": [
+    {
+      "Name": "По умолчанию",
+      "Columns": [
+        {
+          "Order": 1,
+          "Name": "Обозначение",
+          "Formula": "",
+          "Description": "Обозначение из свойств конфигурации вхождения (или имя файла).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0
+        },
+        {
+          "Order": 2,
+          "Name": "Наименование",
+          "Formula": "",
+          "Description": "Наименование из свойств конфигурации вхождения.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0
+        },
+        {
+          "Order": 3,
+          "Name": "Материал",
+          "Formula": "",
+          "Description": "Материал из свойств конфигурации вхождения.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0
+        },
+        {
+          "Order": 4,
+          "Name": "Масса",
+          "Formula": "",
+          "Description": "Масса одной позиции (свойство конфигурации).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0
+        },
+        {
+          "Order": 5,
+          "Name": "Прокат",
+          "Formula": "",
+          "Description": "Прокат из свойств заготовки.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0
+        },
+        {
+          "Order": 6,
+          "Name": "Толщина",
+          "Formula": "",
+          "Description": "Толщина из свойств заготовки.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0
+        },
+        {
+          "Order": 7,
+          "Name": "Ширина",
+          "Formula": "",
+          "Description": "Ширина из свойств заготовки.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0
+        },
+        {
+          "Order": 8,
+          "Name": "Длина",
+          "Formula": "",
+          "Description": "Длина из свойств заготовки.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0
+        },
+        {
+          "Order": 9,
+          "Name": "[Кол-во]",
+          "Formula": "[Quantity]",
+          "Description": "Число вхождений в головной сборке (изделии).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0
+        },
+        {
+          "Order": 10,
+          "Name": "[Всего масса]",
+          "Formula": "[Масса]*[Quantity]",
+          "Description": "Суммарная масса: масса × кол-во.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0
+        },
+        {
+          "Order": 11,
+          "Name": "[Всего длина]",
+          "Formula": "[Длина]*[Quantity]",
+          "Description": "Суммарная длина: длина × кол-во.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0
+        }
+      ]
+    },
+    {
+      "Name": "Новая сводка",
+      "Columns": [
+        {
+          "Order": 1,
+          "Name": "Обозначение",
+          "Formula": "",
+          "Description": "Обозначение из свойств конфигурации вхождения (или имя файла).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0
+        },
+        {
+          "Order": 2,
+          "Name": "Наименование",
+          "Formula": "",
+          "Description": "Наименование из свойств конфигурации вхождения.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0
+        },
+        {
+          "Order": 3,
+          "Name": "Материал",
+          "Formula": "",
+          "Description": "Материал из свойств конфигурации вхождения.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0
+        },
+        {
+          "Order": 4,
+          "Name": "Масса",
+          "Formula": "",
+          "Description": "Масса одной позиции (свойство конфигурации).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0
+        },
+        {
+          "Order": 5,
+          "Name": "Прокат",
+          "Formula": "",
+          "Description": "Прокат из свойств заготовки.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0
+        },
+        {
+          "Order": 6,
+          "Name": "Толщина",
+          "Formula": "",
+          "Description": "Толщина из свойств заготовки.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0
+        },
+        {
+          "Order": 7,
+          "Name": "Ширина",
+          "Formula": "",
+          "Description": "Ширина из свойств заготовки.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0
+        },
+        {
+          "Order": 8,
+          "Name": "Длина",
+          "Formula": "",
+          "Description": "Длина из свойств заготовки.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0
+        },
+        {
+          "Order": 9,
+          "Name": "[Кол-во]",
+          "Formula": "[Quantity]",
+          "Description": "Число вхождений в головной сборке (изделии).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0
+        },
+        {
+          "Order": 10,
+          "Name": "[Всего масса]",
+          "Formula": "[Масса]*[Quantity]",
+          "Description": "Суммарная масса: масса × кол-во.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0
+        },
+        {
+          "Order": 11,
+          "Name": "[Всего длина]",
+          "Formula": "[Длина]*[Quantity]",
+          "Description": "Суммарная длина: длина × кол-во.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta charset="utf-8" />
+  <title>Лента команд — Справка Velum</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <div id="velum-nav" class="nav" data-base=""></div>
+    <div class="content">
+      <h1>Лента команд Velum</h1>
+      <p class="lead">Группа <strong>Velum</strong> на ленте SOLIDWORKS. Доступность команд зависит от типа активного документа и уровня доступа (<code>admin</code> / <code>user</code> в настройках).</p>
+      <p class="meta">Раздел: <code>ribbon</code></p>
+
+      <div class="warn">
+        Адаптер настроен для <strong>SOLIDWORKS 2019</strong>; на других версиях полноценный функционал не гарантируется.
+      </div>
+
+      <div class="note">
+        <strong>Старт</strong> / <strong>Стоп</strong> относятся только к помощнику на панели «Агент». Реестры, материалы, свойства и пакетный DXF/PDF работают без запуска помощника — но пакетные команды и настройки доступны только администратору проекта.
+      </div>
+
+      <div class="figure">
+        <img src="images/img_1.png" alt="Меню Инструменты → Velum в SOLIDWORKS" />
+        <p class="caption">Меню <strong>Инструменты → Velum</strong>: те же команды, что на ленте (Старт, Стоп, Настройки, пакеты, реестры, справка). Серые пункты недоступны в текущем контексте (например, DXF/PDF пакет без открытой сборки).</p>
+      </div>
+
+      <h2>Уровень доступа</h2>
+      <p>В файле <code>%ProgramData%\VELUM\Settings\Settings.xml</code> параметр <code>ProductRegistryAccessLevel</code> принимает значения <code>admin</code> (по умолчанию) или <code>user</code>.</p>
+      <ul>
+        <li><strong>admin</strong> — полный набор команд ленты (с учётом контекста сборка/чертёж).</li>
+        <li><strong>user</strong> — доступны <strong>Реестр документов</strong> (в основном чтение), <strong>Тех. требования</strong>, <strong>Реестр изделия</strong> и <strong>Справка</strong>. Старт помощника, настройки, пакетные материалы/свойства/DXF/PDF — недоступны.</li>
+      </ul>
+
+      <h2>Команды</h2>
+      <table>
+        <thead>
+          <tr><th>Команда</th><th>Назначение</th><th>Контекст документа</th><th>Доступ</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Старт</td>
+            <td>Запустить цикл помощника (панель «Агент» начинает обновляться и принимать указания). Если ядро ещё не инициализировано — выполняет инициализацию.</td>
+            <td>Любой</td>
+            <td>Только admin; кнопка активна, когда цикл не запущен и помощник не «мёртв»</td>
+          </tr>
+          <tr>
+            <td>Стоп</td>
+            <td>Остановить цикл помощника.</td>
+            <td>Любой</td>
+            <td>Только когда помощник готов и цикл запущен</td>
+          </tr>
+          <tr>
+            <td>Настройки</td>
+            <td>Открыть <a href="forms/project-settings.html">настройки проекта</a> (пути данных и параметры помощника).</td>
+            <td>Любой</td>
+            <td>Только admin</td>
+          </tr>
+          <tr>
+            <td>DXF пакет</td>
+            <td><a href="forms/dxf-batch.html">Пакетная диагностика и экспорт DXF</a> по составу активной сборки (позиции с «Нужен dxf = Да»).</td>
+            <td><strong>Сборка</strong></td>
+            <td>Только admin + открыта сборка</td>
+          </tr>
+          <tr>
+            <td>PDF пакет</td>
+            <td><a href="forms/pdf-batch.html">Пакетная диагностика и экспорт PDF</a> по составу активной сборки.</td>
+            <td><strong>Сборка</strong></td>
+            <td>Только admin + открыта сборка</td>
+          </tr>
+          <tr>
+            <td>Материалы пакет</td>
+            <td><a href="forms/material-batch.html">Пакетное присвоение материалов</a> деталям по конфигурациям из выбранного каталога.</td>
+            <td>Любой</td>
+            <td>Только admin</td>
+          </tr>
+          <tr>
+            <td>Свойства пакет</td>
+            <td><a href="forms/document-properties.html">Пакетное обновление свойств</a> деталей и сборок.</td>
+            <td>Любой</td>
+            <td>Только admin</td>
+          </tr>
+          <tr>
+            <td>Реестр документов</td>
+            <td><a href="forms/product-registry.html">Каталог файлов</a> (ключ — полный путь) и виртуальные папки.</td>
+            <td>Любой</td>
+            <td>Всем (у user — без прав изменения)</td>
+          </tr>
+          <tr>
+            <td>Тех. требования</td>
+            <td><a href="forms/tech-requirements.html">Шаблоны и вставка</a> технических требований на чертёж.</td>
+            <td><strong>Чертёж</strong></td>
+            <td>Всем</td>
+          </tr>
+          <tr>
+            <td>Реестр изделия</td>
+            <td><a href="forms/assembly-registry.html">Состав активной сборки</a>, отчёты, хаб экспорта DXF/PDF.</td>
+            <td><strong>Сборка</strong></td>
+            <td>Всем</td>
+          </tr>
+          <tr>
+            <td>Справка</td>
+            <td>Открыть справку Velum со стартовой страницы (оглавление).</td>
+            <td>Любой</td>
+            <td>Всем</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Почему команда серая</h2>
+      <ul>
+        <li>Неверный тип документа: для реестра изделия и DXF/PDF пакета нужна <strong>сборка</strong>, для тех. требований — <strong>чертёж</strong>.</li>
+        <li>Уровень <code>user</code>: пакетные команды, настройки и Старт недоступны.</li>
+        <li>Старт/Стоп зависят от состояния цикла помощника (уже запущен, «мёртв», не инициализирован).</li>
+      </ul>
+
+      <p>Дополнительно после загрузки надстройки появляется панель задач <strong>«Агент»</strong> — см. <a href="forms/agent-taskpane.html">описание панели</a>.</p>
+
+      <div class="seealso">
+        <h2>См. также</h2>
+        <ul>
+          <li><a href="overview.html">Обзор</a></li>
+          <li><a href="platform.html">ISIDA и МВАП</a></li>
+          <li><a href="forms/agent-taskpane.html">Панель «Агент»</a> (дублирует Старт / Стоп / Настройки)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <script src="shared/nav.js"></script>
+</body>
+</html>

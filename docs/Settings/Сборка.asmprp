@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<CPTemplate>
+  <AppVersion>27</AppVersion>
+  <CPSheet>
+    <GroupBox Label="Сборки" PropName="Окно группы2" DefaultState="Expanded">
+      <Control Label="Шапка" PropName="Шапка" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True">
+        <Data Path="" SourceType="List">
+          <Item>Конструкция</Item>
+        </Data>
+      </Control>
+      <Control Label="Объект" PropName="Объект" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True">
+        <Data Path="" SourceType="List">
+          <Item>Объект</Item>
+        </Data>
+      </Control>
+      <Control Label="Название проекта" PropName="Название проекта" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True">
+        <Data Path="" SourceType="List">
+          <Item>Проект</Item>
+        </Data>
+      </Control>
+      <Control Label="КМД" PropName="КМД" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True">
+        <Data Path="" SourceType="List">
+          <Item>012/10-2024-КМД</Item>
+        </Data>
+      </Control>
+      <Control Label="Обозначение сборки" PropName="Обозначение" DefaultValue="$PRP:&quot;SW- Имя файла(File Name)&quot;" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True">
+        <Data Path="" SourceType="List">
+          <Item>$PRP:"SW- Имя файла(File Name)"</Item>
+          <Item>$PRP:"SW- Имя конфигурации(Configuration Name)"</Item>
+        </Data>
+      </Control>
+      <Control Label="Обозначение сборки для чертежа" PropName="Обозначение для чертежа" DefaultValue="$PRP:&quot;SW- Имя файла(File Name)&quot;" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True">
+        <Data Path="" SourceType="List">
+          <Item>$PRP:"SW- Имя файла(File Name)"</Item>
+          <Item>$PRP:"SW- Имя конфигурации(Configuration Name)"</Item>
+        </Data>
+      </Control>
+      <Control Label="Наименование сборки" PropName="Наименование" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True">
+        <Data Path="" SourceType="List">
+          <Item>Балка</Item>
+          <Item>Водоотводная труба</Item>
+          <Item>Закладная деталь</Item>
+          <Item>Закладной фундамент</Item>
+          <Item>Колонна</Item>
+          <Item>Консоль</Item>
+          <Item>Кронштейн</Item>
+          <Item>Корпус</Item>
+          <Item>Опора</Item>
+          <Item>Опора подвеса</Item>
+          <Item>Подвес</Item>
+          <Item>Рама</Item>
+          <Item>Распорка</Item>
+          <Item>Связь</Item>
+          <Item>Секция перильного ограждения</Item>
+          <Item>Стойка</Item>
+          <Item>Стойка перильного ограждения</Item>
+          <Item>Фахверк</Item>
+          <Item>Цоколь</Item>
+        </Data>
+      </Control>
+      <Control Label="Организация" PropName="Организация" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True" DefaultValue="ООО Стройкомплект">
+        <Data Path="" SourceType="List">
+          <Item>ООО Стройкомплект</Item>
+        </Data>
+      </Control>
+      <Control Label="Разработчик" PropName="Разработал" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True">
+        <Data Path="" SourceType="List">
+          <Item>Пупкин</Item>
+        </Data>
+      </Control>
+      <Control Label="Дата" PropName="Дата" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True">
+        <Data Path="" SourceType="List">
+          <Item>$PRP:"SW-Sort Date"</Item>
+        </Data>
+      </Control>
+      <Control Label="Проверил" PropName="Проверил" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True">
+        <Data Path="" SourceType="List">
+          <Item>Пупкин</Item>
+        </Data>
+      </Control>
+      <Control Label="НКонтр" PropName="НКонтр" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True">
+        <Data Path="" SourceType="List">
+          <Item>Пупкин</Item>
+        </Data>
+      </Control>
+      <Control Label="Гл. сварщик" PropName="Гл. сварщик" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True">
+        <Data Path="" SourceType="List">
+          <Item>Пупкин</Item>
+        </Data>
+      </Control>
+      <Control Label="Утвердил" PropName="Утвердил" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True">
+        <Data Path="" SourceType="List">
+          <Item>Пупкин</Item>
+        </Data>
+      </Control>
+      <Control Label="Ссылка на проект" PropName="Ссылка на проект" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True">
+        <Data Path="" SourceType="List">
+          <Item>127-2024/Р-МММ</Item>
+        </Data>
+      </Control>
+      <Control Label="Формат листа" PropName="Формат" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True">
+        <Data Path="" SourceType="List">
+          <Item>БЧ</Item>
+          <Item>А1</Item>
+          <Item>А2</Item>
+          <Item>А2х3</Item>
+          <Item>А3</Item>
+          <Item>А3х3</Item>
+          <Item>А4</Item>
+        </Data>
+      </Control>
+    </GroupBox>
+  </CPSheet>
+</CPTemplate>

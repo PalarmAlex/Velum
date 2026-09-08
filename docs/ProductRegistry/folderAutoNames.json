@@ -1,0 +1,204 @@
+{
+  "Mappings": [
+    {
+      "Extension": ".sldasm",
+      "FolderName": "Сборки"
+    },
+    {
+      "Extension": ".sldprt",
+      "FolderName": "Детали"
+    },
+    {
+      "Extension": ".slddrw",
+      "FolderName": "Чертежи"
+    },
+    {
+      "Extension": ".dxf",
+      "FolderName": "DXF"
+    },
+    {
+      "Extension": ".pdf",
+      "FolderName": "PDF"
+    },
+    {
+      "Extension": ".jpg",
+      "FolderName": "Картинки"
+    },
+    {
+      "Extension": ".jpeg",
+      "FolderName": "Картинки"
+    },
+    {
+      "Extension": ".png",
+      "FolderName": "Картинки"
+    },
+    {
+      "Extension": ".bmp",
+      "FolderName": "Картинки"
+    },
+    {
+      "Extension": ".gif",
+      "FolderName": "Картинки"
+    },
+    {
+      "Extension": ".tif",
+      "FolderName": "Картинки"
+    },
+    {
+      "Extension": ".tiff",
+      "FolderName": "Картинки"
+    },
+    {
+      "Extension": ".webp",
+      "FolderName": "Картинки"
+    },
+    {
+      "Extension": ".ico",
+      "FolderName": "Картинки"
+    },
+    {
+      "Extension": ".svg",
+      "FolderName": "Картинки"
+    },
+    {
+      "Extension": ".heic",
+      "FolderName": "Картинки"
+    },
+    {
+      "Extension": ".txt",
+      "FolderName": "Тексты"
+    },
+    {
+      "Extension": ".log",
+      "FolderName": "Тексты"
+    },
+    {
+      "Extension": ".csv",
+      "FolderName": "Тексты"
+    },
+    {
+      "Extension": ".tsv",
+      "FolderName": "Тексты"
+    },
+    {
+      "Extension": ".xml",
+      "FolderName": "Тексты"
+    },
+    {
+      "Extension": ".json",
+      "FolderName": "Тексты"
+    },
+    {
+      "Extension": ".md",
+      "FolderName": "Тексты"
+    },
+    {
+      "Extension": ".rtf",
+      "FolderName": "Тексты"
+    },
+    {
+      "Extension": ".ini",
+      "FolderName": "Тексты"
+    },
+    {
+      "Extension": ".cfg",
+      "FolderName": "Тексты"
+    },
+    {
+      "Extension": ".conf",
+      "FolderName": "Тексты"
+    },
+    {
+      "Extension": ".doc",
+      "FolderName": "Тексты"
+    },
+    {
+      "Extension": ".docx",
+      "FolderName": "Тексты"
+    },
+    {
+      "Extension": ".xls",
+      "FolderName": "Тексты"
+    },
+    {
+      "Extension": ".xlsx",
+      "FolderName": "Тексты"
+    },
+    {
+      "Extension": ".xlsm",
+      "FolderName": "Тексты"
+    },
+    {
+      "Extension": ".ppt",
+      "FolderName": "Тексты"
+    },
+    {
+      "Extension": ".pptx",
+      "FolderName": "Тексты"
+    },
+    {
+      "Extension": ".odt",
+      "FolderName": "Тексты"
+    },
+    {
+      "Extension": ".ods",
+      "FolderName": "Тексты"
+    },
+    {
+      "Extension": ".odp",
+      "FolderName": "Тексты"
+    },
+    {
+      "Extension": ".mp4",
+      "FolderName": "Видео"
+    },
+    {
+      "Extension": ".avi",
+      "FolderName": "Видео"
+    },
+    {
+      "Extension": ".mkv",
+      "FolderName": "Видео"
+    },
+    {
+      "Extension": ".mov",
+      "FolderName": "Видео"
+    },
+    {
+      "Extension": ".wmv",
+      "FolderName": "Видео"
+    },
+    {
+      "Extension": ".webm",
+      "FolderName": "Видео"
+    },
+    {
+      "Extension": ".mpeg",
+      "FolderName": "Видео"
+    },
+    {
+      "Extension": ".mpg",
+      "FolderName": "Видео"
+    },
+    {
+      "Extension": ".flv",
+      "FolderName": "Видео"
+    },
+    {
+      "Extension": ".m4v",
+      "FolderName": "Видео"
+    },
+    {
+      "Extension": ".3gp",
+      "FolderName": "Видео"
+    },
+    {
+      "Extension": ".nif",
+      "FolderName": "Плазма"
+    },
+    {
+      "Extension": ".lxds",
+      "FolderName": "Лазер"
+    }
+  ]
+}

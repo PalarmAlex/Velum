@@ -1,0 +1,2 @@
+# Формат: ID|Weight|Type|PulsCount
+# Weight: вес (1-10), Type: тип темы (ThemeTypeStr), PulsCount: время актуализации

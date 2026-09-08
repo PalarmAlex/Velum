@@ -1,0 +1,97 @@
+# Рецепты среды (contract 3.2: adaptive_action_id + steps).
+schema: environment-recipes/3.2
+recipes:
+  - id: kb_prefill_designation
+    display_name: "Подготовить имя по КБ, записать свойства"
+    description: Подставить обозначение в имя файла до Save (SetTitle2); Save не вызывается. Прописать  служебные свойства в доукменте
+    adaptive_action_id: 38
+    reactive_eligible: true
+    steps:
+      - type: invoke
+        handler: save_file_name
+      - type: invoke
+        handler: set_custom_property_if_part
+        config: document
+        name: Обозначение
+        overwrite: if_empty
+        property_type: text
+        template: "$PRP:\"SW-File Name\""
+
+  - id: material_assign_session_learned
+    display_name: Назначить выученный материал
+    description: Материал последнего Save Part в этой папке; только пустая конфигурация
+    adaptive_action_id: 40
+    reactive_eligible: true
+    steps:
+      - type: invoke
+        handler: assign_session_material
+
+  - id: export_documentation_dialog
+    display_name: Экспорт детали в dxf
+    description: Модальный диалог — выбор каталога и сохранение DXF
+    adaptive_action_id: 42
+    reactive_eligible: true
+    steps:
+      - type: invoke
+        handler: export_documentation_dialog
+
+  - id: export_drawing_pdf_dialog
+    display_name: Экспорт чертежа в PDF
+    description: Модальный диалог — выбор каталога и сохранение PDF
+    adaptive_action_id: 43
+    reactive_eligible: true
+    steps:
+      - type: invoke
+        handler: export_drawing_pdf_dialog
+
+  - id: finalize_dxf_metadata_dialog
+    display_name: Обновить штамп DXF
+    description: "Фиксация пути, имени, вида и штампа после ручной выгрузки DXF"
+    adaptive_action_id: 44
+    reactive_eligible: true
+    steps:
+      - type: invoke
+        handler: finalize_dxf_metadata_dialog
+
+  - id: ensure_blank_size_links
+    display_name: Ссылки Толщина/Длина/Ширина (лист)
+    description: >
+      Только листовая деталь: выставляет или чинит живые ссылки свойств заготовки.
+    adaptive_action_id: 45
+    reactive_eligible: true
+    steps:
+      - type: invoke
+        handler: ensure_blank_size_property_links
+        config: active
+        overwrite: repair
+
+  - id: product_registry_show_problems
+    display_name: Показать проблемы реестра
+    description: Список битых ссылок и отсутствующих чертежей из кэша целостности реестра
+    adaptive_action_id: 46
+    reactive_eligible: true
+    steps:
+      - type: invoke
+        handler: product_registry_show_problems
+
+  - id: write_drawing_path
+    display_name: Записать путь чертежа
+    description: >
+      Для активного .slddrw — прописывает «путь чертежа» во все referenced детали/сборки
+      (идемпотентно). Для детали/сборки — пишет путь из аргумента drawing_path.
+    adaptive_action_id: 47
+    reactive_eligible: true
+    steps:
+      - type: invoke
+        handler: write_drawing_path
+
+  - id: bom_exchange_show_dialog
+    display_name: Обмен BOM с 1С
+    description: >
+      Диалог формирования CSV-файла обмена с 1С: расхождения состава
+      и отслеживаемых свойств компонентов с момента последнего обмена.
+    adaptive_action_id: 48
+    reactive_eligible: true
+    steps:
+      - type: invoke
+        handler: bom_exchange_show_dialog

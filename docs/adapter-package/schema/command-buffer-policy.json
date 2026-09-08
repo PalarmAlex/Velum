@@ -1,0 +1,5 @@
+{
+  "idle_flush_ms": 3000,
+  "max_tokens": 64,
+  "max_age_ms": 120000
+}
