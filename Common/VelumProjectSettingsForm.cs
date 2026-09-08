@@ -95,6 +95,7 @@ namespace Velum.UI
       _ttpStageEvolution.SetToolTip(_btnBrowseGomeostas, "Выбрать каталог данных гомеостаза");
       _ttpStageEvolution.SetToolTip(_btnBrowseSettings, "Выбрать каталог настроек");
       _ttpStageEvolution.SetToolTip(_chkLog, "Включить запись лога событий");
+      _ttpStageEvolution.SetToolTip(_chkSolidHomeostasisDebugLog, "Включить отладочные логи SolidHomeostasis (VelumSolidDiagLog, ProductRegistryIndexTrace, Trace.WriteLine)");
       _ttpStageEvolution.SetToolTip(_chkHomeostasisPulseDrift, "Дрейф параметров гомеостаза по Speed на каждом пульсе");
       _ttpStageEvolution.SetToolTip(_chkFirstRun, "Режим первого запуска (инициализация)");
       _ttpStageEvolution.SetToolTip(_chkCommandBufferRecording, "Писать команды SW (sw:*) в буфер для разбора");
@@ -145,6 +146,8 @@ namespace Velum.UI
       _tbRecognition.Text = VelumAppConfig.RecognitionThreshold.ToString(CultureInfo.InvariantCulture);
 
       _chkLog.Checked = VelumAppConfig.LogEnabled;
+
+      _chkSolidHomeostasisDebugLog.Checked = VelumAppConfig.SolidHomeostasisDebugLog;
 
       _chkVerbalAuthoritative.Checked = VelumAppConfig.VerbalAuthoritativeMode;
       _chkObservationMode.Checked = VelumAppConfig.ObservationMode;
@@ -452,6 +455,7 @@ namespace Velum.UI
       VelumAppConfig.SetSetting("VerbalAuthoritativeMode", _chkVerbalAuthoritative.Checked.ToString());
       VelumAppConfig.SetSetting("ObservationMode", _chkObservationMode.Checked.ToString());
       VelumAppConfig.SetSetting("LogEnabled", _chkLog.Checked.ToString());
+      VelumAppConfig.SetSetting("SolidHomeostasisDebugLog", _chkSolidHomeostasisDebugLog.Checked.ToString());
       VelumAppConfig.SetSetting("LogFormat", GetSelectedLogFormat().ToString());
       VelumAppConfig.SetSetting("DefaultStileId", _cmbStyle.SelectedIndex >= 0 ? ((IdNameItem)_cmbStyle.SelectedItem).Id.ToString(CultureInfo.InvariantCulture) : "0");
       VelumAppConfig.SetSetting("DefaultAdaptiveActionId", _cmbAdaptive.SelectedIndex >= 0 ? ((IdNameItem)_cmbAdaptive.SelectedItem).Id.ToString(CultureInfo.InvariantCulture) : "0");

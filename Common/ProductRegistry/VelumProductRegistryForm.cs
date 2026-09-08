@@ -69,13 +69,15 @@ namespace Velum.UI
     /// </summary>
     internal bool TryPrepare(int? selectFolderId = null)
     {
-      VelumProductRegistryIndexTrace.Mark("form.prepare.begin");
+      if (VelumAppConfig.SolidHomeostasisDebugLog)
+        VelumProductRegistryIndexTrace.Mark("form.prepare.begin");
       InitializeRuntime();
       _store.Load();
       var allItems = _store.GetAllItems();
-      VelumProductRegistryIndexTrace.Mark(
-          "form.prepare.loaded",
-          "items=" + allItems.Count);
+      if (VelumAppConfig.SolidHomeostasisDebugLog)
+        VelumProductRegistryIndexTrace.Mark(
+            "form.prepare.loaded",
+            "items=" + allItems.Count);
 
       VelumProductRegistryPathScanResult scan = RunPathVerification(
           allItems,
@@ -83,7 +85,8 @@ namespace Velum.UI
           showSummary: false);
       if (scan == VelumProductRegistryPathScanResult.AbortLoad)
       {
-        VelumProductRegistryIndexTrace.Mark("form.prepare.abort_path_check");
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          VelumProductRegistryIndexTrace.Mark("form.prepare.abort_path_check");
         return false;
       }
 
@@ -91,11 +94,14 @@ namespace Velum.UI
       if (!selectFolderId.HasValue || selectFolderId.Value <= 0)
         selectFolderId = ResolveActiveDocumentFolderId();
 
-      VelumProductRegistryIndexTrace.Mark("form.prepare.RebuildTree.begin");
+      if (VelumAppConfig.SolidHomeostasisDebugLog)
+        VelumProductRegistryIndexTrace.Mark("form.prepare.RebuildTree.begin");
       RebuildTree(selectFolderId);
-      VelumProductRegistryIndexTrace.Mark("form.prepare.RebuildTree.end");
+      if (VelumAppConfig.SolidHomeostasisDebugLog)
+        VelumProductRegistryIndexTrace.Mark("form.prepare.RebuildTree.end");
       BindList();
-      VelumProductRegistryIndexTrace.Mark("form.prepare.done");
+      if (VelumAppConfig.SolidHomeostasisDebugLog)
+        VelumProductRegistryIndexTrace.Mark("form.prepare.done");
       return true;
     }
 
@@ -1885,13 +1891,14 @@ namespace Velum.UI
 
       int sessionId = VelumProductRegistryIndexTrace.BeginSession(sourcePath, parentFolderId, swExtra);
       _indexTraceSession = sessionId;
-      VelumProductRegistryIndexTrace.Mark(
-          "ui.after_dialogs",
-          "logs=\"" + VelumProductRegistryIndexTrace.LogsDirectory + "\""
-              + (placeItemsDirectlyInParent
-                  ? " reservedCategory=\"" + reservedCategory + "\""
-                  : " mode=classify"),
-          sessionId);
+      if (VelumAppConfig.SolidHomeostasisDebugLog)
+        VelumProductRegistryIndexTrace.Mark(
+            "ui.after_dialogs",
+            "logs=\"" + VelumProductRegistryIndexTrace.LogsDirectory + "\""
+                + (placeItemsDirectlyInParent
+                    ? " reservedCategory=\"" + reservedCategory + "\""
+                    : " mode=classify"),
+            sessionId);
 
       var worker = new BackgroundWorker
       {
@@ -1901,13 +1908,15 @@ namespace Velum.UI
 
       worker.DoWork += (s, e) =>
       {
-        VelumProductRegistryIndexTrace.Mark("scan.begin", null, sessionId);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          VelumProductRegistryIndexTrace.Mark("scan.begin", null, sessionId);
         var errors = new List<string>();
         List<VelumProductFolderAutoNameMapping> mappings = VelumProductRegistryFolderAutoNames.LoadOrCreate();
         Dictionary<string, string> extensionMap = VelumProductRegistryFolderAutoNames.BuildExtensionMap(mappings);
         List<string> folderOrder = VelumProductRegistryFolderAutoNames.BuildFolderOrder(mappings);
 
-        VelumProductRegistryIndexTrace.Mark("scan.collect.begin", null, sessionId);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          VelumProductRegistryIndexTrace.Mark("scan.collect.begin", null, sessionId);
         int skippedTempOrHidden;
         List<string> files = CollectFilesRecursive(
             sourcePath,
@@ -1924,10 +1933,11 @@ namespace Velum.UI
           };
           return;
         }
-        VelumProductRegistryIndexTrace.Mark(
-            "scan.collect.done",
-            "files=" + files.Count + " skippedHidden=" + skippedTempOrHidden + " errors=" + errors.Count,
-            sessionId);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          VelumProductRegistryIndexTrace.Mark(
+              "scan.collect.done",
+              "files=" + files.Count + " skippedHidden=" + skippedTempOrHidden + " errors=" + errors.Count,
+              sessionId);
 
         var groups = new Dictionary<string, List<string>>(StringComparer.CurrentCultureIgnoreCase);
         if (placeItemsDirectlyInParent)
@@ -1966,11 +1976,12 @@ namespace Velum.UI
           }
         }
 
-        VelumProductRegistryIndexTrace.Mark(
-            "scan.classify.done",
-            "categories=" + folderOrder.Count
-                + (placeItemsDirectlyInParent ? " directIntoParent=1" : string.Empty),
-            sessionId);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          VelumProductRegistryIndexTrace.Mark(
+              "scan.classify.done",
+              "categories=" + folderOrder.Count
+                  + (placeItemsDirectlyInParent ? " directIntoParent=1" : string.Empty),
+              sessionId);
 
         e.Result = new FolderIndexScanResult
         {
@@ -2023,15 +2034,17 @@ namespace Velum.UI
         {
           try
           {
-            VelumProductRegistryIndexTrace.Mark(
-                "ui.worker_completed.marshal",
-                "fromTid=" + System.Environment.CurrentManagedThreadId,
-                sessionId);
+            if (VelumAppConfig.SolidHomeostasisDebugLog)
+              VelumProductRegistryIndexTrace.Mark(
+                  "ui.worker_completed.marshal",
+                  "fromTid=" + System.Environment.CurrentManagedThreadId,
+                  sessionId);
             BeginInvoke(new Action(() => FinishFolderIndexOnUiThread(e, sessionId)));
           }
           catch (ObjectDisposedException)
           {
-            VelumProductRegistryIndexTrace.EndSessionFail(sessionId, null);
+            if (VelumAppConfig.SolidHomeostasisDebugLog)
+              VelumProductRegistryIndexTrace.EndSessionFail(sessionId, null);
           }
           return;
         }
@@ -2039,7 +2052,8 @@ namespace Velum.UI
         FinishFolderIndexOnUiThread(e, sessionId);
       };
 
-      VelumProductRegistryIndexTrace.Mark("scan.worker_start", null, sessionId);
+      if (VelumAppConfig.SolidHomeostasisDebugLog)
+        VelumProductRegistryIndexTrace.Mark("scan.worker_start", null, sessionId);
       worker.RunWorkerAsync();
     }
 
@@ -2047,15 +2061,17 @@ namespace Velum.UI
     {
       try
       {
-        VelumProductRegistryIndexTrace.Mark(
-            "ui.worker_completed",
-            "tid=" + System.Environment.CurrentManagedThreadId
-                + " invokeRequired=" + (InvokeRequired ? "1" : "0"),
-            sessionId);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          VelumProductRegistryIndexTrace.Mark(
+              "ui.worker_completed",
+              "tid=" + System.Environment.CurrentManagedThreadId
+                  + " invokeRequired=" + (InvokeRequired ? "1" : "0"),
+              sessionId);
 
         if (e.Error != null)
         {
-          VelumProductRegistryIndexTrace.EndSessionFail(sessionId, e.Error);
+          if (VelumAppConfig.SolidHomeostasisDebugLog)
+            VelumProductRegistryIndexTrace.EndSessionFail(sessionId, e.Error);
           MessageBox.Show(
               this,
               "Ошибка индексации:\n" + e.Error.Message
@@ -2069,8 +2085,10 @@ namespace Velum.UI
         var scan = e.Result as FolderIndexScanResult;
         if (scan == null)
         {
-          VelumProductRegistryIndexTrace.Mark("ui.worker_completed.null_result", null, sessionId);
-          VelumProductRegistryIndexTrace.EndSessionFail(sessionId, null);
+          if (VelumAppConfig.SolidHomeostasisDebugLog)
+            VelumProductRegistryIndexTrace.Mark("ui.worker_completed.null_result", null, sessionId);
+          if (VelumAppConfig.SolidHomeostasisDebugLog)
+            VelumProductRegistryIndexTrace.EndSessionFail(sessionId, null);
           return;
         }
 
@@ -2079,7 +2097,8 @@ namespace Velum.UI
       catch (Exception ex)
       {
         // Не пробрасывать: необработанное исключение на UI-потоке в add-in роняет SolidWorks.
-        VelumProductRegistryIndexTrace.EndSessionFail(sessionId, ex);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          VelumProductRegistryIndexTrace.EndSessionFail(sessionId, ex);
         try
         {
           MessageBox.Show(
@@ -2114,12 +2133,15 @@ namespace Velum.UI
     private void ApplyFolderIndexResult(FolderIndexScanResult scan)
     {
       int sessionId = scan.TraceSessionId > 0 ? scan.TraceSessionId : _indexTraceSession;
-      VelumProductRegistryIndexTrace.Mark("apply.begin", null, sessionId);
+      if (VelumAppConfig.SolidHomeostasisDebugLog)
+        VelumProductRegistryIndexTrace.Mark("apply.begin", null, sessionId);
 
       if (scan.Cancelled)
       {
-        VelumProductRegistryIndexTrace.Mark("apply.cancelled", null, sessionId);
-        VelumProductRegistryIndexTrace.EndSessionOk(sessionId, "cancelled");
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          VelumProductRegistryIndexTrace.Mark("apply.cancelled", null, sessionId);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          VelumProductRegistryIndexTrace.EndSessionOk(sessionId, "cancelled");
         MessageBox.Show(
             this,
             "Индексация прервана.",
@@ -2157,22 +2179,30 @@ namespace Velum.UI
         else
           emptyMessage = "В выбранном каталоге файлы не найдены.";
 
-        VelumProductRegistryIndexTrace.Mark("apply.empty", "errors=" + errors.Count, sessionId);
-        VelumProductRegistryIndexTrace.Mark("ui.RebuildTree.begin", "empty", sessionId);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          VelumProductRegistryIndexTrace.Mark("apply.empty", "errors=" + errors.Count, sessionId);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          VelumProductRegistryIndexTrace.Mark("ui.RebuildTree.begin", "empty", sessionId);
         RebuildTree(scan.ParentFolderId);
-        VelumProductRegistryIndexTrace.Mark("ui.RebuildTree.end", "empty", sessionId);
-        VelumProductRegistryIndexTrace.Mark("ui.BindList.begin", "empty", sessionId);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          VelumProductRegistryIndexTrace.Mark("ui.RebuildTree.end", "empty", sessionId);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          VelumProductRegistryIndexTrace.Mark("ui.BindList.begin", "empty", sessionId);
         BindList();
-        VelumProductRegistryIndexTrace.Mark("ui.BindList.end", "empty", sessionId);
-        VelumProductRegistryIndexTrace.Mark("ui.MessageBox.begin", "empty", sessionId);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          VelumProductRegistryIndexTrace.Mark("ui.BindList.end", "empty", sessionId);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          VelumProductRegistryIndexTrace.Mark("ui.MessageBox.begin", "empty", sessionId);
         MessageBox.Show(
             this,
             emptyMessage,
             "Реестр документов",
             MessageBoxButtons.OK,
             errors.Count == 0 ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
-        VelumProductRegistryIndexTrace.Mark("ui.MessageBox.end", "empty", sessionId);
-        VelumProductRegistryIndexTrace.EndSessionOk(sessionId, "empty");
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          VelumProductRegistryIndexTrace.Mark("ui.MessageBox.end", "empty", sessionId);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          VelumProductRegistryIndexTrace.EndSessionOk(sessionId, "empty");
         return;
       }
 
@@ -2188,10 +2218,11 @@ namespace Velum.UI
 
       try
       {
-        VelumProductRegistryIndexTrace.Mark(
-            "apply.loop.begin",
-            "totalFiles=" + totalFiles,
-            sessionId);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          VelumProductRegistryIndexTrace.Mark(
+              "apply.loop.begin",
+              "totalFiles=" + totalFiles,
+              sessionId);
 
         foreach (string category in scan.FolderOrder)
         {
@@ -2275,7 +2306,8 @@ namespace Velum.UI
               errors.Add(filePath + ": " + ex.Message);
             }
 
-            VelumProductRegistryIndexTrace.MarkApplyProgress(processed, totalFiles, sessionId);
+            if (VelumAppConfig.SolidHomeostasisDebugLog)
+              VelumProductRegistryIndexTrace.MarkApplyProgress(processed, totalFiles, sessionId);
 
             if (processed % 25 == 0 || processed >= totalFiles)
             {
@@ -2287,32 +2319,41 @@ namespace Velum.UI
             break;
         }
 
-        VelumProductRegistryIndexTrace.Mark(
-            "apply.loop.done",
-            "added=" + addedItems + " skippedExisting=" + skippedExisting,
-            sessionId);
-        VelumProductRegistryIndexTrace.Mark("store.Save.begin", null, sessionId);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          VelumProductRegistryIndexTrace.Mark(
+              "apply.loop.done",
+              "added=" + addedItems + " skippedExisting=" + skippedExisting,
+              sessionId);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          VelumProductRegistryIndexTrace.Mark("store.Save.begin", null, sessionId);
         _store.Save();
-        VelumProductRegistryIndexTrace.Mark("store.Save.end", null, sessionId);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          VelumProductRegistryIndexTrace.Mark("store.Save.end", null, sessionId);
 
         VelumProductRegistryIntegrityScheduler.RevalidateCachedItemProblems();
-        VelumProductRegistryIndexTrace.Mark("integrity.revalidate_cached.done", null, sessionId);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          VelumProductRegistryIndexTrace.Mark("integrity.revalidate_cached.done", null, sessionId);
       }
       catch (Exception ex)
       {
         errors.Add("Сохранение реестра: " + ex.Message);
-        VelumProductRegistryIndexTrace.Mark(
-            "apply.loop.exception",
-            ex.GetType().Name + ": " + ex.Message,
-            sessionId);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          VelumProductRegistryIndexTrace.Mark(
+              "apply.loop.exception",
+              ex.GetType().Name + ": " + ex.Message,
+              sessionId);
       }
 
-      VelumProductRegistryIndexTrace.Mark("ui.RebuildTree.begin", null, sessionId);
+      if (VelumAppConfig.SolidHomeostasisDebugLog)
+        VelumProductRegistryIndexTrace.Mark("ui.RebuildTree.begin", null, sessionId);
       RebuildTree(scan.ParentFolderId);
-      VelumProductRegistryIndexTrace.Mark("ui.RebuildTree.end", null, sessionId);
-      VelumProductRegistryIndexTrace.Mark("ui.BindList.begin", null, sessionId);
+      if (VelumAppConfig.SolidHomeostasisDebugLog)
+        VelumProductRegistryIndexTrace.Mark("ui.RebuildTree.end", null, sessionId);
+      if (VelumAppConfig.SolidHomeostasisDebugLog)
+        VelumProductRegistryIndexTrace.Mark("ui.BindList.begin", null, sessionId);
       BindList();
-      VelumProductRegistryIndexTrace.Mark("ui.BindList.end", null, sessionId);
+      if (VelumAppConfig.SolidHomeostasisDebugLog)
+        VelumProductRegistryIndexTrace.Mark("ui.BindList.end", null, sessionId);
 
       string summary = BuildIndexSummaryMessage(
           addedFolders,
@@ -2324,7 +2365,8 @@ namespace Velum.UI
       {
         summary = "Индексация прервана." + System.Environment.NewLine + System.Environment.NewLine + summary;
       }
-      VelumProductRegistryIndexTrace.Mark("ui.MessageBox.begin", "summary", sessionId);
+      if (VelumAppConfig.SolidHomeostasisDebugLog)
+        VelumProductRegistryIndexTrace.Mark("ui.MessageBox.begin", "summary", sessionId);
       if (errors.Count == 0)
       {
         MessageBox.Show(
@@ -2344,10 +2386,12 @@ namespace Velum.UI
             MessageBoxIcon.Warning);
       }
 
-      VelumProductRegistryIndexTrace.Mark("ui.MessageBox.end", "summary", sessionId);
-      VelumProductRegistryIndexTrace.EndSessionOk(
-          sessionId,
-          "added=" + addedItems + " folders=" + addedFolders + " errors=" + errors.Count);
+      if (VelumAppConfig.SolidHomeostasisDebugLog)
+        VelumProductRegistryIndexTrace.Mark("ui.MessageBox.end", "summary", sessionId);
+      if (VelumAppConfig.SolidHomeostasisDebugLog)
+        VelumProductRegistryIndexTrace.EndSessionOk(
+            sessionId,
+            "added=" + addedItems + " folders=" + addedFolders + " errors=" + errors.Count);
     }
 
     private static string BuildIndexSummaryMessage(

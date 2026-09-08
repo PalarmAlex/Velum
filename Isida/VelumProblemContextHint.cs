@@ -6,6 +6,7 @@ using ISIDA.Common;
 using ISIDA.Gomeostas;
 using ISIDA.Psychic;
 using ISIDA.Reflexes;
+using Velum.Configuration;
 using Velum.SolidHomeostasis;
 using Velum.UI.ProductRegistry;
 using Xarial.XCad.SolidWorks;
@@ -82,7 +83,8 @@ namespace Velum.Isida
       }
       catch (Exception ex)
       {
-        System.Diagnostics.Trace.WriteLine("VelumProblemContextHint.TryGetActualProblem: " + ex);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          System.Diagnostics.Trace.WriteLine("VelumProblemContextHint.TryGetActualProblem: " + ex);
         return false;
       }
     }
@@ -157,7 +159,8 @@ namespace Velum.Isida
       }
       catch (Exception ex)
       {
-        System.Diagnostics.Trace.WriteLine("VelumProblemContextHint.TryGetSuggestedOperatorInfluenceActionId: " + ex);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          System.Diagnostics.Trace.WriteLine("VelumProblemContextHint.TryGetSuggestedOperatorInfluenceActionId: " + ex);
         return null;
       }
     }

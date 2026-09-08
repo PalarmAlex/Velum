@@ -286,6 +286,11 @@ namespace Velum.Configuration
     public static bool LogEnabled => GetBoolSetting("LogEnabled", false);
 
     /// <summary>
+    /// Включено ли отладочное логирование SolidHomeostasis (VelumSolidDiagLog, ProductRegistryIndexTrace и др.).
+    /// </summary>
+    public static bool SolidHomeostasisDebugLog => GetBoolSetting("SolidHomeostasisDebugLog", false);
+
+    /// <summary>
     /// Идентификатор стиля по умолчанию.
     /// </summary>
     public static int DefaultStileId => GetIntSetting("DefaultStileId", 0);
@@ -768,8 +773,9 @@ namespace Velum.Configuration
                   new XElement("ThinkingCycleMainMaxAgePulses", 1000),
                   new XElement("NoOperatorStimulusSilencePulses", 30),
                   new XElement("FirstRun", 1),
-                  new XElement("LogEnabled", false),
-                  new XElement("LogFormat", "All"),
+                   new XElement("LogEnabled", false),
+                   new XElement("SolidHomeostasisDebugLog", false),
+                   new XElement("LogFormat", "All"),
                   new XElement("VerbalAuthoritativeMode", false),
                   new XElement("ObservationMode", false),
                   new XElement("ProductRegistryAccessLevel", "admin"))));

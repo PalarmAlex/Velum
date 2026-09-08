@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using ISIDA.Gomeostas;
+using Velum.Configuration;
 
 namespace Velum.SolidHomeostasis
 {
@@ -28,6 +29,9 @@ namespace Velum.SolidHomeostasis
     /// <summary>Ошибки, таймауты и деградация SessionHealth — всегда в Output (один sink).</summary>
     internal static void WriteError(string message)
     {
+      if (!VelumAppConfig.SolidHomeostasisDebugLog)
+        return;
+
       try
       {
         string line = "[Velum.SolidDiag] " + DateTime.Now.ToString("HH:mm:ss.fff") + " " + message;

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Xml;
 using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
+using Velum.Configuration;
 using Xarial.XCad.SolidWorks;
 
 namespace Velum.UI
@@ -44,7 +45,8 @@ namespace Velum.UI
       }
       catch (Exception ex)
       {
-        Debug.WriteLine("Velum material DB paths error: " + ex.Message);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          Debug.WriteLine("Velum material DB paths error: " + ex.Message);
       }
 
       if (result.Count == 0)
@@ -77,13 +79,15 @@ namespace Velum.UI
           }
           catch (Exception ex)
           {
-            Debug.WriteLine("Velum material DB dir error: " + ex.Message);
+            if (VelumAppConfig.SolidHomeostasisDebugLog)
+              Debug.WriteLine("Velum material DB dir error: " + ex.Message);
           }
         }
       }
       catch (Exception ex)
       {
-        Debug.WriteLine("Velum material DB preference error: " + ex.Message);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          Debug.WriteLine("Velum material DB preference error: " + ex.Message);
         return GetDefaultMaterialPaths();
       }
 
@@ -174,7 +178,8 @@ namespace Velum.UI
         }
         catch (Exception ex)
         {
-          Debug.WriteLine("Velum material XML load error: " + ex.Message);
+          if (VelumAppConfig.SolidHomeostasisDebugLog)
+            Debug.WriteLine("Velum material XML load error: " + ex.Message);
         }
       }
 

@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Windows.Forms;
 using ISIDA.Common;
+using Velum.Configuration;
 using Velum.UI.ProductRegistry;
 using Xarial.XCad.SolidWorks;
 
@@ -24,18 +25,22 @@ namespace Velum.UI
 
       try
       {
-        VelumProductRegistryIndexTrace.Mark("form.open.begin");
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          VelumProductRegistryIndexTrace.Mark("form.open.begin");
         using (var form = new VelumProductRegistryForm(swApp))
         {
           if (!form.TryPrepare(selectFolderId))
           {
-            VelumProductRegistryIndexTrace.Mark("form.open.aborted_prepare");
+            if (VelumAppConfig.SolidHomeostasisDebugLog)
+              VelumProductRegistryIndexTrace.Mark("form.open.aborted_prepare");
             return true;
           }
 
-          VelumProductRegistryIndexTrace.Mark("form.showdialog.begin");
+          if (VelumAppConfig.SolidHomeostasisDebugLog)
+            VelumProductRegistryIndexTrace.Mark("form.showdialog.begin");
           form.ShowDialog();
-          VelumProductRegistryIndexTrace.Mark("form.showdialog.end");
+          if (VelumAppConfig.SolidHomeostasisDebugLog)
+            VelumProductRegistryIndexTrace.Mark("form.showdialog.end");
         }
 
         // После закрытия: подхватить изменения JSON и сразу снять устаревшие

@@ -120,7 +120,8 @@ namespace Velum.SolidHomeostasis
       try
       {
         var result = sys.GetActiveEnvironmentInfluenceActions();
-        System.Diagnostics.Debug.WriteLine("[Velum.EA] GetActiveEnvironmentActions count=" + result.Count + " ids=" + string.Join(",", result.Select(a => a.Id)));
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          System.Diagnostics.Debug.WriteLine("[Velum.EA] GetActiveEnvironmentActions count=" + result.Count + " ids=" + string.Join(",", result.Select(a => a.Id)));
         return result;
       }
       catch (MissingMethodException)
@@ -138,9 +139,10 @@ namespace Velum.SolidHomeostasis
               Array.Empty<InfluenceActionSystem.GomeostasisInfluenceAction>()))
           .Where(a => a != null && a.IsEnvironmentProbeAction)
           .OrderBy(a => a.Id)
-          .ToList();
-      System.Diagnostics.Debug.WriteLine("[Velum.EA] FilterEnvironmentActions all=" + (all?.Count ?? 0) + " filtered=" + filtered.Count);
-      return filtered;
+           .ToList();
+       if (VelumAppConfig.SolidHomeostasisDebugLog)
+         System.Diagnostics.Debug.WriteLine("[Velum.EA] FilterEnvironmentActions all=" + (all?.Count ?? 0) + " filtered=" + filtered.Count);
+       return filtered;
     }
 
 
@@ -194,14 +196,16 @@ namespace Velum.SolidHomeostasis
       IReadOnlyDictionary<string, float> snap = VelumSolidEnvironmentGate.GetPublishedSnapshot();
       if (snap == null || !snap.TryGetValue(probeKey, out float metric))
       {
-        System.Diagnostics.Debug.WriteLine("[Velum.EA] IsActiveMetricPressing MISS probe=" + probeKey);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          System.Diagnostics.Debug.WriteLine("[Velum.EA] IsActiveMetricPressing MISS probe=" + probeKey);
         return false;
       }
 
       bool bad = MetricProbeThresholds.IsProbeBad(metric, VelumAppConfig.SolidEnvironmentMetricDeltaEpsilon);
       if (bad)
       {
-        System.Diagnostics.Debug.WriteLine("[Velum.EA] IsActiveMetricPressing BAD probe=" + probeKey + " metric=" + metric);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          System.Diagnostics.Debug.WriteLine("[Velum.EA] IsActiveMetricPressing BAD probe=" + probeKey + " metric=" + metric);
       }
       return bad;
     }

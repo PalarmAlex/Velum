@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Velum.Configuration;
 
 namespace Velum.SolidHomeostasis
 {
@@ -192,9 +193,14 @@ namespace Velum.SolidHomeostasis
       lock (Gate)
       {
         if (_published == null || _published.Count == 0)
-          System.Diagnostics.Debug.WriteLine("[Velum.Gate] GetPublishedSnapshot EMPTY");
-        else
+        {
+          if (VelumAppConfig.SolidHomeostasisDebugLog)
+            System.Diagnostics.Debug.WriteLine("[Velum.Gate] GetPublishedSnapshot EMPTY");
+        }
+        else if (VelumAppConfig.SolidHomeostasisDebugLog)
+        {
           System.Diagnostics.Debug.WriteLine("[Velum.Gate] GetPublishedSnapshot keys=" + string.Join(",", _published.Keys));
+        }
         return _published;
       }
     }

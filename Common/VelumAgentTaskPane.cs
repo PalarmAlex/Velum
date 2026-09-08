@@ -960,7 +960,8 @@ namespace Velum.UI
       }
       catch (Exception ex)
       {
-        System.Diagnostics.Trace.WriteLine("VelumAgentTaskPane.RefreshFromEngine: " + ex);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          System.Diagnostics.Trace.WriteLine("VelumAgentTaskPane.RefreshFromEngine: " + ex);
         try
         {
           ShowAgentMonitorUiFull();
@@ -1099,7 +1100,8 @@ namespace Velum.UI
         }
         catch (Exception ex)
         {
-          System.Diagnostics.Trace.WriteLine("VelumAgentTaskPane metrics mosaic: " + ex);
+          if (VelumAppConfig.SolidHomeostasisDebugLog)
+            System.Diagnostics.Trace.WriteLine("VelumAgentTaskPane metrics mosaic: " + ex);
           ClearMosaic();
         }
 
@@ -1111,7 +1113,8 @@ namespace Velum.UI
       }
       catch (Exception ex)
       {
-        System.Diagnostics.Trace.WriteLine("VelumAgentTaskPane.RefreshFromEngine: " + ex);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          System.Diagnostics.Trace.WriteLine("VelumAgentTaskPane.RefreshFromEngine: " + ex);
         ShowAgentMonitorUiFull();
         ClearMosaic();
         ClearActualProblemField();
@@ -1123,7 +1126,8 @@ namespace Velum.UI
       }
       catch (Exception ex)
       {
-        System.Diagnostics.Trace.WriteLine("VelumAgentTaskPane.LayoutScrollContents: " + ex);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          System.Diagnostics.Trace.WriteLine("VelumAgentTaskPane.LayoutScrollContents: " + ex);
       }
     }
 
@@ -1267,7 +1271,8 @@ namespace Velum.UI
       }
       catch (Exception ex)
       {
-        System.Diagnostics.Trace.WriteLine("VelumAgentTaskPane countdown tick: " + ex.Message);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          System.Diagnostics.Trace.WriteLine("VelumAgentTaskPane countdown tick: " + ex.Message);
       }
     }
 

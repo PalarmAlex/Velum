@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Velum.Configuration;
 
 namespace Velum.ReactiveCore.Export
 {
@@ -55,7 +56,8 @@ namespace Velum.ReactiveCore.Export
       }
       catch (Exception ex)
       {
-        Debug.WriteLine("Velum DXF post-process failed: " + ex.Message);
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          Debug.WriteLine("Velum DXF post-process failed: " + ex.Message);
       }
     }
   }

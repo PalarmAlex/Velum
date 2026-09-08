@@ -71,8 +71,10 @@ namespace Velum.UI
       this._lblLogFormat = new System.Windows.Forms.Label();
       this._cmbLogFormat = new System.Windows.Forms.ComboBox();
       this._lblLogEnabled = new System.Windows.Forms.Label();
-      this._chkLog = new System.Windows.Forms.CheckBox();
-      this._lblSolidHostMinDelta = new System.Windows.Forms.Label();
+       this._chkLog = new System.Windows.Forms.CheckBox();
+       this._lblSolidHomeostasisDebugLog = new System.Windows.Forms.Label();
+       this._chkSolidHomeostasisDebugLog = new System.Windows.Forms.CheckBox();
+       this._lblSolidHostMinDelta = new System.Windows.Forms.Label();
       this._tbSolidHostMinDelta = new System.Windows.Forms.TextBox();
       this._lblSolidMetricEpsilon = new System.Windows.Forms.Label();
       this._tbSolidMetricEpsilon = new System.Windows.Forms.TextBox();
@@ -418,6 +420,8 @@ namespace Velum.UI
       this.tabPage2.Controls.Add(this._cmbLogFormat);
       this.tabPage2.Controls.Add(this._lblLogEnabled);
       this.tabPage2.Controls.Add(this._chkLog);
+      this.tabPage2.Controls.Add(this._lblSolidHomeostasisDebugLog);
+      this.tabPage2.Controls.Add(this._chkSolidHomeostasisDebugLog);
       this.tabPage2.Controls.Add(this._lblSolidHostMinDelta);
       this.tabPage2.Controls.Add(this._tbSolidHostMinDelta);
       this.tabPage2.Controls.Add(this._lblSolidMetricEpsilon);
@@ -507,10 +511,30 @@ namespace Velum.UI
       this._chkLog.Margin = new System.Windows.Forms.Padding(8, 4, 40, 0);
       this._chkLog.Name = "_chkLog";
       this._chkLog.Size = new System.Drawing.Size(15, 14);
-      this._chkLog.TabIndex = 17;
-      this._chkLog.UseVisualStyleBackColor = true;
-      // 
-      // _lblSolidHostMinDelta
+       this._chkLog.TabIndex = 17;
+       this._chkLog.UseVisualStyleBackColor = true;
+       // 
+       // _lblSolidHomeostasisDebugLog
+       // 
+       this._lblSolidHomeostasisDebugLog.Location = new System.Drawing.Point(393, 108);
+       this._lblSolidHomeostasisDebugLog.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+       this._lblSolidHomeostasisDebugLog.Name = "_lblSolidHomeostasisDebugLog";
+       this._lblSolidHomeostasisDebugLog.Size = new System.Drawing.Size(270, 20);
+       this._lblSolidHomeostasisDebugLog.TabIndex = 18;
+       this._lblSolidHomeostasisDebugLog.Text = "Отладка SolidHomeostasis (Trace/Debug):";
+       this._lblSolidHomeostasisDebugLog.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+       // 
+       // _chkSolidHomeostasisDebugLog
+       // 
+       this._chkSolidHomeostasisDebugLog.AutoSize = true;
+       this._chkSolidHomeostasisDebugLog.Location = new System.Drawing.Point(374, 114);
+       this._chkSolidHomeostasisDebugLog.Margin = new System.Windows.Forms.Padding(8, 4, 40, 0);
+       this._chkSolidHomeostasisDebugLog.Name = "_chkSolidHomeostasisDebugLog";
+       this._chkSolidHomeostasisDebugLog.Size = new System.Drawing.Size(15, 14);
+       this._chkSolidHomeostasisDebugLog.TabIndex = 18;
+       this._chkSolidHomeostasisDebugLog.UseVisualStyleBackColor = true;
+       // 
+       // _lblSolidHostMinDelta
       // 
       this._lblSolidHostMinDelta.Location = new System.Drawing.Point(3, 162);
       this._lblSolidHostMinDelta.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
@@ -1184,6 +1208,8 @@ namespace Velum.UI
     private System.Windows.Forms.TextBox _tbSolidHostMinDelta;
     private System.Windows.Forms.Label _lblLogEnabled;
     private System.Windows.Forms.CheckBox _chkLog;
+    private System.Windows.Forms.Label _lblSolidHomeostasisDebugLog;
+    private System.Windows.Forms.CheckBox _chkSolidHomeostasisDebugLog;
     private System.Windows.Forms.CheckBox _chkVerbalAuthoritative;
     private System.Windows.Forms.CheckBox _chkObservationMode;
     private System.Windows.Forms.Label _lblRecognition;
