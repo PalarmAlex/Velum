@@ -87,23 +87,65 @@ namespace Velum.UI
 
     private void BindControlToolTips()
     {
+      // Вкладка «Пути данных»
+      _ttpStageEvolution.SetToolTip(_tbSettingsPath, "Каталог для хранения пользовательских настроек проекта");
       _ttpStageEvolution.SetToolTip(_btnBrowseProductRegistry, "Выбрать каталог реестра документов");
+      _ttpStageEvolution.SetToolTip(_tbProductRegistry, "Каталог реестра документов — хранилище структурированных данных о деталях и сборках");
       _ttpStageEvolution.SetToolTip(_btnBrowseBomExchange, "Выбрать каталог обмена с 1С");
+      _ttpStageEvolution.SetToolTip(_tbBomExchange, "Каталог обмена данными с системой 1С");
       _ttpStageEvolution.SetToolTip(_btnBrowseScenario, "Выбрать каталог отчётов сценариев");
+      _ttpStageEvolution.SetToolTip(_tbScenarioReports, "Каталог HTML-отчётов, генерируемых сценариями анализа");
       _ttpStageEvolution.SetToolTip(_btnBrowseBoot, "Выбрать каталог boot-данных");
+      _ttpStageEvolution.SetToolTip(_tbBoot, "Каталог начальных данных для загрузки и инициализации системы");
       _ttpStageEvolution.SetToolTip(_btnBrowseLogs, "Выбрать каталог логов");
+      _ttpStageEvolution.SetToolTip(_tbLogs, "Каталог для хранения файлов журналов событий");
       _ttpStageEvolution.SetToolTip(_btnBrowseGomeostas, "Выбрать каталог данных гомеостаза");
+      _ttpStageEvolution.SetToolTip(_tbGomeostas, "Каталог данных гомеостаза — основное хранилище параметров и состояний агента");
       _ttpStageEvolution.SetToolTip(_btnBrowseSettings, "Выбрать каталог настроек");
+
+      // Вкладка «Регуляция»
+      _ttpStageEvolution.SetToolTip(_tbCompare, "Интегральный порог распознавания (%) — минимальный процент совпадения для фиксации образа");
+      _ttpStageEvolution.SetToolTip(_tbDifSensor, "Минимальный шаг параметра — минимальное изменение параметра, которое считается значимым");
+      _ttpStageEvolution.SetToolTip(_tbDynamic, "Время удержания состояний «Плохо»/«Хорошо» в пульсах — как долго сохраняется оценка");
+      _ttpStageEvolution.SetToolTip(_tbReflexDur, "Время удержания действия в пульсах — как долго исполняется выбранный рефлекс");
+      _ttpStageEvolution.SetToolTip(_tbRecognition, "Количество повторов для фиксации образа — сколько пульсов нужно для распознавания");
+      _ttpStageEvolution.SetToolTip(_cmbStyle, "Стиль поведения агента по умолчанию — выбирается из доступных стилей гомеостаза");
+      _ttpStageEvolution.SetToolTip(_cmbAdaptive, "Адаптивные действия по умолчанию — выбирается из доступных системой адаптивных действий");
+      _ttpStageEvolution.SetToolTip(_cmbLogFormat, "Формат файлов журнала событий: нет, JSON, CSV или все форматы");
       _ttpStageEvolution.SetToolTip(_chkLog, "Включить запись лога событий");
       _ttpStageEvolution.SetToolTip(_chkSolidHomeostasisDebugLog, "Включить отладочные логи SolidHomeostasis (VelumSolidDiagLog, ProductRegistryIndexTrace, Trace.WriteLine)");
       _ttpStageEvolution.SetToolTip(_chkHomeostasisPulseDrift, "Дрейф параметров гомеостаза по Speed на каждом пульсе");
+      _ttpStageEvolution.SetToolTip(_chkObservationMode, "Режим наблюдения — воздействия с пульта не меняют параметры гомеостаза; автоматизмы и рефлексы исполняются");
+      _ttpStageEvolution.SetToolTip(_chkVerbalAuthoritative, "Авторитарная запись вербального канала — воздействия сразу попадают в дерево решений (иначе через песочницу с RecognitionThreshold)");
+
+      // Вкладка «Аналитика»
+      _ttpStageEvolution.SetToolTip(_cmbTheme, "Тема анализа — визуальная тема для интерфейса анализа данных");
+      _ttpStageEvolution.SetToolTip(_tbWaitOperator, "Период ожидания оператора в пульсах — время перед переходом в режим ожидания действий");
+      _ttpStageEvolution.SetToolTip(_tbCycleDiv, "Делитель возраста цикла (A) — параметр формулы затухания B+age/A для основного цикла");
+      _ttpStageEvolution.SetToolTip(_tbCycleBase, "Базовое снятие веса (B) — начальное значение затухания веса цикла за пульс");
+      _ttpStageEvolution.SetToolTip(_tbMainMaxAge, "Максимальный возраст главного цикла в пульсах — после этого цикл сбрасывается");
+      _ttpStageEvolution.SetToolTip(_tbSilence, "Порог простоя оператора в пульсах — время без стимулов от оператора перед переходом в режим ожидания");
+      _ttpStageEvolution.SetToolTip(_tbDefaultGeneticReflexId, "ID безусловного (генетического) рефлекса — рефлекс, выполняемый по умолчанию при отсутствии других");
       _ttpStageEvolution.SetToolTip(_chkFirstRun, "Режим первого запуска (инициализация)");
+
+      // Вкладка «Адаптер»
+      _ttpStageEvolution.SetToolTip(_tbHeavyMetricsPulsePeriod, "Период пульсации метрик среды — как часто измеряются тяжёлые метрики SolidWorks (в пульсах)");
+      _ttpStageEvolution.SetToolTip(_tbCommandBufferIdleFlushSec, "Время простоя для принудительного сброса буфера команд в секундах");
+      _ttpStageEvolution.SetToolTip(_tbCommandBufferMaxTokens, "Максимальное количество токенов в буфере команд — ограничение на размер буфера");
+      _ttpStageEvolution.SetToolTip(_tbCommandBufferMaxAgeSec, "Максимальный возраст команды в буфере в секундах — после этого команда удаляется");
       _ttpStageEvolution.SetToolTip(_chkCommandBufferRecording, "Писать команды SW (sw:*) в буфер для разбора");
-      _ttpStageEvolution.SetToolTip(_btnSave, "Сохранить настройки проекта");
-      _ttpStageEvolution.SetToolTip(_btnCancel, "Закрыть без сохранения");
+
+      // Вкладка «Документы»
       _ttpStageEvolution.SetToolTip(_chkNeedDxfDefault, "Дефолтное значение свойства «Нужен dxf» при создании новых деталей");
       _ttpStageEvolution.SetToolTip(_chkNeedPdfDefault, "Дефолтное значение свойства «Нужен pdf» при создании новых чертежей");
       _ttpStageEvolution.SetToolTip(_chkNeedDrawingDefault, "Дефолтное значение свойства «Нужен чертеж» при создании новых деталей и сборок");
+
+      // Стадия 2: коды стилей Поиск/Игра
+      _ttpStageEvolution.SetToolTip(_tbStage2SearchPlayStyleIds, "Через запятую укажите ID стилей поведения, используемых на стадии 2 (Поиск/Игра). Например: 3,5,7");
+
+      // Нижняя панель
+      _ttpStageEvolution.SetToolTip(_btnSave, "Сохранить настройки проекта");
+      _ttpStageEvolution.SetToolTip(_btnCancel, "Закрыть без сохранения");
     }
 
     private void PathBrowse_Click(object sender, EventArgs e)
