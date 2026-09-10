@@ -242,8 +242,29 @@ namespace Velum.UI.AssemblyRegistry
         string configurationName)
     {
       var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-      CollectPropertyNames(modelDoc, configurationName, names);
+
+      // Active configuration.
+      if (!string.IsNullOrEmpty(configurationName))
+        CollectPropertyNames(modelDoc, configurationName, names);
+
+      // Document scope.
       CollectPropertyNames(modelDoc, string.Empty, names);
+
+      // All other configurations (in case tracked properties are stored per-config).
+      try
+      {
+        string[] allConfigs = modelDoc.GetConfigurationNames() as string[];
+        if (allConfigs != null)
+        {
+          foreach (string cfg in allConfigs)
+          {
+            if (string.IsNullOrEmpty(cfg) || string.Equals(cfg, configurationName, StringComparison.OrdinalIgnoreCase))
+              continue;
+            CollectPropertyNames(modelDoc, cfg.Trim(), names);
+          }
+        }
+      }
+      catch { /* Ignore collection errors */ }
 
       foreach (string name in names)
       {

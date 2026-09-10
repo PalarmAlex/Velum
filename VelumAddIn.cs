@@ -627,8 +627,8 @@ namespace Velum
           break;
 
         case Velum_Commands.TechRequirements:
-          // Тех. требования — всем; активны при чертеже (WorkspaceTypes.Drawing).
-          state.Enabled = true;
+          // Тех. требования — всем; активны при чертеже.
+          state.Enabled = IsActiveDrawingDocument();
           break;
 
         case Velum_Commands.Help:
@@ -645,6 +645,21 @@ namespace Velum
         ModelDoc2 active = swApp?.Sw?.IActiveDoc2 as ModelDoc2;
         return active != null &&
                active.GetType() == (int)swDocumentTypes_e.swDocASSEMBLY;
+      }
+      catch
+      {
+        return false;
+      }
+    }
+
+    private bool IsActiveDrawingDocument()
+    {
+      try
+      {
+        var swApp = this.Application as ISwApplication;
+        ModelDoc2 active = swApp?.Sw?.IActiveDoc2 as ModelDoc2;
+        return active != null &&
+               active.GetType() == (int)swDocumentTypes_e.swDocDRAWING;
       }
       catch
       {

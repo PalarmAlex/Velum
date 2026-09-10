@@ -16,6 +16,7 @@ namespace Velum.UI.AssemblyRegistry
     private System.Windows.Forms.Button _exportButton;
     private System.Windows.Forms.Button _settingsButton;
     private System.Windows.Forms.ListView _listView;
+    private System.Windows.Forms.ColumnHeader _colTypeDocs;
     private System.Windows.Forms.ColumnHeader _colExternalId;
     private System.Windows.Forms.ColumnHeader _colDesignation;
     private System.Windows.Forms.ColumnHeader _colName;
@@ -47,6 +48,7 @@ namespace Velum.UI.AssemblyRegistry
       this._settingsButton = new System.Windows.Forms.Button();
       this._toolTip = new System.Windows.Forms.ToolTip(this.components);
       this._listView = new System.Windows.Forms.ListView();
+      this._colTypeDocs = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this._colExternalId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this._colDesignation = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this._colName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -111,6 +113,7 @@ namespace Velum.UI.AssemblyRegistry
       // _listView
       // 
       this._listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this._colTypeDocs,
             this._colExternalId,
             this._colDesignation,
             this._colName,
@@ -126,6 +129,11 @@ namespace Velum.UI.AssemblyRegistry
       this._listView.TabIndex = 5;
       this._listView.UseCompatibleStateImageBehavior = false;
       this._listView.View = System.Windows.Forms.View.Details;
+      // 
+      // _colTypeDocs
+      // 
+      this._colTypeDocs.Text = "TypeDocs";
+      this._colTypeDocs.Width = 80;
       // 
       // _colExternalId
       // 
@@ -298,3 +306,4 @@ namespace Velum.UI.AssemblyRegistry
     private Button cancelButton;
   }
 }
+

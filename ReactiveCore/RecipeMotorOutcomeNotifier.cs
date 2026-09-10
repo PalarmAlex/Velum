@@ -19,7 +19,8 @@ namespace Velum.ReactiveCore
         {
           "export_documentation_dialog",
           "export_drawing_pdf_dialog",
-          "product_registry_show_problems"
+          "product_registry_show_problems",
+          "bom_exchange_show_dialog"
         };
 
     /// <summary>

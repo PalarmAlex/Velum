@@ -66,6 +66,7 @@ namespace Velum.UI.AssemblyRegistry
           foreach (var entry in entries)
           {
             var item = new ListViewItem(entry.ExternalId ?? string.Empty);
+            item.SubItems.Add(entry.Quantity > 0 ? "Assembly" : "Part");
             item.SubItems.Add(entry.Designation ?? string.Empty);
             item.SubItems.Add(entry.Name ?? string.Empty);
             item.SubItems.Add(entry.Quantity.ToString(System.Globalization.CultureInfo.InvariantCulture));
@@ -148,6 +149,7 @@ namespace Velum.UI.AssemblyRegistry
               MessageBoxIcon.Information);
           // previousHash обновлён внутри TryExecuteBomExchangeExport.
           LoadDiscrepancyList();
+          this.DialogResult = DialogResult.OK;
           Close();
         }
         else

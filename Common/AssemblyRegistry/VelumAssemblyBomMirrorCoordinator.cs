@@ -49,8 +49,8 @@ namespace Velum.UI.AssemblyRegistry
         if (graph == null || graph.Components.Count == 0)
           return false;
 
-        // Load tracked properties config.
-        IReadOnlyList<string> trackedProperties =
+        // Load the shared tracked properties config.
+        IReadOnlyList<TrackedProperty> trackedProperties =
             VelumAssemblyBomTrackedPropertiesConfig.Load();
         if (trackedProperties.Count == 0)
         {
@@ -128,8 +128,8 @@ namespace Velum.UI.AssemblyRegistry
         // Служебное свойство связи с 1С (по умолчанию пустое).
         EnsureExternalIdProperty(modelDoc);
 
-        // Load tracked properties config.
-        IReadOnlyList<string> trackedProperties =
+        // Load the shared tracked properties config.
+        IReadOnlyList<TrackedProperty> trackedProperties =
             VelumAssemblyBomTrackedPropertiesConfig.Load();
         if (trackedProperties.Count == 0)
         {
@@ -207,30 +207,34 @@ namespace Velum.UI.AssemblyRegistry
 
     /// <summary>
     /// Собрать снимок значений отслеживаемых свойств из кэша свойств.
+    /// Числовые значения округляются до заданной точности.
     /// </summary>
     private static Dictionary<string, string> ExtractTrackedValues(
         Dictionary<string, string> propertyValues,
-        IReadOnlyList<string> trackedProperties)
+        IReadOnlyList<TrackedProperty> trackedProperties)
     {
       var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
       if (trackedProperties == null)
         return result;
 
-      foreach (string propName in trackedProperties)
+      foreach (var prop in trackedProperties)
       {
-        if (string.IsNullOrWhiteSpace(propName))
+        if (string.IsNullOrWhiteSpace(prop.Name))
           continue;
 
         string value = string.Empty;
         if (propertyValues != null &&
-            propertyValues.TryGetValue(propName, out string raw))
+            propertyValues.TryGetValue(prop.Name, out string raw))
         {
           value = (raw ?? string.Empty).Trim();
           if (string.Equals(value, "?", StringComparison.Ordinal))
             value = string.Empty;
         }
 
-        result[propName] = value;
+        // Округляем числовые значения до заданной точности.
+        value = VelumAssemblyBomTrackedPropertiesConfig.RoundIfNumeric(value, prop.Precision);
+
+        result[prop.Name] = value;
       }
 
       return result;
@@ -475,17 +479,40 @@ namespace Velum.UI.AssemblyRegistry
     }
 
     /// <summary>
-    /// Собрать tracked properties из кэша компонента (используем PropertyValues).
+    /// Собрать tracked properties из кэша свойств детали.
+    /// Собирает имена свойств из active-конфигурации, document scope
+    /// и всех остальных конфигураций детали.
     /// </summary>
     private static Dictionary<string, string> CollectPartPropertyValues(
         ModelDoc2 modelDoc, string configurationName)
     {
       var cache = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-      // Collect names from configuration and document scopes.
+      // Collect names from all configuration scopes and document scope.
       var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-      CollectPropertyNames(modelDoc, configurationName, names);
+
+      // Active configuration.
+      if (!string.IsNullOrEmpty(configurationName))
+        CollectPropertyNames(modelDoc, configurationName, names);
+
+      // Document scope.
       CollectPropertyNames(modelDoc, string.Empty, names);
+
+      // All other configurations (in case tracked properties are stored per-config).
+      try
+      {
+        string[] allConfigs = modelDoc.GetConfigurationNames() as string[];
+        if (allConfigs != null)
+        {
+          foreach (string cfg in allConfigs)
+          {
+            if (string.IsNullOrEmpty(cfg) || string.Equals(cfg, configurationName, StringComparison.OrdinalIgnoreCase))
+              continue;
+            CollectPropertyNames(modelDoc, cfg.Trim(), names);
+          }
+        }
+      }
+      catch { /* Ignore collection errors */ }
 
       foreach (string name in names)
       {

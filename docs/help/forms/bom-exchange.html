@@ -29,8 +29,12 @@
             <td>Сетевой или локальный каталог, куда записывается CSV-файл. Значение сохраняется в настройках проекта (кнопка <strong>Обзор</strong> выбирает каталог).</td>
           </tr>
           <tr>
+            <td>Таблица расхождений</td>
+            <td>Список позиций с расхождениями. Столбцы: <strong>TypeDocs</strong> (Assembly/Part), <strong>ExternalId</strong>, <strong>Designation</strong>, <strong>Name</strong>, <strong>Quantity</strong>.</td>
+          </tr>
+          <tr>
             <td>Настройки</td>
-            <td>Открывает окно <a href="bom-tracked-properties.html">«Отслеживаемые свойства BOM»</a> — список свойств, изменения которых отслеживаются.</td>
+            <td>Открывает окно <a href="bom-tracked-properties.html">«Отслеживаемые свойства BOM»</a> — список свойств, изменения которых отслеживаются. Настройки разделены по типу документа: сборки и детали.</td>
           </tr>
           <tr>
             <td>Экспорт</td>
@@ -50,8 +54,8 @@
       <p>Кодировка UTF-8 с BOM, разделитель — точка с запятой. Имя файла: <code>1C_update_ГГГГ.ММ.ДД.ЧЧ.ММ.СС.csv</code>.</p>
       <p>Колонки:</p>
       <ul>
+        <li><strong>TypeDocs</strong> — тип документа: <code>Assembly</code> (сборка) или <code>Part</code> (деталь);</li>
         <li><strong>ExternalId</strong> — идентификатор связи с 1С (свойство компонента в SOLIDWORKS, заполняется вручную);</li>
-        <li><strong>RegistryId</strong> — идентификатор записи в реестре изделий Velum;</li>
         <li><strong>Designation</strong>, <strong>Name</strong> — обозначение и наименование;</li>
         <li><strong>FilePath</strong>, <strong>Configuration</strong> — путь к файлу и конфигурация;</li>
         <li><strong>Quantity</strong> — количество вхождений;</li>

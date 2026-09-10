@@ -7,7 +7,7 @@ using Xarial.XCad.SolidWorks;
 
 namespace Velum.UI
 {
-  /// <summary>Хост формы технических требований (доступна всем при активном чертеже).</summary>
+  /// <summary>Хост формы технических требований (доступен всем при активном чертеже).</summary>
   internal static class VelumTechRequirementsFormHost
   {
     private static int _formOpen;
@@ -26,7 +26,7 @@ namespace Velum.UI
         {
           MessageBox.Show(
               string.IsNullOrEmpty(error) ? "Откройте чертеж в активном окне." : error,
-              "Технические требования",
+              "Тех. требования",
               MessageBoxButtons.OK,
               MessageBoxIcon.Information);
           return false;
@@ -34,9 +34,6 @@ namespace Velum.UI
 
         using (var form = new VelumTechRequirementsForm(swApp))
         {
-          if (form.IsDisposed)
-            return false;
-
           form.ShowDialog();
         }
 
@@ -53,41 +50,32 @@ namespace Velum.UI
       error = string.Empty;
       if (swApp?.Sw == null)
       {
-        error = "SolidWorks недоступен.";
-        return false;
-      }
-
-      ModelDoc2 active = null;
-      try
-      {
-        active = swApp.Sw.IActiveDoc2 as ModelDoc2;
-      }
-      catch
-      {
-        active = null;
-      }
-
-      if (active == null)
-      {
-        error = "Нет активного документа. Откройте чертеж.";
+        error = "SolidWorks недоступен";
         return false;
       }
 
       try
       {
-        if (active.GetType() != (int)swDocumentTypes_e.swDocDRAWING)
+        ModelDoc2 active = swApp.Sw.IActiveDoc2 as ModelDoc2;
+        if (active == null)
         {
-          error = "Технические требования доступны только при активном чертеже.";
+          error = "Нет активного документа. Откройте чертеж.";
           return false;
         }
+
+        if (active.GetType() != (int)swDocumentTypes_e.swDocDRAWING)
+        {
+          error = "Тех. требования доступны только при активном чертеже.";
+          return false;
+        }
+
+        return true;
       }
-      catch
+      catch (System.Exception ex)
       {
-        error = "Не удалось определить тип активного документа.";
+        error = ex.Message;
         return false;
       }
-
-      return true;
     }
   }
 }

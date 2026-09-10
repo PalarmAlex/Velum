@@ -11,8 +11,9 @@ namespace Velum.UI.AssemblyRegistry
   {
     private System.ComponentModel.IContainer components = null;
 
-    private System.Windows.Forms.DataGridView _dataGridView;
-    private System.Windows.Forms.DataGridViewTextBoxColumn _colPropertyName;
+    private System.Windows.Forms.DataGridView _grid;
+    private System.Windows.Forms.DataGridViewTextBoxColumn _colName;
+    private System.Windows.Forms.DataGridViewTextBoxColumn _colPrecision;
     private System.Windows.Forms.ContextMenuStrip _contextMenuStrip;
     private System.Windows.Forms.ToolStripMenuItem _deleteMenuItem;
     private System.Windows.Forms.Button _okButton;
@@ -35,52 +36,68 @@ namespace Velum.UI.AssemblyRegistry
     /// </summary>
     private void InitializeComponent()
     {
+      this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(VelumBomTrackedPropertiesEditForm));
-      this._dataGridView = new System.Windows.Forms.DataGridView();
-      this._colPropertyName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this._contextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
+      this._grid = new System.Windows.Forms.DataGridView();
+      this._colName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this._colPrecision = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this._contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
       this._deleteMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this._okButton = new System.Windows.Forms.Button();
-      this._cancelButton = new System.Windows.Forms.Button();
       this.root = new System.Windows.Forms.TableLayoutPanel();
       this.descLabel = new System.Windows.Forms.Label();
       this.buttonsRow = new System.Windows.Forms.FlowLayoutPanel();
+      this._okButton = new System.Windows.Forms.Button();
+      this._cancelButton = new System.Windows.Forms.Button();
+      ((System.ComponentModel.ISupportInitialize)(this._grid)).BeginInit();
       this._contextMenuStrip.SuspendLayout();
       this.root.SuspendLayout();
       this.buttonsRow.SuspendLayout();
       this.SuspendLayout();
       // 
-      // _dataGridView
+      // _grid
       // 
-      this._dataGridView.AllowUserToAddRows = false;
-      this._dataGridView.AllowUserToDeleteRows = false;
-      this._dataGridView.AllowUserToResizeRows = false;
-      this._dataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-      this._dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-      this._dataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { this._colPropertyName });
-      this._dataGridView.ContextMenuStrip = this._contextMenuStrip;
-      this._dataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-      this._dataGridView.Location = new System.Drawing.Point(12, 33);
-      this._dataGridView.MultiSelect = false;
-      this._dataGridView.Name = "_dataGridView";
-      this._dataGridView.RowHeadersVisible = false;
-      this._dataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-      this._dataGridView.Size = new System.Drawing.Size(425, 293);
-      this._dataGridView.TabIndex = 1;
-      this._dataGridView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnDataGridViewKeyDown);
+      this._grid.AllowUserToAddRows = true;
+      this._grid.AllowUserToDeleteRows = false;
+      this._grid.AllowUserToResizeRows = false;
+      this._grid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+      this._grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+      this._grid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this._colName,
+            this._colPrecision});
+      this._grid.ContextMenuStrip = this._contextMenuStrip;
+      this._grid.Dock = System.Windows.Forms.DockStyle.Fill;
+      this._grid.Location = new System.Drawing.Point(12, 33);
+      this._grid.MultiSelect = false;
+      this._grid.Name = "_grid";
+      this._grid.RowHeadersVisible = false;
+      this._grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+      this._grid.Size = new System.Drawing.Size(425, 293);
+      this._grid.TabIndex = 1;
+      this._grid.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.OnGridCellValidating);
+      this._grid.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnGridCellEndEdit);
+      this._grid.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.OnGridEditingControlShowing);
+      this._grid.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnDataGridViewKeyDown);
       // 
-      // _colPropertyName
+      // _colName
       // 
-      this._colPropertyName.HeaderText = "Свойство";
-      this._colPropertyName.Name = "_colPropertyName";
-      this._colPropertyName.ReadOnly = false;
-      this._colPropertyName.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+      this._colName.HeaderText = "Свойство";
+      this._colName.Name = "_colName";
+      this._colName.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+      // 
+      // _colPrecision
+      // 
+      this._colPrecision.HeaderText = "Точность";
+      this._colPrecision.Name = "_colPrecision";
+      this._colPrecision.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+      this._colPrecision.Width = 80;
+      this._colPrecision.ToolTipText = "Количество знаков после запятой для числовых значений при округлении (целое число от 0 до 15)";
       // 
       // _contextMenuStrip
       // 
       this._contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this._deleteMenuItem });
       this._contextMenuStrip.Name = "contextMenuStrip";
       this._contextMenuStrip.Size = new System.Drawing.Size(106, 26);
+      this._contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.OnContextMenuStripOpening);
       // 
       // _deleteMenuItem
       // 
@@ -89,34 +106,12 @@ namespace Velum.UI.AssemblyRegistry
       this._deleteMenuItem.Text = "Удалить";
       this._deleteMenuItem.Click += new System.EventHandler(this.OnDeleteClick);
       // 
-      // _okButton
-      // 
-      this._okButton.AutoSize = true;
-      this._okButton.Location = new System.Drawing.Point(266, 3);
-      this._okButton.Name = "_okButton";
-      this._okButton.Size = new System.Drawing.Size(75, 23);
-      this._okButton.TabIndex = 1;
-      this._okButton.Text = "OK";
-      this._okButton.UseVisualStyleBackColor = true;
-      this._okButton.Click += new System.EventHandler(this.OnOkClick);
-      // 
-      // _cancelButton
-      // 
-      this._cancelButton.AutoSize = true;
-      this._cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this._cancelButton.Location = new System.Drawing.Point(347, 3);
-      this._cancelButton.Name = "_cancelButton";
-      this._cancelButton.Size = new System.Drawing.Size(75, 23);
-      this._cancelButton.TabIndex = 0;
-      this._cancelButton.Text = "Отмена";
-      this._cancelButton.UseVisualStyleBackColor = true;
-      // 
       // root
       // 
       this.root.ColumnCount = 1;
       this.root.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
       this.root.Controls.Add(this.descLabel, 0, 0);
-      this.root.Controls.Add(this._dataGridView, 0, 1);
+      this.root.Controls.Add(this._grid, 0, 1);
       this.root.Controls.Add(this.buttonsRow, 0, 2);
       this.root.Dock = System.Windows.Forms.DockStyle.Fill;
       this.root.Location = new System.Drawing.Point(0, 0);
@@ -154,6 +149,28 @@ namespace Velum.UI.AssemblyRegistry
       this.buttonsRow.TabIndex = 4;
       this.buttonsRow.WrapContents = false;
       // 
+      // _okButton
+      // 
+      this._okButton.AutoSize = true;
+      this._okButton.Location = new System.Drawing.Point(266, 3);
+      this._okButton.Name = "_okButton";
+      this._okButton.Size = new System.Drawing.Size(75, 23);
+      this._okButton.TabIndex = 1;
+      this._okButton.Text = "OK";
+      this._okButton.UseVisualStyleBackColor = true;
+      this._okButton.Click += new System.EventHandler(this.OnOkClick);
+      // 
+      // _cancelButton
+      // 
+      this._cancelButton.AutoSize = true;
+      this._cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this._cancelButton.Location = new System.Drawing.Point(347, 3);
+      this._cancelButton.Name = "_cancelButton";
+      this._cancelButton.Size = new System.Drawing.Size(75, 23);
+      this._cancelButton.TabIndex = 0;
+      this._cancelButton.Text = "Отмена";
+      this._cancelButton.UseVisualStyleBackColor = true;
+      // 
       // VelumBomTrackedPropertiesEditForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -168,6 +185,7 @@ namespace Velum.UI.AssemblyRegistry
       this.ShowInTaskbar = false;
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "Отслеживаемые свойства BOM";
+      ((System.ComponentModel.ISupportInitialize)(this._grid)).EndInit();
       this._contextMenuStrip.ResumeLayout(false);
       this.root.ResumeLayout(false);
       this.root.PerformLayout();

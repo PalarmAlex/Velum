@@ -22,8 +22,7 @@ namespace Velum.UI
       try
       {
         using (var form = new VelumBomExchangeForm())
-          form.ShowDialog();
-        return true;
+          return form.ShowDialog() == DialogResult.OK;
       }
       finally
       {

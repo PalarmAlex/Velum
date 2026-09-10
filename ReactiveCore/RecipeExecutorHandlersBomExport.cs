@@ -27,15 +27,28 @@ namespace Velum.ReactiveCore
         int index,
         out RecipeStepExecutionResult result)
     {
-      Velum.UI.VelumBomExchangeFormHost.TryShow();
-      result = new RecipeStepExecutionResult(
-          index,
-          "invoke",
-          true,
-          false,
-          "bom_exchange_dialog_closed");
-      Logger.Info("Velum bom_exchange_show_dialog closed");
-      return true;
+      bool exported = Velum.UI.VelumBomExchangeFormHost.TryShow();
+      if (exported)
+      {
+        result = new RecipeStepExecutionResult(
+            index,
+            "invoke",
+            true,
+            false,
+            "bom_exchange_exported");
+        Logger.Info("Velum bom_exchange_show_dialog: export completed");
+      }
+      else
+      {
+        result = new RecipeStepExecutionResult(
+            index,
+            "invoke",
+            false,
+            false,
+            "bom_exchange_dialog_closed");
+        Logger.Info("Velum bom_exchange_show_dialog: closed without export");
+      }
+      return exported;
     }
 
     /// <summary>
@@ -113,23 +126,6 @@ namespace Velum.ReactiveCore
           return false;
         }
 
-        // Resolve RegistryId from the product registry by file path.
-        try
-        {
-          var registry = new Velum.UI.ProductRegistry.VelumProductRegistryStore();
-          registry.Load();
-          foreach (VelumAssemblyBomMirrorEntry entry in exportEntries)
-          {
-            Velum.UI.ProductRegistry.VelumProductItem item =
-                registry.FindItemByFilePath(entry.FilePath);
-            entry.RegistryId = item?.Id;
-          }
-        }
-        catch (Exception ex)
-        {
-          Logger.Warning("Velum bomExport: registry resolve failed: " + ex.Message);
-        }
-
         // Generate CSV content.
         string csvContent = GenerateCsv(exportEntries);
 
@@ -192,9 +188,21 @@ namespace Velum.ReactiveCore
     /// </summary>
     private static string GenerateCsv(IReadOnlyList<VelumAssemblyBomMirrorEntry> entries)
     {
-      // Load tracked properties config for dynamic columns.
-      IReadOnlyList<string> trackedProperties =
+      // Единый список отслеживаемых свойств (сборки и детали).
+      IReadOnlyList<TrackedProperty> trackedProperties =
           VelumAssemblyBomTrackedPropertiesConfig.Load();
+
+      // Колонки свойств в выгрузке: имена из настроек без дублей (без учёта регистра).
+      // Имя из файла настроеки используется как заголовок и как ключ поиска значения.
+      var columnProps = new List<TrackedProperty>();
+      var columnHeaderNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+      foreach (TrackedProperty prop in trackedProperties)
+      {
+        if (prop == null || string.IsNullOrWhiteSpace(prop.Name))
+          continue;
+        if (columnHeaderNames.Add(prop.Name))
+          columnProps.Add(prop);
+      }
 
       var sb = new StringBuilder();
 
@@ -202,25 +210,26 @@ namespace Velum.ReactiveCore
       sb.Append('\uFEFF');
 
       // Header row.
+      sb.Append("TypeDocs;"); // Тип документа: Assembly или Part
       sb.Append("ExternalId;"); // Id связи с 1C
-      sb.Append("RegistryId;"); // Id записи в реестре
       sb.Append("Designation;"); // Обозначение
       sb.Append("Name;"); // Наименование
       sb.Append("FilePath;"); // Путь к файлу
       sb.Append("Configuration;"); // Конфигурация
       sb.Append("Quantity;"); // Количество
-      foreach (string prop in trackedProperties)
+      foreach (var prop in columnProps)
       {
-        sb.Append(prop + ";");
+        sb.Append(prop.Name + ";");
       }
       sb.AppendLine();
 
       // Data rows.
       foreach (VelumAssemblyBomMirrorEntry entry in entries)
       {
-        sb.Append(CsvField(entry.ExternalId ?? string.Empty));
+        string typeDocs = entry.Quantity > 0 ? "Assembly" : "Part";
+        sb.Append(CsvField(typeDocs));
         sb.Append(';');
-        sb.Append(CsvField((entry.RegistryId.HasValue ? entry.RegistryId.Value.ToString(CultureInfo.InvariantCulture) : string.Empty)));
+        sb.Append(CsvField(entry.ExternalId ?? string.Empty));
         sb.Append(';');
         sb.Append(CsvField(entry.Designation ?? string.Empty));
         sb.Append(';');
@@ -233,14 +242,17 @@ namespace Velum.ReactiveCore
         sb.Append(CsvField(entry.Quantity.ToString(CultureInfo.InvariantCulture)));
 
         // Tracked property values from the mirror snapshot.
-        foreach (string prop in trackedProperties)
+        foreach (var prop in columnProps)
         {
           string value = string.Empty;
           if (entry.TrackedValues != null &&
-              entry.TrackedValues.TryGetValue(prop, out string raw))
+              entry.TrackedValues.TryGetValue(prop.Name, out string raw))
           {
             value = raw ?? string.Empty;
           }
+
+          // Округляем числовые значения до заданной точности.
+          value = VelumAssemblyBomTrackedPropertiesConfig.RoundIfNumeric(value, prop.Precision);
 
           sb.Append(';');
           sb.Append(CsvField(value));
