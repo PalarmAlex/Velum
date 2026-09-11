@@ -420,6 +420,14 @@ namespace Velum.ReactiveCore.Export
         statusText = "Устарело кол-во в имени";
         selected = true;
       }
+      else if (!fileFound &&
+               string.Equals(artifact.Reason, "dxf_name_property_empty", StringComparison.Ordinal))
+      {
+        // Свойство «Имя файла dxf» пустое: имя ещё не задано — только ручная первая выгрузка.
+        status = VelumDxfBatchRowStatus.FirstExport;
+        statusText = "Первая выгрузка";
+        selected = false;
+      }
       else if (!fileFound)
       {
         if (!hasProjection)

@@ -29,6 +29,12 @@ namespace Velum.ReactiveCore.Export
 
       public string ResolvedFileName { get; set; }
 
+      /// <summary>
+      /// Пакетный режим: свойство «Имя файла dxf» только читается — finalize не перезаписывает
+      /// существующее значение имени.
+      /// </summary>
+      public bool ReadOnlyFileNameProperty { get; set; }
+
       public string ConfigName { get; set; }
 
       public VelumDxfProjectionView ProjectionView { get; set; }
@@ -56,6 +62,9 @@ namespace Velum.ReactiveCore.Export
       public IReadOnlyList<string> EmptySuffixProperties { get; set; }
 
       public bool IsEmptyDocument { get; set; }
+
+      /// <summary>Свойство «Имя файла dxf» пустое — нужна первая выгрузка через диалог.</summary>
+      public bool IsFirstExport { get; set; }
     }
 
     internal sealed class MultiExportProgress
@@ -226,6 +235,21 @@ namespace Velum.ReactiveCore.Export
         return result;
       }
 
+      // Пакетный режим: базовое имя берётся только из свойства «Имя файла dxf».
+      // Пустое свойство — не выгружаем (это первая выгрузка, она делается вручную через диалог).
+      if (request.ReadOnlyFileNameProperty)
+      {
+        string propertyFileName = VelumDxfArtifactResolver.TryReadPerConfigFileName(modelDoc, configName);
+        if (string.IsNullOrWhiteSpace(propertyFileName))
+        {
+          result.IsFirstExport = true;
+          result.Message = "Свойство «Имя файла dxf» не задано — нужна первая выгрузка через диалог DXF.";
+          return result;
+        }
+
+        request.ResolvedFileName = propertyFileName;
+      }
+
       string baseName = VelumDxfFileNameHelper.PrepareResolvedFileName(request.ResolvedFileName);
       if (string.IsNullOrWhiteSpace(baseName))
       {
@@ -298,7 +322,8 @@ namespace Velum.ReactiveCore.Export
               ConfigName = configName,
               ProjectionView = projectionView,
               TemplateContext = templateContext,
-              PersistSettings = true
+              PersistSettings = true,
+              PreserveExistingFileNameProperty = request.ReadOnlyFileNameProperty
             });
 
         if (!finalize.Success)
@@ -349,6 +374,7 @@ namespace Velum.ReactiveCore.Export
         DeliveryFileName = request.DeliveryFileName,
         FileNamePattern = request.FileNamePattern,
         ResolvedFileName = null,
+        ReadOnlyFileNameProperty = request.ReadOnlyFileNameProperty,
         ConfigName = configName,
         ProjectionView = request.ProjectionView,
         TemplateContext = request.TemplateContext

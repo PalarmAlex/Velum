@@ -37,6 +37,12 @@ namespace Velum.ReactiveCore.Export
 
       /// <summary>Писать настройки каталога/шаблона в AppConfig.</summary>
       public bool PersistSettings { get; set; }
+
+      /// <summary>
+      /// Пакетный режим: непустое существующее значение «Имя файла dxf» не перезаписывается
+      /// (при пакетной выгрузке это свойство только читается).
+      /// </summary>
+      public bool PreserveExistingFileNameProperty { get; set; }
     }
 
     internal sealed class FinalizeResult
@@ -134,7 +140,11 @@ namespace Velum.ReactiveCore.Export
           return;
         }
 
-        if (!VelumDxfArtifactResolver.TryWritePerConfigFileName(modelDoc, configName, baseName, out string nameMessage))
+        // Пакетный режим: непустое «Имя файла dxf» не перезаписываем — пустое фиксируем как обычно.
+        bool preserveFileName = request.PreserveExistingFileNameProperty &&
+            !string.IsNullOrWhiteSpace(VelumDxfArtifactResolver.TryReadPerConfigFileName(modelDoc, configName));
+        if (!preserveFileName &&
+            !VelumDxfArtifactResolver.TryWritePerConfigFileName(modelDoc, configName, baseName, out string nameMessage))
         {
           writeOk = false;
           writeError = "Не записано Имя файла dxf: " + nameMessage;

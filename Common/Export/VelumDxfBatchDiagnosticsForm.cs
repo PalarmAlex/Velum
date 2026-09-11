@@ -682,6 +682,8 @@ namespace Velum.UI
                 DeliveryFolder = deliveryFolder,
                 DeliveryFileName = deliveryBaseName,
                 FileNamePattern = string.Empty,
+                // Пакет: имя канонического DXF берётся из свойства «Имя файла dxf» и не перезаписывается.
+                ReadOnlyFileNameProperty = true,
                 ConfigName = row.ConfigName,
                 ProjectionView = projectionView,
                 TemplateContext = VelumDxfFileNameHelper.BuildTemplateContext(modelDoc)
@@ -709,6 +711,13 @@ namespace Velum.UI
                 {
                   row.Status = VelumDxfBatchRowStatus.EmptyDocument;
                   row.StatusText = "Пустой документ";
+                }
+                else if (exportResult.IsFirstExport)
+                {
+                  // Пустое свойство «Имя файла dxf»: пакет не выгружает, нужна первая выгрузка вручную.
+                  row.Status = VelumDxfBatchRowStatus.FirstExport;
+                  row.StatusText = "Первая выгрузка";
+                  row.Selected = false;
                 }
                 else
                 {
