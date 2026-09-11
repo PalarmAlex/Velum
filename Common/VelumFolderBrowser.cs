@@ -469,11 +469,23 @@ namespace Velum.UI
 
       /// <summary>
       /// Добавляет узел в дерево, раскрывает родителя и возвращает созданный узел.
+      /// Если узел для такого пути уже присутствует (например, был подгружен с диска
+      /// при <see cref="EnsureChildrenLoaded"/>), возвращает существующий — без дубликата.
       /// </summary>
       private TreeNode AddNodeToTree(TreeNode parentNode, string fullPath, string caption)
       {
         if (parentNode == null)
           return null;
+
+        // Каталог мог уже попасть в дерево при подгрузке детей с диска
+        // (EnsureChildrenLoaded вызывается после Directory.CreateDirectory).
+        // Ищем существующий узел, чтобы не создавать дубликат.
+        string fullPathNorm = NormalizePath(fullPath);
+        foreach (TreeNode child in parentNode.Nodes)
+        {
+          if (string.Equals(NormalizePath(child.Tag as string), fullPathNorm, StringComparison.OrdinalIgnoreCase))
+            return child;
+        }
 
         TreeNode newNode = CreateFolderNode(fullPath, caption ?? GetFolderCaption(fullPath));
         parentNode.Nodes.Add(newNode);

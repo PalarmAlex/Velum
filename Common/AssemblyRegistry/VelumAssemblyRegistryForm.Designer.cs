@@ -378,10 +378,10 @@ namespace Velum.UI
       // _filterButtonsHost
       // 
       this._filterButtonsHost.ColumnCount = 5;
-      this._filterButtonsHost.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 66F));
-      this._filterButtonsHost.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 98F));
+      this._filterButtonsHost.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 86F));
+      this._filterButtonsHost.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 88F));
       this._filterButtonsHost.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 34F));
-      this._filterButtonsHost.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 422F));
+      this._filterButtonsHost.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 412F));
       this._filterButtonsHost.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 104F));
       this._filterButtonsHost.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
       this._filterButtonsHost.Controls.Add(this._btnFilterHelp, 2, 0);
@@ -400,7 +400,7 @@ namespace Velum.UI
       // _btnFilterHelp
       // 
       this._btnFilterHelp.Anchor = System.Windows.Forms.AnchorStyles.Left;
-      this._btnFilterHelp.Location = new System.Drawing.Point(167, 4);
+      this._btnFilterHelp.Location = new System.Drawing.Point(177, 4);
       this._btnFilterHelp.Name = "_btnFilterHelp";
       this._btnFilterHelp.Size = new System.Drawing.Size(28, 23);
       this._btnFilterHelp.TabIndex = 2;
@@ -410,9 +410,9 @@ namespace Velum.UI
       // _btnFilterReset
       // 
       this._btnFilterReset.Anchor = System.Windows.Forms.AnchorStyles.Left;
-      this._btnFilterReset.Location = new System.Drawing.Point(69, 4);
+      this._btnFilterReset.Location = new System.Drawing.Point(89, 4);
       this._btnFilterReset.Name = "_btnFilterReset";
-      this._btnFilterReset.Size = new System.Drawing.Size(90, 23);
+      this._btnFilterReset.Size = new System.Drawing.Size(80, 23);
       this._btnFilterReset.TabIndex = 3;
       this._btnFilterReset.Text = "Сброс";
       this._btnFilterReset.UseVisualStyleBackColor = true;
@@ -422,7 +422,7 @@ namespace Velum.UI
       this._btnFilterApply.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this._btnFilterApply.Location = new System.Drawing.Point(3, 4);
       this._btnFilterApply.Name = "_btnFilterApply";
-      this._btnFilterApply.Size = new System.Drawing.Size(60, 23);
+      this._btnFilterApply.Size = new System.Drawing.Size(80, 23);
       this._btnFilterApply.TabIndex = 2;
       this._btnFilterApply.Text = "Применить";
       this._btnFilterApply.UseVisualStyleBackColor = true;
