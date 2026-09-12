@@ -25,6 +25,14 @@ namespace Velum.UI.ProductRegistry
     private readonly Dictionary<int, VelumProductFolder> _folders = new Dictionary<int, VelumProductFolder>();
     private readonly Dictionary<int, VelumProductItem> _items = new Dictionary<int, VelumProductItem>();
     private readonly Dictionary<int, List<int>> _itemsByFolder = new Dictionary<int, List<int>>();
+
+    /// <summary>
+    /// Индекс ключа уникальности обозначения: «обозначение|расширение» → Id записей.
+    /// Список (не одно значение) — в существующих JSON допускаются исторические дубли;
+    /// новые конфликты блокируются на добавлении и при изменении ключа.
+    /// </summary>
+    private readonly Dictionary<string, List<int>> _itemsByDesignationKey =
+        new Dictionary<string, List<int>>(StringComparer.OrdinalIgnoreCase);
     private int _nextFolderId = 1;
     private int _nextItemId = 1;
     private bool _foldersDirty;
@@ -54,6 +62,7 @@ namespace Velum.UI.ProductRegistry
       _folders.Clear();
       _items.Clear();
       _itemsByFolder.Clear();
+      _itemsByDesignationKey.Clear();
 
       VelumProductFolderFile folderFile = ReadJson<VelumProductFolderFile>(FoldersFilePath)
           ?? new VelumProductFolderFile();
@@ -92,6 +101,7 @@ namespace Velum.UI.ProductRegistry
           if (item.Id >= _nextItemId)
             _nextItemId = item.Id + 1;
           GetOrCreateFolderItemList(item.FolderId).Add(item.Id);
+          AddToDesignationKeyIndex(item);
         }
       }
 
@@ -354,7 +364,12 @@ namespace Velum.UI.ProductRegistry
         if (_itemsByFolder.TryGetValue(id, out itemIds))
         {
           foreach (int itemId in itemIds.ToArray())
+          {
+            VelumProductItem removedItem;
+            if (_items.TryGetValue(itemId, out removedItem))
+              RemoveFromDesignationKeyIndex(removedItem);
             _items.Remove(itemId);
+          }
           _itemsByFolder.Remove(id);
           _itemsDirty = true;
         }
@@ -386,6 +401,8 @@ namespace Velum.UI.ProductRegistry
         throw new InvalidOperationException("Каталог не найден.");
 
       EnsureFilePathUnique(filePath, excludeItemId: 0);
+      EnsureDesignationKeyUnique(
+          (designation ?? string.Empty).Trim(), filePath, excludeItemId: 0);
 
       var item = new VelumProductItem
       {
@@ -399,6 +416,7 @@ namespace Velum.UI.ProductRegistry
       NormalizeItem(item);
       _items[item.Id] = item;
       GetOrCreateFolderItemList(folderId).Add(item.Id);
+      AddToDesignationKeyIndex(item);
       _itemsDirty = true;
       if (persist)
         Save();
@@ -476,8 +494,19 @@ namespace Velum.UI.ProductRegistry
       if (!_folders.ContainsKey(item.FolderId))
         throw new InvalidOperationException("Каталог не найден.");
 
+      // Старый ключ считаем до NormalizeItem: объект item может быть тем же
+      // экземпляром, что лежит в _items (вызывающий уже изменил поля).
+      string oldDesignationKey = BuildDesignationKey(item.Designation, item.FilePath);
+
       NormalizeItem(item);
       EnsureFilePathUnique(item.FilePath, excludeItemId: item.Id);
+
+      // Уникальность обозначения проверяем только при фактическом изменении ключа:
+      // фоновые sync-записи зеркал (ExportMeta/Name/PdfDiagnostics) не должны падать
+      // на исторических дублях, существование которых разрешено загрузкой.
+      string newDesignationKey = BuildDesignationKey(item.Designation, item.FilePath);
+      if (!string.Equals(oldDesignationKey, newDesignationKey, StringComparison.OrdinalIgnoreCase))
+        EnsureDesignationKeyUnique(item.Designation, item.FilePath, excludeItemId: item.Id);
 
       // Индекс может отличаться от item.FolderId, если вызывающий код
       // уже изменил FolderId у того же объекта, что лежит в _items.
@@ -494,6 +523,8 @@ namespace Velum.UI.ProductRegistry
       }
 
       _items[item.Id] = item;
+      if (!string.Equals(oldDesignationKey, newDesignationKey, StringComparison.OrdinalIgnoreCase))
+        UpdateDesignationKeyIndex(item, oldDesignationKey);
       _itemsDirty = true;
       if (persist)
         Save();
@@ -514,6 +545,185 @@ namespace Velum.UI.ProductRegistry
       {
         return string.Empty;
       }
+    }
+
+    /// <summary>Разделитель частей ключа уникальности обозначения.</summary>
+    private const char DesignationKeySeparator = '|';
+
+    /// <summary>
+    /// Ключ уникальности записи: <c>Trim(Designation) + "|" + расширение FilePath</c>
+    /// (нижний регистр через <see cref="GetDocumentTypeKey"/>). Пустое обозначение —
+    /// пустой ключ: такие записи не участвуют в проверке уникальности
+    /// (несколько заготовок без обозначения допустимы).
+    /// </summary>
+    /// <param name="designation">Обозначение записи.</param>
+    /// <param name="filePath">Путь связанного файла (может быть пустым).</param>
+    /// <returns>Ключ вида «обозначение|.sldprt»; string.Empty при пустом обозначении.</returns>
+    public static string BuildDesignationKey(string designation, string filePath)
+    {
+      string des = (designation ?? string.Empty).Trim();
+      if (des.Length == 0)
+        return string.Empty;
+      return des + DesignationKeySeparator + GetDocumentTypeKey(filePath);
+    }
+
+    /// <summary>Ключ уникальности обозначения данной записи.</summary>
+    /// <param name="item">Запись реестра.</param>
+    /// <returns>Ключ из <see cref="BuildDesignationKey(string, string)"/>; string.Empty при item = null или пустом обозначении.</returns>
+    public static string BuildDesignationKey(VelumProductItem item)
+    {
+      return item == null
+          ? string.Empty
+          : BuildDesignationKey(item.Designation, item.FilePath);
+    }
+
+    /// <summary>
+    /// Другая запись с тем же ключом «обозначение|расширение», иначе null.
+    /// </summary>
+    /// <param name="designation">Обозначение.</param>
+    /// <param name="filePath">Путь связанного файла.</param>
+    /// <param name="excludeItemId">Id собственной записи (0 — ничего не исключать).</param>
+    /// <returns>Конфликтующая запись или null.</returns>
+    public VelumProductItem FindItemByDesignationKey(
+        string designation,
+        string filePath,
+        int excludeItemId)
+    {
+      string key = BuildDesignationKey(designation, filePath);
+      if (string.IsNullOrEmpty(key))
+        return null;
+
+      List<int> ids;
+      if (!_itemsByDesignationKey.TryGetValue(key, out ids))
+        return null;
+
+      foreach (int id in ids)
+      {
+        if (id == excludeItemId)
+          continue;
+        VelumProductItem other;
+        if (_items.TryGetValue(id, out other))
+          return other;
+      }
+
+      return null;
+    }
+
+    /// <summary>
+    /// Все Id записей с тем же ключом «обозначение|расширение» (для перепроверки
+    /// всей группы дублей, включая группы из трёх и более записей).
+    /// </summary>
+    /// <param name="designation">Обозначение.</param>
+    /// <param name="filePath">Путь связанного файла.</param>
+    /// <param name="excludeItemId">Id исключаемой записи (0 — ничего не исключать).</param>
+    /// <returns>Список Id (может быть пустым).</returns>
+    public IReadOnlyList<int> GetItemIdsByDesignationKey(
+        string designation,
+        string filePath,
+        int excludeItemId)
+    {
+      string key = BuildDesignationKey(designation, filePath);
+      if (string.IsNullOrEmpty(key))
+        return Array.Empty<int>();
+
+      List<int> ids;
+      if (!_itemsByDesignationKey.TryGetValue(key, out ids) || ids.Count == 0)
+        return Array.Empty<int>();
+
+      var result = new List<int>(ids.Count);
+      foreach (int id in ids)
+      {
+        if (id == excludeItemId || id <= 0)
+          continue;
+        if (_items.ContainsKey(id))
+          result.Add(id);
+      }
+
+      return result;
+    }
+
+    /// <summary>Занятые ключи уникальности обозначения (для предпроверки пакетной индексации).</summary>
+    public IEnumerable<string> GetAllDesignationKeys()
+    {
+      foreach (KeyValuePair<string, List<int>> kv in _itemsByDesignationKey)
+      {
+        if (kv.Value != null && kv.Value.Count > 0)
+          yield return kv.Key;
+      }
+    }
+
+    /// <summary>Текст сообщения о конфликте ключа обозначения (единый для диалога и стора).</summary>
+    /// <param name="conflict">Конфликтующая запись.</param>
+    /// <returns>Человекочитаемое описание конфликта.</returns>
+    public static string BuildDesignationKeyConflictMessage(VelumProductItem conflict)
+    {
+      string otherPath = (conflict.FilePath ?? string.Empty).Trim();
+      return "Обозначение с таким расширением файла уже есть в реестре (Id=" + conflict.Id + "):\n"
+          + (string.IsNullOrEmpty(otherPath) ? "(без файла)" : otherPath)
+          + "\n\nКлюч уникальности — обозначение + расширение файла; он должен быть один на документ.";
+    }
+
+    /// <summary>
+    /// Бросает <see cref="InvalidOperationException"/>, если другая запись уже занимает
+    /// тот же ключ «обозначение|расширение». Пустое обозначение — пропуск.
+    /// </summary>
+    private void EnsureDesignationKeyUnique(string designation, string filePath, int excludeItemId)
+    {
+      VelumProductItem conflict = FindItemByDesignationKey(designation, filePath, excludeItemId);
+      if (conflict == null)
+        return;
+      throw new InvalidOperationException(BuildDesignationKeyConflictMessage(conflict));
+    }
+
+    /// <summary>Регистрирует запись в индексе ключей обозначения (пустой ключ — пропуск).</summary>
+    private void AddToDesignationKeyIndex(VelumProductItem item)
+    {
+      string key = BuildDesignationKey(item);
+      if (string.IsNullOrEmpty(key))
+        return;
+
+      List<int> ids;
+      if (!_itemsByDesignationKey.TryGetValue(key, out ids))
+      {
+        ids = new List<int>();
+        _itemsByDesignationKey[key] = ids;
+      }
+
+      if (!ids.Contains(item.Id))
+        ids.Add(item.Id);
+    }
+
+    /// <summary>Убирает запись из индекса ключей обозначения (по текущему ключу записи).</summary>
+    private void RemoveFromDesignationKeyIndex(VelumProductItem item)
+    {
+      string key = BuildDesignationKey(item);
+      if (string.IsNullOrEmpty(key))
+        return;
+
+      List<int> ids;
+      if (!_itemsByDesignationKey.TryGetValue(key, out ids))
+        return;
+
+      ids.Remove(item.Id);
+      if (ids.Count == 0)
+        _itemsByDesignationKey.Remove(key);
+    }
+
+    /// <summary>Переносит запись индекса со старого ключа на новый (после UpdateItem).</summary>
+    private void UpdateDesignationKeyIndex(VelumProductItem item, string oldKey)
+    {
+      if (!string.IsNullOrEmpty(oldKey))
+      {
+        List<int> ids;
+        if (_itemsByDesignationKey.TryGetValue(oldKey, out ids))
+        {
+          ids.Remove(item.Id);
+          if (ids.Count == 0)
+            _itemsByDesignationKey.Remove(oldKey);
+        }
+      }
+
+      AddToDesignationKeyIndex(item);
     }
 
     /// <summary>
@@ -628,6 +838,7 @@ namespace Velum.UI.ProductRegistry
       if (_itemsByFolder.TryGetValue(item.FolderId, out list))
         list.Remove(itemId);
 
+      RemoveFromDesignationKeyIndex(item);
       _items.Remove(itemId);
       _itemsDirty = true;
       Save();

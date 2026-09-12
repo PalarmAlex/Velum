@@ -204,6 +204,46 @@ namespace Velum.UI.ProductRegistry
       }
     }
 
+    /// <summary>
+    /// Проблема конкретного вида для одной записи (pending имеет приоритет над
+    /// опубликованным кэшем). Нужна точечной перепроверке, чтобы прочитать
+    /// реквизиты записи на момент находки (например прежний ключ дубля).
+    /// Для <see cref="VelumProductRegistryProblemKind.MissingRegistryEntry"/> не работает
+    /// (такие проблемы ключуются путём, а не Id).
+    /// </summary>
+    /// <param name="itemId">Id записи реестра.</param>
+    /// <param name="kind">Вид проблемы.</param>
+    /// <param name="entry">Найденная проблема (копия), иначе null.</param>
+    /// <returns>true - проблема есть в опубликованном кэше или pending.</returns>
+    internal static bool TryGet(
+        int itemId,
+        VelumProductRegistryProblemKind kind,
+        out VelumProductRegistryProblemEntry entry)
+    {
+      entry = null;
+      if (itemId <= 0 || kind == VelumProductRegistryProblemKind.MissingRegistryEntry)
+        return false;
+
+      lock (Gate)
+      {
+        string key = MakeKey(itemId, kind);
+        VelumProductRegistryProblemEntry found;
+        if (Pending.TryGetValue(key, out found) && found != null)
+        {
+          entry = Clone(found);
+          return true;
+        }
+
+        if (Problems.TryGetValue(key, out found) && found != null)
+        {
+          entry = Clone(found);
+          return true;
+        }
+
+        return false;
+      }
+    }
+
     internal static void Upsert(VelumProductRegistryProblemEntry entry)
     {
       if (entry == null)

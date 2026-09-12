@@ -418,6 +418,7 @@
     <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryIntegrityRules.cs" />
     <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryBrokenLinkScanner.cs" />
     <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryMissingDrawingScanner.cs" />
+    <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryDuplicateDesignationScanner.cs" />
     <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryDxfFleetScanner.cs" />
     <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryPdfFleetScanner.cs" />
     <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryNeedDrawingCommands.cs" />

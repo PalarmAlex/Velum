@@ -20,6 +20,10 @@ namespace Velum.UI.ProductRegistry
         case VelumProductRegistryProblemKind.MissingRegistryEntry:
           return 10;
 
+        // Дубль ключа «обозначение + расширение» — структурная ошибка учёта.
+        case VelumProductRegistryProblemKind.DuplicateDesignation:
+          return 15;
+
         // Ожидание чертежа в реестре (структурное).
         case VelumProductRegistryProblemKind.MissingDrawing:
           return 20;

@@ -146,6 +146,25 @@ namespace Velum.UI
         }
       }
 
+      // Конфликт ключа уникальности «обозначение + расширение» — предпроверка до
+      // сохранения; исключаем собственную редактируемую запись (_item.Id).
+      if (!string.IsNullOrEmpty(designation))
+      {
+        VelumProductItem desConflict = _store.FindItemByDesignationKey(
+            designation, filePath, excludeItemId: _item.Id);
+        if (desConflict != null)
+        {
+          MessageBox.Show(
+              this,
+              VelumProductRegistryStore.BuildDesignationKeyConflictMessage(desConflict),
+              "Реестр документов",
+              MessageBoxButtons.OK,
+              MessageBoxIcon.Warning);
+          _designationBox.Focus();
+          return;
+        }
+      }
+
       ResultItem = new VelumProductItem
       {
         Id = _item.Id,

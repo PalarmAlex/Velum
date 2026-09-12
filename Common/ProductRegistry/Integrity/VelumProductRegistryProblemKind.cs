@@ -7,6 +7,11 @@ namespace Velum.UI.ProductRegistry
     MissingDrawing = 2,
     /// <summary>Открытый документ SW отсутствует в реестре (нет записи с тем же путём).</summary>
     MissingRegistryEntry = 3,
+    /// <summary>
+    /// Две и более записей занимают один ключ уникальности
+    /// «обозначение + расширение файла связанного документа».
+    /// </summary>
+    DuplicateDesignation = 4,
 
     // DXF fleet (зеркало + FS, только при закрытых документах)
     NeedDxfExport = 10,

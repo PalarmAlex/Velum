@@ -472,6 +472,8 @@ namespace Velum.UI
           return "Нет чертежа";
         case VelumProductRegistryProblemKind.MissingRegistryEntry:
           return "Нет в реестре";
+        case VelumProductRegistryProblemKind.DuplicateDesignation:
+          return "Дублирование обозначения";
         case VelumProductRegistryProblemKind.NeedDxfExport:
           return "Нужен DXF";
         case VelumProductRegistryProblemKind.OutdatedDxf:
@@ -743,15 +745,18 @@ namespace Velum.UI
 
       var missingDrawing = new List<VelumProductRegistryProblemEntry>();
       var missingRegistry = new List<VelumProductRegistryProblemEntry>();
-      var brokenLinks = new List<VelumProductRegistryProblemEntry>();
+      // Починка через редактор записи: битая ссылка — исправить/очистить путь,
+      // дубль обозначения — задать свободное обозначение (или отвязать файл).
+      var editableProblems = new List<VelumProductRegistryProblemEntry>();
       foreach (VelumProductRegistryProblemEntry p in selected)
       {
         if (p.Kind == VelumProductRegistryProblemKind.MissingDrawing)
           missingDrawing.Add(p);
         else if (p.Kind == VelumProductRegistryProblemKind.MissingRegistryEntry)
           missingRegistry.Add(p);
-        else if (p.Kind == VelumProductRegistryProblemKind.BrokenLink)
-          brokenLinks.Add(p);
+        else if (p.Kind == VelumProductRegistryProblemKind.BrokenLink
+            || p.Kind == VelumProductRegistryProblemKind.DuplicateDesignation)
+          editableProblems.Add(p);
       }
 
       if (missingDrawing.Count > 0)
@@ -780,13 +785,13 @@ namespace Velum.UI
             MessageBoxIcon.Information);
       }
 
-      if (brokenLinks.Count == 0)
+      if (editableProblems.Count == 0)
         return;
 
       try
       {
         VelumProductRegistryStore store = EnsureStore();
-        foreach (VelumProductRegistryProblemEntry problem in brokenLinks)
+        foreach (VelumProductRegistryProblemEntry problem in editableProblems)
         {
           VelumProductItem item = store.GetItem(problem.ItemId);
           if (item == null)
@@ -800,7 +805,22 @@ namespace Velum.UI
             if (edit.ShowDialog(this) != DialogResult.OK || edit.ResultItem == null)
               continue;
 
-            store.UpdateItem(edit.ResultItem);
+            // Поэлементная защита: конфликт ключей у одной записи не должен
+            // обрывать починку остальных выбранных проблем.
+            try
+            {
+              store.UpdateItem(edit.ResultItem);
+            }
+            catch (InvalidOperationException ex)
+            {
+              MessageBox.Show(
+                  this,
+                  "Запись Id=" + problem.ItemId + " не обновлена:\n" + ex.Message,
+                  Text,
+                  MessageBoxButtons.OK,
+                  MessageBoxIcon.Warning);
+              continue;
+            }
           }
 
           VelumProductRegistryIntegrityScheduler.NotifyRegistryChanged();

@@ -2165,6 +2165,7 @@ namespace Velum.UI
       int addedFolders = 0;
       int addedItems = 0;
       int skippedExisting = 0;
+      int skippedDupDesignation = 0;
       int skippedTempOrHidden = scan.SkippedTempOrHidden;
       var addedNames = new List<string>();
 
@@ -2226,6 +2227,12 @@ namespace Velum.UI
       foreach (string path in _store.GetAllFilePaths())
         knownPaths.Add(path);
 
+      // Занятые ключи уникальности «обозначение + расширение»: файлы, дающие новый
+      // дубль ключа, считаем пропущенными с причиной (как повторы по пути),
+      // а не ошибкой — иначе индексация встала бы на первом конфликте комплектов.
+      var usedDesignationKeys = new HashSet<string>(
+          _store.GetAllDesignationKeys(), StringComparer.OrdinalIgnoreCase);
+
       try
       {
         if (VelumAppConfig.SolidHomeostasisDebugLog)
@@ -2283,32 +2290,46 @@ namespace Velum.UI
               else
               {
                 string designation = Path.GetFileNameWithoutExtension(filePath) ?? string.Empty;
-                if (categoryFolder == null)
+                string designationKey = VelumProductRegistryStore.BuildDesignationKey(
+                    designation, pathKey);
+                if (!string.IsNullOrEmpty(designationKey) && usedDesignationKeys.Contains(designationKey))
                 {
-                  try
-                  {
-                    VelumProductFolder before = _store.FindChildFolderByName(scan.ParentFolderId, category);
-                    categoryFolder = _store.GetOrCreateChildFolder(scan.ParentFolderId, category, persist: false);
-                    if (before == null)
-                      addedFolders++;
-                  }
-                  catch (Exception ex)
-                  {
-                    errors.Add("Каталог «" + category + "»: " + ex.Message);
-                    continue;
-                  }
+                  // Дубль ключа обозначения — пропуск с причиной (см. usedDesignationKeys).
+                  skippedDupDesignation++;
+                  errors.Add(filePath + ": пропущено — обозначение «" + designation
+                      + "» с таким расширением уже есть в реестре.");
                 }
+                else
+                {
+                  if (categoryFolder == null)
+                  {
+                    try
+                    {
+                      VelumProductFolder before = _store.FindChildFolderByName(scan.ParentFolderId, category);
+                      categoryFolder = _store.GetOrCreateChildFolder(scan.ParentFolderId, category, persist: false);
+                      if (before == null)
+                        addedFolders++;
+                    }
+                    catch (Exception ex)
+                    {
+                      errors.Add("Каталог «" + category + "»: " + ex.Message);
+                      continue;
+                    }
+                  }
 
-                VelumProductItem created = _store.AddItem(
-                    categoryFolder.Id,
-                    designation,
-                    string.Empty,
-                    pathKey,
-                    persist: false);
-                knownPaths.Add(pathKey);
-                SetPathStatus(created.Id, VelumProductRegistryPathStatus.Ok);
-                addedItems++;
-                addedNames.Add(string.IsNullOrEmpty(designation) ? Path.GetFileName(filePath) : designation);
+                  VelumProductItem created = _store.AddItem(
+                      categoryFolder.Id,
+                      designation,
+                      string.Empty,
+                      pathKey,
+                      persist: false);
+                  knownPaths.Add(pathKey);
+                  if (!string.IsNullOrEmpty(designationKey))
+                    usedDesignationKeys.Add(designationKey);
+                  SetPathStatus(created.Id, VelumProductRegistryPathStatus.Ok);
+                  addedItems++;
+                  addedNames.Add(string.IsNullOrEmpty(designation) ? Path.GetFileName(filePath) : designation);
+                }
               }
             }
             catch (Exception ex)
@@ -2332,7 +2353,8 @@ namespace Velum.UI
         if (VelumAppConfig.SolidHomeostasisDebugLog)
           VelumProductRegistryIndexTrace.Mark(
               "apply.loop.done",
-              "added=" + addedItems + " skippedExisting=" + skippedExisting,
+              "added=" + addedItems + " skippedExisting=" + skippedExisting
+              + " skippedDupDesignation=" + skippedDupDesignation,
               sessionId);
         if (VelumAppConfig.SolidHomeostasisDebugLog)
           VelumProductRegistryIndexTrace.Mark("store.Save.begin", null, sessionId);
@@ -2369,6 +2391,7 @@ namespace Velum.UI
           addedFolders,
           addedItems,
           skippedExisting,
+          skippedDupDesignation,
           skippedTempOrHidden,
           addedNames);
       if (stopped)
@@ -2408,6 +2431,7 @@ namespace Velum.UI
         int addedFolders,
         int addedItems,
         int skippedExisting,
+        int skippedDupDesignation,
         int skippedTempOrHidden,
         List<string> addedNames)
     {
@@ -2419,6 +2443,8 @@ namespace Velum.UI
           text.AppendLine("Каталогов создано: " + addedFolders);
         if (skippedExisting > 0)
           text.AppendLine("Уже в реестре (тот же путь): " + skippedExisting);
+        if (skippedDupDesignation > 0)
+          text.AppendLine("Пропущено (дубль обозначения + расширения): " + skippedDupDesignation);
         if (skippedTempOrHidden > 0)
           text.AppendLine("Пропущено скрытых/временных: " + skippedTempOrHidden);
         return text.ToString().TrimEnd();
@@ -2429,6 +2455,8 @@ namespace Velum.UI
       text.AppendLine("Записей добавлено: " + addedItems);
       if (skippedExisting > 0)
         text.AppendLine("Пропущено (уже в реестре, тот же путь): " + skippedExisting);
+      if (skippedDupDesignation > 0)
+        text.AppendLine("Пропущено (дубль обозначения + расширения): " + skippedDupDesignation);
       if (skippedTempOrHidden > 0)
         text.AppendLine("Пропущено скрытых/временных: " + skippedTempOrHidden);
 

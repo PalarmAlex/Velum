@@ -17,6 +17,7 @@ namespace Velum.UI.ProductRegistry
     internal const string ProbeKeyHasMissingRegistryEntries = "Velum.Registry.HasMissingRegistryEntries";
     internal const string ProbeKeyHasDxfProblems = "Velum.Registry.HasDxfProblems";
     internal const string ProbeKeyHasPdfProblems = "Velum.Registry.HasPdfProblems";
+    internal const string ProbeKeyHasDuplicateDesignations = "Velum.Registry.HasDuplicateDesignations";
 
     internal const float BadScore = 50f;
     internal const float GoodScore = 100f;
@@ -48,6 +49,7 @@ namespace Velum.UI.ProductRegistry
           || string.Equals(k, ProbeKeyHasMissingRegistryEntries, StringComparison.Ordinal)
           || string.Equals(k, ProbeKeyHasDxfProblems, StringComparison.Ordinal)
           || string.Equals(k, ProbeKeyHasPdfProblems, StringComparison.Ordinal)
+          || string.Equals(k, ProbeKeyHasDuplicateDesignations, StringComparison.Ordinal)
           || string.Equals(k, VelumAssemblyBomDiffProbe.ProbeKey, StringComparison.Ordinal);
     }
 
@@ -96,6 +98,21 @@ namespace Velum.UI.ProductRegistry
               VelumProductRegistryProblemCache.SnapshotKind(
                   VelumProductRegistryProblemKind.MissingRegistryEntry);
           detail = "Открытые документы вне реестра: " + snap.Count;
+        }
+
+        return true;
+      }
+
+      if (string.Equals(k, ProbeKeyHasDuplicateDesignations, StringComparison.Ordinal))
+      {
+        bool bad = VelumProductRegistryProblemCache.HasKind(
+            VelumProductRegistryProblemKind.DuplicateDesignation);
+        value = bad ? BadScore : GoodScore;
+        if (bad)
+        {
+          int n = VelumProductRegistryProblemCache.CountKindIncludingPending(
+              VelumProductRegistryProblemKind.DuplicateDesignation);
+          detail = "Дубли обозначений в реестре: " + n;
         }
 
         return true;
@@ -207,6 +224,7 @@ namespace Velum.UI.ProductRegistry
       PublishOne(values, influence, ProbeKeyHasMissingRegistryEntries);
       PublishOne(values, influence, ProbeKeyHasDxfProblems);
       PublishOne(values, influence, ProbeKeyHasPdfProblems);
+      PublishOne(values, influence, ProbeKeyHasDuplicateDesignations);
       PublishOne(values, influence, VelumAssemblyBomDiffProbe.ProbeKey);
 
       float pdfScore = -1f; values.TryGetValue(ProbeKeyHasPdfProblems, out pdfScore);

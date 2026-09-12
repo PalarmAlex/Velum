@@ -70,6 +70,7 @@ namespace Velum.UI.ProductRegistry
     private static int _openDocumentsScopeActive;
     private static bool _brokenPassActive;
     private static bool _drawingPassActive;
+    private static bool _dupDesPassActive;
     private static bool _dxfPassActive;
     private static bool _pdfPassActive;
     private static string _lastScopeKey = string.Empty;
@@ -332,6 +333,7 @@ namespace Velum.UI.ProductRegistry
         List<VelumProductFolderAutoNameMapping> mappings;
         bool brokenPassActive;
         bool drawingPassActive;
+        bool dupDesPassActive;
         bool dxfPassActive;
         bool pdfPassActive;
         lock (Gate)
@@ -340,6 +342,7 @@ namespace Velum.UI.ProductRegistry
           mappings = _mappings;
           brokenPassActive = _brokenPassActive;
           drawingPassActive = _drawingPassActive;
+          dupDesPassActive = _dupDesPassActive;
           dxfPassActive = _dxfPassActive;
           pdfPassActive = _pdfPassActive;
         }
@@ -351,6 +354,10 @@ namespace Velum.UI.ProductRegistry
         if (item == null)
         {
           VelumProductRegistryProblemCache.RemoveAllForItem(itemId);
+
+          // Запись удалена (её прежний ключ уже недоступен), а с ней мог исчезнуть
+          // дубль у оставшегося партнёра - пересчитываем вид по реестру в памяти.
+          VelumProductRegistryDuplicateDesignationScanner.RevalidateAll(store);
           return;
         }
 
@@ -380,6 +387,35 @@ namespace Velum.UI.ProductRegistry
         else
         {
           VelumProductRegistryProblemCache.Remove(itemId, VelumProductRegistryProblemKind.MissingDrawing);
+        }
+
+        // Дубль обозначения. Прежний ключ читаем ДО перепроверки: после удачной
+        // правки проблема снимается, и найти «бывшего» партнёра по новому ключу
+        // уже невозможно - иначе его строка висела бы до следующего полного прохода.
+        VelumProductRegistryProblemEntry dupOldProblem;
+        VelumProductRegistryProblemCache.TryGet(
+            itemId,
+            VelumProductRegistryProblemKind.DuplicateDesignation,
+            out dupOldProblem);
+
+        // Множество visited исключает повторный обход группы (запись и её партнёр
+        // имеют один ключ, поэтому рекурсивный обход ушёл бы по кругу).
+        var dupVisited = new HashSet<int> { itemId };
+        VelumProductRegistryDuplicateDesignationScanner.RevalidateItem(
+            store, item, writePending: dupDesPassActive);
+
+        // Партнёры по новому ключу (конфликт остался или появился) и по прежнему
+        // ключу (конфликт только что убрали) - проблема пересчитывается сразу.
+        VelumProductRegistryDuplicateDesignationScanner.RevalidateKeyGroup(
+            store, item.Designation, item.FilePath, dupVisited, dupDesPassActive);
+        if (dupOldProblem != null)
+        {
+          VelumProductRegistryDuplicateDesignationScanner.RevalidateKeyGroup(
+              store,
+              dupOldProblem.Designation,
+              dupOldProblem.FilePath,
+              dupVisited,
+              dupDesPassActive);
         }
 
         VelumProductRegistryDxfFleetScanner.RevalidateItem(item, writePending: dxfPassActive);
@@ -655,6 +691,13 @@ namespace Velum.UI.ProductRegistry
       if (AbortRunTickIfOpenDocumentsScope())
         return;
 
+      // Дубли обозначений — группировка по ключам в памяти (без ФС), весь проход
+      // укладывается в один квант; курсор между тиками не нужен.
+      passCompleted &= VelumProductRegistryDuplicateDesignationScanner.Tick(
+          store, ref _dupDesPassActive);
+      if (AbortRunTickIfOpenDocumentsScope())
+        return;
+
       // BOM diff probe — лёгкое сканирование без COM, только чтение JSON.
       if (Volatile.Read(ref _openDocumentsScopeActive) != 1)
       {
@@ -721,6 +764,9 @@ private static void AbortDiscoveryPassesUnlocked()
             VelumProductRegistryProblemKind.MissingDrawing);
       }
 
+      if (_dupDesPassActive)
+        VelumProductRegistryDuplicateDesignationScanner.DiscardPending();
+
       if (_dxfPassActive)
         VelumProductRegistryDxfFleetScanner.DiscardPending();
       if (_pdfPassActive)
@@ -732,6 +778,7 @@ private static void AbortDiscoveryPassesUnlocked()
       _pdfCursor = 0;
       _brokenPassActive = false;
       _drawingPassActive = false;
+      _dupDesPassActive = false;
       _dxfPassActive = false;
       _pdfPassActive = false;
     }
