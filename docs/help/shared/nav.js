@@ -70,8 +70,8 @@
       ]},
       { title: "Агент", items: [
         { t: "Панель «Агент»", h: "forms/agent-taskpane.html" },
-        { t: "Показатели", h: "forms/environment-metrics.html" },
-        { t: "Указания", h: "forms/operator-influences.html" },
+        { t: "Метрики среды", h: "forms/environment-metrics.html" },
+        { t: "Воздействия оператора", h: "forms/operator-influences.html" },
         { t: "Буфер команд", h: "forms/sensor-buffer.html" }
       ]}
     ];
