@@ -157,6 +157,8 @@ namespace Velum.UI
       Image modifyIcon = TryLoadMenuBitmap("Modify.png");
       Image loadIcon = TryLoadMenuBitmap("Load.png");
       Image textIcon = TryLoadMenuBitmap("Text.png");
+      Image moveUpIcon = TryLoadMenuBitmap("Up.png");
+      Image moveDownIcon = TryLoadMenuBitmap("Down.png");
 
       _treeMenu = new ContextMenuStrip();
       var addItem = new ToolStripMenuItem("Добавить", addIcon, (s, e) => AddFolder());
@@ -169,11 +171,19 @@ namespace Velum.UI
       editItem.ShortcutKeys = Keys.F2;
       editItem.ShowShortcutKeys = true;
       var descriptionItem = new ToolStripMenuItem("Описание", textIcon, (s, e) => EditSelectedFolderDescription());
+      // Перестановка узла в группе — только пунктами меню, без сочетаний клавиш.
+      var moveUpItem = new ToolStripMenuItem("Вверх", moveUpIcon, (s, e) => MoveSelectedFolder(-1));
+      var moveDownItem = new ToolStripMenuItem("Вниз", moveDownIcon, (s, e) => MoveSelectedFolder(1));
       var loadItem = new ToolStripMenuItem("Загрузить", loadIcon, (s, e) => LoadFolderIndex());
+      // Смысловые группы: операции с каталогом | порядок в группе | индексация.
       _treeMenu.Items.Add(addItem);
       _treeMenu.Items.Add(deleteItem);
       _treeMenu.Items.Add(editItem);
       _treeMenu.Items.Add(descriptionItem);
+      _treeMenu.Items.Add(new ToolStripSeparator());
+      _treeMenu.Items.Add(moveUpItem);
+      _treeMenu.Items.Add(moveDownItem);
+      _treeMenu.Items.Add(new ToolStripSeparator());
       _treeMenu.Items.Add(loadItem);
       _folderTreeView.ContextMenuStrip = _treeMenu;
     }
@@ -2773,6 +2783,25 @@ namespace Velum.UI
         e.Handled = true;
         e.SuppressKeyPress = true;
       }
+    }
+
+    /// <summary>
+    /// Сдвигает выделенный каталог внутри своей дочерней группы:
+    /// offset &lt; 0 — вверх, offset &gt; 0 — вниз.
+    /// </summary>
+    private void MoveSelectedFolder(int offset)
+    {
+      if (!_isAdmin)
+        return;
+
+      int? folderId = GetSelectedFolderId();
+      if (folderId == null)
+        return;
+
+      if (!_store.MoveFolderRelative(folderId.Value, offset))
+        return;
+
+      RebuildTree(folderId);
     }
 
     private void SearchFolders()

@@ -309,6 +309,36 @@ namespace Velum.UI.ProductRegistry
       return true;
     }
 
+    /// <summary>
+    /// Сдвигает каталог внутри своей дочерней группы на offset позиций
+    /// (offset &lt; 0 — вверх, offset &gt; 0 — вниз).
+    /// true — порядок изменён; false — сдвиг невозможен (край группы или каталог не найден).
+    /// </summary>
+    public bool MoveFolderRelative(int folderId, int offset)
+    {
+      VelumProductFolder folder = GetFolder(folderId);
+      if (folder == null)
+        return false;
+
+      List<VelumProductFolder> siblings = GetChildFolders(folder.ParentId).ToList();
+      int index = siblings.FindIndex(f => f.Id == folderId);
+      if (index < 0)
+        return false;
+
+      int target = index + offset;
+      if (target < 0 || target >= siblings.Count)
+        return false;
+
+      siblings.RemoveAt(index);
+      siblings.Insert(target, folder);
+      for (int i = 0; i < siblings.Count; i++)
+        siblings[i].SortOrder = i;
+
+      _foldersDirty = true;
+      Save();
+      return true;
+    }
+
     public void DeleteFolderCascade(int folderId)
     {
       if (!_folders.ContainsKey(folderId))
