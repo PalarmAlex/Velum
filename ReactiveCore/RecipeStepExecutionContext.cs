@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using ISIDA.Actions;
 using SolidWorks.Interop.sldworks;
 
 namespace Velum.ReactiveCore
@@ -16,13 +17,15 @@ namespace Velum.ReactiveCore
         RecipeDefinition recipe,
         ModelDoc2 modelDoc,
         SldWorks sw,
-        IReadOnlyDictionary<string, string> templateContext)
+        IReadOnlyDictionary<string, string> templateContext,
+        AdaptiveActionsSystem.ActionActivationSource activationSource)
     {
       StepIndex = stepIndex;
       Recipe = recipe;
       ModelDoc = modelDoc;
       Sw = sw;
       TemplateContext = templateContext ?? new Dictionary<string, string>();
+      ActivationSource = activationSource;
     }
 
     /// <summary>Индекс шага в рецепте.</summary>
@@ -39,5 +42,19 @@ namespace Velum.ReactiveCore
 
     /// <summary>Контекст подстановки шаблонов.</summary>
     public IReadOnlyDictionary<string, string> TemplateContext { get; }
+
+    /// <summary>
+    /// Источник активации действия, из-за которого исполняется рецепт
+    /// (безусловный рефлекс, условный рефлекс, автоматизм).
+    /// </summary>
+    public AdaptiveActionsSystem.ActionActivationSource ActivationSource { get; }
+
+    /// <summary>
+    /// Рецепт запущен условным рефлексом: при несовпадении типа документа интерактивные
+    /// шаги должны тихо пропускаться без пользовательского MessageBox (оператор не просил действие).
+    /// </summary>
+    public bool FromConditionedReflex =>
+        ActivationSource == AdaptiveActionsSystem.ActionActivationSource.ConditionedReflex;
   }
 }
+

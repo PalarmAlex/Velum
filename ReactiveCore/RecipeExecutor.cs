@@ -66,7 +66,11 @@ namespace Velum.ReactiveCore
     /// </summary>
     public static bool TryExecute(RecipeDefinition recipe, out RecipeExecutionResult result)
     {
-      return TryExecute(recipe, DefaultProbe, out result);
+      return TryExecute(
+          recipe,
+          DefaultProbe,
+          ISIDA.Actions.AdaptiveActionsSystem.ActionActivationSource.GeneticReflex,
+          out result);
     }
 
     /// <summary>
@@ -75,6 +79,29 @@ namespace Velum.ReactiveCore
     public static bool TryExecute(
         RecipeDefinition recipe,
         ISolidWorksSessionProbe probe,
+        out RecipeExecutionResult result)
+    {
+      return TryExecute(
+          recipe,
+          probe,
+          ISIDA.Actions.AdaptiveActionsSystem.ActionActivationSource.GeneticReflex,
+          out result);
+    }
+
+    /// <summary>
+    /// Исполняет рецепт с указанным зондом сессии и источником активации действия.
+    /// </summary>
+    /// <param name="recipe">Исполняемый рецепт.</param>
+    /// <param name="probe">Зонд сессии SolidWorks.</param>
+    /// <param name="activationSource">
+    /// Источник активации (безусловный/условный рефлекс, автоматизм): влияет на то,
+    /// показывать ли пользовательские предупреждения при несовпадении типа документа.
+    /// </param>
+    /// <param name="result">Результат исполнения.</param>
+    public static bool TryExecute(
+        RecipeDefinition recipe,
+        ISolidWorksSessionProbe probe,
+        ISIDA.Actions.AdaptiveActionsSystem.ActionActivationSource activationSource,
         out RecipeExecutionResult result)
     {
       result = null;
@@ -145,7 +172,8 @@ namespace Velum.ReactiveCore
                   recipe,
                   modelDoc,
                   sw,
-                  templateContext);
+                  templateContext,
+                  activationSource);
 
               if (!TryExecuteStep(step, context, out RecipeStepExecutionResult stepResult))
               {

@@ -356,8 +356,8 @@ namespace Velum.UI.ProductRegistry
           VelumProductRegistryProblemCache.RemoveAllForItem(itemId);
 
           // Запись удалена (её прежний ключ уже недоступен), а с ней мог исчезнуть
-          // дубль у оставшегося партнёра - пересчитываем вид по реестру в памяти.
-          VelumProductRegistryDuplicateDesignationScanner.RevalidateAll(store);
+          // дубль у оставшегося партнёра - перепроверяем записи с кэшированным дублем.
+          VelumProductRegistryDuplicateDesignationScanner.RevalidateCachedDuplicates(store);
           return;
         }
 

@@ -18,6 +18,13 @@ namespace Velum.UI
     private System.Windows.Forms.CheckBox _chkNeedDxfDefault;
     private System.Windows.Forms.CheckBox _chkNeedPdfDefault;
     private System.Windows.Forms.CheckBox _chkNeedDrawingDefault;
+    private System.Windows.Forms.Label _lblDocumentColorsHint;
+    private System.Windows.Forms.Label _lblDocumentColorPart;
+    private System.Windows.Forms.TextBox _tbDocumentColorPart;
+    private System.Windows.Forms.Label _lblDocumentColorAssembly;
+    private System.Windows.Forms.TextBox _tbDocumentColorAssembly;
+    private System.Windows.Forms.Label _lblDocumentColorDrawing;
+    private System.Windows.Forms.TextBox _tbDocumentColorDrawing;
 
     /// <summary>
     /// Clean up any resources being used.
@@ -126,6 +133,13 @@ namespace Velum.UI
       this._chkNeedDrawingDefault = new System.Windows.Forms.CheckBox();
       this._chkNeedPdfDefault = new System.Windows.Forms.CheckBox();
       this._chkNeedDxfDefault = new System.Windows.Forms.CheckBox();
+      this._lblDocumentColorsHint = new System.Windows.Forms.Label();
+      this._lblDocumentColorPart = new System.Windows.Forms.Label();
+      this._tbDocumentColorPart = new System.Windows.Forms.TextBox();
+      this._lblDocumentColorAssembly = new System.Windows.Forms.Label();
+      this._tbDocumentColorAssembly = new System.Windows.Forms.TextBox();
+      this._lblDocumentColorDrawing = new System.Windows.Forms.Label();
+      this._tbDocumentColorDrawing = new System.Windows.Forms.TextBox();
       this._lblStage2SearchPlayStyleIds = new System.Windows.Forms.Label();
       this._tbStage2SearchPlayStyleIds = new System.Windows.Forms.TextBox();
       this._btnCancel = new System.Windows.Forms.Button();
@@ -1023,6 +1037,13 @@ namespace Velum.UI
       this.tabPageDocuments.Controls.Add(this._chkNeedDrawingDefault);
       this.tabPageDocuments.Controls.Add(this._chkNeedPdfDefault);
       this.tabPageDocuments.Controls.Add(this._chkNeedDxfDefault);
+      this.tabPageDocuments.Controls.Add(this._lblDocumentColorsHint);
+      this.tabPageDocuments.Controls.Add(this._lblDocumentColorPart);
+      this.tabPageDocuments.Controls.Add(this._tbDocumentColorPart);
+      this.tabPageDocuments.Controls.Add(this._lblDocumentColorAssembly);
+      this.tabPageDocuments.Controls.Add(this._tbDocumentColorAssembly);
+      this.tabPageDocuments.Controls.Add(this._lblDocumentColorDrawing);
+      this.tabPageDocuments.Controls.Add(this._tbDocumentColorDrawing);
       this.tabPageDocuments.Location = new System.Drawing.Point(4, 22);
       this.tabPageDocuments.Name = "tabPageDocuments";
       this.tabPageDocuments.Padding = new System.Windows.Forms.Padding(3);
@@ -1060,6 +1081,74 @@ namespace Velum.UI
       this._chkNeedDxfDefault.TabIndex = 0;
       this._chkNeedDxfDefault.Text = "По умолчанию «Нужен dxf = Да» при создании новых деталей";
       this._chkNeedDxfDefault.UseVisualStyleBackColor = true;
+      // 
+      // _lblDocumentColorsHint
+      // 
+      this._lblDocumentColorsHint.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this._lblDocumentColorsHint.Location = new System.Drawing.Point(3, 92);
+      this._lblDocumentColorsHint.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+      this._lblDocumentColorsHint.Name = "_lblDocumentColorsHint";
+      this._lblDocumentColorsHint.Size = new System.Drawing.Size(650, 20);
+      this._lblDocumentColorsHint.TabIndex = 3;
+      this._lblDocumentColorsHint.Text = "Коды зрительного канала по типу активного документа (для контекста у-рефлексов):";
+      this._lblDocumentColorsHint.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // _lblDocumentColorPart
+      // 
+      this._lblDocumentColorPart.Location = new System.Drawing.Point(3, 118);
+      this._lblDocumentColorPart.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+      this._lblDocumentColorPart.Name = "_lblDocumentColorPart";
+      this._lblDocumentColorPart.Size = new System.Drawing.Size(175, 20);
+      this._lblDocumentColorPart.TabIndex = 4;
+      this._lblDocumentColorPart.Text = "Деталь (код цвета):";
+      this._lblDocumentColorPart.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // _tbDocumentColorPart
+      // 
+      this._tbDocumentColorPart.BackColor = System.Drawing.SystemColors.Window;
+      this._tbDocumentColorPart.Location = new System.Drawing.Point(181, 119);
+      this._tbDocumentColorPart.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+      this._tbDocumentColorPart.Name = "_tbDocumentColorPart";
+      this._tbDocumentColorPart.Size = new System.Drawing.Size(150, 20);
+      this._tbDocumentColorPart.TabIndex = 5;
+      // 
+      // _lblDocumentColorAssembly
+      // 
+      this._lblDocumentColorAssembly.Location = new System.Drawing.Point(3, 144);
+      this._lblDocumentColorAssembly.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+      this._lblDocumentColorAssembly.Name = "_lblDocumentColorAssembly";
+      this._lblDocumentColorAssembly.Size = new System.Drawing.Size(175, 20);
+      this._lblDocumentColorAssembly.TabIndex = 6;
+      this._lblDocumentColorAssembly.Text = "Сборка (код цвета):";
+      this._lblDocumentColorAssembly.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // _tbDocumentColorAssembly
+      // 
+      this._tbDocumentColorAssembly.BackColor = System.Drawing.SystemColors.Window;
+      this._tbDocumentColorAssembly.Location = new System.Drawing.Point(181, 145);
+      this._tbDocumentColorAssembly.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+      this._tbDocumentColorAssembly.Name = "_tbDocumentColorAssembly";
+      this._tbDocumentColorAssembly.Size = new System.Drawing.Size(150, 20);
+      this._tbDocumentColorAssembly.TabIndex = 7;
+      // 
+      // _lblDocumentColorDrawing
+      // 
+      this._lblDocumentColorDrawing.Location = new System.Drawing.Point(3, 170);
+      this._lblDocumentColorDrawing.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+      this._lblDocumentColorDrawing.Name = "_lblDocumentColorDrawing";
+      this._lblDocumentColorDrawing.Size = new System.Drawing.Size(175, 20);
+      this._lblDocumentColorDrawing.TabIndex = 8;
+      this._lblDocumentColorDrawing.Text = "Чертёж (код цвета):";
+      this._lblDocumentColorDrawing.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // _tbDocumentColorDrawing
+      // 
+      this._tbDocumentColorDrawing.BackColor = System.Drawing.SystemColors.Window;
+      this._tbDocumentColorDrawing.Location = new System.Drawing.Point(181, 171);
+      this._tbDocumentColorDrawing.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+      this._tbDocumentColorDrawing.Name = "_tbDocumentColorDrawing";
+      this._tbDocumentColorDrawing.Size = new System.Drawing.Size(150, 20);
+      this._tbDocumentColorDrawing.TabIndex = 9;
       // 
       // _lblStage2SearchPlayStyleIds
       // 

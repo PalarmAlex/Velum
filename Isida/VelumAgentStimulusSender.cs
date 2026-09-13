@@ -4,7 +4,6 @@ using System.Linq;
 using ISIDA.Actions;
 using ISIDA.Common;
 using ISIDA.Psychic.Automatism;
-using ISIDA.Reflexes;
 using ISIDA.Sensors;
 using Velum.SolidHomeostasis;
 
@@ -184,6 +183,10 @@ namespace Velum.Isida
       var influence = VelumIsidaHost.Context.InfluenceActions;
       try
       {
+        // Единая точка: резолвим код зрительного канала по типу активного документа SolidWorks,
+        // чтобы у-рефлексы различали контекст «деталь / сборка / чертёж» (белый = контекст не ограничен).
+        int visualColorId = VelumDocumentVisualColor.ResolveActiveDocumentColorId();
+
         var (success, err) = influence.ApplyMultipleInfluenceActions(
             influenceIds,
             phraseIds,
@@ -191,7 +194,7 @@ namespace Velum.Isida
             verbalAuthoritative || commandAuthoritative,
             toneId,
             moodId,
-            visualColorId: AgentVisualColor.White);
+            visualColorId: visualColorId);
 
         if (!success)
         {
@@ -252,6 +255,68 @@ namespace Velum.Isida
       }
 
       return unrecognized;
+    }
+  }
+
+  /// <summary>
+  /// Маппинг типа активного документа SolidWorks в код зрительного канала образа восприятия ISIDA
+  /// (<see cref="ISIDA.Reflexes.AgentVisualColor"/>). Позволяет различать контекст
+  /// «деталь / сборка / чертёж» при формировании образов у-рефлексов, чтобы у-рефлекс,
+  /// выученный на одном типе документа, не срабатывал на другом.
+  /// </summary>
+  internal static class VelumDocumentVisualColor
+  {
+    /// <summary>
+    /// Резолвит код цвета для текущего активного документа SolidWorks.
+    /// Требуется UI-поток панели (доступ к COM). При отсутствии активного документа,
+    /// неизвестном типе или сбое — белый (контекст не ограничен).
+    /// </summary>
+    internal static int ResolveActiveDocumentColorId()
+    {
+      try
+      {
+        Xarial.XCad.SolidWorks.ISwApplication app =
+            Velum.SolidHomeostasis.VelumSolidEnvironmentBridge.TryGetSolidWorksApplication();
+        if (app == null)
+          return ISIDA.Reflexes.AgentVisualColor.White;
+
+        Velum.ReactiveCore.SolidWorksSessionSnapshot snapshot =
+            new Velum.ReactiveCore.VelumSolidWorksSessionProbe().Capture(app);
+        return MapKindToColorId(snapshot.DocumentKind);
+      }
+      catch
+      {
+        return ISIDA.Reflexes.AgentVisualColor.White;
+      }
+    }
+
+    /// <summary>
+    /// Маппит тип документа в код цвета по настройкам проекта.
+    /// «Нет документа» и «другой тип» — белый (стимул не ограничивает контекст по типу
+    /// документа). Некорректный код из настройки — белый.
+    /// </summary>
+    /// <param name="kind">Тип активного документа.</param>
+    internal static int MapKindToColorId(Velum.ReactiveCore.VelumSolidDocumentKind kind)
+    {
+      int code;
+      switch (kind)
+      {
+        case Velum.ReactiveCore.VelumSolidDocumentKind.Part:
+          code = Velum.Configuration.VelumAppConfig.DocumentColorPart;
+          break;
+        case Velum.ReactiveCore.VelumSolidDocumentKind.Assembly:
+          code = Velum.Configuration.VelumAppConfig.DocumentColorAssembly;
+          break;
+        case Velum.ReactiveCore.VelumSolidDocumentKind.Drawing:
+          code = Velum.Configuration.VelumAppConfig.DocumentColorDrawing;
+          break;
+        default:
+          return ISIDA.Reflexes.AgentVisualColor.White;
+      }
+
+      return ISIDA.Reflexes.AgentVisualColor.IsValidCode(code)
+          ? code
+          : ISIDA.Reflexes.AgentVisualColor.White;
     }
   }
 }

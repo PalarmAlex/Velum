@@ -21,6 +21,7 @@ namespace Velum.ReactiveCore
     public static bool TryExecuteExportDocumentationDialog(
         int index,
         ModelDoc2 modelDoc,
+        bool suppressWrongDocumentWarning,
         out RecipeStepExecutionResult result)
     {
       string docHint = TryGetDocumentHint(modelDoc);
@@ -32,11 +33,15 @@ namespace Velum.ReactiveCore
 
       if (modelDoc.GetType() != (int)swDocumentTypes_e.swDocPART)
       {
-        System.Windows.Forms.MessageBox.Show(
-            "Экспорт DXF доступен только для детали.",
-            "Экспорт DXF",
-            System.Windows.Forms.MessageBoxButtons.OK,
-            System.Windows.Forms.MessageBoxIcon.Information);
+        // У-рефлекс мог сработать на «не тот» тип документа: оператор действие не просил — тихо пропускаем.
+        if (!suppressWrongDocumentWarning)
+        {
+          System.Windows.Forms.MessageBox.Show(
+              "Экспорт DXF доступен только для детали.",
+              "Экспорт DXF",
+              System.Windows.Forms.MessageBoxButtons.OK,
+              System.Windows.Forms.MessageBoxIcon.Information);
+        }
         result = new RecipeStepExecutionResult(
             index,
             "invoke",
@@ -74,6 +79,7 @@ namespace Velum.ReactiveCore
     public static bool TryExecuteExportDrawingPdfDialog(
         int index,
         ModelDoc2 modelDoc,
+        bool suppressWrongDocumentWarning,
         out RecipeStepExecutionResult result)
     {
       string docHint = TryGetDocumentHint(modelDoc);
@@ -85,11 +91,15 @@ namespace Velum.ReactiveCore
 
       if (modelDoc.GetType() != (int)swDocumentTypes_e.swDocDRAWING)
       {
-        System.Windows.Forms.MessageBox.Show(
-            "Экспорт PDF доступен только для чертежа.",
-            "Экспорт PDF",
-            System.Windows.Forms.MessageBoxButtons.OK,
-            System.Windows.Forms.MessageBoxIcon.Information);
+        // У-рефлекс мог сработать на «не тот» тип документа: оператор действие не просил — тихо пропускаем.
+        if (!suppressWrongDocumentWarning)
+        {
+          System.Windows.Forms.MessageBox.Show(
+              "Экспорт PDF доступен только для чертежа.",
+              "Экспорт PDF",
+              System.Windows.Forms.MessageBoxButtons.OK,
+              System.Windows.Forms.MessageBoxIcon.Information);
+        }
         result = new RecipeStepExecutionResult(
             index,
             "invoke",

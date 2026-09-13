@@ -84,6 +84,7 @@ namespace Velum.Configuration
           EnsureDocumentDefaultsSettings();
           EnsureCommandBufferSettings();
           EnsureReactiveCorePathSettings();
+          EnsureDocumentVisualColorSettings();
           EnsureBomExchangeFolderSetting();
           EnsureProductRegistryAccessLevelSetting();
           EnsureProductRegistryFolderPathSetting();
@@ -474,6 +475,24 @@ namespace Velum.Configuration
     /// </summary>
     public static int NoOperatorStimulusSilencePulses => GetIntSetting("NoOperatorStimulusSilencePulses", 30);
 
+    /// <summary>
+    /// Код зрительного канала (<see cref="ISIDA.Reflexes.AgentVisualColor"/>) для стимулов при активном документе «деталь».
+    /// Дефолт 1 (совпадает с числовым значением <see cref="Velum.ReactiveCore.VelumSolidDocumentKind.Part"/>).
+    /// </summary>
+    public static int DocumentColorPart => GetIntSetting("DocumentColorPart", 1);
+
+    /// <summary>
+    /// Код зрительного канала (<see cref="ISIDA.Reflexes.AgentVisualColor"/>) для стимулов при активном документе «сборка».
+    /// Дефолт 2 (совпадает с числовым значением <see cref="Velum.ReactiveCore.VelumSolidDocumentKind.Assembly"/>).
+    /// </summary>
+    public static int DocumentColorAssembly => GetIntSetting("DocumentColorAssembly", 2);
+
+    /// <summary>
+    /// Код зрительного канала (<see cref="ISIDA.Reflexes.AgentVisualColor"/>) для стимулов при активном документе «чертёж».
+    /// Дефолт 3 (совпадает с числовым значением <see cref="Velum.ReactiveCore.VelumSolidDocumentKind.Drawing"/>).
+    /// </summary>
+    public static int DocumentColorDrawing => GetIntSetting("DocumentColorDrawing", 3);
+
     /// <summary>Шаблон имени DXF, сохранённый при последнем экспорте.</summary>
     public static string DxfFileNameTemplate =>
         GetSetting("DxfFileNameTemplate") ?? string.Empty;
@@ -770,9 +789,12 @@ namespace Velum.Configuration
                   new XElement("WaitingPeriodForActionsVal", 30),
                   new XElement("ThinkingCycleDecayAgeDivisor", 100),
                   new XElement("ThinkingCycleDecayBase", 1),
-                  new XElement("ThinkingCycleMainMaxAgePulses", 1000),
-                  new XElement("NoOperatorStimulusSilencePulses", 30),
-                  new XElement("FirstRun", 1),
+                   new XElement("ThinkingCycleMainMaxAgePulses", 1000),
+                   new XElement("NoOperatorStimulusSilencePulses", 30),
+                   new XElement("DocumentColorPart", 1),
+                   new XElement("DocumentColorAssembly", 2),
+                   new XElement("DocumentColorDrawing", 3),
+                   new XElement("FirstRun", 1),
                    new XElement("LogEnabled", false),
                    new XElement("SolidHomeostasisDebugLog", false),
                    new XElement("LogFormat", "All"),
@@ -1063,6 +1085,50 @@ namespace Velum.Configuration
         if (app.Element("RecipeDispatchCooldownPulses") == null)
         {
           app.Add(new XElement("RecipeDispatchCooldownPulses", 3));
+          changed = true;
+        }
+
+        if (changed)
+          doc.Save(ConfigFullPath);
+      }
+      catch (Exception ex)
+      {
+        Logger.Error(ex.Message);
+      }
+    }
+
+    /// <summary>
+    /// Добавляет коды зрительного канала для типов документов, если ключей ещё нет
+    /// (деталь=1, сборка=2, чертёж=3).
+    /// </summary>
+    private static void EnsureDocumentVisualColorSettings()
+    {
+      try
+      {
+        if (!File.Exists(ConfigFullPath))
+          return;
+
+        XDocument doc = XDocument.Load(ConfigFullPath);
+        XElement app = doc.Root?.Element("AppSettings");
+        if (app == null)
+          return;
+
+        bool changed = false;
+        if (app.Element("DocumentColorPart") == null)
+        {
+          app.Add(new XElement("DocumentColorPart", 1));
+          changed = true;
+        }
+
+        if (app.Element("DocumentColorAssembly") == null)
+        {
+          app.Add(new XElement("DocumentColorAssembly", 2));
+          changed = true;
+        }
+
+        if (app.Element("DocumentColorDrawing") == null)
+        {
+          app.Add(new XElement("DocumentColorDrawing", 3));
           changed = true;
         }
 

@@ -97,7 +97,7 @@ namespace Velum.ReactiveCore
         return false;
       }
 
-      if (!RecipeExecutor.TryExecute(recipe, DefaultProbe, out RecipeExecutionResult result))
+      if (!RecipeExecutor.TryExecute(recipe, DefaultProbe, action.ActivationSource, out RecipeExecutionResult result))
       {
         LogDispatchFailure(recipe, adaptiveActionId, pulse, activationPulse, result);
         RecipeMotorOutcomeNotifier.TryNotify(recipe, result);

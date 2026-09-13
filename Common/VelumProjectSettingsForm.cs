@@ -2,6 +2,7 @@ using ISIDA.Actions;
 using ISIDA.Common;
 using ISIDA.Gomeostas;
 using ISIDA.Psychic.Understanding;
+using ISIDA.Reflexes;
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -139,6 +140,9 @@ namespace Velum.UI
       _ttpStageEvolution.SetToolTip(_chkNeedDxfDefault, "Дефолтное значение свойства «Нужен dxf» при создании новых деталей");
       _ttpStageEvolution.SetToolTip(_chkNeedPdfDefault, "Дефолтное значение свойства «Нужен pdf» при создании новых чертежей");
       _ttpStageEvolution.SetToolTip(_chkNeedDrawingDefault, "Дефолтное значение свойства «Нужен чертеж» при создании новых деталей и сборок");
+      _ttpStageEvolution.SetToolTip(_tbDocumentColorPart, "Код зрительного канала образа восприятия при активном документе «деталь» (0…8). Различает контекст у-рефлексов по типу документа; 0 — контекст не ограничен.");
+      _ttpStageEvolution.SetToolTip(_tbDocumentColorAssembly, "Код зрительного канала образа восприятия при активном документе «сборка» (0…8). Различает контекст у-рефлексов по типу документа; 0 — контекст не ограничен.");
+      _ttpStageEvolution.SetToolTip(_tbDocumentColorDrawing, "Код зрительного канала образа восприятия при активном документе «чертёж» (0…8). Различает контекст у-рефлексов по типу документа; 0 — контекст не ограничен.");
 
       // Стадия 2: коды стилей Поиск/Игра
       _ttpStageEvolution.SetToolTip(_tbStage2SearchPlayStyleIds, "Через запятую укажите ID стилей поведения, используемых на стадии 2 (Поиск/Игра). Например: 3,5,7");
@@ -217,6 +221,11 @@ namespace Velum.UI
       _chkNeedDxfDefault.Checked = VelumAppConfig.NeedDxfDefault;
       _chkNeedPdfDefault.Checked = VelumAppConfig.NeedPdfDefault;
       _chkNeedDrawingDefault.Checked = VelumAppConfig.NeedDrawingDefault;
+
+      // Вкладка «Документы»: коды зрительного канала по типу активного документа
+      _tbDocumentColorPart.Text = VelumAppConfig.DocumentColorPart.ToString(CultureInfo.InvariantCulture);
+      _tbDocumentColorAssembly.Text = VelumAppConfig.DocumentColorAssembly.ToString(CultureInfo.InvariantCulture);
+      _tbDocumentColorDrawing.Text = VelumAppConfig.DocumentColorDrawing.ToString(CultureInfo.InvariantCulture);
 
       // Стадия 2: коды стилей Поиск/Игра
       var stage2StyleIds = VelumAppConfig.Stage2SearchPlayStyleIds;
@@ -455,6 +464,25 @@ namespace Velum.UI
         return false;
       }
 
+      // Вкладка «Документы»: коды зрительного канала по типу активного документа (допустимый диапазон ISIDA).
+      if (!int.TryParse(_tbDocumentColorPart.Text.Trim(), out int docColorPart) ||
+          !int.TryParse(_tbDocumentColorAssembly.Text.Trim(), out int docColorAssembly) ||
+          !int.TryParse(_tbDocumentColorDrawing.Text.Trim(), out int docColorDrawing) ||
+          !IsVisualColorCodeInRange(docColorPart) ||
+          !IsVisualColorCodeInRange(docColorAssembly) ||
+          !IsVisualColorCodeInRange(docColorDrawing))
+      {
+        MessageBox.Show(
+            this,
+            "Некорректный код зрительного канала. Допустимый диапазон: " +
+            AgentVisualColor.MinCode + "…" + AgentVisualColor.MaxCode + " (0 — белый, контекст не ограничен).",
+            "Проверка",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Warning);
+        return false;
+      }
+
+
       // Стадия 2: коды стилей Поиск/Игра
       var stage2StyleIdsText = _tbStage2SearchPlayStyleIds.Text.Trim();
       var stage2StyleIds = stage2StyleIdsText
@@ -516,6 +544,11 @@ namespace Velum.UI
       VelumAppConfig.SetNeedPdfDefault(_chkNeedPdfDefault.Checked);
       VelumAppConfig.SetNeedDrawingDefault(_chkNeedDrawingDefault.Checked);
 
+      // Вкладка «Документы»: коды зрительного канала по типу активного документа
+      VelumAppConfig.SetSetting("DocumentColorPart", docColorPart.ToString(CultureInfo.InvariantCulture));
+      VelumAppConfig.SetSetting("DocumentColorAssembly", docColorAssembly.ToString(CultureInfo.InvariantCulture));
+      VelumAppConfig.SetSetting("DocumentColorDrawing", docColorDrawing.ToString(CultureInfo.InvariantCulture));
+
       // Пути
       VelumAppConfig.SetSetting("SettingsPath", _tbSettingsPath.Text.Trim());
       VelumAppConfig.SetSetting("DataFolderPath", _tbGomeostas.Text.Trim());
@@ -527,6 +560,17 @@ namespace Velum.UI
 
       Logger.Info("Настройки проекта сохранены.");
       return true;
+    }
+
+    /// <summary>
+    /// Проверяет, что код зрительного канала входит в допустимый диапазон ISIDA
+    /// (<see cref="AgentVisualColor.MinCode"/>…<see cref="AgentVisualColor.MaxCode"/>).
+    /// </summary>
+    /// <param name="code">Код цвета.</param>
+    /// <returns>true, если код допустим.</returns>
+    private static bool IsVisualColorCodeInRange(int code)
+    {
+      return AgentVisualColor.IsValidCode(code);
     }
 
     /// <summary>

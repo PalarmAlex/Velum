@@ -220,6 +220,7 @@ namespace Velum.ReactiveCore
       return RecipeExecutorHandlersExport.TryExecuteExportDocumentationDialog(
           context.StepIndex,
           context.ModelDoc,
+          context.FromConditionedReflex,
           out result);
     }
 
@@ -231,6 +232,7 @@ namespace Velum.ReactiveCore
       return RecipeExecutorHandlersExport.TryExecuteExportDrawingPdfDialog(
           context.StepIndex,
           context.ModelDoc,
+          context.FromConditionedReflex,
           out result);
     }
 

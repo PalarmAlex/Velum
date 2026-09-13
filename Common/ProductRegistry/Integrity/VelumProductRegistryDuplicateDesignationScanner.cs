@@ -127,23 +127,30 @@ namespace Velum.UI.ProductRegistry
     }
 
     /// <summary>
-    /// Пересчёт вида по всему реестру без pending (опубликованный кэш). Применяется,
-    /// когда запись удалена и её прежний ключ уже недоступен: перепроверяются все
-    /// записи, поэтому у оставшегося партнёра проблема снимается сразу.
-    /// Работает только по данным реестра в памяти (без ФС), потому и допустим целиком.
+    /// Перепроверяет только те записи, у которых уже есть опубликованная проблема
+    /// этого вида. Применяется после удаления записи: её прежний ключ недоступен,
+    /// а устаревшая строка гарантированно лежит в кэше у оставшегося партнёра.
+    /// Дешевле полного прохода, т.к. вызывается из UI-потока по каждой удалённой записи.
     /// </summary>
     /// <param name="store">Реестр изделий.</param>
-    internal static void RevalidateAll(VelumProductRegistryStore store)
+    internal static void RevalidateCachedDuplicates(VelumProductRegistryStore store)
     {
       if (store == null)
         return;
 
-      IReadOnlyList<VelumProductItem> items = store.GetAllItems();
-      for (int i = 0; i < items.Count; i++)
+      IReadOnlyList<VelumProductRegistryProblemEntry> cached =
+          VelumProductRegistryProblemCache.SnapshotKind(
+              VelumProductRegistryProblemKind.DuplicateDesignation);
+
+      for (int i = 0; i < cached.Count; i++)
       {
-        VelumProductItem item = items[i];
-        if (item != null && item.Id > 0)
-          RevalidateItem(store, item, writePending: false);
+        VelumProductRegistryProblemEntry entry = cached[i];
+        if (entry == null || entry.ItemId <= 0)
+          continue;
+
+        VelumProductItem other = store.GetItem(entry.ItemId);
+        if (other != null)
+          RevalidateItem(store, other, writePending: false);
       }
     }
 
