@@ -465,9 +465,29 @@ namespace Velum.UI.ProductRegistry
             if (maxDxfStamp > 0)
             {
               stamp = maxDxfStamp;
-              Logger.Info(
-                  "Velum registry export-meta: using DxfGeometryUpdateStamp for part " +
-                  partPath + " stamp=" + stamp);
+
+              // Fallback: симметрично VelumProductRegistryPdfFleetScanner — если
+              // DxfGeometryUpdateStamp отстаёт от ModelGeometryStamp больше чем на 1,
+              // DXF export-штамп не обновился (race condition) — считаем
+              // ModelGeometryStamp эффективным штампом. Без этого экспорт PDF всегда
+              // писал отставший штамп, а сканер сравнивал с ModelGeometryStamp —
+              // метрика "PDF устарел" не снималась никогда.
+              if (partItem.ModelGeometryStamp.HasValue &&
+                  partItem.ModelGeometryStamp.Value - maxDxfStamp > 1)
+              {
+                stamp = partItem.ModelGeometryStamp.Value;
+                Logger.Info(
+                    "Velum registry export-meta: DxfGeometryUpdateStamp lags ModelGeometryStamp by " +
+                    (partItem.ModelGeometryStamp.Value - maxDxfStamp) +
+                    " — using ModelGeometryStamp as effective stamp" +
+                    " part=" + partPath + " stamp=" + stamp + " maxDxfStamp=" + maxDxfStamp);
+              }
+              else
+              {
+                Logger.Info(
+                    "Velum registry export-meta: using DxfGeometryUpdateStamp for part " +
+                    partPath + " stamp=" + stamp);
+              }
             }
             else
             {

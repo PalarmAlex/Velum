@@ -374,6 +374,8 @@ internal static bool TryClassify(
       // Дополнительная проверка: если ModelGeometryStamp детали больше, чем max(DxfGeometryUpdateStamp),
       // значит геометрия точно менялась, даже если pending-штамп не обновился
       // (например, из-за выключенной пульсации или race condition).
+      // Допуск > 1 симметричен IsPdfOutdatedByModelGeometry: штатный fold/unfold
+      // развёртки поднимает ModelGeometryStamp на 1 без изменения геометрии DXF.
       if (partItem.ModelGeometryStamp.HasValue && partItem.ModelGeometryStamp.Value > 0)
       {
         int maxDxfStamp = 0;
@@ -387,8 +389,8 @@ internal static bool TryClassify(
           }
         }
 
-        // Если ModelGeometryStamp > maxDxfStamp, значит геометрия точно менялась.
-        if (partItem.ModelGeometryStamp.Value > maxDxfStamp)
+        // Если ModelGeometryStamp отстаёт от maxDxfStamp больше чем на 1, геометрия менялась.
+        if (partItem.ModelGeometryStamp.Value - maxDxfStamp > 1)
           return false;
       }
 
