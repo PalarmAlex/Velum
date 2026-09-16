@@ -18,10 +18,18 @@ namespace Velum.ReactiveCore
   internal static class RecipeExecutorHandlersExport
   {
     /// <summary>export_documentation_dialog — модальный диалог экспорта DXF.</summary>
+    /// <param name="index">Индекс шага рецепта.</param>
+    /// <param name="modelDoc">Активный документ.</param>
+    /// <param name="fromConditionedReflex">
+    /// Рецепт запущен условным рефлексом: интерактивные предупреждения подавляются,
+    /// а кнопка «Запрет» в диалоге активна только в этом случае.
+    /// </param>
+    /// <param name="result">Результат шага.</param>
+    /// <returns>true, если шаг обработан.</returns>
     public static bool TryExecuteExportDocumentationDialog(
         int index,
         ModelDoc2 modelDoc,
-        bool suppressWrongDocumentWarning,
+        bool fromConditionedReflex,
         out RecipeStepExecutionResult result)
     {
       string docHint = TryGetDocumentHint(modelDoc);
@@ -34,10 +42,11 @@ namespace Velum.ReactiveCore
       if (modelDoc.GetType() != (int)swDocumentTypes_e.swDocPART)
       {
         // У-рефлекс мог сработать на «не тот» тип документа: оператор действие не просил — тихо пропускаем.
-        if (!suppressWrongDocumentWarning)
+        if (!fromConditionedReflex)
         {
           System.Windows.Forms.MessageBox.Show(
               "Экспорт DXF доступен только для детали.",
+
               "Экспорт DXF",
               System.Windows.Forms.MessageBoxButtons.OK,
               System.Windows.Forms.MessageBoxIcon.Information);
@@ -64,7 +73,8 @@ namespace Velum.ReactiveCore
         return true;
       }
 
-      VelumDxfExportDialogHost.TryShowModal(modelDoc);
+      VelumDxfExportDialogHost.TryShowModal(modelDoc, fromConditionedReflex);
+
       result = new RecipeStepExecutionResult(
           index,
           "invoke",
@@ -76,10 +86,18 @@ namespace Velum.ReactiveCore
     }
 
     /// <summary>export_drawing_pdf_dialog — модальный диалог экспорта PDF чертежа.</summary>
+    /// <param name="index">Индекс шага рецепта.</param>
+    /// <param name="modelDoc">Активный документ.</param>
+    /// <param name="fromConditionedReflex">
+    /// Рецепт запущен условным рефлексом: интерактивные предупреждения подавляются,
+    /// а кнопка «Запрет» в диалоге активна только в этом случае.
+    /// </param>
+    /// <param name="result">Результат шага.</param>
+    /// <returns>true, если шаг обработан.</returns>
     public static bool TryExecuteExportDrawingPdfDialog(
         int index,
         ModelDoc2 modelDoc,
-        bool suppressWrongDocumentWarning,
+        bool fromConditionedReflex,
         out RecipeStepExecutionResult result)
     {
       string docHint = TryGetDocumentHint(modelDoc);
@@ -92,10 +110,11 @@ namespace Velum.ReactiveCore
       if (modelDoc.GetType() != (int)swDocumentTypes_e.swDocDRAWING)
       {
         // У-рефлекс мог сработать на «не тот» тип документа: оператор действие не просил — тихо пропускаем.
-        if (!suppressWrongDocumentWarning)
+        if (!fromConditionedReflex)
         {
           System.Windows.Forms.MessageBox.Show(
               "Экспорт PDF доступен только для чертежа.",
+
               "Экспорт PDF",
               System.Windows.Forms.MessageBoxButtons.OK,
               System.Windows.Forms.MessageBoxIcon.Information);
@@ -122,7 +141,8 @@ namespace Velum.ReactiveCore
         return true;
       }
 
-      VelumPdfExportDialogHost.TryShowModal(modelDoc);
+      VelumPdfExportDialogHost.TryShowModal(modelDoc, fromConditionedReflex);
+
       result = new RecipeStepExecutionResult(
           index,
           "invoke",

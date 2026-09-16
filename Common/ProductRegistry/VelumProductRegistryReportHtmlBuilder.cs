@@ -28,7 +28,8 @@ namespace Velum.UI.ProductRegistry
     internal static string BuildHtml(
         string selectionLabel,
         List<VelumProductItem> rows,
-        Dictionary<int, VelumProductFolder> folderLookup)
+        Dictionary<int, VelumProductFolder> folderLookup,
+        int skipLastFolderLevels = 0)
     {
       var sb = new StringBuilder();
       sb.AppendLine("<!DOCTYPE html>");
@@ -52,7 +53,7 @@ namespace Velum.UI.ProductRegistry
 
       sb.AppendLine("<h2>Список</h2>");
       int expectedCount = rows.Count;
-      int renderedCount = AppendDataTable(sb, rows, folderLookup);
+      int renderedCount = AppendDataTable(sb, rows, folderLookup, skipLastFolderLevels);
 
       sb.AppendLine("<p class=\"muted footer\">Сформировано Velum. Отрендерено записей: " +
           "<span id=\"renderedCount\">" + renderedCount + "</span> из " + expectedCount + ".</p>");
@@ -63,7 +64,8 @@ namespace Velum.UI.ProductRegistry
     private static int AppendDataTable(
         StringBuilder sb,
         List<VelumProductItem> rows,
-        Dictionary<int, VelumProductFolder> folderLookup)
+        Dictionary<int, VelumProductFolder> folderLookup,
+        int skipLastFolderLevels)
     {
       if (rows == null || rows.Count == 0)
       {
@@ -74,7 +76,7 @@ namespace Velum.UI.ProductRegistry
       var folderPaths = new Dictionary<int, string>();
       foreach (var kvp in folderLookup)
       {
-        folderPaths[kvp.Key] = BuildFolderPath(kvp.Value, folderLookup);
+        folderPaths[kvp.Key] = BuildFolderPath(kvp.Value, folderLookup, skipLastFolderLevels);
       }
 
       var groups = new Dictionary<int, List<VelumProductItem>>();
@@ -141,6 +143,42 @@ namespace Velum.UI.ProductRegistry
       return renderedCount;
     }
 
+    private static string BuildFolderPath(
+        VelumProductFolder folder,
+        Dictionary<int, VelumProductFolder> lookup,
+        int skipLastLevels)
+    {
+      if (folder == null)
+        return string.Empty;
+
+      var parts = new List<string>();
+      int currentId = folder.Id;
+      int depth = 0;
+      while (currentId > 0 && depth < 50)
+      {
+        // Пропускаем корневой узел (Изделия) — не включаем его в путь.
+        if (folder.ParentId <= 0)
+          break;
+
+        parts.Insert(0, folder.Name ?? string.Empty);
+        if (!lookup.TryGetValue(folder.ParentId, out folder))
+          break;
+        currentId = folder.ParentId;
+        depth++;
+      }
+
+      // Усечение хвоста пути (для «сокращённой ведомости» при активном фильтре дерева).
+      // Не уходим в пустой путь: минимум один сегмент должен остаться,
+      // иначе записи попадут в невидимый корневой узел отчёта.
+      if (skipLastLevels > 0 && parts.Count > 1)
+      {
+        int remove = Math.Min(skipLastLevels, parts.Count - 1);
+        parts.RemoveRange(parts.Count - remove, remove);
+      }
+
+      return string.Join(@"\", parts);
+    }
+
     private static void CollectFoldersInTreeOrder(
         int parentId,
         Dictionary<int, List<VelumProductFolder>> childrenByParent,
@@ -164,29 +202,6 @@ namespace Velum.UI.ProductRegistry
         target.Add(child.Id);
         CollectFoldersInTreeOrder(child.Id, childrenByParent, target);
       }
-    }
-
-    private static string BuildFolderPath(VelumProductFolder folder, Dictionary<int, VelumProductFolder> lookup)
-    {
-      if (folder == null)
-        return string.Empty;
-
-      var parts = new List<string>();
-      int currentId = folder.Id;
-      int depth = 0;
-      while (currentId > 0 && depth < 50)
-      {
-        // Пропускаем корневой узел (Изделия) — не включаем его в путь.
-        if (folder.ParentId <= 0)
-          break;
-
-        parts.Insert(0, folder.Name ?? string.Empty);
-        if (!lookup.TryGetValue(folder.ParentId, out folder))
-          break;
-        currentId = folder.ParentId;
-        depth++;
-      }
-      return string.Join(@"\", parts);
     }
 
     private static string GetStatusText(VelumProductItem item)

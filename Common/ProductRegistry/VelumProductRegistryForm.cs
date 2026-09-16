@@ -1341,25 +1341,49 @@ namespace Velum.UI
       List<VelumProductItem> items = new List<VelumProductItem>(_store.GetItemsInFolderTree(folderId.Value));
       items = ApplyItemFilters(items);
 
-      // Collect all folders for path lookup
+      // фильтры дерева
+      string folderNameFilter = (_folderSearchNameBox.Text ?? string.Empty).Trim();
+      string folderDescriptionFilter = (_folderSearchDescriptionBox.Text ?? string.Empty).Trim();
+      bool treeFilterActive = folderNameFilter.Length > 0 || folderDescriptionFilter.Length > 0;
+
       var folderLookup = new Dictionary<int, VelumProductFolder>();
       foreach (var f in _store.Folders)
         folderLookup[f.Id] = f;
 
+      if (treeFilterActive)
+      {
+        HashSet<int> allowedFolderIds = CollectFolderIdsMatchingTreeFilter(
+            folderId.Value, folderNameFilter, folderDescriptionFilter);
+        var filtered = new List<VelumProductItem>(items.Count);
+        foreach (var it in items)
+        {
+          if (it != null && allowedFolderIds.Contains(it.FolderId))
+            filtered.Add(it);
+        }
+        items = filtered;
+      }
+
       var selectionLabel = new StringBuilder();
       selectionLabel.Append("Каталог: ").Append(GetSelectedFolderPathDisplay(folderId.Value));
+      if (treeFilterActive)
+      {
+        selectionLabel.Append("; фильтр дерева:");
+        if (folderNameFilter.Length > 0) selectionLabel.Append(" имя~«").Append(folderNameFilter).Append('»');
+        if (folderDescriptionFilter.Length > 0) selectionLabel.Append(" описание~«").Append(folderDescriptionFilter).Append('»');
+      }
 
       int filterCount = 0;
       if (_activeFilterStatus != null) filterCount++;
       if (!string.IsNullOrEmpty(_activeFilterDesignation)) filterCount++;
       if (!string.IsNullOrEmpty(_activeFilterName)) filterCount++;
       if (filterCount > 0)
-        selectionLabel.Append("; фильтров: ").Append(filterCount);
+        selectionLabel.Append("; фильтров списка: ").Append(filterCount);
 
       string html = VelumProductRegistryReportHtmlBuilder.BuildHtml(
           selectionLabel.ToString(),
           items,
-          folderLookup);
+          folderLookup,
+          skipLastFolderLevels: treeFilterActive ? 2 : 0);
 
       string folder = VelumProductRegistryReportHtmlBuilder.ReportsFolderPath;
       string path;
@@ -1406,6 +1430,42 @@ namespace Velum.UI
             MessageBoxButtons.OK,
             MessageBoxIcon.Warning);
       }
+    }
+
+    private HashSet<int> CollectFolderIdsMatchingTreeFilter(
+    int rootFolderId, string nameFilter, string descriptionFilter)
+    {
+      var result = new HashSet<int>();
+      CollectMatchingFolderIdsRecursive(rootFolderId, nameFilter, descriptionFilter, result);
+      return result;
+    }
+
+    private void CollectMatchingFolderIdsRecursive(
+        int folderId, string nameFilter, string descriptionFilter, HashSet<int> result)
+    {
+      VelumProductFolder folder = _store.GetFolder(folderId);
+      if (folder == null) return;
+
+      bool nameOk = nameFilter.Length == 0
+          || (folder.Name ?? string.Empty).IndexOf(nameFilter, StringComparison.OrdinalIgnoreCase) >= 0;
+      bool descriptionOk = descriptionFilter.Length == 0
+          || (folder.Description ?? string.Empty).IndexOf(descriptionFilter, StringComparison.OrdinalIgnoreCase) >= 0;
+
+      if (nameOk && descriptionOk)
+      {
+        AddSubtreeFolderIds(folderId, result);
+        return;
+      }
+
+      foreach (VelumProductFolder child in _store.GetChildFolders(folderId))
+        CollectMatchingFolderIdsRecursive(child.Id, nameFilter, descriptionFilter, result);
+    }
+
+    private void AddSubtreeFolderIds(int folderId, HashSet<int> result)
+    {
+      result.Add(folderId);
+      foreach (VelumProductFolder child in _store.GetChildFolders(folderId))
+        AddSubtreeFolderIds(child.Id, result);
     }
 
     private string GetSelectedFolderPathDisplay(int folderId)

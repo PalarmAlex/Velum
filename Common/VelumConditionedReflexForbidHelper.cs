@@ -15,7 +15,12 @@ namespace Velum.UI
     private const string ForbidTooltip =
         "Понижение крепости условного рефлекса, вызвавшего эту форму.";
 
+    private const string StrengthTooltipPrefix = "Текущая крепость У-рефлекса: ";
+
+    private const string StrengthUnavailableText = "неизвестна";
+
     private static readonly object ReflexIdAccessSync = new object();
+
     private static bool _reflexIdAccessResolved;
     private static PropertyInfo _conditionedReflexIdProperty;
 
@@ -68,6 +73,51 @@ namespace Velum.UI
       }
     }
 
+    /// <summary>
+    /// Читает текущую крепость у-рефлекса из справочника в оперативной памяти
+    /// (<see cref="ConditionedReflexesSystem"/>, загруженный ConditionedReflexes.dat).
+    /// </summary>
+    /// <param name="conditionedReflexId">ID условного рефлекса.</param>
+    /// <param name="strength">Крепость связи C ∈ [0, 1].</param>
+    /// <returns>true, если рефлекс найден и система инициализирована.</returns>
+    public static bool TryGetConditionedReflexStrength(int conditionedReflexId, out float strength)
+    {
+      strength = 0f;
+      if (conditionedReflexId <= 0)
+        return false;
+
+      try
+      {
+        if (!ConditionedReflexesSystem.IsInitialized)
+          return false;
+
+        ConditionedReflexesSystem.ConditionedReflex reflex =
+            ConditionedReflexesSystem.Instance.GetConditionedReflexById(conditionedReflexId);
+        if (reflex == null)
+          return false;
+
+        strength = reflex.AssociationStrength;
+        return true;
+      }
+      catch
+      {
+        return false;
+      }
+    }
+
+    /// <summary>
+    /// Текст подсказки кнопки «Запрет»: назначение кнопки и текущая крепость у-рефлекса,
+    /// запустившего рецепт.
+    /// </summary>
+    private static string BuildForbidTooltipText(int conditionedReflexId)
+    {
+      string strengthText = TryGetConditionedReflexStrength(conditionedReflexId, out float strength)
+          ? strength.ToString("0.###", CultureInfo.InvariantCulture)
+          : StrengthUnavailableText;
+
+      return ForbidTooltip + Environment.NewLine + StrengthTooltipPrefix + strengthText;
+    }
+
     /// <summary>Настраивает кнопку «Запрет»: активна только при ID у-рефлекса &gt; 0.</summary>
     public static void BindForbidButton(Button button, int conditionedReflexId, IWin32Window owner)
     {
@@ -75,7 +125,7 @@ namespace Velum.UI
         return;
 
       var tip = new ToolTip();
-      tip.SetToolTip(button, ForbidTooltip);
+      tip.SetToolTip(button, BuildForbidTooltipText(conditionedReflexId));
 
       bool enabled = conditionedReflexId > 0;
       button.Enabled = enabled;
@@ -84,12 +134,16 @@ namespace Velum.UI
         return;
 
       int reflexId = conditionedReflexId;
-      button.Click += (s, e) => OnForbidClick(owner, button, reflexId);
+
+      // Крепость точится/усиливается на пульсах ISIDA — перечитываем при наведении курсора.
+      button.MouseEnter += (s, e) => tip.SetToolTip(button, BuildForbidTooltipText(reflexId));
+      button.Click += (s, e) => OnForbidClick(owner, button, tip, reflexId);
     }
 
-    private static void OnForbidClick(IWin32Window owner, Button button, int reflexId)
+    private static void OnForbidClick(IWin32Window owner, Button button, ToolTip tip, int reflexId)
     {
       DialogResult confirm = MessageBox.Show(
+
           owner,
           "Вы уверены, что хотите понизить крепость условного рефлекса ID=" +
           reflexId.ToString(CultureInfo.InvariantCulture) + "?",
@@ -124,6 +178,11 @@ namespace Velum.UI
 
         if (result.Success && button != null)
           button.Enabled = false;
+
+        // Крепость изменилась — подсказка должна показывать актуальное значение.
+        if (tip != null && button != null)
+          tip.SetToolTip(button, BuildForbidTooltipText(reflexId));
+
       }
       catch (Exception ex)
       {

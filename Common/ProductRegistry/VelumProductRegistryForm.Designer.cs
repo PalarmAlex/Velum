@@ -119,6 +119,7 @@ namespace Velum.UI
       this._treePanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
       this._treePanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
       this._treePanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 0F));
+      this._treePanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
       this._treePanel.Size = new System.Drawing.Size(344, 534);
       this._treePanel.TabIndex = 0;
       // 
