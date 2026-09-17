@@ -30,11 +30,15 @@
           </tr>
           <tr>
             <td>Таблица расхождений</td>
-            <td>Список позиций с расхождениями. Столбцы: <strong>TypeDocs</strong> (Assembly/Part), <strong>ExternalId</strong>, <strong>Designation</strong>, <strong>Name</strong>, <strong>Quantity</strong>.</td>
+            <td>Список позиций с расхождениями. Состав, порядок и заголовки столбцов берутся из настроек выгрузки (кнопка <strong>Поля…</strong>) и совпадают со столбцами CSV-файла.</td>
           </tr>
           <tr>
             <td>Настройки</td>
-            <td>Открывает окно <a href="bom-tracked-properties.html">«Отслеживаемые свойства BOM»</a> — список свойств, изменения которых отслеживаются. Настройки разделены по типу документа: сборки и детали.</td>
+            <td>Открывает окно <a href="bom-tracked-properties.html">«Отслеживаемые свойства BOM»</a> — список свойств, изменения которых отслеживаются.</td>
+          </tr>
+          <tr>
+            <td>Поля…</td>
+            <td>Открывает окно <a href="bom-exchange-layout.html">«Поля выгрузки BOM»</a> — настройка состава, порядка и заголовков столбцов выгрузки. Изменения сразу применяются к таблице и к CSV.</td>
           </tr>
           <tr>
             <td>Экспорт</td>
@@ -52,7 +56,7 @@
 
       <h2>Формат CSV-файла</h2>
       <p>Кодировка UTF-8 с BOM, разделитель — точка с запятой. Имя файла: <code>1C_update_ГГГГ.ММ.ДД.ЧЧ.ММ.СС.csv</code>.</p>
-      <p>Колонки:</p>
+      <p>Состав и порядок колонок задаются в окне <a href="bom-exchange-layout.html">«Поля выгрузки BOM»</a> и по умолчанию равны:</p>
       <ul>
         <li><strong>TypeDocs</strong> — тип документа: <code>Assembly</code> (сборка) или <code>Part</code> (деталь);</li>
         <li><strong>ExternalId</strong> — идентификатор связи с 1С (свойство компонента в SOLIDWORKS, заполняется вручную);</li>
@@ -68,14 +72,14 @@
       <h2>Типовой порядок работы</h2>
       <ol>
         <li>Заполните свойства <code>ExternalId</code> в компонентах и сохраните документы — Velum зеркалирует состав и свойства автоматически.</li>
-        <li>Укажите каталог обмена и при необходимости настройте список свойств.</li>
+        <li>Укажите каталог обмена и при необходимости настройте список свойств и состав полей выгрузки.</li>
         <li>Нажмите <strong>Экспорт</strong> и передайте файл в 1С.</li>
       </ol>
 
       <h2>Данные на диске</h2>
-      <p>Зеркало состава и свойств — <code>%ProgramData%\VELUM\AssemblyRegistry\bomMirror.json</code>; список отслеживаемых свойств — <code>bomTrackedProperties.json</code> в том же каталоге. Каталог обмена хранится в настройках проекта.</p>
+      <p>Зеркало состава и свойств — <code>%ProgramData%\VELUM\AssemblyRegistry\bomMirror.json</code>; список отслеживаемых свойств — <code>bomTrackedProperties.json</code>; состав полей выгрузки — <code>bomExchangeLayout.json</code> (всё в одном каталоге). Каталог обмена хранится в настройках проекта.</p>
 
-      <div class="seealso">См. также: <a href="bom-tracked-properties.html">Отслеживаемые свойства BOM</a></div>
+      <div class="seealso">См. также: <a href="bom-exchange-layout.html">Поля выгрузки BOM</a>, <a href="bom-tracked-properties.html">Отслеживаемые свойства BOM</a></div>
     </div>
   </div>
 </body>

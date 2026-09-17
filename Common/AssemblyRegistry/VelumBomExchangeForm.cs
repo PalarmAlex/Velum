@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -15,6 +16,10 @@ namespace Velum.UI.AssemblyRegistry
   /// </summary>
   internal sealed partial class VelumBomExchangeForm : Form
   {
+    /// <summary>Включённые колонки выгрузки (в порядке следования) — из bomExchangeLayout.json.</summary>
+    private List<VelumBomExchangeColumnDef> _enabledColumns =
+        new List<VelumBomExchangeColumnDef>();
+
     public VelumBomExchangeForm()
     {
       InitializeComponent();
@@ -26,7 +31,8 @@ namespace Velum.UI.AssemblyRegistry
       UpdateExportButtonState();
       _folderBox.TextChanged += (s, e) => UpdateExportButtonState();
 
-      // Загрузить список строк для экспорта.
+      // Построить колонки списка из настроек выгрузки, затем загрузить строки.
+      RebuildColumns();
       LoadDiscrepancyList();
     }
 
@@ -47,6 +53,33 @@ namespace Velum.UI.AssemblyRegistry
     }
 
     /// <summary>
+    /// Перестроить колонки списка из настроек выгрузки (bomExchangeLayout.json).
+    /// </summary>
+    private void RebuildColumns()
+    {
+      VelumBomExchangeLayoutFile layout = VelumBomExchangeLayoutStore.LoadOrCreate();
+      _enabledColumns = layout.Columns
+          .Where(c => c != null && c.Enabled)
+          .OrderBy(c => c.Order)
+          .ToList();
+
+      _listView.BeginUpdate();
+      try
+      {
+        _listView.Columns.Clear();
+        foreach (VelumBomExchangeColumnDef col in _enabledColumns)
+        {
+          string header = string.IsNullOrWhiteSpace(col.Header) ? col.Field : col.Header;
+          _listView.Columns.Add(header ?? string.Empty, col.Width);
+        }
+      }
+      finally
+      {
+        _listView.EndUpdate();
+      }
+    }
+
+    /// <summary>
     /// Загрузить список расхождений, доступных для экспорта, в список.
     /// </summary>
     private void LoadDiscrepancyList()
@@ -59,18 +92,28 @@ namespace Velum.UI.AssemblyRegistry
             .Where(e => !string.IsNullOrWhiteSpace(e.ExternalId))
             .ToList();
 
+        if (_enabledColumns.Count == 0)
+          RebuildColumns();
+
         _listView.BeginUpdate();
         try
         {
           _listView.Items.Clear();
-          foreach (var entry in entries)
+          if (_enabledColumns.Count == 0)
           {
-            var item = new ListViewItem(entry.ExternalId ?? string.Empty);
-            item.SubItems.Add(entry.Quantity > 0 ? "Assembly" : "Part");
-            item.SubItems.Add(entry.Designation ?? string.Empty);
-            item.SubItems.Add(entry.Name ?? string.Empty);
-            item.SubItems.Add(entry.Quantity.ToString(System.Globalization.CultureInfo.InvariantCulture));
-            _listView.Items.Add(item);
+            // Колонки не выбраны — список остаётся пустым.
+          }
+          else
+          {
+            foreach (VelumAssemblyBomMirrorEntry entry in entries)
+            {
+              string first = VelumBomExchangeRowProjector.GetValue(entry, _enabledColumns[0]);
+              var item = new ListViewItem(first ?? string.Empty);
+              for (int i = 1; i < _enabledColumns.Count; i++)
+                item.SubItems.Add(
+                    VelumBomExchangeRowProjector.GetValue(entry, _enabledColumns[i]) ?? string.Empty);
+              _listView.Items.Add(item);
+            }
           }
         }
         finally
@@ -96,6 +139,19 @@ namespace Velum.UI.AssemblyRegistry
       {
         form.ShowDialog(this);
       }
+    }
+
+    /// <summary>
+    /// Открыть окно настройки полей выгрузки, затем перестроить список.
+    /// </summary>
+    private void OnLayoutSettingsClick(object sender, EventArgs e)
+    {
+      using (var form = new VelumBomExchangeLayoutForm())
+      {
+        form.ShowDialog(this);
+      }
+      RebuildColumns();
+      LoadDiscrepancyList();
     }
 
     private void OnExportClick(object sender, EventArgs e)

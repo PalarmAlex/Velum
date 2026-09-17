@@ -29,6 +29,7 @@
     "sensor-buffer": "forms/sensor-buffer.html",
     "dialog-recipes": "forms/dialog-recipes.html",
     "bom-exchange": "forms/bom-exchange.html",
+    "bom-exchange-layout": "forms/bom-exchange-layout.html",
     "bom-tracked-properties": "forms/bom-tracked-properties.html"
   }
 }

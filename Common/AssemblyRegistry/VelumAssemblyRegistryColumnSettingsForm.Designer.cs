@@ -23,10 +23,6 @@ namespace Velum.UI
       this._btnCopy = new System.Windows.Forms.Button();
       this._btnTemplates = new System.Windows.Forms.Button();
       this._grid = new System.Windows.Forms.DataGridView();
-      this._buttonsRow = new System.Windows.Forms.FlowLayoutPanel();
-      this._btnClose = new System.Windows.Forms.Button();
-      this._btnApply = new System.Windows.Forms.Button();
-      this._btnValidate = new System.Windows.Forms.Button();
       this._colOrder = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this._colName = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this._colFormula = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -36,6 +32,10 @@ namespace Velum.UI
       this._colSort = new System.Windows.Forms.DataGridViewComboBoxColumn();
       this._colShowInList = new System.Windows.Forms.DataGridViewCheckBoxColumn();
       this._colDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this._buttonsRow = new System.Windows.Forms.FlowLayoutPanel();
+      this._btnClose = new System.Windows.Forms.Button();
+      this._btnApply = new System.Windows.Forms.Button();
+      this._btnValidate = new System.Windows.Forms.Button();
       this._layout.SuspendLayout();
       this._templateRow.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this._grid)).BeginInit();
@@ -147,47 +147,6 @@ namespace Velum.UI
       this._grid.Size = new System.Drawing.Size(990, 407);
       this._grid.TabIndex = 1;
       // 
-      // _buttonsRow
-      // 
-      this._buttonsRow.Controls.Add(this._btnClose);
-      this._buttonsRow.Controls.Add(this._btnApply);
-      this._buttonsRow.Controls.Add(this._btnValidate);
-      this._buttonsRow.Dock = System.Windows.Forms.DockStyle.Fill;
-      this._buttonsRow.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-      this._buttonsRow.Location = new System.Drawing.Point(15, 463);
-      this._buttonsRow.Name = "_buttonsRow";
-      this._buttonsRow.Padding = new System.Windows.Forms.Padding(0, 8, 0, 0);
-      this._buttonsRow.Size = new System.Drawing.Size(990, 42);
-      this._buttonsRow.TabIndex = 2;
-      // 
-      // _btnClose
-      // 
-      this._btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this._btnClose.Location = new System.Drawing.Point(892, 11);
-      this._btnClose.Name = "_btnClose";
-      this._btnClose.Size = new System.Drawing.Size(95, 28);
-      this._btnClose.TabIndex = 2;
-      this._btnClose.Text = "Закрыть";
-      this._btnClose.UseVisualStyleBackColor = true;
-      // 
-      // _btnApply
-      // 
-      this._btnApply.Location = new System.Drawing.Point(791, 11);
-      this._btnApply.Name = "_btnApply";
-      this._btnApply.Size = new System.Drawing.Size(95, 28);
-      this._btnApply.TabIndex = 1;
-      this._btnApply.Text = "Применить";
-      this._btnApply.UseVisualStyleBackColor = true;
-      // 
-      // _btnValidate
-      // 
-      this._btnValidate.Location = new System.Drawing.Point(690, 11);
-      this._btnValidate.Name = "_btnValidate";
-      this._btnValidate.Size = new System.Drawing.Size(95, 28);
-      this._btnValidate.TabIndex = 0;
-      this._btnValidate.Text = "Проверить";
-      this._btnValidate.UseVisualStyleBackColor = true;
-      // 
       // _colOrder
       // 
       this._colOrder.FillWeight = 12F;
@@ -273,6 +232,47 @@ namespace Velum.UI
       this._colDescription.HeaderText = "Описание";
       this._colDescription.Name = "_colDescription";
       this._colDescription.ToolTipText = "Подсказка (tooltip) для заголовка столбца в списке реестра.";
+      // 
+      // _buttonsRow
+      // 
+      this._buttonsRow.Controls.Add(this._btnClose);
+      this._buttonsRow.Controls.Add(this._btnApply);
+      this._buttonsRow.Controls.Add(this._btnValidate);
+      this._buttonsRow.Dock = System.Windows.Forms.DockStyle.Fill;
+      this._buttonsRow.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
+      this._buttonsRow.Location = new System.Drawing.Point(15, 463);
+      this._buttonsRow.Name = "_buttonsRow";
+      this._buttonsRow.Padding = new System.Windows.Forms.Padding(0, 8, 0, 0);
+      this._buttonsRow.Size = new System.Drawing.Size(990, 42);
+      this._buttonsRow.TabIndex = 2;
+      // 
+      // _btnClose
+      // 
+      this._btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this._btnClose.Location = new System.Drawing.Point(892, 11);
+      this._btnClose.Name = "_btnClose";
+      this._btnClose.Size = new System.Drawing.Size(95, 28);
+      this._btnClose.TabIndex = 2;
+      this._btnClose.Text = "Закрыть";
+      this._btnClose.UseVisualStyleBackColor = true;
+      // 
+      // _btnApply
+      // 
+      this._btnApply.Location = new System.Drawing.Point(791, 11);
+      this._btnApply.Name = "_btnApply";
+      this._btnApply.Size = new System.Drawing.Size(95, 28);
+      this._btnApply.TabIndex = 1;
+      this._btnApply.Text = "Применить";
+      this._btnApply.UseVisualStyleBackColor = true;
+      // 
+      // _btnValidate
+      // 
+      this._btnValidate.Location = new System.Drawing.Point(690, 11);
+      this._btnValidate.Name = "_btnValidate";
+      this._btnValidate.Size = new System.Drawing.Size(95, 28);
+      this._btnValidate.TabIndex = 0;
+      this._btnValidate.Text = "Проверить";
+      this._btnValidate.UseVisualStyleBackColor = true;
       // 
       // VelumAssemblyRegistryColumnSettingsForm
       // 

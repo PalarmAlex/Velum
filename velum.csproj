@@ -384,6 +384,8 @@
     <Compile Include="Common\AssemblyRegistry\VelumAssemblyBomTrackedPropertiesConfig.cs" />
     <Compile Include="Common\AssemblyRegistry\VelumAssemblyBomMirrorCoordinator.cs" />
     <Compile Include="Common\AssemblyRegistry\VelumAssemblyBomDiffProbe.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumBomExchangeLayout.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumBomExchangeRowProjector.cs" />
     <Compile Include="Common\AssemblyRegistry\VelumBomExchangeForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -396,6 +398,12 @@
     </Compile>
     <Compile Include="Common\AssemblyRegistry\VelumBomTrackedPropertiesEditForm.Designer.cs">
       <DependentUpon>VelumBomTrackedPropertiesEditForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\AssemblyRegistry\VelumBomExchangeLayoutForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\AssemblyRegistry\VelumBomExchangeLayoutForm.Designer.cs">
+      <DependentUpon>VelumBomExchangeLayoutForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Common\ProductRegistry\VelumProductRegistryModels.cs" />
     <Compile Include="Common\ProductRegistry\VelumProductRegistryStore.cs" />
@@ -503,6 +511,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Common\AssemblyRegistry\VelumBomExchangeForm.resx">
       <DependentUpon>VelumBomExchangeForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\AssemblyRegistry\VelumBomExchangeLayoutForm.resx">
+      <DependentUpon>VelumBomExchangeLayoutForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Common\AssemblyRegistry\VelumBomTrackedPropertiesEditForm.resx">
       <DependentUpon>VelumBomTrackedPropertiesEditForm.cs</DependentUpon>

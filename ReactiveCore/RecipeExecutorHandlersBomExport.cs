@@ -126,8 +126,16 @@ namespace Velum.ReactiveCore
           return false;
         }
 
-        // Generate CSV content.
-        string csvContent = GenerateCsv(exportEntries);
+        // Generate CSV content (состав колонок берётся из bomExchangeLayout.json).
+        string layoutError;
+        string csvContent = GenerateCsv(exportEntries, out layoutError);
+        if (csvContent == null)
+        {
+          result = new RecipeStepExecutionResult(
+              index, "invoke", false, false, layoutError ?? "Не выбрано ни одного поля для выгрузки.");
+          Logger.Warning("Velum bomExport: " + (layoutError ?? "no export columns"));
+          return false;
+        }
 
         // Generate filename with timestamp.
         string timestamp = DateTime.Now.ToString(
@@ -183,25 +191,27 @@ namespace Velum.ReactiveCore
     }
 
     /// <summary>
-    /// Сформировать CSV-контент для обмена с 1C.
+    /// Сформировать CSV-контент для обмена с 1C на основе настроек выгрузки.
+    /// Состав, порядок и заголовки колонок берутся из <c>bomExchangeLayout.json</c>.
     /// Формат: UTF-8 с BOM, разделитель «;».
     /// </summary>
-    private static string GenerateCsv(IReadOnlyList<VelumAssemblyBomMirrorEntry> entries)
+    /// <param name="entries">Выгружаемые записи зеркала BOM.</param>
+    /// <param name="error">Сообщение об ошибке (если колонок для выгрузки нет).</param>
+    /// <returns>CSV-строка или <c>null</c>, если выбрано ноль колонок.</returns>
+    private static string GenerateCsv(IReadOnlyList<VelumAssemblyBomMirrorEntry> entries, out string error)
     {
-      // Единый список отслеживаемых свойств (сборки и детали).
-      IReadOnlyList<TrackedProperty> trackedProperties =
-          VelumAssemblyBomTrackedPropertiesConfig.Load();
+      error = null;
 
-      // Колонки свойств в выгрузке: имена из настроек без дублей (без учёта регистра).
-      // Имя из файла настроеки используется как заголовок и как ключ поиска значения.
-      var columnProps = new List<TrackedProperty>();
-      var columnHeaderNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-      foreach (TrackedProperty prop in trackedProperties)
+      VelumBomExchangeLayoutFile layout = VelumBomExchangeLayoutStore.LoadOrCreate();
+      List<VelumBomExchangeColumnDef> columns = layout.Columns
+          .Where(c => c != null && c.Enabled)
+          .OrderBy(c => c.Order)
+          .ToList();
+
+      if (columns.Count == 0)
       {
-        if (prop == null || string.IsNullOrWhiteSpace(prop.Name))
-          continue;
-        if (columnHeaderNames.Add(prop.Name))
-          columnProps.Add(prop);
+        error = "Не выбрано ни одного поля для выгрузки.";
+        return null;
       }
 
       var sb = new StringBuilder();
@@ -210,54 +220,23 @@ namespace Velum.ReactiveCore
       sb.Append('\uFEFF');
 
       // Header row.
-      sb.Append("TypeDocs;"); // Тип документа: Assembly или Part
-      sb.Append("ExternalId;"); // Id связи с 1C
-      sb.Append("Designation;"); // Обозначение
-      sb.Append("Name;"); // Наименование
-      sb.Append("FilePath;"); // Путь к файлу
-      sb.Append("Configuration;"); // Конфигурация
-      sb.Append("Quantity;"); // Количество
-      foreach (var prop in columnProps)
+      for (int i = 0; i < columns.Count; i++)
       {
-        sb.Append(prop.Name + ";");
+        if (i > 0) sb.Append(';');
+        string header = columns[i].Header ?? columns[i].Field ?? string.Empty;
+        sb.Append(CsvField(header));
       }
       sb.AppendLine();
 
       // Data rows.
       foreach (VelumAssemblyBomMirrorEntry entry in entries)
       {
-        string typeDocs = entry.Quantity > 0 ? "Assembly" : "Part";
-        sb.Append(CsvField(typeDocs));
-        sb.Append(';');
-        sb.Append(CsvField(entry.ExternalId ?? string.Empty));
-        sb.Append(';');
-        sb.Append(CsvField(entry.Designation ?? string.Empty));
-        sb.Append(';');
-        sb.Append(CsvField(entry.Name ?? string.Empty));
-        sb.Append(';');
-        sb.Append(CsvField(entry.FilePath ?? string.Empty));
-        sb.Append(';');
-        sb.Append(CsvField(entry.ConfigurationName ?? string.Empty));
-        sb.Append(';');
-        sb.Append(CsvField(entry.Quantity.ToString(CultureInfo.InvariantCulture)));
-
-        // Tracked property values from the mirror snapshot.
-        foreach (var prop in columnProps)
+        for (int i = 0; i < columns.Count; i++)
         {
-          string value = string.Empty;
-          if (entry.TrackedValues != null &&
-              entry.TrackedValues.TryGetValue(prop.Name, out string raw))
-          {
-            value = raw ?? string.Empty;
-          }
-
-          // Округляем числовые значения до заданной точности.
-          value = VelumAssemblyBomTrackedPropertiesConfig.RoundIfNumeric(value, prop.Precision);
-
-          sb.Append(';');
+          if (i > 0) sb.Append(';');
+          string value = VelumBomExchangeRowProjector.GetValue(entry, columns[i]);
           sb.Append(CsvField(value));
         }
-
         sb.AppendLine();
       }
 

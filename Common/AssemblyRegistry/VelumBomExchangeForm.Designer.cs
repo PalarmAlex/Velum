@@ -15,6 +15,7 @@ namespace Velum.UI.AssemblyRegistry
     private System.Windows.Forms.Button _browseButton;
     private System.Windows.Forms.Button _exportButton;
     private System.Windows.Forms.Button _settingsButton;
+    private System.Windows.Forms.Button _layoutButton;
     private System.Windows.Forms.ListView _listView;
     private System.Windows.Forms.ColumnHeader _colTypeDocs;
     private System.Windows.Forms.ColumnHeader _colExternalId;
@@ -46,6 +47,7 @@ namespace Velum.UI.AssemblyRegistry
       this._browseButton = new System.Windows.Forms.Button();
       this._exportButton = new System.Windows.Forms.Button();
       this._settingsButton = new System.Windows.Forms.Button();
+      this._layoutButton = new System.Windows.Forms.Button();
       this._toolTip = new System.Windows.Forms.ToolTip(this.components);
       this._listView = new System.Windows.Forms.ListView();
       this._colTypeDocs = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -75,27 +77,31 @@ namespace Velum.UI.AssemblyRegistry
       this._folderBox.ReadOnly = true;
       this._folderBox.Size = new System.Drawing.Size(313, 20);
       this._folderBox.TabIndex = 1;
+      this._toolTip.SetToolTip(this._folderBox, "Каталог, в который сохраняется CSV-файл обмена с 1C.");
       // 
       // _browseButton
       // 
       this._browseButton.AutoSize = true;
+      this._browseButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this._browseButton.Location = new System.Drawing.Point(421, 2);
       this._browseButton.Margin = new System.Windows.Forms.Padding(4, 2, 0, 2);
       this._browseButton.Name = "_browseButton";
       this._browseButton.Size = new System.Drawing.Size(75, 23);
       this._browseButton.TabIndex = 2;
       this._browseButton.Text = "Обзор";
+      this._toolTip.SetToolTip(this._browseButton, "Выбрать каталог обмена с 1C.");
       this._browseButton.UseVisualStyleBackColor = true;
       this._browseButton.Click += new System.EventHandler(this.OnBrowseClick);
       // 
       // _exportButton
       // 
       this._exportButton.AutoSize = true;
-      this._exportButton.Location = new System.Drawing.Point(256, 3);
+      this._exportButton.Location = new System.Drawing.Point(175, 3);
       this._exportButton.Name = "_exportButton";
       this._exportButton.Size = new System.Drawing.Size(75, 23);
       this._exportButton.TabIndex = 2;
       this._exportButton.Text = "Экспорт";
+      this._toolTip.SetToolTip(this._exportButton, "Сформировать CSV-файл обмена с 1C в выбранном каталоге.");
       this._exportButton.UseVisualStyleBackColor = true;
       this._exportButton.Click += new System.EventHandler(this.OnExportClick);
       // 
@@ -107,8 +113,28 @@ namespace Velum.UI.AssemblyRegistry
       this._settingsButton.Size = new System.Drawing.Size(75, 23);
       this._settingsButton.TabIndex = 1;
       this._settingsButton.Text = "Настройки";
+      this._toolTip.SetToolTip(this._settingsButton, "Открыть редактор отслеживаемых свойств BOM.");
       this._settingsButton.UseVisualStyleBackColor = true;
       this._settingsButton.Click += new System.EventHandler(this.OnSettingsClick);
+      // 
+      // _layoutButton
+      // 
+      this._layoutButton.AutoSize = true;
+      this._layoutButton.Location = new System.Drawing.Point(256, 3);
+      this._layoutButton.Name = "_layoutButton";
+      this._layoutButton.Size = new System.Drawing.Size(75, 23);
+      this._layoutButton.TabIndex = 3;
+      this._layoutButton.Text = "Поля…";
+      this._toolTip.SetToolTip(this._layoutButton, "Настроить состав, порядок и заголовки полей выгрузки");
+      this._layoutButton.UseVisualStyleBackColor = true;
+      this._layoutButton.Click += new System.EventHandler(this.OnLayoutSettingsClick);
+      // 
+      // _toolTip
+      // 
+      this._toolTip.AutoPopDelay = 12000;
+      this._toolTip.InitialDelay = 400;
+      this._toolTip.ReshowDelay = 200;
+      this._toolTip.ShowAlways = true;
       // 
       // _listView
       // 
@@ -127,6 +153,7 @@ namespace Velum.UI.AssemblyRegistry
       this._listView.Name = "_listView";
       this._listView.Size = new System.Drawing.Size(490, 180);
       this._listView.TabIndex = 5;
+      this._toolTip.SetToolTip(this._listView, "Строки, которые попадут в CSV. Состав колонок настраивается кнопкой «Поля…».");
       this._listView.UseCompatibleStateImageBehavior = false;
       this._listView.View = System.Windows.Forms.View.Details;
       // 
@@ -249,6 +276,7 @@ namespace Velum.UI.AssemblyRegistry
       this.buttonsRow.AutoSize = true;
       this.buttonsRow.Controls.Add(this.cancelButton);
       this.buttonsRow.Controls.Add(this._settingsButton);
+      this.buttonsRow.Controls.Add(this._layoutButton);
       this.buttonsRow.Controls.Add(this._exportButton);
       this.buttonsRow.Dock = System.Windows.Forms.DockStyle.Fill;
       this.buttonsRow.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
@@ -278,8 +306,6 @@ namespace Velum.UI.AssemblyRegistry
       this.Controls.Add(this.root);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-      this.MaximizeBox = false;
-      this.MinimizeBox = false;
       this.Name = "VelumBomExchangeForm";
       this.ShowInTaskbar = false;
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
