@@ -640,8 +640,6 @@ namespace Velum.SolidHomeostasis
 
       NotifyPartGeometryModifiedForCurrentDocument();
       VelumSolidProbeRefreshPlanner.MarkStale(ModifyStaleCategories);
-      // Уведомляем планировщик о возможном изменении состава сборки
-      VelumProductRegistryIntegrityScheduler.NotifyAssemblyStructureChanged();
       return 0;
     }
 
@@ -793,8 +791,6 @@ namespace Velum.SolidHomeostasis
         return 0;
 
       VelumSolidProbeRefreshPlanner.MarkStale(SaveStaleCategories);
-      // При сохранении сборки всегда уведомляем о необходимости синхронизации состава
-      VelumProductRegistryIntegrityScheduler.NotifyAssemblyStructureChanged();
       // синхронизация зеркал в реестре
       VelumProductRegistryExportMetaSync.TrySyncStampsAfterSave(_assy as ModelDoc2);
 
@@ -901,6 +897,10 @@ namespace Velum.SolidHomeostasis
               VelumSolidWorksSaveFileNameHelper.IsNativeSavePath(fileName, nativeExtension))
           {
             Velum.UI.AssemblyRegistry.VelumAssemblyBomMirrorCoordinator.EnsureExternalIdProperty(modelDoc);
+            // ExternalId = финальное имя сохранённого файла, если поле пустое.
+            // После записи файла на диск: предложенное автопоиском имя оператор мог изменить.
+            Velum.UI.AssemblyRegistry.VelumAssemblyBomMirrorCoordinator
+                .FillExternalIdWithFileNameIfEmpty(modelDoc, fileName);
           }
         }
         catch

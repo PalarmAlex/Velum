@@ -647,6 +647,115 @@ namespace Velum.UI.AssemblyRegistry
     }
 
     /// <summary>
+    /// Заполнить <see cref="ExternalIdPropertyName"/> именем сохранённого файла,
+    /// если поле пустое. Вызывается из post-save: имя берётся из события сохранения,
+    /// то есть это финальное имя, под которым файл записан на диск (автоподстановка
+    /// имени могла быть изменена оператором в диалоге Save). Заполненное поле
+    /// не перезаписывается.
+    /// </summary>
+    /// <param name="modelDoc">Сохранённый документ (деталь или сборка).</param>
+    /// <param name="savePath">Путь сохранения (из события FileSavePostNotify).</param>
+    internal static void FillExternalIdWithFileNameIfEmpty(
+        ModelDoc2 modelDoc, string savePath)
+    {
+      if (modelDoc == null || string.IsNullOrWhiteSpace(savePath))
+        return;
+
+      try
+      {
+        string fileName;
+        try
+        {
+          fileName = Path.GetFileNameWithoutExtension(savePath).Trim();
+        }
+        catch
+        {
+          return;
+        }
+
+        if (string.IsNullOrEmpty(fileName))
+          return;
+
+        // Активная конфигурация — свойство может быть как на вкладке конфигурации,
+        // так и на вкладке документа (см. EnsureExternalIdProperty).
+        string configName = string.Empty;
+        try
+        {
+          SolidWorks.Interop.sldworks.Configuration activeConfig =
+              modelDoc.GetActiveConfiguration() as SolidWorks.Interop.sldworks.Configuration;
+          configName = activeConfig?.Name ?? string.Empty;
+        }
+        catch
+        {
+        }
+
+        // Уже заполнено — не трогаем.
+        if (VelumRecipeSolidWorksCustomProperties.TryReadConfigThenDocument(
+                modelDoc,
+                configName,
+                ExternalIdPropertyName,
+                out string current,
+                out _) &&
+            !string.IsNullOrWhiteSpace(current))
+        {
+          return;
+        }
+
+        // Пишем на ту вкладку, где свойство существует.
+        CustomPropertyManager cpm = null;
+        if (!string.IsNullOrWhiteSpace(configName))
+        {
+          CustomPropertyManager configCpm =
+              VelumRecipeSolidWorksCustomProperties.TryGetManager(modelDoc, configName);
+          if (configCpm != null &&
+              VelumRecipeSolidWorksCustomProperties.TryPropertyExists(
+                  configCpm, ExternalIdPropertyName))
+          {
+            cpm = configCpm;
+          }
+        }
+
+        if (cpm == null)
+        {
+          CustomPropertyManager docCpm =
+              VelumRecipeSolidWorksCustomProperties.TryGetManager(modelDoc, "document");
+          if (docCpm == null ||
+              !VelumRecipeSolidWorksCustomProperties.TryPropertyExists(
+                  docCpm, ExternalIdPropertyName))
+          {
+            return;
+          }
+
+          cpm = docCpm;
+        }
+
+        // if_empty: свойство могло появиться/заполниться параллельно — не перезаписываем.
+        if (!VelumRecipeSolidWorksCustomProperties.TrySetValue(
+                cpm,
+                ExternalIdPropertyName,
+                fileName,
+                "if_empty",
+                "text",
+                out bool skipped,
+                out string message))
+        {
+          Logger.Warning(
+              "Velum bomMirror: заполнение ExternalId именем файла FAIL: " + message);
+          return;
+        }
+
+        if (!skipped)
+          Logger.Info(
+              "Velum bomMirror: ExternalId заполнен именем файла \"" + fileName + "\"");
+      }
+      catch (Exception ex)
+      {
+        Logger.Warning(
+            "Velum bomMirror: FillExternalIdWithFileNameIfEmpty: " + ex.Message);
+      }
+    }
+
+    /// <summary>
     /// Гарантировать наличие служебного свойства <see cref="ExternalIdPropertyName"/>
     /// в документе (по умолчанию пустое). Свойство нужно оператору для заполнения
     /// идентификатора связи с 1С; создаётся без участия пульсации. Вызывается из

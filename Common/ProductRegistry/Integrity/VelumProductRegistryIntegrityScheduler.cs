@@ -2,12 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using ISIDA.Common;
-using SolidWorks.Interop.sldworks;
-using SolidWorks.Interop.swconst;
 using Velum.Configuration;
 using Velum.SolidHomeostasis;
 using Velum.UI.AssemblyRegistry;
-using Xarial.XCad.SolidWorks;
 
 namespace Velum.UI.ProductRegistry
 {
@@ -23,12 +20,16 @@ namespace Velum.UI.ProductRegistry
   /// не запускайте сканеры вручную при открытом документе — это оставляет устаревшие метрики
   /// и приводит к багам (см. <see cref="NotifyOpenDocumentsScopeChanged"/>).
   /// </para>
-  /// <para>
-  /// При активном документе на heavy-тике выполняется только Name/ExportMeta sync;
-  /// сканеры проблем реестра на паузе до закрытия всех документов.
-  /// Счётчик пульсов без активного документа сбрасывается при появлении ActiveDoc;
-  /// первый флот-тик — через N таких пульсов, далее каждые N.
-  /// </para>
+   /// <para>
+   /// Пульсовый такт <b>не выполняет</b> тяжёлой COM-работы: дерево активной сборки
+   /// не обходим, реестр по открытым документам (Name/ExportMeta sync) на пульсе
+   /// не синхронизируем. Синхронизация открытых документов выполняется только на
+   /// событиях SW (FileSavePostNotify, OnActiveModelDocChangeNotify) и по кнопке
+   /// «Обновить свойства» формы реестра. Сканеры проблем реестра работают в
+   /// closed-области (нет открытых документов) в фоновых ThreadPool-тиках.
+   /// Счётчик пульсов без активного документа сбрасывается при появлении ActiveDoc;
+   /// первый флот-тик — через N таких пульсов, далее каждые N.
+   /// </para>
   /// <para>
   /// Каждый сканер копит результат прохода в pending и держит курсор
   /// (<c>searchCursor</c>). Тик работает <b>непрерывно</b> до следующего тяжёлого
@@ -64,8 +65,6 @@ namespace Velum.UI.ProductRegistry
     private static int _pdfCursor;
     /// <summary>Пульсы подряд без активного документа SW (сброс при ActiveDoc).</summary>
     private static int _closedScopePulseCount;
-    /// <summary>Пульсы подряд при ActiveDoc (только Name/ExportMeta sync, без скана проблем).</summary>
-    private static int _openScopePulseCount;
     /// <summary>1 — открыт хотя бы один документ SW; сканеры проблем реестра не работают.</summary>
     private static int _openDocumentsScopeActive;
     private static bool _brokenPassActive;
@@ -86,13 +85,6 @@ namespace Velum.UI.ProductRegistry
     /// должен начинаться с №1, а не продолжать общий счётчик тиков.
     /// </summary>
     private static bool _scanPassInProgress;
-    /// <summary>
-    /// Количество компонентов активной сборки (GetComponents(false).Length).
-    /// Используется для оптимизации: если количество не изменилось — пропускаем
-    /// тяжёлую синхронизацию NameSync/ExportMetaSync на каждом N-м пульсе.
-    /// -1 — сборка не открыта или количество не инициализировано.
-    /// </summary>
-    private static int _assemblyComponentCount = -1;
 
     /// <summary>Вызывается при изменении состояния фонового сканирования реестра.</summary>
     internal static event Action ScanStateChanged;
@@ -172,9 +164,6 @@ namespace Velum.UI.ProductRegistry
     /// <summary>Число пульсов подряд без активного документа.</summary>
     internal static int ClosedScopePulseCount => Volatile.Read(ref _closedScopePulseCount);
 
-    /// <summary>Число пульсов подряд с активным документом.</summary>
-    internal static int OpenScopePulseCount => Volatile.Read(ref _openScopePulseCount);
-
     /// <summary>Период тяжёлых пульсов (сканирование раз в N пульсов).</summary>
     internal static int HeavyMetricsPulsePeriod
     {
@@ -215,17 +204,6 @@ namespace Velum.UI.ProductRegistry
       Interlocked.Exchange(ref _reloadRequested, 1);
     }
 
-    /// <summary>
-    /// Уведомить о возможном изменении состава активной сборки.
-    /// Сбрасывает счётчик компонентов, чтобы на следующем пульсе выполнилась
-    /// полная синхронизация NameSync/ExportMetaSync.
-    /// Вызывать из VelumSolidWorksEventsConnector при событиях Modify/Save сборки.
-    /// </summary>
-    internal static void NotifyAssemblyStructureChanged()
-    {
-      Volatile.Write(ref _assemblyComponentCount, -1);
-    }
-
     private static void RaiseScanStateChanged()
     {
       try
@@ -234,31 +212,6 @@ namespace Velum.UI.ProductRegistry
       }
       catch
       {
-      }
-    }
-
-    /// <summary>
-    /// Получить количество компонентов активной сборки (GetComponents(false)).
-    /// Возвращает -1, если активный документ не сборка или ошибка.
-    /// </summary>
-    private static int GetActiveAssemblyComponentCount()
-    {
-      try
-      {
-        ModelDoc2 active = VelumSolidEnvironmentBridge.TryGetSolidWorksApplication()?.Sw?.IActiveDoc2 as ModelDoc2;
-        if (active == null || !(active is AssemblyDoc))
-          return -1;
-
-        AssemblyDoc assyDoc = active as AssemblyDoc;
-        object[] components = assyDoc.GetComponents(false) as object[];
-        if (components == null)
-          return -1;
-
-        return components.Length;
-      }
-      catch
-      {
-        return -1;
       }
     }
 
@@ -437,6 +390,15 @@ namespace Velum.UI.ProductRegistry
     }
 
 
+    /// <summary>
+    /// Пульсовый такт: только счётчики и планирование фоновых тиков сканеров.
+    /// COM-дерево активной сборки не обходим, реестр по открытым документам
+    /// (Name/ExportMeta sync) на пульсе не синхронизируем — тяжёлая работа со
+    /// сборкой на каждый пульс подвешивала UI SolidWorks. Синхронизация открытых
+    /// документов выполняется на событиях SW (FileSavePostNotify,
+    /// OnActiveModelDocChangeNotify) и по кнопке «Обновить свойства» формы реестра.
+    /// Область open/closed отслеживается событиями (см. <see cref="NotifyOpenDocumentsScopeChanged"/>).
+    /// </summary>
     private static void OnPulseCompleted(int pulseNumber)
     {
       if (Interlocked.CompareExchange(ref _enabled, 1, 1) != 1)
@@ -448,96 +410,30 @@ namespace Velum.UI.ProductRegistry
       if (period < 1)
         period = 1;
 
-      VelumSolidEnvironmentBridge.RunOnTaskPaneUiThread(() =>
+      // Документ открыт: сканеры проблем реестра на паузе, синхронизация — на событиях SW.
+      if (IsOpenDocumentsScopeActive)
       {
-        HashSet<string> openPaths = null;
-        try
-        {
-          openPaths = VelumProductRegistryOpenDocumentsScope.TryCollectNormalizedOpenPaths();
-        }
-        catch (Exception ex)
-        {
-          Logger.Warning("Velum registry integrity open-docs: " + ex.Message);
-          openPaths = null;
-        }
+        Interlocked.Exchange(ref _closedScopePulseCount, 0);
+        return;
+      }
 
-        bool openScope = openPaths != null && openPaths.Count > 0;
-        SyncDocumentsScope(openScope);
+      int closedCount = Interlocked.Increment(ref _closedScopePulseCount);
+      RaiseScanStateChanged();
+      bool due = closedCount > 0 && (closedCount % period == 0);
+      if (!due)
+        return;
 
-        bool due;
-        if (openScope)
-        {
-          Interlocked.Exchange(ref _closedScopePulseCount, 0);
-          due = ShouldRunOpenScopeSyncTick(period);
-          if (!due)
-            return;
+      if (!QueueTick(null))
+      {
+        // Предыдущий тик ещё выполняется в фоновом потоке — не пропускаем работу,
+        // а сигнализируем ему уступить: он завершит текущий квант и сразу продолжит
+        // с сохранённых курсоров. Так сканирование идёт непрерывно, а пульс UI
+        // успевает проходить между квантами.
+        Interlocked.Exchange(ref _tickYieldRequested, 1);
+        return;
+      }
 
-          // Оптимизация: если активный документ — сборка, проверяем количество компонентов.
-          // Если количество не изменилось с последней синхронизации — пропускаем тяжёлую
-          // синхронизацию (Load + итерация по всем путям). Это устраняет перетрату ресурсов
-          // при работе со сборкой без изменений состава.
-          int currentCompCount = GetActiveAssemblyComponentCount();
-          if (currentCompCount >= 0)
-          {
-            // Сборка открыта: сравниваем количество компонентов
-            int expectedCount = Volatile.Read(ref _assemblyComponentCount);
-            if (expectedCount == currentCompCount && expectedCount >= 0)
-            {
-              // Количество не изменилось — пропускаем синхронизацию
-              return;
-            }
-
-            // Количество изменилось или сборка впервые — обновляем счётчик
-            Volatile.Write(ref _assemblyComponentCount, currentCompCount);
-          }
-          else
-          {
-            // Не сборка (деталь/чертёж) — сбрасываем счётчик компонентов
-            Volatile.Write(ref _assemblyComponentCount, -1);
-          }
-
-          try
-          {
-            ISwApplication swApp = VelumSolidEnvironmentBridge.TryGetSolidWorksApplication();
-            VelumProductRegistryNameSync.SyncOpenPathsFromDisk(swApp, openPaths);
-            VelumProductRegistryExportMetaSync.SyncOpenPathsFromDisk(swApp, openPaths);
-
-            // Обновляем счётчик компонентов после синхронизации (на случай, если сборка
-            // изменилась в процессе синхронизации)
-            if (currentCompCount >= 0)
-            {
-              int finalCompCount = GetActiveAssemblyComponentCount();
-              if (finalCompCount >= 0)
-                Volatile.Write(ref _assemblyComponentCount, finalCompCount);
-            }
-          }
-          catch (Exception ex)
-          {
-            Logger.Warning("Velum registry integrity open-docs sync: " + ex.Message);
-          }
-
-          return;
-        }
-
-        Interlocked.Exchange(ref _openScopePulseCount, 0);
-        int closedCount = Interlocked.Increment(ref _closedScopePulseCount);
-        RaiseScanStateChanged();
-        due = closedCount > 0 && (closedCount % period == 0);
-        if (!due)
-          return;
-
-        if (!QueueTick(openPaths))
-        {
-          // Предыдущий тик ещё выполняется в фоновом потоке — не пропускаем работу,
-          // а сигнализируем ему уступить: он завершит текущий квант и сразу продолжит
-          // с сохранённых курсоров. Так сканирование идёт непрерывно, а пульс UI
-          // успевает проходить между квантами.
-          Interlocked.Exchange(ref _tickYieldRequested, 1);
-          return;
-        }
-
-        RaiseScanStateChanged();
-      });
+      RaiseScanStateChanged();
     }
 
     /// <summary>
@@ -583,12 +479,6 @@ namespace Velum.UI.ProductRegistry
       return true;
     }
 
-    private static bool ShouldRunOpenScopeSyncTick(int period)
-    {
-      int n = Interlocked.Increment(ref _openScopePulseCount);
-      return n % period == 0;
-    }
-
     /// <summary>
     /// Переход closed ↔ open: abort discovery, полная очистка кэша проблем, сброс метрик.
     /// Сканеры проблем реестра работают только в closed-области (нет открытых документов SW).
@@ -605,10 +495,6 @@ namespace Velum.UI.ProductRegistry
         Volatile.Write(ref _openDocumentsScopeActive, openScope ? 1 : 0);
         AbortDiscoveryPassesUnlocked();
         ClearAllProblemCacheUnlocked();
-
-        // При переключении scope сбрасываем счётчик компонентов — следующая
-        // синхронизация выполнится принудительно для обновления данных.
-        Volatile.Write(ref _assemblyComponentCount, -1);
       }
 
       RaiseScanStateChanged();
