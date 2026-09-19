@@ -88,6 +88,28 @@ namespace Velum.UI.ProductRegistry
       }
     }
 
+    /// <summary>
+    /// Лёгкая проверка наличия активного документа SW: один вызов <c>IActiveDoc2</c>,
+    /// без обхода дерева сборки. true — активный документ есть; false — документов нет.
+    /// При недоступности COM консервативно true (область open не сбрасывается).
+    /// Вызывать с UI/COM-потока SolidWorks.
+    /// </summary>
+    internal static bool HasActiveDocument()
+    {
+      try
+      {
+        ISwApplication swApp = VelumSolidEnvironmentBridge.TryGetSolidWorksApplication();
+        if (swApp?.Sw == null)
+          return false;
+
+        return swApp.Sw.IActiveDoc2 != null;
+      }
+      catch
+      {
+        return true;
+      }
+    }
+
     private static bool IsAssemblyDocument(ModelDoc2 doc)
     {
       if (doc == null)

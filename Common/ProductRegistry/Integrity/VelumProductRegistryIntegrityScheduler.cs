@@ -25,11 +25,19 @@ namespace Velum.UI.ProductRegistry
    /// не обходим, реестр по открытым документам (Name/ExportMeta sync) на пульсе
    /// не синхронизируем. Синхронизация открытых документов выполняется только на
    /// событиях SW (FileSavePostNotify, OnActiveModelDocChangeNotify) и по кнопке
-   /// «Обновить свойства» формы реестра. Сканеры проблем реестра работают в
-   /// closed-области (нет открытых документов) в фоновых ThreadPool-тиках.
-   /// Счётчик пульсов без активного документа сбрасывается при появлении ActiveDoc;
-   /// первый флот-тик — через N таких пульсов, далее каждые N.
-   /// </para>
+    /// «Обновить свойства» формы реестра. Сканеры проблем реестра работают в
+    /// closed-области (нет открытых документов) в фоновых ThreadPool-тиках.
+    /// Счётчик пульсов без активного документа сбрасывается при появлении ActiveDoc;
+    /// первый флот-тик — через N таких пульсов, далее каждые N.
+    /// </para>
+    /// <para>
+    /// Область open/closed отслеживается событием <c>ActiveModelDocChangeNotify</c>
+    /// и синхронизируется при старте пульсации. Так как это событие <b>не приходит</b>
+    /// при закрытии последнего документа (нового активного нет), на каждом пульсе
+    /// в open-области выполняется лёгкая проверка наличия активного документа
+    /// (один вызов <c>IActiveDoc2</c>, без обхода дерева сборки): если документа нет,
+    /// область переводится в closed и сканирование возобновляется.
+    /// </para>
   /// <para>
   /// Каждый сканер копит результат прохода в pending и держит курсор
   /// (<c>searchCursor</c>). Тик работает <b>непрерывно</b> до следующего тяжёлого
@@ -100,6 +108,21 @@ namespace Velum.UI.ProductRegistry
       SyncEnabledFromPulse();
     }
 
+    /// <summary>
+    /// Отписаться от пульса ISIDA и сбросить флаг подписки. Вызывается перед
+    /// <c>VelumIsidaHost.Shutdown</c>: Dispose контекста ISIDA выполняет
+    /// <c>GlobalTimer.ClearSystems()</c>, который обнуляет делегаты событий таймера —
+    /// без сброса <see cref="_hooked"/> повторная подписка после перезагрузки ISIDA
+    /// (сохранение настроек) не выполнялась бы, и шедулер терял пульс до перезапуска SW.
+    /// </summary>
+    internal static void Detach()
+    {
+      GlobalTimer.OnPulseCompleted -= OnPulseCompleted;
+      GlobalTimer.PulsationStateChanged -= OnPulsationStateChanged;
+      Interlocked.Exchange(ref _hooked, 0);
+      Interlocked.Exchange(ref _enabled, 0);
+    }
+
     internal static void SyncEnabledFromPulse()
     {
       bool run = false;
@@ -116,7 +139,15 @@ namespace Velum.UI.ProductRegistry
       {
         int was = Interlocked.Exchange(ref _enabled, 1);
         if (was != 1)
+        {
           Interlocked.Exchange(ref _reloadRequested, 1);
+
+          // Синхронизировать область скана при старте пульсации: события
+          // ActiveModelDocChange могли не прийти (документы открыты до загрузки
+          // надстройки; последний документ закрыт при остановленной пульсации).
+          // Разовый вызов по команде пользователя — тяжёлая работа допустима (E10).
+          NotifyOpenDocumentsScopeChanged();
+        }
       }
       else
       {
@@ -411,7 +442,10 @@ namespace Velum.UI.ProductRegistry
         period = 1;
 
       // Документ открыт: сканеры проблем реестра на паузе, синхронизация — на событиях SW.
-      if (IsOpenDocumentsScopeActive)
+      // НО: ActiveModelDocChangeNotify не приходит при закрытии последнего документа
+      // (нового активного нет), и область могла застрять в open — лёгкая проверка
+      // наличия активного документа (один IActiveDoc2, без обхода дерева, E10).
+      if (IsOpenDocumentsScopeActive && !TrySyncClosedScopeIfNoActiveDocument())
       {
         Interlocked.Exchange(ref _closedScopePulseCount, 0);
         return;
@@ -434,6 +468,26 @@ namespace Velum.UI.ProductRegistry
       }
 
       RaiseScanStateChanged();
+    }
+
+    /// <summary>
+    /// Лёгкая проверка open-области на пульсе: <c>ActiveModelDocChangeNotify</c> не приходит
+    /// при закрытии последнего документа (нового активного нет), и область могла застрять в open.
+    /// Проверяется только наличие активного документа (<c>IActiveDoc2</c>) — без обхода дерева
+    /// сборки (E10). Возвращает true, если активного документа нет и область переведена в closed.
+    /// </summary>
+    private static bool TrySyncClosedScopeIfNoActiveDocument()
+    {
+      bool becameClosed = false;
+      VelumSolidEnvironmentBridge.RunOnTaskPaneUiThread(() =>
+      {
+        if (VelumProductRegistryOpenDocumentsScope.HasActiveDocument())
+          return;
+
+        SyncDocumentsScope(openScope: false);
+        becameClosed = true;
+      });
+      return becameClosed;
     }
 
     /// <summary>

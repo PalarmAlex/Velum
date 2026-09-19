@@ -276,6 +276,10 @@ namespace Velum.SolidHomeostasis
         return;
       GlobalTimer.OnPulseBeforeGomeostasis -= OnPulseBeforeGomeostasis;
       VelumEnginePulseBridge.Unhook();
+      // Dispose контекста ISIDA обнуляет делегаты GlobalTimer (ClearSystems) — шедулер
+      // целостности должен сбросить флаг подписки, иначе после перезагрузки ISIDA
+      // он не переподпишется на пульс и потеряет сканирование реестра.
+      VelumProductRegistryIntegrityScheduler.Detach();
       _hooked = false;
       VelumSolidWorksMetricsCache.Clear();
       VelumSolidEnvironmentGate.Clear();
