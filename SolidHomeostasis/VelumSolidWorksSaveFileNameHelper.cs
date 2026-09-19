@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using ISIDA.Common;
 using SolidWorks.Interop.sldworks;
 using Velum.ReactiveCore;
@@ -10,6 +11,35 @@ namespace Velum.SolidHomeostasis
   /// </summary>
   internal static class VelumSolidWorksSaveFileNameHelper
   {
+    /// <summary>
+    /// true, если <paramref name="fileName"/> — сохранение в нативный формат SolidWorks
+    /// (<paramref name="expectedExtension"/>), а не экспорт (DXF, PDF, STEP, DWG и т.п.).
+    /// События FileSaveNotify / FileSaveAsNotify2 / FileSavePostNotify приходят и на экспорт,
+    /// поэтому любые пост-обработчики, которые меняют документ (rebuild, CutList, запись
+    /// свойств, назначение материала), обязаны это фильтровать: иначе SolidWorks рвёт
+    /// собственный PropertyManager «Сохранить как» (у листовых деталей — страница настроек DXF).
+    /// Пустое имя или имя без расширения считается нативным сохранением (как в pre-save).
+    /// </summary>
+    internal static bool IsNativeSavePath(string fileName, string expectedExtension)
+    {
+      if (string.IsNullOrWhiteSpace(fileName))
+        return true;
+
+      try
+      {
+        string ext = Path.GetExtension(fileName.Trim());
+        if (string.IsNullOrEmpty(ext))
+          return true;
+
+        return string.Equals(ext, expectedExtension, StringComparison.OrdinalIgnoreCase);
+      }
+      catch
+      {
+        return true;
+      }
+    }
+
+
     /// <summary>
     /// Задаёт имя файла для следующего диалога сохранения активного документа.
     /// </summary>

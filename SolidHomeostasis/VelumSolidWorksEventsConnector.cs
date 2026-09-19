@@ -874,40 +874,12 @@ namespace Velum.SolidHomeostasis
     /// </summary>
     private static bool IsNativeDrawingSavePath(string fileName)
     {
-      if (string.IsNullOrWhiteSpace(fileName))
-        return true;
-
-      try
-      {
-        string ext = Path.GetExtension(fileName.Trim());
-        if (string.IsNullOrEmpty(ext))
-          return true;
-
-        return string.Equals(ext, ".slddrw", StringComparison.OrdinalIgnoreCase);
-      }
-      catch
-      {
-        return true;
-      }
+      return VelumSolidWorksSaveFileNameHelper.IsNativeSavePath(fileName, ".slddrw");
     }
 
     private static bool IsNativePartOrAssemblySavePath(string fileName, string expectedExtension)
     {
-      if (string.IsNullOrWhiteSpace(fileName))
-        return true;
-
-      try
-      {
-        string ext = Path.GetExtension(fileName.Trim());
-        if (string.IsNullOrEmpty(ext))
-          return true;
-
-        return string.Equals(ext, expectedExtension, StringComparison.OrdinalIgnoreCase);
-      }
-      catch
-      {
-        return true;
-      }
+      return VelumSolidWorksSaveFileNameHelper.IsNativeSavePath(fileName, expectedExtension);
     }
 
     private static int OnModelFileSavePostNotify(ModelDoc2 modelDoc, string fileName)
@@ -916,11 +888,17 @@ namespace Velum.SolidHomeostasis
       {
         // Служебное свойство связи с 1С — после сохранения, когда документ разблокирован.
         // Работает независимо от состояния пульсации. Только для деталей и сборок, не для чертежей.
+        // Пишем лишь при нативном сохранении: FileSavePostNotify приходит и на экспорт
+        // (Save As → DXF/PDF), а запись свойства в этот момент рвёт PropertyManager экспорта.
         try
         {
           int docType = modelDoc.GetType();
-          bool isDrawing = docType == (int)swDocumentTypes_e.swDocDRAWING;
-          if (!isDrawing)
+          string nativeExtension =
+              docType == (int)swDocumentTypes_e.swDocPART ? ".sldprt" :
+              docType == (int)swDocumentTypes_e.swDocASSEMBLY ? ".sldasm" : null;
+
+          if (nativeExtension != null &&
+              VelumSolidWorksSaveFileNameHelper.IsNativeSavePath(fileName, nativeExtension))
           {
             Velum.UI.AssemblyRegistry.VelumAssemblyBomMirrorCoordinator.EnsureExternalIdProperty(modelDoc);
           }

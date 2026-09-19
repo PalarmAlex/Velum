@@ -18,6 +18,13 @@ namespace Velum.SolidHomeostasis
       if (string.IsNullOrWhiteSpace(fullPath))
         return;
 
+      // Экспорт (Save As → DXF/PDF/STEP) тоже шлёт FileSavePostNotify. Назначение материала
+      // делает SetMaterialPropertyName2 + EditRebuild3 — в момент открытого PropertyManager
+      // настроек экспорта SolidWorks закрывает его. Назначаем только при нативном .sldprt.
+      if (!VelumSolidWorksSaveFileNameHelper.IsNativeSavePath(fullPath, ".sldprt"))
+        return;
+
+
       string directory = VelumMaterialSequenceState.TryGetDocumentDirectory(modelDoc);
       if (string.IsNullOrWhiteSpace(directory))
         return;

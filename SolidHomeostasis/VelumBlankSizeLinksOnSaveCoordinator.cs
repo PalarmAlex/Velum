@@ -28,19 +28,40 @@ namespace Velum.SolidHomeostasis
       }
 
       string fullPath = ResolveSavedPath(modelDoc, saveFileNameHint);
+
+      // FileSavePostNotify приходит и на экспорт (Save As → DXF/PDF/STEP). Для листовой детали
+      // TryEnsure делает ForceRebuild3 + UpdateCutList + запись свойств, и это рвёт
+      // PropertyManager настроек экспорта DXF («мигает и схлопывается»). Чиним ссылки
+      // только когда реально сохраняется нативный .sldprt.
+      if (!VelumSolidWorksSaveFileNameHelper.IsNativeSavePath(fullPath, ".sldprt"))
+        return;
+
+      // Как рецепт ensure_blank_size_links: active + repair. Синхронно на потоке UI панели:
+      // FileSavePostNotify — после записи файла на диск, менять документ здесь безопасно.
+      // Откладывать через BeginInvoke нельзя: задача доедет до момента, когда пользователь
+      // уже открыл PropertyManager «Сохранить как», и схлопнет его.
       VelumBlankSizePropertyLinksService.EnsureStatus status =
           VelumBlankSizePropertyLinksService.EnsureStatus.Failed;
       string message = string.Empty;
 
-      // Как рецепт ensure_blank_size_links: active + repair.
-      VelumSolidEnvironmentBridge.RunOnTaskPaneUiThread(() =>
+      try
       {
-        status = VelumBlankSizePropertyLinksService.TryEnsure(
-            modelDoc,
-            "repair",
-            "active",
-            out message);
-      });
+        VelumSolidEnvironmentBridge.RunOnTaskPaneUiThread(() =>
+        {
+          status = VelumBlankSizePropertyLinksService.TryEnsure(
+              modelDoc,
+              "repair",
+              "active",
+              out message);
+        });
+      }
+      catch (Exception ex)
+      {
+        Logger.Warning(
+            "Velum blank-size links after save FAIL path=\"" + (fullPath ?? string.Empty) +
+            "\" " + ex.Message);
+        return;
+      }
 
       switch (status)
       {
