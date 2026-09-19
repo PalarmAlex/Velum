@@ -60,21 +60,13 @@ namespace Velum.UI
 
       _lblDocument.Text = "Деталь: " + TryGetDocumentTitle(modelDoc);
       if (_isEmptyDocument)
-      {
         _lblMode.Text = "Режим: документ пустой — нет эскизов и твёрдых тел.";
-      }
       else if (_isSheetMetal)
-      {
         _lblMode.Text = "Режим: листовая деталь — экспорт развёртки.";
-      }
       else if (_isSketchOnly)
-      {
         _lblMode.Text = "Режим: эскиз — экспорт первого эскиза в дереве построения.";
-      }
       else
-      {
         _lblMode.Text = "Режим: проекция детали (Front / Top / Right / Back / Bottom / Left).";
-      }
 
       _patternBox.Text = VelumDxfFileNameHelper.GetInitialNamePattern() ?? string.Empty;
       _patternBox.TextChanged += (s, e) => UpdateResolvedPreview();
@@ -114,6 +106,15 @@ namespace Velum.UI
       }
 
       UpdateResolvedPreview();
+
+      AcceptButton = _btnExport;
+      // Фокус на кнопку при открытии, чтобы Enter сразу сработал.
+      Shown += (s, e) =>
+      {
+        _btnExport.Focus();
+        // На всякий случай: если фокус "убежал" на TextBox при первом показе.
+        BeginInvoke(new Action(() => _btnExport.Focus()));
+      };
     }
 
     private void SetInitialProjectionView(VelumDxfProjectionView projectionView)

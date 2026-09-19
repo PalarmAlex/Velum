@@ -1,11 +1,11 @@
-﻿using System.Drawing;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Velum.UI.AssemblyRegistry
 {
   /// <summary>
-  /// Форма диалога запуска формирования CSV-файла обмена с 1C.
-  /// Содержит поле каталога обмена и кнопку запуска рефлекса.
+  /// Форма диалога экспорта BOM-данных в 1C: карточки номенклатуры
+  /// и структура состава (вкладки), поле каталога обмена и кнопка экспорта.
   /// </summary>
   internal sealed partial class VelumBomExchangeForm
   {
@@ -16,12 +16,21 @@ namespace Velum.UI.AssemblyRegistry
     private System.Windows.Forms.Button _exportButton;
     private System.Windows.Forms.Button _settingsButton;
     private System.Windows.Forms.Button _layoutButton;
+    private System.Windows.Forms.TabControl _tabs;
+    private System.Windows.Forms.TabPage _cardsTab;
+    private System.Windows.Forms.TabPage _structureTab;
     private System.Windows.Forms.ListView _listView;
     private System.Windows.Forms.ColumnHeader _colTypeDocs;
     private System.Windows.Forms.ColumnHeader _colExternalId;
     private System.Windows.Forms.ColumnHeader _colDesignation;
     private System.Windows.Forms.ColumnHeader _colName;
     private System.Windows.Forms.ColumnHeader _colQuantity;
+    private System.Windows.Forms.ListView _structureListView;
+    private System.Windows.Forms.ColumnHeader _colStructParent;
+    private System.Windows.Forms.ColumnHeader _colStructChild;
+    private System.Windows.Forms.ColumnHeader _colStructConfig;
+    private System.Windows.Forms.ColumnHeader _colStructQty;
+    private System.Windows.Forms.ColumnHeader _colStructAction;
     private System.Windows.Forms.ToolTip _toolTip;
 
     protected override void Dispose(bool disposing)
@@ -49,12 +58,21 @@ namespace Velum.UI.AssemblyRegistry
       this._settingsButton = new System.Windows.Forms.Button();
       this._layoutButton = new System.Windows.Forms.Button();
       this._toolTip = new System.Windows.Forms.ToolTip(this.components);
+      this._tabs = new System.Windows.Forms.TabControl();
+      this._cardsTab = new System.Windows.Forms.TabPage();
+      this._structureTab = new System.Windows.Forms.TabPage();
       this._listView = new System.Windows.Forms.ListView();
       this._colTypeDocs = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this._colExternalId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this._colDesignation = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this._colName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this._colQuantity = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this._structureListView = new System.Windows.Forms.ListView();
+      this._colStructParent = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this._colStructChild = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this._colStructConfig = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this._colStructQty = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this._colStructAction = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.root = new System.Windows.Forms.TableLayoutPanel();
       this.titleLabel = new System.Windows.Forms.Label();
       this.descLabel = new System.Windows.Forms.Label();
@@ -63,6 +81,9 @@ namespace Velum.UI.AssemblyRegistry
       this.noteLabel = new System.Windows.Forms.Label();
       this.buttonsRow = new System.Windows.Forms.FlowLayoutPanel();
       this.cancelButton = new System.Windows.Forms.Button();
+      this._tabs.SuspendLayout();
+      this._cardsTab.SuspendLayout();
+      this._structureTab.SuspendLayout();
       this.root.SuspendLayout();
       this.folderRow.SuspendLayout();
       this.buttonsRow.SuspendLayout();
@@ -77,7 +98,7 @@ namespace Velum.UI.AssemblyRegistry
       this._folderBox.ReadOnly = true;
       this._folderBox.Size = new System.Drawing.Size(313, 20);
       this._folderBox.TabIndex = 1;
-      this._toolTip.SetToolTip(this._folderBox, "Каталог, в который сохраняется CSV-файл обмена с 1C.");
+      this._toolTip.SetToolTip(this._folderBox, "Каталог, в который сохраняются CSV-файлы обмена с 1C.");
       // 
       // _browseButton
       // 
@@ -101,7 +122,7 @@ namespace Velum.UI.AssemblyRegistry
       this._exportButton.Size = new System.Drawing.Size(75, 23);
       this._exportButton.TabIndex = 2;
       this._exportButton.Text = "Экспорт";
-      this._toolTip.SetToolTip(this._exportButton, "Сформировать CSV-файл обмена с 1C в выбранном каталоге.");
+      this._toolTip.SetToolTip(this._exportButton, "Сформировать CSV-файлы обмена с 1C (карточки и структура) в выбранном каталоге.");
       this._exportButton.UseVisualStyleBackColor = true;
       this._exportButton.Click += new System.EventHandler(this.OnExportClick);
       // 
@@ -125,7 +146,7 @@ namespace Velum.UI.AssemblyRegistry
       this._layoutButton.Size = new System.Drawing.Size(75, 23);
       this._layoutButton.TabIndex = 3;
       this._layoutButton.Text = "Поля…";
-      this._toolTip.SetToolTip(this._layoutButton, "Настроить состав, порядок и заголовки полей выгрузки");
+      this._toolTip.SetToolTip(this._layoutButton, "Настроить состав, порядок и заголовки полей выгрузки карточек");
       this._layoutButton.UseVisualStyleBackColor = true;
       this._layoutButton.Click += new System.EventHandler(this.OnLayoutSettingsClick);
       // 
@@ -135,6 +156,39 @@ namespace Velum.UI.AssemblyRegistry
       this._toolTip.InitialDelay = 400;
       this._toolTip.ReshowDelay = 200;
       this._toolTip.ShowAlways = true;
+      // 
+      // _tabs
+      // 
+      this._tabs.Controls.Add(this._cardsTab);
+      this._tabs.Controls.Add(this._structureTab);
+      this._tabs.Dock = System.Windows.Forms.DockStyle.Fill;
+      this._tabs.Location = new System.Drawing.Point(15, 99);
+      this._tabs.Name = "_tabs";
+      this._tabs.SelectedIndex = 0;
+      this._tabs.Size = new System.Drawing.Size(490, 180);
+      this._tabs.TabIndex = 5;
+      // 
+      // _cardsTab
+      // 
+      this._cardsTab.Controls.Add(this._listView);
+      this._cardsTab.Location = new System.Drawing.Point(4, 22);
+      this._cardsTab.Name = "_cardsTab";
+      this._cardsTab.Padding = new System.Windows.Forms.Padding(3);
+      this._cardsTab.Size = new System.Drawing.Size(482, 154);
+      this._cardsTab.TabIndex = 0;
+      this._cardsTab.Text = "Карточки";
+      this._cardsTab.UseVisualStyleBackColor = true;
+      // 
+      // _structureTab
+      // 
+      this._structureTab.Controls.Add(this._structureListView);
+      this._structureTab.Location = new System.Drawing.Point(4, 22);
+      this._structureTab.Name = "_structureTab";
+      this._structureTab.Padding = new System.Windows.Forms.Padding(3);
+      this._structureTab.Size = new System.Drawing.Size(482, 154);
+      this._structureTab.TabIndex = 1;
+      this._structureTab.Text = "Структура";
+      this._structureTab.UseVisualStyleBackColor = true;
       // 
       // _listView
       // 
@@ -149,11 +203,11 @@ namespace Velum.UI.AssemblyRegistry
       this._listView.GridLines = true;
       this._listView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this._listView.HideSelection = false;
-      this._listView.Location = new System.Drawing.Point(15, 99);
+      this._listView.Location = new System.Drawing.Point(3, 3);
       this._listView.Name = "_listView";
-      this._listView.Size = new System.Drawing.Size(490, 180);
-      this._listView.TabIndex = 5;
-      this._toolTip.SetToolTip(this._listView, "Строки, которые попадут в CSV. Состав колонок настраивается кнопкой «Поля…».");
+      this._listView.Size = new System.Drawing.Size(476, 148);
+      this._listView.TabIndex = 0;
+      this._toolTip.SetToolTip(this._listView, "Карточки, которые попадут в 1C_update_*.csv. Состав колонок настраивается кнопкой «Поля…».");
       this._listView.UseCompatibleStateImageBehavior = false;
       this._listView.View = System.Windows.Forms.View.Details;
       // 
@@ -182,6 +236,52 @@ namespace Velum.UI.AssemblyRegistry
       this._colQuantity.Text = "Quantity";
       this._colQuantity.Width = 70;
       // 
+      // _structureListView
+      // 
+      this._structureListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this._colStructParent,
+            this._colStructChild,
+            this._colStructConfig,
+            this._colStructQty,
+            this._colStructAction});
+      this._structureListView.Dock = System.Windows.Forms.DockStyle.Fill;
+      this._structureListView.FullRowSelect = true;
+      this._structureListView.GridLines = true;
+      this._structureListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+      this._structureListView.HideSelection = false;
+      this._structureListView.Location = new System.Drawing.Point(3, 3);
+      this._structureListView.Name = "_structureListView";
+      this._structureListView.Size = new System.Drawing.Size(476, 148);
+      this._structureListView.TabIndex = 0;
+      this._toolTip.SetToolTip(this._structureListView, "Строки состава, которые попадут в 1C_bom_*.csv (операции add/update/delete).");
+      this._structureListView.UseCompatibleStateImageBehavior = false;
+      this._structureListView.View = System.Windows.Forms.View.Details;
+      // 
+      // _colStructParent
+      // 
+      this._colStructParent.Text = "Родитель";
+      this._colStructParent.Width = 140;
+      // 
+      // _colStructChild
+      // 
+      this._colStructChild.Text = "Компонент";
+      this._colStructChild.Width = 140;
+      // 
+      // _colStructConfig
+      // 
+      this._colStructConfig.Text = "Конфигурация";
+      this._colStructConfig.Width = 90;
+      // 
+      // _colStructQty
+      // 
+      this._colStructQty.Text = "Кол-во";
+      this._colStructQty.Width = 50;
+      // 
+      // _colStructAction
+      // 
+      this._colStructAction.Text = "Действие";
+      this._colStructAction.Width = 70;
+      // 
       // root
       // 
       this.root.ColumnCount = 1;
@@ -189,7 +289,7 @@ namespace Velum.UI.AssemblyRegistry
       this.root.Controls.Add(this.titleLabel, 0, 0);
       this.root.Controls.Add(this.descLabel, 0, 1);
       this.root.Controls.Add(this.folderRow, 0, 2);
-      this.root.Controls.Add(this._listView, 0, 3);
+      this.root.Controls.Add(this._tabs, 0, 3);
       this.root.Controls.Add(this.noteLabel, 0, 4);
       this.root.Controls.Add(this.buttonsRow, 0, 5);
       this.root.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -227,8 +327,7 @@ namespace Velum.UI.AssemblyRegistry
       this.descLabel.Name = "descLabel";
       this.descLabel.Size = new System.Drawing.Size(496, 17);
       this.descLabel.TabIndex = 1;
-      this.descLabel.Text = "Формирует CSV-файл с расхождениями состава и свойств компонентов для выгрузки в 1" +
-    "C.";
+      this.descLabel.Text = "Формирует CSV-файлы обмена с 1C: карточки номенклатуры и структура состава сборок.";
       // 
       // folderRow
       // 
@@ -310,6 +409,9 @@ namespace Velum.UI.AssemblyRegistry
       this.ShowInTaskbar = false;
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "Экспорт BOM в 1C";
+      this._tabs.ResumeLayout(false);
+      this._cardsTab.ResumeLayout(false);
+      this._structureTab.ResumeLayout(false);
       this.root.ResumeLayout(false);
       this.root.PerformLayout();
       this.folderRow.ResumeLayout(false);
@@ -332,4 +434,3 @@ namespace Velum.UI.AssemblyRegistry
     private Button cancelButton;
   }
 }
-

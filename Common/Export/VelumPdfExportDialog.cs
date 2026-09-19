@@ -60,6 +60,8 @@ namespace Velum.UI
     private void OnFormShown(object sender, EventArgs e)
     {
       FitFormHeightToContent();
+      _btnExport.Focus();
+      BeginInvoke(new Action(() => _btnExport.Focus()));
     }
 
     private void OnBrowseFolder(object sender, EventArgs e)

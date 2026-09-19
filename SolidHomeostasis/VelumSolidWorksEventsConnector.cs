@@ -920,6 +920,9 @@ namespace Velum.SolidHomeostasis
         if (string.Equals(ext, ".sldasm", StringComparison.OrdinalIgnoreCase))
         {
           VelumAssemblyBomMirrorCoordinator.TryMirrorSavedAssembly(modelDoc, fileName);
+          // BOM structure: зеркалирование состава (только прямые дети) — строго
+          // после карточек: для строк структуры нужны ExternalId детей из bomMirror.json.
+          VelumAssemblyBomStructureCoordinator.TryMirrorSavedAssemblyStructure(modelDoc, fileName);
         }
         else if (string.Equals(ext, ".sldprt", StringComparison.OrdinalIgnoreCase))
         {

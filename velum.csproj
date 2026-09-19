@@ -381,11 +381,15 @@
     </Compile>
     <Compile Include="Common\AssemblyRegistry\VelumAssemblyRegistryFormHost.cs" />
     <Compile Include="Common\AssemblyRegistry\VelumAssemblyBomMirrorStore.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumAssemblyBomStructureCoordinator.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumBomChangeLogStore.cs" />
     <Compile Include="Common\AssemblyRegistry\VelumAssemblyBomTrackedPropertiesConfig.cs" />
     <Compile Include="Common\AssemblyRegistry\VelumAssemblyBomMirrorCoordinator.cs" />
     <Compile Include="Common\AssemblyRegistry\VelumAssemblyBomDiffProbe.cs" />
     <Compile Include="Common\AssemblyRegistry\VelumBomExchangeLayout.cs" />
     <Compile Include="Common\AssemblyRegistry\VelumBomExchangeRowProjector.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumBomStructureStore.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumBomExchangeStructureProjector.cs" />
     <Compile Include="Common\AssemblyRegistry\VelumBomExchangeForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -11,14 +12,21 @@ using Velum.UI;
 namespace Velum.UI.AssemblyRegistry
 {
   /// <summary>
-  /// Форма диалога запуска формирования CSV-файла обмена с 1C.
-  /// Содержит поле каталога обмена и кнопку запуска рефлекса.
+  /// Форма диалога запуска формирования CSV-файлов обмена с 1C:
+  /// вкладка «Карточки» (расхождения свойств компонентов) и вкладка
+  /// «Структура» (операции add/update/delete по строкам состава).
   /// </summary>
   internal sealed partial class VelumBomExchangeForm : Form
   {
-    /// <summary>Включённые колонки выгрузки (в порядке следования) — из bomExchangeLayout.json.</summary>
+    /// <summary>Включённые колонки выгрузки карточек (в порядке следования) — из bomExchangeLayout.json.</summary>
     private List<VelumBomExchangeColumnDef> _enabledColumns =
         new List<VelumBomExchangeColumnDef>();
+
+    /// <summary>Число карточек к выгрузке (для статус-строки).</summary>
+    private int _cardCount;
+
+    /// <summary>Число строк состава к выгрузке (для статус-строки).</summary>
+    private int _structureCount;
 
     public VelumBomExchangeForm()
     {
@@ -31,9 +39,10 @@ namespace Velum.UI.AssemblyRegistry
       UpdateExportButtonState();
       _folderBox.TextChanged += (s, e) => UpdateExportButtonState();
 
-      // Построить колонки списка из настроек выгрузки, затем загрузить строки.
+      // Построить колонки списка карточек из настроек выгрузки, затем загрузить строки.
       RebuildColumns();
       LoadDiscrepancyList();
+      LoadStructureList();
     }
 
     private void UpdateExportButtonState()
@@ -53,7 +62,7 @@ namespace Velum.UI.AssemblyRegistry
     }
 
     /// <summary>
-    /// Перестроить колонки списка из настроек выгрузки (bomExchangeLayout.json).
+    /// Перестроить колонки списка карточек из настроек выгрузки (bomExchangeLayout.json).
     /// </summary>
     private void RebuildColumns()
     {
@@ -80,7 +89,7 @@ namespace Velum.UI.AssemblyRegistry
     }
 
     /// <summary>
-    /// Загрузить список расхождений, доступных для экспорта, в список.
+    /// Загрузить список расхождений карточек, доступных для экспорта.
     /// </summary>
     private void LoadDiscrepancyList()
     {
@@ -121,16 +130,95 @@ namespace Velum.UI.AssemblyRegistry
           _listView.EndUpdate();
         }
 
-        noteLabel.Text = entries.Count == 0
-            ? "Экспортируемые строки не обнаружены."
-            : $"Компоненты без заполненного ExternalId будут пропущены при экспорте. Найдено строк для экспорта: {entries.Count}.";
+        _cardCount = entries.Count;
       }
       catch (Exception ex)
       {
         Logger.Warning("Velum bomExchange: unable to load discrepancy list: " + ex.Message);
         _listView.Items.Clear();
-        noteLabel.Text = "Ошибка загрузки списка: " + ex.Message;
+        _cardCount = 0;
       }
+
+      UpdateNoteLabel();
+    }
+
+    /// <summary>
+    /// Загрузить список строк состава, ожидающих выгрузки в 1С.
+    /// Отбор — общий с CSV-выгрузкой (<see cref="VelumBomExchangeStructureProjector"/>):
+    /// список в форме совпадает со строками 1C_bom_*.csv.
+    /// </summary>
+    private void LoadStructureList()
+    {
+      try
+      {
+        var structureStore = new VelumBomStructureStore();
+        structureStore.Load();
+        var mirrorStore = new VelumAssemblyBomMirrorStore();
+        mirrorStore.Load();
+        var changeStore = new VelumBomChangeLogStore();
+        changeStore.Load();
+
+        VelumBomExchangeStructureProjector.Selection selection =
+            VelumBomExchangeStructureProjector.Select(structureStore, mirrorStore, changeStore);
+
+        List<VelumBomChangeRecord> pending = selection.Records
+            .OrderBy(r => r.ParentExternalId, StringComparer.Ordinal)
+            .ThenBy(r => r.ChildExternalId, StringComparer.Ordinal)
+            .ThenBy(r => r.TimestampUtc)
+            .ToList();
+
+        _structureListView.BeginUpdate();
+        try
+        {
+          _structureListView.Items.Clear();
+          foreach (VelumBomChangeRecord record in pending)
+          {
+            // Обозначение родителя: из структуры, fallback — ExternalId.
+            string parentDesignation = record.ParentExternalId;
+            VelumBomStructureEntry structureEntry;
+            if (selection.StructuresByParentExternalId.TryGetValue(
+                    record.ParentExternalId, out structureEntry) &&
+                !string.IsNullOrWhiteSpace(structureEntry.ParentDesignation))
+              parentDesignation = structureEntry.ParentDesignation;
+
+            // Обозначение компонента: из зеркала карточек, fallback — ExternalId.
+            string childDesignation = record.ChildExternalId;
+            VelumAssemblyBomMirrorEntry childMirror = mirrorStore.GetEntry(record.ChildIdentity);
+            if (childMirror != null && !string.IsNullOrWhiteSpace(childMirror.Designation))
+              childDesignation = childMirror.Designation;
+
+            var item = new ListViewItem(parentDesignation);
+            item.SubItems.Add(childDesignation);
+            item.SubItems.Add(record.ChildConfiguration ?? string.Empty);
+            item.SubItems.Add(record.Quantity.ToString(CultureInfo.InvariantCulture));
+            item.SubItems.Add(VelumBomChangeLogStore.RenderAction(record.Action));
+            _structureListView.Items.Add(item);
+          }
+        }
+        finally
+        {
+          _structureListView.EndUpdate();
+        }
+
+        _structureCount = pending.Count;
+      }
+      catch (Exception ex)
+      {
+        Logger.Warning("Velum bomExchange: unable to load structure list: " + ex.Message);
+        _structureListView.Items.Clear();
+        _structureCount = 0;
+      }
+
+      UpdateNoteLabel();
+    }
+
+    /// <summary>Обновить статус-строку: сколько карточек и строк состава к выгрузке.</summary>
+    private void UpdateNoteLabel()
+    {
+      noteLabel.Text =
+          "Карточек к выгрузке: " + _cardCount +
+          ". Строк состава: " + _structureCount + "." +
+          " Компоненты без заполненного ExternalId будут пропущены при экспорте.";
     }
 
     private void OnSettingsClick(object sender, EventArgs e)
@@ -142,7 +230,7 @@ namespace Velum.UI.AssemblyRegistry
     }
 
     /// <summary>
-    /// Открыть окно настройки полей выгрузки, затем перестроить список.
+    /// Открыть окно настройки полей выгрузки карточек, затем перестроить список.
     /// </summary>
     private void OnLayoutSettingsClick(object sender, EventArgs e)
     {
@@ -203,8 +291,9 @@ namespace Velum.UI.AssemblyRegistry
               Text,
               MessageBoxButtons.OK,
               MessageBoxIcon.Information);
-          // previousHash обновлён внутри TryExecuteBomExchangeExport.
+          // previousHash и журнал обновлены внутри TryExecuteBomExchangeExport.
           LoadDiscrepancyList();
+          LoadStructureList();
           this.DialogResult = DialogResult.OK;
           Close();
         }
