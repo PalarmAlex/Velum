@@ -11,7 +11,10 @@ namespace Velum.UI.ProductRegistry
 {
   /// <summary>
   /// Хранилище реестра документов: JSON в каталоге <see cref="VelumAppConfig.ProductRegistryFolderPath"/>.
-  /// Ключ учёта файла — нормализованный абсолютный путь; виртуальные папки — смысловая раскладка.
+  /// Ключ учёта файла — путь, относительный корневому каталогу документов
+  /// (<see cref="VelumAppConfig.DocumentRootPath"/>; при пустой настройке — абсолютный);
+  /// поиск/сравнение записей — по полному пути (<see cref="NormalizeFilePathKey"/>).
+  /// Виртуальные папки — смысловая раскладка.
   /// Для ~10k записей данные держатся в памяти; выборка по каталогу — O(1) через индекс FolderId.
   /// </summary>
   internal sealed class VelumProductRegistryStore
@@ -473,7 +476,9 @@ namespace Velum.UI.ProductRegistry
 
       try
       {
-        path = Path.GetFullPath(path);
+        // Относительное значение (срез по префиксу корневого каталога) достраивается
+        // до GetFullPath — иначе ключ развернётся от текущего каталога процесса.
+        path = Path.GetFullPath(Velum.ReactiveCore.Export.VelumRelativeDocumentPathResolver.ToFull(path));
       }
       catch
       {
@@ -885,9 +890,14 @@ namespace Velum.UI.ProductRegistry
     {
       item.Designation = (item.Designation ?? string.Empty).Trim();
       item.Name = (item.Name ?? string.Empty).Trim();
-      // Путь сразу в каноническом виде — чтобы knownPaths при индексации совпадал с JSON.
+      // Ключ FilePath хранится относительным корневому каталогу документов
+      // (items.json переносим между машинами: дома по VPN путь по IP, на работе — буква диска).
+      // Сравнение/поиск записей — через NormalizeFilePathKey (достройка до полного пути).
+      // При пустой настройке корня ToStored прозрачен — пути остаются абсолютными.
       string path = (item.FilePath ?? string.Empty).Trim();
-      item.FilePath = string.IsNullOrEmpty(path) ? string.Empty : NormalizeFilePathKey(path);
+      item.FilePath = string.IsNullOrEmpty(path)
+          ? string.Empty
+          : Velum.ReactiveCore.Export.VelumRelativeDocumentPathResolver.ToStored(path);
     }
 
     private static T ReadJson<T>(string path) where T : class

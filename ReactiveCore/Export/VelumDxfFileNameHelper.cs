@@ -426,11 +426,16 @@ namespace Velum.ReactiveCore.Export
         return false;
       }
 
+      // Нормализуем в полный каталог, затем срезаем префикс корневого каталога —
+      // в свойстве хранится относительный путь (при пустой настройке — абсолютный).
       string normalized = VelumDxfArtifactResolver.NormalizeCatalogPath(catalogPath, modelDoc);
+      string storedValue = string.IsNullOrEmpty(normalized)
+          ? normalized
+          : VelumRelativeDocumentPathResolver.ToStored(normalized);
       return VelumRecipeSolidWorksCustomProperties.TrySetValue(
           cpm,
           VelumExportDocumentationProperties.DxfPath,
-          normalized,
+          storedValue,
           "always",
           VelumSolidCustomPropertyTypes.TypeKeyText,
           out bool skipped,

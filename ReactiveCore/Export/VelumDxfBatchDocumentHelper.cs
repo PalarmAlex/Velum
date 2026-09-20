@@ -523,7 +523,10 @@ namespace Velum.SolidHomeostasis
 
       try
       {
-        string fullPath = Path.GetFullPath(partPath.Trim());
+        // Относительное хранимое значение достраивается по префиксу корневого каталога
+        // до GetFullPath (иначе путь развернётся от текущего каталога процесса).
+        string full = VelumRelativeDocumentPathResolver.ToFull(partPath.Trim());
+        string fullPath = Path.GetFullPath(full);
         string longPath = TryGetLongPath(fullPath);
         return string.IsNullOrWhiteSpace(longPath) ? fullPath : longPath;
       }

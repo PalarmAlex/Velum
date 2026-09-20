@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
 using Velum.Configuration;
+using Velum.ReactiveCore.Export;
 using Velum.SolidHomeostasis;
 using Velum.UI.AssemblyRegistry;
 using Velum.UI.ProductRegistry;
@@ -375,6 +376,7 @@ namespace Velum.UI
       _btnStop.Enabled = false;
       _btnReport.Click += (s, e) => ExportHtmlReport();
       _btnReports.Click += (s, e) => OpenExistingReports();
+      _btnConvertRelativePaths.Click += (s, e) => OnConvertRelativePathsClick();
     }
 
     private void ApplyItemFiltersFromUi()
@@ -430,6 +432,10 @@ namespace Velum.UI
       tip.SetToolTip(_chkShowDescriptions, "Показать описание узлов в дереве каталогов");
       tip.SetToolTip(_btnReport, "Сформировать HTML-отчёт по текущему списку");
       tip.SetToolTip(_btnReports, "Открыть список сохранённых отчётов");
+      tip.SetToolTip(
+          _btnConvertRelativePaths,
+          "Перевести «путь чертежа», «Путь pdf», «Путь dxf» выбранных записей "
+          + "(или всех, если ничего не выбрано) в относительные по корневому каталогу из настроек проекта");
     }
 
     private void OpenFolderAutoNamesSettings()
@@ -762,6 +768,203 @@ namespace Velum.UI
         Cursor = previous;
         _pathCheckRunning = false;
       }
+    }
+
+    private void OnConvertRelativePathsClick()
+    {
+      if (_indexing || _pathCheckRunning || _updatingProperties)
+        return;
+
+      if (_swApp?.Sw == null)
+      {
+        MessageBox.Show(
+            this,
+            "SolidWorks недоступен.",
+            "Реестр документов",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Warning);
+        return;
+      }
+
+      if (!VelumRelativeDocumentPathResolver.HasRootPath())
+      {
+        MessageBox.Show(
+            this,
+            "Не задан корневой каталог. Укажите «Путь к корневому каталогу» "
+            + "в настройках проекта (вкладка «Пути данных»).",
+            "Перевод путей в относительные",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Warning);
+        return;
+      }
+
+      List<VelumProductItem> targets = GetSelectedItems();
+      bool selectionScoped = targets.Count > 0;
+      if (!selectionScoped)
+        targets = new List<VelumProductItem>(_store.GetAllItems());
+
+      if (targets.Count == 0)
+      {
+        MessageBox.Show(
+            this,
+            "Нет записей для обработки.",
+            "Реестр документов",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Information);
+        return;
+      }
+
+      string scope = selectionScoped
+          ? "выбранных записей: " + targets.Count
+          : "всего записей: " + targets.Count;
+      DialogResult confirm = MessageBox.Show(
+          this,
+          "Перевести пути в относительные по корневому каталогу из настроек проекта?"
+          + System.Environment.NewLine
+          + "Обрабатывается " + scope + "."
+          + System.Environment.NewLine + System.Environment.NewLine
+          + "Документы будут открыты без окон, свойства перезаписаны и файлы сохранены."
+          + System.Environment.NewLine
+          + "Операция может занять длительное время. Продолжить?",
+          "Перевод путей в относительные",
+          MessageBoxButtons.YesNo,
+          MessageBoxIcon.Question);
+      if (confirm != DialogResult.Yes)
+        return;
+
+      var paths = new List<string>(targets.Count);
+      for (int i = 0; i < targets.Count; i++)
+      {
+        string filePath = (targets[i].FilePath ?? string.Empty).Trim();
+        if (filePath.Length > 0)
+          paths.Add(filePath);
+      }
+
+      _stopRequested = false;
+      _updatingProperties = true;
+      VelumRelativePathMigrator.Result result = null;
+      try
+      {
+        SetPropertiesUpdateUi(true, true, paths.Count);
+        result = VelumRelativePathMigrator.Run(
+            _swApp,
+            paths,
+            () => _stopRequested,
+            (current, total, label) =>
+            {
+              if (total > 0)
+                SetIndexProgressPercent((current * 100) / total);
+              Application.DoEvents();
+            });
+      }
+      finally
+      {
+        SetPropertiesUpdateUi(false, false, 0);
+        _updatingProperties = false;
+      }
+
+      if (result == null)
+        return;
+
+      int mirrorUpdated = ApplyRelativePathsToMirror(result.ConvertedPaths);
+      if (mirrorUpdated > 0)
+        _store.Save();
+
+      ShowConvertRelativePathsReport(result, mirrorUpdated);
+      BindList();
+    }
+
+    /// <summary>
+    /// Обновляет зеркало реестра для успешно сконвертированных документов:
+    /// относительными становятся поля-ссылки <c>DrawingPath/DxfPath/PdfPath</c>.
+    /// Ключ <c>FilePath</c> не меняется. Пустые/несинхронизированные (null) поля не трогаются,
+    /// чтобы не создавать ложных проблем у сканеров целостности.
+    /// </summary>
+    private int ApplyRelativePathsToMirror(List<string> convertedPaths)
+    {
+      if (convertedPaths == null || convertedPaths.Count == 0)
+        return 0;
+
+      int updated = 0;
+      for (int i = 0; i < convertedPaths.Count; i++)
+      {
+        string key = VelumProductRegistryStore.NormalizeFilePathKey(convertedPaths[i]);
+        if (string.IsNullOrEmpty(key))
+          continue;
+
+        VelumProductItem item = _store.FindItemByFilePath(key);
+        if (item == null)
+          continue;
+
+        bool changed = false;
+
+        string drawing = SliceMirrorLinkIfPresent(item.DrawingPath);
+        if (!string.Equals(drawing, item.DrawingPath, StringComparison.Ordinal))
+        {
+          item.DrawingPath = drawing;
+          changed = true;
+        }
+
+        string dxf = SliceMirrorLinkIfPresent(item.DxfPath);
+        if (!string.Equals(dxf, item.DxfPath, StringComparison.Ordinal))
+        {
+          item.DxfPath = dxf;
+          changed = true;
+        }
+
+        string pdf = SliceMirrorLinkIfPresent(item.PdfPath);
+        if (!string.Equals(pdf, item.PdfPath, StringComparison.Ordinal))
+        {
+          item.PdfPath = pdf;
+          changed = true;
+        }
+
+        if (changed)
+          updated++;
+      }
+
+      return updated;
+    }
+
+    /// <summary>Срезает префикс корневого каталога только у непустого значения зеркала.</summary>
+    private static string SliceMirrorLinkIfPresent(string current)
+    {
+      if (string.IsNullOrEmpty(current))
+        return current;
+      return VelumRelativeDocumentPathResolver.ToStored(current);
+    }
+
+    private void ShowConvertRelativePathsReport(
+        VelumRelativePathMigrator.Result result,
+        int mirrorUpdated)
+    {
+      var text = new StringBuilder();
+      text.AppendLine(result.Stopped ? "Перевод прерван." : "Перевод путей завершён.");
+      text.AppendLine("Просмотрено: " + result.Scanned);
+      text.AppendLine("Документов изменено: " + result.ConvertedDocuments);
+      text.AppendLine("Свойств переведено: " + result.PropertiesConverted);
+      text.AppendLine("Без изменений: " + result.UnchangedDocuments);
+      text.AppendLine("Пропущено (нет файла / не открылся): " + result.SkippedMissing);
+      text.AppendLine("Ошибок: " + result.Failed);
+      text.AppendLine("Зеркало реестра обновлено: " + mirrorUpdated);
+
+      if (result.Errors.Count > 0)
+      {
+        text.AppendLine();
+        text.AppendLine("Первые ошибки:");
+        int shown = Math.Min(result.Errors.Count, 12);
+        for (int i = 0; i < shown; i++)
+          text.AppendLine("  " + result.Errors[i]);
+        if (result.Errors.Count > shown)
+          text.AppendLine("  …");
+      }
+
+      MessageBox.Show(
+          this,
+          text.ToString().TrimEnd(),
+          "Перевод путей в относительные",
+          MessageBoxButtons.OK,
+          (result.Failed > 0 || result.Stopped) ? MessageBoxIcon.Warning : MessageBoxIcon.Information);
     }
 
     private void UpdateSelectedItemProperties()
@@ -1159,6 +1362,7 @@ namespace Velum.UI
       _btnFilterHelp.Enabled = !updating && !_indexing;
       _btnReport.Enabled = !updating && !_indexing;
       _btnReports.Enabled = !updating && !_indexing;
+      _btnConvertRelativePaths.Enabled = !updating && !_indexing && !_pathCheckRunning;
       if (_treeMenu != null)
         _treeMenu.Enabled = !updating && !_indexing;
       if (_listMenu != null)
@@ -2554,6 +2758,7 @@ namespace Velum.UI
       _folderTreeView.LabelEdit = _isAdmin && !indexing;
       _listView.Enabled = !indexing;
       _btnVerifyPaths.Enabled = !indexing && !_pathCheckRunning;
+      _btnConvertRelativePaths.Enabled = !indexing && !_pathCheckRunning;
       _btnStop.Enabled = indexing;
       _filterStatusBox.Enabled = !indexing;
       _filterDesignationBox.Enabled = !indexing;
@@ -3347,7 +3552,9 @@ namespace Velum.UI
         if (item == null)
           continue;
 
-        string path = (item.FilePath ?? string.Empty).Trim();
+        // Ключ FilePath хранится относительным корню документов — достраиваем до полного.
+        string path = Velum.ReactiveCore.Export.VelumRelativeDocumentPathResolver.ToFull(
+            (item.FilePath ?? string.Empty).Trim());
         string label = string.IsNullOrWhiteSpace(item.Designation)
             ? ("ID " + item.Id)
             : item.Designation;

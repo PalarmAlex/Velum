@@ -1,4 +1,4 @@
-using ISIDA.Actions;
+﻿using ISIDA.Actions;
 using ISIDA.Common;
 using ISIDA.Gomeostas;
 using ISIDA.Psychic.Understanding;
@@ -103,6 +103,10 @@ namespace Velum.UI
       _ttpStageEvolution.SetToolTip(_btnBrowseGomeostas, "Выбрать каталог данных гомеостаза");
       _ttpStageEvolution.SetToolTip(_tbGomeostas, "Каталог данных гомеостаза — основное хранилище параметров и состояний агента");
       _ttpStageEvolution.SetToolTip(_btnBrowseSettings, "Выбрать каталог настроек");
+      _ttpStageEvolution.SetToolTip(_tbDocumentRootPaths,
+          @"Корневой каталог документов на этом компьютере, например: Z:\ или \\192.168.10.66\dfs\ — " +
+          "пути в реестре и в свойствах документов хранятся относительными этого корня "
+          + "и собираются при чтении; пусто — абсолютные пути");
 
       // Вкладка «Регуляция»
       _ttpStageEvolution.SetToolTip(_tbCompare, "Интегральный порог распознавания (%) — минимальный процент совпадения для фиксации образа");
@@ -184,6 +188,7 @@ namespace Velum.UI
       _tbScenarioReports.Text = VelumAppConfig.ScenarioReportsFolderPath ?? string.Empty;
       _tbProductRegistry.Text = VelumAppConfig.ProductRegistryFolderPath ?? string.Empty;
       _tbBomExchange.Text = VelumAppConfig.BomExchangeFolder ?? string.Empty;
+      _tbDocumentRootPaths.Text = VelumAppConfig.DocumentRootPath ?? string.Empty;
 
       _tbCompare.Text = VelumAppConfig.CompareLevel.ToString(CultureInfo.InvariantCulture);
       _tbDifSensor.Text = VelumAppConfig.DifSensorPar.ToString(CultureInfo.InvariantCulture);
@@ -557,6 +562,9 @@ namespace Velum.UI
       VelumAppConfig.SetSetting("ScenarioReportsFolderPath", _tbScenarioReports.Text.Trim());
       VelumAppConfig.SetSetting("ProductRegistryFolderPath", _tbProductRegistry.Text.Trim());
       VelumAppConfig.SetBomExchangeFolder(_tbBomExchange.Text.Trim());
+
+      // Корневой каталог документов (относительные пути в реестре и свойствах)
+      VelumAppConfig.DocumentRootPath = _tbDocumentRootPaths.Text.Trim();
 
       Logger.Info("Настройки проекта сохранены.");
       return true;

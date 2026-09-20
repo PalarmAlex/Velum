@@ -173,7 +173,8 @@ namespace Velum.UI.ProductRegistry
 
       // NeedDxf не записан — по умолчанию DXF не нужен.
       bool itemNeedDxf = item.NeedDxf ?? false;
-      string catalog = (item.DxfPath ?? string.Empty).Trim();
+      // Зеркало может хранить относительный каталог — достраиваем префикс корневого каталога.
+      string catalog = VelumRelativeDocumentPathResolver.ToFull((item.DxfPath ?? string.Empty).Trim());
       bool firstExport = string.IsNullOrWhiteSpace(catalog);
       VelumProductExportMetaConfig[] configs = item.ExportMetaConfigs
           ?? Array.Empty<VelumProductExportMetaConfig>();

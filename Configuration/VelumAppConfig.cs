@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -90,6 +90,7 @@ namespace Velum.Configuration
           EnsureProductRegistryFolderPathSetting();
           EnsureTechRequirementsFolderPathSetting();
           EnsureAssemblyRegistryFolderPathSetting();
+          EnsureDocumentRootPathsSetting();
           TryCreateDirectory(ScenarioReportsFolderPath);
           EnsureDataFolderTree();
         }
@@ -144,6 +145,62 @@ namespace Velum.Configuration
     public static string AssemblyRegistryFolderPath => GetExpandedDataPathOrDefault(
         "AssemblyRegistryFolderPath",
         Path.Combine(BaseDataPath, "AssemblyRegistry"));
+
+    /// <summary>
+    /// Путь к корневому каталогу документов на <b>этой</b> машине: <c>Z:\</c> либо
+    /// <c>\server\dfs\</c>. Настройка локальная — дома по VPN указывается доступ по IP,
+    /// на работе — буква общего диска. Пути в реестре и в свойствах документов хранятся
+    /// относительными этого корня и собираются при чтении.
+    /// Пустое значение — прежнее поведение (абсолютные пути).
+    /// </summary>
+    /// <remarks>
+    /// Ключ в Settings.xml исторически называется <c>DocumentRootPaths</c> и допускал
+    /// список через «;». Список больше не поддерживается: если в значении остались
+    /// разделители, используется первая часть (старые файлы настроек продолжают работать).
+    /// </remarks>
+    public static string DocumentRootPath
+    {
+      get { return FirstRootPathPart(GetSetting("DocumentRootPaths") ?? string.Empty); }
+      set { SetSetting("DocumentRootPaths", (value ?? string.Empty).Trim()); }
+    }
+
+    /// <summary>
+    /// Нормализованный корневой путь документов (<see cref="DocumentRootPath"/>):
+    /// с гарантированным «\» на конце UNC-пути и для буквы диска («Z:» → «Z:\»).
+    /// string.Empty — корень не задан.
+    /// </summary>
+    public static string GetDocumentRootPath()
+    {
+      string trimmed = DocumentRootPath;
+      if (trimmed.Length == 0)
+        return string.Empty;
+
+      // UNC-префикс «\server\dfs» без хвостового «\» не срезает корень корректно;
+      // буква диска «Z:» дополняется до «Z:\».
+      if (trimmed.StartsWith(@"\", StringComparison.Ordinal) && !trimmed.EndsWith(@"\"))
+        trimmed += @"\";
+      else if (trimmed.Length == 2 && trimmed[1] == ':')
+        trimmed += @"\";
+
+      return trimmed;
+    }
+
+    /// <summary>Первая непустая часть значения (обратная совместимость со списком через «;»).</summary>
+    private static string FirstRootPathPart(string raw)
+    {
+      string value = (raw ?? string.Empty).Trim();
+      if (value.Length == 0)
+        return string.Empty;
+
+      foreach (string part in value.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
+      {
+        string trimmed = part.Trim();
+        if (trimmed.Length > 0)
+          return trimmed;
+      }
+
+      return string.Empty;
+    }
 
     /// <summary>Последний выбранный шаблон столбцов реестра изделия.</summary>
     public static string AssemblyRegistryLastTemplate
@@ -754,6 +811,7 @@ namespace Velum.Configuration
                   new XElement("ScenarioReportsFolderPath", root + @"\Scenarios\Reports"),
                   new XElement("ProductRegistryFolderPath", root + @"\ProductRegistry"),
                   new XElement("AssemblyRegistryFolderPath", root + @"\AssemblyRegistry"),
+                  new XElement("DocumentRootPaths", string.Empty),
                   new XElement("DefaultGeneticReflexId", 0),
                   new XElement("DefaultStileId", 0),
                   new XElement("DefaultAdaptiveActionId", 0),
@@ -905,6 +963,35 @@ namespace Velum.Configuration
             DefaultVelumDataRootExpression + @"\AssemblyRegistry"));
         doc.Save(ConfigFullPath);
         Logger.Info("Velum: в Settings.xml добавлен AssemblyRegistryFolderPath");
+      }
+      catch (Exception ex)
+      {
+        Logger.Error(ex.Message);
+      }
+    }
+
+    /// <summary>
+    /// Добавляет префиксы корневого каталога документов, если ключа ещё нет
+    /// (по умолчанию пусто — прежнее поведение с абсолютными путями).
+    /// </summary>
+    private static void EnsureDocumentRootPathsSetting()
+    {
+      try
+      {
+        if (!File.Exists(ConfigFullPath))
+          return;
+
+        XDocument doc = XDocument.Load(ConfigFullPath);
+        XElement app = doc.Root?.Element("AppSettings");
+        if (app == null)
+          return;
+
+        if (app.Element("DocumentRootPaths") != null)
+          return;
+
+        app.Add(new XElement("DocumentRootPaths", string.Empty));
+        doc.Save(ConfigFullPath);
+        Logger.Info("Velum: в Settings.xml добавлен DocumentRootPaths");
       }
       catch (Exception ex)
       {

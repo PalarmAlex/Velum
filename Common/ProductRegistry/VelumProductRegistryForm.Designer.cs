@@ -51,6 +51,7 @@ namespace Velum.UI
       this._lblFilterName = new System.Windows.Forms.Label();
       this._filterNameBox = new System.Windows.Forms.TextBox();
       this._btnReport = new System.Windows.Forms.Button();
+      this._btnConvertRelativePaths = new System.Windows.Forms.Button();
       this._listStatusLabel = new System.Windows.Forms.Label();
       this._listView = new System.Windows.Forms.ListView();
       this._colDesignation = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -423,7 +424,7 @@ namespace Velum.UI
       // 
       // _filtersBottomRow
       // 
-      this._filtersBottomRow.ColumnCount = 8;
+      this._filtersBottomRow.ColumnCount = 9;
       this._filtersBottomRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
       this._filtersBottomRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
       this._filtersBottomRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -432,6 +433,7 @@ namespace Velum.UI
       this._filtersBottomRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 70F));
       this._filtersBottomRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 26F));
       this._filtersBottomRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+      this._filtersBottomRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
       this._filtersBottomRow.Controls.Add(this._btnReports, 6, 0);
       this._filtersBottomRow.Controls.Add(this._lblFilterDesignation, 0, 0);
       this._filtersBottomRow.Controls.Add(this._filterDesignationBox, 1, 0);
@@ -439,6 +441,7 @@ namespace Velum.UI
       this._filtersBottomRow.Controls.Add(this._filterNameBox, 3, 0);
       this._filtersBottomRow.Controls.Add(this._btnReport, 5, 0);
       this._filtersBottomRow.Controls.Add(this._listStatusLabel, 7, 0);
+      this._filtersBottomRow.Controls.Add(this._btnConvertRelativePaths, 8, 0);
       this._filtersBottomRow.Dock = System.Windows.Forms.DockStyle.Fill;
       this._filtersBottomRow.Location = new System.Drawing.Point(0, 30);
       this._filtersBottomRow.Margin = new System.Windows.Forms.Padding(0);
@@ -516,6 +519,18 @@ namespace Velum.UI
       this._listStatusLabel.TabIndex = 7;
       this._listStatusLabel.Text = "Записей: 0";
       // 
+      // _btnConvertRelativePaths
+      // 
+      this._btnConvertRelativePaths.Anchor = System.Windows.Forms.AnchorStyles.Left;
+      this._btnConvertRelativePaths.AutoSize = true;
+      this._btnConvertRelativePaths.Location = new System.Drawing.Point(541, 3);
+      this._btnConvertRelativePaths.Margin = new System.Windows.Forms.Padding(8, 3, 3, 3);
+      this._btnConvertRelativePaths.Name = "_btnConvertRelativePaths";
+      this._btnConvertRelativePaths.Size = new System.Drawing.Size(206, 24);
+      this._btnConvertRelativePaths.TabIndex = 11;
+      this._btnConvertRelativePaths.Text = "Перевести пути в относительные";
+      this._btnConvertRelativePaths.UseVisualStyleBackColor = true;
+      // 
       // _listView
       // 
       this._listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -551,7 +566,7 @@ namespace Velum.UI
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(980, 560);
+      this.ClientSize = new System.Drawing.Size(1160, 560);
       this.Controls.Add(this._rootLayout);
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.MinimizeBox = false;
@@ -621,5 +636,6 @@ namespace Velum.UI
     private System.Windows.Forms.ColumnHeader _colName;
     private System.Windows.Forms.ColumnHeader _colStatus;
     private System.Windows.Forms.Button _btnReports;
+    private System.Windows.Forms.Button _btnConvertRelativePaths;
   }
 }

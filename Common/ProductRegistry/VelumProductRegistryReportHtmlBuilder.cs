@@ -208,7 +208,8 @@ namespace Velum.UI.ProductRegistry
     {
       if (string.IsNullOrEmpty(item.FilePath))
         return "Не указан";
-      if (File.Exists(item.FilePath))
+      // Ключ FilePath хранится относительным корню документов — достраиваем до полного.
+      if (File.Exists(Velum.ReactiveCore.Export.VelumRelativeDocumentPathResolver.ToFull(item.FilePath)))
         return "OK";
       return "Отсутствует";
     }
@@ -352,7 +353,7 @@ namespace Velum.UI.ProductRegistry
           sb.Append("<tr>");
           sb.Append("<td>").Append(Escape(item.Designation ?? string.Empty)).Append("</td>");
           sb.Append("<td>").Append(Escape(item.Name ?? string.Empty)).Append("</td>");
-          sb.Append("<td>").Append(Escape(item.FilePath ?? string.Empty)).Append("</td>");
+          sb.Append("<td>").Append(Escape(Velum.ReactiveCore.Export.VelumRelativeDocumentPathResolver.ToFull(item.FilePath) ?? string.Empty)).Append("</td>");
           sb.Append("<td>").Append(Escape(GetStatusText(item))).Append("</td>");
           sb.AppendLine("</tr>");
         }

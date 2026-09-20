@@ -291,7 +291,7 @@ namespace Velum.UI.AssemblyRegistry
         if (hasNeedFlag && !needPdf)
           continue;
 
-        string drawingPath = TryReadStringFromCache(item, VelumExportDocumentationProperties.DrawingPath);
+        string drawingPath = TryReadDrawingPathFromCache(item);
         if (string.IsNullOrWhiteSpace(drawingPath) && modelDoc != null)
           drawingPath = VelumDrawingPathPropertyHelper.TryRead(modelDoc);
         if ((string.IsNullOrWhiteSpace(drawingPath) || !File.Exists(drawingPath)) && modelDoc != null)
@@ -387,7 +387,7 @@ namespace Velum.UI.AssemblyRegistry
         if (hasNeedFlag && !needPdf)
           continue;
 
-        string drawingPath = TryReadStringFromCache(item, VelumExportDocumentationProperties.DrawingPath);
+        string drawingPath = TryReadDrawingPathFromCache(item);
         if (string.IsNullOrWhiteSpace(drawingPath) && modelDoc != null)
         {
           drawingPath = VelumDrawingPathPropertyHelper.TryRead(modelDoc);
@@ -648,6 +648,16 @@ namespace Velum.UI.AssemblyRegistry
       if (!item.PropertyValues.TryGetValue(propertyName, out raw) || raw == null)
         return string.Empty;
       return raw.Trim();
+    }
+
+    /// <summary>
+    /// «путь чертежа» из кэша свойств с достройкой префикса корневого каталога
+    /// (в кэше может лежать относительное хранимое значение).
+    /// </summary>
+    private static string TryReadDrawingPathFromCache(VelumAssemblyRegistryComponent item)
+    {
+      return VelumRelativeDocumentPathResolver.ToFull(
+          TryReadStringFromCache(item, VelumExportDocumentationProperties.DrawingPath));
     }
   }
 }

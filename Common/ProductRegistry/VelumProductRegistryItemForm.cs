@@ -98,7 +98,9 @@ namespace Velum.UI
         dialog.CheckFileExists = true;
         dialog.Multiselect = false;
 
-        string current = (_filePathBox.Text ?? string.Empty).Trim();
+        // Ключ FilePath хранится относительным корню документов — достраиваем до полного.
+        string current = Velum.ReactiveCore.Export.VelumRelativeDocumentPathResolver.ToFull(
+            (_filePathBox.Text ?? string.Empty).Trim());
         if (!string.IsNullOrEmpty(current))
         {
           try

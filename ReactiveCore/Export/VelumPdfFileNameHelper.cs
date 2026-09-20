@@ -80,7 +80,8 @@ namespace Velum.ReactiveCore.Export
               out string pathValue) &&
           !string.IsNullOrWhiteSpace(pathValue))
       {
-        string trimmed = pathValue.Trim();
+        // Свойство может хранить относительный путь — достраиваем префикс корневого каталога.
+        string trimmed = VelumRelativeDocumentPathResolver.ToFull(pathValue.Trim());
         if (Directory.Exists(trimmed))
           return trimmed;
 
@@ -216,7 +217,8 @@ namespace Velum.ReactiveCore.Export
         bool ok = VelumRecipeSolidWorksCustomProperties.TrySetValue(
             cpm,
             VelumExportDocumentationProperties.PdfPath,
-            fullPath,
+            // Хранится относительный путь (срез по префиксу корневого каталога).
+            VelumRelativeDocumentPathResolver.ToStored(fullPath),
             "always",
             VelumSolidCustomPropertyTypes.TypeKeyText,
             out bool skipped,

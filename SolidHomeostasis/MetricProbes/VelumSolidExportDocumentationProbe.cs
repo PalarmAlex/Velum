@@ -1019,7 +1019,10 @@ namespace Velum.SolidHomeostasis
 
         string trimmed = (raw ?? string.Empty).Trim();
         if (!string.IsNullOrWhiteSpace(trimmed))
-          return trimmed;
+        {
+          // Свойство может хранить относительный путь — достраиваем префикс корневого каталога.
+          return VelumRelativeDocumentPathResolver.ToFull(trimmed);
+        }
 
         if (string.IsNullOrEmpty(emptyFromExistingProperty) &&
             VelumRecipeSolidWorksCustomProperties.TryPropertyExists(cpm, pathPropertyName))
@@ -1139,7 +1142,13 @@ namespace Velum.SolidHomeostasis
       {
         string candidate = System.Environment.ExpandEnvironmentVariables(path.Trim());
         if (!Path.IsPathRooted(candidate))
-          candidate = Path.GetFullPath(candidate);
+        {
+          // Относительный путь из свойства — сначала достройка префикса корневого каталога
+          // (при пустой настройке ToFull вернёт как есть, сработает fallback от каталога документа).
+          candidate = VelumRelativeDocumentPathResolver.ToFull(candidate);
+          if (!Path.IsPathRooted(candidate))
+            candidate = Path.GetFullPath(candidate);
+        }
 
         if (File.Exists(candidate))
         {

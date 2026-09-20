@@ -203,6 +203,15 @@ namespace Velum.ReactiveCore.Export
 
     internal static string TryReadPdfPathProperty(ModelDoc2 modelDoc)
     {
+      return VelumRelativeDocumentPathResolver.ToFull(TryReadPdfPathPropertyRaw(modelDoc));
+    }
+
+    /// <summary>
+    /// Читает свойство «Путь pdf» без достройки префикса — ровно как хранится в документе
+    /// (может быть относительным). Используется зеркалом реестра и мигратором.
+    /// </summary>
+    internal static string TryReadPdfPathPropertyRaw(ModelDoc2 modelDoc)
+    {
       CustomPropertyManager cpm =
           VelumRecipeSolidWorksCustomProperties.TryGetManager(modelDoc, "document");
       if (cpm == null)
@@ -269,7 +278,7 @@ namespace Velum.ReactiveCore.Export
       {
         string candidate = System.Environment.ExpandEnvironmentVariables(path.Trim());
         if (!Path.IsPathRooted(candidate))
-          candidate = Path.GetFullPath(candidate);
+          candidate = VelumRelativeDocumentPathResolver.ToFull(candidate);
 
         if (File.Exists(candidate))
         {

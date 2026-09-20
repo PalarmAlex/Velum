@@ -156,7 +156,10 @@ namespace Velum.UI.AssemblyRegistry
               Velum.ReactiveCore.VelumExportDocumentationProperties.DrawingPath,
               out string fromCache) &&
           !string.IsNullOrWhiteSpace(fromCache))
-        return fromCache.Trim();
+      {
+        // Кэш свойств может хранить относительный путь — достраиваем префикс корневого каталога.
+        return VelumRelativeDocumentPathResolver.ToFull(fromCache.Trim());
+      }
 
       return string.Empty;
     }

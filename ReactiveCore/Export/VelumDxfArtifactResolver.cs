@@ -226,6 +226,16 @@ namespace Velum.ReactiveCore.Export
       try
       {
         string expanded = System.Environment.ExpandEnvironmentVariables(trimmed);
+        if (!Path.IsPathRooted(expanded))
+        {
+          // Относительный путь из свойства — сначала достройка префикса корневого каталога
+          // (мигрированные значения срезаны по корню). Подкаталог детали («DXF» рядом с ней)
+          // не резолвится по корню и уходит в прежнюю логику от каталога документа.
+          string byRoot = VelumRelativeDocumentPathResolver.ToFull(expanded);
+          if (Path.IsPathRooted(byRoot) && Directory.Exists(byRoot))
+            expanded = byRoot;
+        }
+
         if (!Path.IsPathRooted(expanded) && modelDoc != null)
         {
           string docPath = TryGetPartPath(modelDoc);

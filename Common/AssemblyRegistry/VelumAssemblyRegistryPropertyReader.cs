@@ -214,7 +214,11 @@ namespace Velum.UI.AssemblyRegistry
         return string.Empty;
       try
       {
-        return Path.GetFullPath(filePath.Trim()).ToUpperInvariant();
+        // Относительное хранимое значение достраивается по префиксу корневого каталога
+        // до GetFullPath (иначе путь развернётся от текущего каталога процесса).
+        return Path.GetFullPath(
+                Velum.ReactiveCore.Export.VelumRelativeDocumentPathResolver.ToFull(filePath.Trim()))
+            .ToUpperInvariant();
       }
       catch
       {

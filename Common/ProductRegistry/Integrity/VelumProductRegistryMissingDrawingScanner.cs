@@ -136,6 +136,9 @@ namespace Velum.UI.ProductRegistry
         return true;
       }
 
+      // Зеркало может хранить относительный путь — достраиваем префикс корневого каталога.
+      drawingPath = Velum.ReactiveCore.Export.VelumRelativeDocumentPathResolver.ToFull(drawingPath);
+
       if (!File.Exists(drawingPath))
       {
         problem = Build(

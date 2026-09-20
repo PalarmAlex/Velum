@@ -166,7 +166,9 @@ internal static bool TryClassify(
 
       // NeedPdf не записан, но зеркало есть — как batch: нужен PDF.
       bool needPdf = item.NeedPdf ?? true;
-      string pdfPath = (item.PdfPath ?? string.Empty).Trim();
+      // Зеркало может хранить относительный путь — достраиваем префикс корневого каталога.
+      string pdfPath = Velum.ReactiveCore.Export.VelumRelativeDocumentPathResolver.ToFull(
+          (item.PdfPath ?? string.Empty).Trim());
       bool fileFound = pdfPath.Length > 0 && File.Exists(pdfPath);
       bool outdated = IsPdfOutdated(item)
           || IsPdfOutdatedByModelGeometry(store, item);

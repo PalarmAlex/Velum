@@ -11,6 +11,15 @@ namespace Velum.ReactiveCore.Export
   {
     internal static string TryRead(ModelDoc2 modelDoc)
     {
+      return VelumRelativeDocumentPathResolver.ToFull(TryReadRaw(modelDoc));
+    }
+
+    /// <summary>
+    /// Читает свойство «путь чертежа» без достройки префикса — ровно как хранится в документе
+    /// (может быть относительным). Используется мигратором и зеркалом реестра.
+    /// </summary>
+    internal static string TryReadRaw(ModelDoc2 modelDoc)
+    {
       CustomPropertyManager cpm =
           VelumRecipeSolidWorksCustomProperties.TryGetManager(modelDoc, "document");
       return cpm != null &&
@@ -371,7 +380,11 @@ namespace Velum.ReactiveCore.Export
         message = "property_manager_unavailable";
         return false;
       }
-      if (string.Equals(TryRead(modelDoc), value, StringComparison.OrdinalIgnoreCase))
+
+      // В свойстве хранится относительный путь (срез по префиксу корневого каталога),
+      // при чтении достраивается обратно. Без настройки — абсолютный как раньше.
+      string storedValue = VelumRelativeDocumentPathResolver.ToStored(value);
+      if (string.Equals(TryReadRaw(modelDoc), storedValue, StringComparison.OrdinalIgnoreCase))
       {
         skipped = true;
         message = "unchanged";
@@ -381,7 +394,7 @@ namespace Velum.ReactiveCore.Export
       bool ok = VelumRecipeSolidWorksCustomProperties.TrySetValue(
           cpm,
           VelumExportDocumentationProperties.DrawingPath,
-          value,
+          storedValue,
           "always",
           VelumSolidCustomPropertyTypes.TypeKeyText,
           out skipped,
@@ -529,7 +542,9 @@ namespace Velum.ReactiveCore.Export
         return string.Empty;
       try
       {
-        return Path.GetFullPath(path.Trim());
+        // Относительные хранимые значения достраиваются по префиксу корневого каталога
+        // до GetFullPath (иначе путь развернётся от текущего каталога процесса).
+        return VelumRelativeDocumentPathResolver.NormalizeForCompare(path);
       }
       catch
       {

@@ -465,7 +465,10 @@ namespace Velum.ReactiveCore.Export
 
       try
       {
-        string fullPath = Path.GetFullPath(drawingPath.Trim());
+        // Относительное хранимое значение достраивается по префиксу корневого каталога
+        // до GetFullPath (иначе путь развернётся от текущего каталога процесса).
+        string full = VelumRelativeDocumentPathResolver.ToFull(drawingPath.Trim());
+        string fullPath = Path.GetFullPath(full);
         string longPath = TryGetLongPath(fullPath);
         return string.IsNullOrWhiteSpace(longPath) ? fullPath : longPath;
       }

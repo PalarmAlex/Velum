@@ -14,6 +14,8 @@ namespace Velum.UI
     private System.Windows.Forms.Label _lblBomExchange;
     private System.Windows.Forms.TextBox _tbBomExchange;
     private System.Windows.Forms.Button _btnBrowseBomExchange;
+    private System.Windows.Forms.Label _lblDocumentRootPaths;
+    private System.Windows.Forms.TextBox _tbDocumentRootPaths;
 
     private System.Windows.Forms.CheckBox _chkNeedDxfDefault;
     private System.Windows.Forms.CheckBox _chkNeedPdfDefault;
@@ -57,6 +59,8 @@ namespace Velum.UI
       this._lblBomExchange = new System.Windows.Forms.Label();
       this._tbBomExchange = new System.Windows.Forms.TextBox();
       this._btnBrowseBomExchange = new System.Windows.Forms.Button();
+      this._lblDocumentRootPaths = new System.Windows.Forms.Label();
+      this._tbDocumentRootPaths = new System.Windows.Forms.TextBox();
       this._lblPathScenario = new System.Windows.Forms.Label();
       this._tbScenarioReports = new System.Windows.Forms.TextBox();
       this._btnBrowseScenario = new System.Windows.Forms.Button();
@@ -179,6 +183,8 @@ namespace Velum.UI
       this.tabPage1.Controls.Add(this._lblBomExchange);
       this.tabPage1.Controls.Add(this._tbBomExchange);
       this.tabPage1.Controls.Add(this._btnBrowseBomExchange);
+      this.tabPage1.Controls.Add(this._lblDocumentRootPaths);
+      this.tabPage1.Controls.Add(this._tbDocumentRootPaths);
       this.tabPage1.Controls.Add(this._lblPathScenario);
       this.tabPage1.Controls.Add(this._tbScenarioReports);
       this.tabPage1.Controls.Add(this._btnBrowseScenario);
@@ -265,9 +271,27 @@ namespace Velum.UI
       this._btnBrowseBomExchange.Text = "Обзор...";
       this._btnBrowseBomExchange.UseVisualStyleBackColor = true;
       this._btnBrowseBomExchange.Click += new System.EventHandler(this.PathBrowse_Click);
-      // 
+      //
+      // _lblDocumentRootPaths
+      //
+      this._lblDocumentRootPaths.Location = new System.Drawing.Point(3, 204);
+      this._lblDocumentRootPaths.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+      this._lblDocumentRootPaths.Name = "_lblDocumentRootPaths";
+      this._lblDocumentRootPaths.Size = new System.Drawing.Size(175, 20);
+      this._lblDocumentRootPaths.TabIndex = 37;
+      this._lblDocumentRootPaths.Text = "Путь к корневому каталогу:";
+      this._lblDocumentRootPaths.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      //
+      // _tbDocumentRootPaths
+      //
+      this._tbDocumentRootPaths.Location = new System.Drawing.Point(181, 205);
+      this._tbDocumentRootPaths.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+      this._tbDocumentRootPaths.Name = "_tbDocumentRootPaths";
+      this._tbDocumentRootPaths.Size = new System.Drawing.Size(484, 20);
+      this._tbDocumentRootPaths.TabIndex = 38;
+      //
       // _lblPathScenario
-      // 
+      //
       this._lblPathScenario.Location = new System.Drawing.Point(3, 120);
       this._lblPathScenario.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
       this._lblPathScenario.Name = "_lblPathScenario";

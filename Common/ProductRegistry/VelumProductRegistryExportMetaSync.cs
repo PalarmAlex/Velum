@@ -685,10 +685,18 @@ snap.DrawingPath = NormalizeOptionalPath(VelumDrawingPathPropertyHelper.TryRead(
       return list;
     }
 
+    /// <summary>
+    /// Значение ссылки для зеркала реестра: срезает префикс корневого каталога → относительный путь
+    /// (items.json становится переносимым между машинами). Ключ <see cref="VelumProductItem.FilePath"/>
+    /// этим методом не обрабатывается и остаётся абсолютным. При пустой настройке — без изменений.
+    /// </summary>
     private static string NormalizeOptionalPath(string raw)
     {
       string value = (raw ?? string.Empty).Trim();
-      return value.Length == 0 ? string.Empty : value;
+      if (value.Length == 0)
+        return string.Empty;
+
+      return VelumRelativeDocumentPathResolver.ToStored(value);
     }
 
     private static bool TryOpenOrFind(

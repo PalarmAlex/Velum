@@ -335,7 +335,9 @@ namespace Velum.UI
           if (p == null)
             continue;
 
-          string path = (p.FilePath ?? string.Empty).Trim();
+          // Путь записи может быть относительным корню документов — достраиваем до полного.
+          string path = Velum.ReactiveCore.Export.VelumRelativeDocumentPathResolver.ToFull(
+              (p.FilePath ?? string.Empty).Trim());
           string label = !string.IsNullOrWhiteSpace(p.Designation)
               ? p.Designation
               : (p.ItemId > 0 ? ("Id=" + p.ItemId) : path);
