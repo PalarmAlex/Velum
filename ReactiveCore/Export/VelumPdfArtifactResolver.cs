@@ -208,7 +208,7 @@ namespace Velum.ReactiveCore.Export
 
     /// <summary>
     /// Читает свойство «Путь pdf» без достройки префикса — ровно как хранится в документе
-    /// (может быть относительным). Используется зеркалом реестра и мигратором.
+    /// (может быть относительным). Используется зеркалом реестра.
     /// </summary>
     internal static string TryReadPdfPathPropertyRaw(ModelDoc2 modelDoc)
     {

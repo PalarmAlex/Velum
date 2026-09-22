@@ -51,7 +51,6 @@ namespace Velum.UI
       this._lblFilterName = new System.Windows.Forms.Label();
       this._filterNameBox = new System.Windows.Forms.TextBox();
       this._btnReport = new System.Windows.Forms.Button();
-      this._btnConvertRelativePaths = new System.Windows.Forms.Button();
       this._listStatusLabel = new System.Windows.Forms.Label();
       this._listView = new System.Windows.Forms.ListView();
       this._colDesignation = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -82,7 +81,7 @@ namespace Velum.UI
       this._rootLayout.Padding = new System.Windows.Forms.Padding(10);
       this._rootLayout.RowCount = 1;
       this._rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-      this._rootLayout.Size = new System.Drawing.Size(980, 560);
+      this._rootLayout.Size = new System.Drawing.Size(1160, 560);
       this._rootLayout.TabIndex = 0;
       // 
       // _splitContainer
@@ -98,8 +97,8 @@ namespace Velum.UI
       // _splitContainer.Panel2
       // 
       this._splitContainer.Panel2.Controls.Add(this._listPanel);
-      this._splitContainer.Size = new System.Drawing.Size(954, 534);
-      this._splitContainer.SplitterDistance = 344;
+      this._splitContainer.Size = new System.Drawing.Size(1134, 534);
+      this._splitContainer.SplitterDistance = 408;
       this._splitContainer.TabIndex = 0;
       // 
       // _treePanel
@@ -121,7 +120,7 @@ namespace Velum.UI
       this._treePanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
       this._treePanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 0F));
       this._treePanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-      this._treePanel.Size = new System.Drawing.Size(344, 534);
+      this._treePanel.Size = new System.Drawing.Size(408, 534);
       this._treePanel.TabIndex = 0;
       // 
       // _lblTree
@@ -132,7 +131,7 @@ namespace Velum.UI
       this._lblTree.Location = new System.Drawing.Point(3, 0);
       this._lblTree.Margin = new System.Windows.Forms.Padding(3, 0, 3, 4);
       this._lblTree.Name = "_lblTree";
-      this._lblTree.Size = new System.Drawing.Size(338, 13);
+      this._lblTree.Size = new System.Drawing.Size(402, 13);
       this._lblTree.TabIndex = 0;
       this._lblTree.Text = "Каталоги";
       // 
@@ -154,7 +153,7 @@ namespace Velum.UI
       this._folderSearchPanel.RowCount = 2;
       this._folderSearchPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
       this._folderSearchPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-      this._folderSearchPanel.Size = new System.Drawing.Size(338, 56);
+      this._folderSearchPanel.Size = new System.Drawing.Size(402, 56);
       this._folderSearchPanel.TabIndex = 1;
       // 
       // _lblFolderSearchName
@@ -172,14 +171,14 @@ namespace Velum.UI
       this._folderSearchNameBox.Dock = System.Windows.Forms.DockStyle.Fill;
       this._folderSearchNameBox.Location = new System.Drawing.Point(41, 3);
       this._folderSearchNameBox.Name = "_folderSearchNameBox";
-      this._folderSearchNameBox.Size = new System.Drawing.Size(111, 20);
+      this._folderSearchNameBox.Size = new System.Drawing.Size(143, 20);
       this._folderSearchNameBox.TabIndex = 1;
       // 
       // _lblFolderSearchDescription
       // 
       this._lblFolderSearchDescription.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this._lblFolderSearchDescription.AutoSize = true;
-      this._lblFolderSearchDescription.Location = new System.Drawing.Point(158, 6);
+      this._lblFolderSearchDescription.Location = new System.Drawing.Point(190, 6);
       this._lblFolderSearchDescription.Name = "_lblFolderSearchDescription";
       this._lblFolderSearchDescription.Size = new System.Drawing.Size(60, 13);
       this._lblFolderSearchDescription.TabIndex = 2;
@@ -188,9 +187,9 @@ namespace Velum.UI
       // _folderSearchDescriptionBox
       // 
       this._folderSearchDescriptionBox.Dock = System.Windows.Forms.DockStyle.Fill;
-      this._folderSearchDescriptionBox.Location = new System.Drawing.Point(224, 3);
+      this._folderSearchDescriptionBox.Location = new System.Drawing.Point(256, 3);
       this._folderSearchDescriptionBox.Name = "_folderSearchDescriptionBox";
-      this._folderSearchDescriptionBox.Size = new System.Drawing.Size(111, 20);
+      this._folderSearchDescriptionBox.Size = new System.Drawing.Size(143, 20);
       this._folderSearchDescriptionBox.TabIndex = 3;
       // 
       // _folderSearchButtonsRow
@@ -211,7 +210,7 @@ namespace Velum.UI
       this._folderSearchButtonsRow.Name = "_folderSearchButtonsRow";
       this._folderSearchButtonsRow.RowCount = 1;
       this._folderSearchButtonsRow.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-      this._folderSearchButtonsRow.Size = new System.Drawing.Size(338, 30);
+      this._folderSearchButtonsRow.Size = new System.Drawing.Size(402, 30);
       this._folderSearchButtonsRow.TabIndex = 4;
       // 
       // _chkShowDescriptions
@@ -228,7 +227,7 @@ namespace Velum.UI
       // _btnFolderSearchPrev
       // 
       this._btnFolderSearchPrev.Dock = System.Windows.Forms.DockStyle.Fill;
-      this._btnFolderSearchPrev.Location = new System.Drawing.Point(245, 3);
+      this._btnFolderSearchPrev.Location = new System.Drawing.Point(309, 3);
       this._btnFolderSearchPrev.Name = "_btnFolderSearchPrev";
       this._btnFolderSearchPrev.Size = new System.Drawing.Size(26, 24);
       this._btnFolderSearchPrev.TabIndex = 1;
@@ -237,7 +236,7 @@ namespace Velum.UI
       // _btnFolderSearchNext
       // 
       this._btnFolderSearchNext.Dock = System.Windows.Forms.DockStyle.Fill;
-      this._btnFolderSearchNext.Location = new System.Drawing.Point(277, 3);
+      this._btnFolderSearchNext.Location = new System.Drawing.Point(341, 3);
       this._btnFolderSearchNext.Name = "_btnFolderSearchNext";
       this._btnFolderSearchNext.Size = new System.Drawing.Size(26, 24);
       this._btnFolderSearchNext.TabIndex = 2;
@@ -246,7 +245,7 @@ namespace Velum.UI
       // _btnFolderSearchClear
       // 
       this._btnFolderSearchClear.Dock = System.Windows.Forms.DockStyle.Fill;
-      this._btnFolderSearchClear.Location = new System.Drawing.Point(309, 3);
+      this._btnFolderSearchClear.Location = new System.Drawing.Point(373, 3);
       this._btnFolderSearchClear.Name = "_btnFolderSearchClear";
       this._btnFolderSearchClear.Size = new System.Drawing.Size(26, 24);
       this._btnFolderSearchClear.TabIndex = 3;
@@ -260,7 +259,7 @@ namespace Velum.UI
       this._folderSearchStatusLabel.Location = new System.Drawing.Point(3, 79);
       this._folderSearchStatusLabel.Margin = new System.Windows.Forms.Padding(3, 0, 3, 4);
       this._folderSearchStatusLabel.Name = "_folderSearchStatusLabel";
-      this._folderSearchStatusLabel.Size = new System.Drawing.Size(338, 13);
+      this._folderSearchStatusLabel.Size = new System.Drawing.Size(402, 13);
       this._folderSearchStatusLabel.TabIndex = 2;
       // 
       // _folderTreeView
@@ -273,7 +272,7 @@ namespace Velum.UI
       this._folderTreeView.Location = new System.Drawing.Point(3, 99);
       this._folderTreeView.Name = "_folderTreeView";
       this._folderTreeView.ShowNodeToolTips = true;
-      this._folderTreeView.Size = new System.Drawing.Size(338, 432);
+      this._folderTreeView.Size = new System.Drawing.Size(402, 432);
       this._folderTreeView.TabIndex = 3;
       // 
       // _indexProgressBar
@@ -282,7 +281,7 @@ namespace Velum.UI
       this._indexProgressBar.Location = new System.Drawing.Point(3, 537);
       this._indexProgressBar.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
       this._indexProgressBar.Name = "_indexProgressBar";
-      this._indexProgressBar.Size = new System.Drawing.Size(338, 1);
+      this._indexProgressBar.Size = new System.Drawing.Size(402, 1);
       this._indexProgressBar.TabIndex = 4;
       this._indexProgressBar.Visible = false;
       // 
@@ -298,7 +297,7 @@ namespace Velum.UI
       this._listPanel.RowCount = 2;
       this._listPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
       this._listPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-      this._listPanel.Size = new System.Drawing.Size(606, 534);
+      this._listPanel.Size = new System.Drawing.Size(722, 534);
       this._listPanel.TabIndex = 0;
       // 
       // _filtersHost
@@ -314,7 +313,7 @@ namespace Velum.UI
       this._filtersHost.RowCount = 2;
       this._filtersHost.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
       this._filtersHost.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-      this._filtersHost.Size = new System.Drawing.Size(606, 60);
+      this._filtersHost.Size = new System.Drawing.Size(722, 60);
       this._filtersHost.TabIndex = 0;
       // 
       // _filtersTopRow
@@ -342,7 +341,7 @@ namespace Velum.UI
       this._filtersTopRow.Name = "_filtersTopRow";
       this._filtersTopRow.RowCount = 1;
       this._filtersTopRow.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-      this._filtersTopRow.Size = new System.Drawing.Size(606, 30);
+      this._filtersTopRow.Size = new System.Drawing.Size(722, 30);
       this._filtersTopRow.TabIndex = 0;
       // 
       // _lblFilterStatus
@@ -424,7 +423,7 @@ namespace Velum.UI
       // 
       // _filtersBottomRow
       // 
-      this._filtersBottomRow.ColumnCount = 9;
+      this._filtersBottomRow.ColumnCount = 8;
       this._filtersBottomRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
       this._filtersBottomRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
       this._filtersBottomRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -433,7 +432,6 @@ namespace Velum.UI
       this._filtersBottomRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 70F));
       this._filtersBottomRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 26F));
       this._filtersBottomRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-      this._filtersBottomRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
       this._filtersBottomRow.Controls.Add(this._btnReports, 6, 0);
       this._filtersBottomRow.Controls.Add(this._lblFilterDesignation, 0, 0);
       this._filtersBottomRow.Controls.Add(this._filterDesignationBox, 1, 0);
@@ -441,21 +439,20 @@ namespace Velum.UI
       this._filtersBottomRow.Controls.Add(this._filterNameBox, 3, 0);
       this._filtersBottomRow.Controls.Add(this._btnReport, 5, 0);
       this._filtersBottomRow.Controls.Add(this._listStatusLabel, 7, 0);
-      this._filtersBottomRow.Controls.Add(this._btnConvertRelativePaths, 8, 0);
       this._filtersBottomRow.Dock = System.Windows.Forms.DockStyle.Fill;
       this._filtersBottomRow.Location = new System.Drawing.Point(0, 30);
       this._filtersBottomRow.Margin = new System.Windows.Forms.Padding(0);
       this._filtersBottomRow.Name = "_filtersBottomRow";
       this._filtersBottomRow.RowCount = 1;
       this._filtersBottomRow.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-      this._filtersBottomRow.Size = new System.Drawing.Size(606, 30);
+      this._filtersBottomRow.Size = new System.Drawing.Size(722, 30);
       this._filtersBottomRow.TabIndex = 1;
       // 
       // _btnReports
       // 
       this._btnReports.Dock = System.Windows.Forms.DockStyle.Fill;
       this._btnReports.Image = global::Velum.Properties.Resources.List;
-      this._btnReports.Location = new System.Drawing.Point(510, 3);
+      this._btnReports.Location = new System.Drawing.Point(626, 3);
       this._btnReports.Name = "_btnReports";
       this._btnReports.Size = new System.Drawing.Size(20, 24);
       this._btnReports.TabIndex = 10;
@@ -476,14 +473,14 @@ namespace Velum.UI
       this._filterDesignationBox.Dock = System.Windows.Forms.DockStyle.Fill;
       this._filterDesignationBox.Location = new System.Drawing.Point(86, 3);
       this._filterDesignationBox.Name = "_filterDesignationBox";
-      this._filterDesignationBox.Size = new System.Drawing.Size(96, 20);
+      this._filterDesignationBox.Size = new System.Drawing.Size(154, 20);
       this._filterDesignationBox.TabIndex = 1;
       // 
       // _lblFilterName
       // 
       this._lblFilterName.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this._lblFilterName.AutoSize = true;
-      this._lblFilterName.Location = new System.Drawing.Point(188, 8);
+      this._lblFilterName.Location = new System.Drawing.Point(246, 8);
       this._lblFilterName.Name = "_lblFilterName";
       this._lblFilterName.Size = new System.Drawing.Size(86, 13);
       this._lblFilterName.TabIndex = 2;
@@ -492,15 +489,15 @@ namespace Velum.UI
       // _filterNameBox
       // 
       this._filterNameBox.Dock = System.Windows.Forms.DockStyle.Fill;
-      this._filterNameBox.Location = new System.Drawing.Point(280, 3);
+      this._filterNameBox.Location = new System.Drawing.Point(338, 3);
       this._filterNameBox.Name = "_filterNameBox";
-      this._filterNameBox.Size = new System.Drawing.Size(96, 20);
+      this._filterNameBox.Size = new System.Drawing.Size(154, 20);
       this._filterNameBox.TabIndex = 3;
       // 
       // _btnReport
       // 
       this._btnReport.Dock = System.Windows.Forms.DockStyle.Fill;
-      this._btnReport.Location = new System.Drawing.Point(440, 3);
+      this._btnReport.Location = new System.Drawing.Point(556, 3);
       this._btnReport.Name = "_btnReport";
       this._btnReport.Size = new System.Drawing.Size(64, 24);
       this._btnReport.TabIndex = 8;
@@ -512,24 +509,12 @@ namespace Velum.UI
       this._listStatusLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this._listStatusLabel.AutoSize = true;
       this._listStatusLabel.ForeColor = System.Drawing.SystemColors.GrayText;
-      this._listStatusLabel.Location = new System.Drawing.Point(541, 8);
+      this._listStatusLabel.Location = new System.Drawing.Point(657, 8);
       this._listStatusLabel.Margin = new System.Windows.Forms.Padding(8, 0, 3, 0);
       this._listStatusLabel.Name = "_listStatusLabel";
       this._listStatusLabel.Size = new System.Drawing.Size(62, 13);
       this._listStatusLabel.TabIndex = 7;
       this._listStatusLabel.Text = "Записей: 0";
-      // 
-      // _btnConvertRelativePaths
-      // 
-      this._btnConvertRelativePaths.Anchor = System.Windows.Forms.AnchorStyles.Left;
-      this._btnConvertRelativePaths.AutoSize = true;
-      this._btnConvertRelativePaths.Location = new System.Drawing.Point(541, 3);
-      this._btnConvertRelativePaths.Margin = new System.Windows.Forms.Padding(8, 3, 3, 3);
-      this._btnConvertRelativePaths.Name = "_btnConvertRelativePaths";
-      this._btnConvertRelativePaths.Size = new System.Drawing.Size(206, 24);
-      this._btnConvertRelativePaths.TabIndex = 11;
-      this._btnConvertRelativePaths.Text = "Перевести пути в относительные";
-      this._btnConvertRelativePaths.UseVisualStyleBackColor = true;
       // 
       // _listView
       // 
@@ -542,7 +527,7 @@ namespace Velum.UI
       this._listView.HideSelection = false;
       this._listView.Location = new System.Drawing.Point(3, 63);
       this._listView.Name = "_listView";
-      this._listView.Size = new System.Drawing.Size(600, 468);
+      this._listView.Size = new System.Drawing.Size(716, 468);
       this._listView.TabIndex = 1;
       this._listView.UseCompatibleStateImageBehavior = false;
       this._listView.View = System.Windows.Forms.View.Details;
@@ -636,6 +621,5 @@ namespace Velum.UI
     private System.Windows.Forms.ColumnHeader _colName;
     private System.Windows.Forms.ColumnHeader _colStatus;
     private System.Windows.Forms.Button _btnReports;
-    private System.Windows.Forms.Button _btnConvertRelativePaths;
   }
 }
