@@ -125,7 +125,7 @@ namespace Velum.UI.ProductRegistry
       if (item == null || item.Id <= 0)
         return false;
 
-      string path = VelumProductRegistryStore.NormalizeFilePathKey(item.FilePath);
+      string path = item.GetNormalizedPathKey();
       if (string.IsNullOrEmpty(path))
       {
         problem = Build(item, "Путь к файлу пуст.");

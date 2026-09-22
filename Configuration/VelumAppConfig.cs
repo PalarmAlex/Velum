@@ -40,6 +40,19 @@ namespace Velum.Configuration
     private static readonly string ConfigFullPath = Path.Combine(ConfigDirectory, ConfigFileName);
 
     /// <summary>
+    /// Кэш значений настроек, прочитанных из Settings.xml. Чтение файла нужно
+    /// держать вне горячих циклов: нормализация путей реестра
+    /// (<see cref="Velum.ReactiveCore.Export.VelumRelativeDocumentPathResolver"/> →
+    /// <see cref="DocumentRootPath"/>)
+    /// вызывается на каждую запись при сканировании и загрузке формы.
+    /// </summary>
+    private static readonly Dictionary<string, CachedSetting> _settingCache =
+        new Dictionary<string, CachedSetting>(StringComparer.Ordinal);
+
+    /// <summary>Срок жизни кэшированного значения настройки, мс. Правки файла руками видны не позже этого срока.</summary>
+    private const int SettingCacheTtlMs = 1000;
+
+    /// <summary>
     /// Полный путь к файлу настроек на машине пользователя.
     /// </summary>
     public static string ConfigFilePath => ConfigFullPath;
@@ -67,6 +80,8 @@ namespace Velum.Configuration
       {
         lock (ConfigLock)
         {
+          // Файл мог быть заменен извне (установщик, форма настроек, ISIDA) — кэш не нужен.
+          _settingCache.Clear();
           Directory.CreateDirectory(ConfigDirectory);
           if (!File.Exists(ConfigFullPath))
             CreateDefaultConfig();
@@ -712,21 +727,37 @@ namespace Velum.Configuration
         SetSetting("NeedDrawingDefault", value.ToString());
 
     /// <summary>
-    /// Читает строковую настройку из XML.
+    /// Читает строковую настройку из XML (через кэш <see cref="_settingCache"/>).
     /// </summary>
     /// <param name="key">Имя элемента внутри AppSettings.</param>
     /// <returns>Значение элемента или null при ошибке или отсутствии узла.</returns>
     public static string GetSetting(string key)
     {
+      if (string.IsNullOrEmpty(key))
+        return null;
+
       try
       {
         lock (ConfigLock)
         {
+          int now = Environment.TickCount;
+          CachedSetting cached;
+          if (_settingCache.TryGetValue(key, out cached)
+              && unchecked(now - cached.StampMs) < SettingCacheTtlMs)
+            return cached.Value;
+
           XDocument doc = XDocument.Load(ConfigFullPath);
-          return doc.Root?
+          string value = doc.Root?
               .Element("AppSettings")?
               .Element(key)?
               .Value;
+
+          _settingCache[key] = new CachedSetting
+          {
+            Value = value,
+            StampMs = now
+          };
+          return value;
         }
       }
       catch (Exception ex)
@@ -737,12 +768,15 @@ namespace Velum.Configuration
     }
 
     /// <summary>
-    /// Записывает строковую настройку в XML.
+    /// Записывает строковую настройку в XML и обновляет её кэш.
     /// </summary>
     /// <param name="key">Имя элемента.</param>
     /// <param name="value">Новое значение.</param>
     public static void SetSetting(string key, string value)
     {
+      if (string.IsNullOrEmpty(key))
+        return;
+
       try
       {
         lock (ConfigLock)
@@ -759,12 +793,39 @@ namespace Velum.Configuration
             app.Add(new XElement(key, value));
 
           doc.Save(ConfigFullPath);
+          _settingCache[key] = new CachedSetting
+          {
+            Value = value,
+            StampMs = Environment.TickCount
+          };
         }
       }
       catch (Exception ex)
       {
         Logger.Error(ex.Message);
+        // Кэш мог разойтись с файлом — сбрасываем полностью.
+        InvalidateSettingCache();
       }
+    }
+
+    /// <summary>
+    /// Сбрасывает кэш значений Settings.xml (после сторонней правки файла,
+    /// перезагрузки контекста ISIDA, смены корневых каталогов).
+    /// </summary>
+    public static void InvalidateSettingCache()
+    {
+      lock (ConfigLock)
+        _settingCache.Clear();
+    }
+
+    /// <summary>Кэшированное значение одной настройки вместе с меткой времени чтения.</summary>
+    private sealed class CachedSetting
+    {
+      /// <summary>Значение элемента (null — узел отсутствует или файл не читался успешно).</summary>
+      public string Value;
+
+      /// <summary>Environment.TickCount на момент чтения (сравнение через unchecked-вычитание).</summary>
+      public int StampMs;
     }
 
     /// <summary>

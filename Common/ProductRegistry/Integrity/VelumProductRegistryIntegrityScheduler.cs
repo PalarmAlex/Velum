@@ -34,8 +34,8 @@ namespace Velum.UI.ProductRegistry
     /// Область open/closed отслеживается событием <c>ActiveModelDocChangeNotify</c>
     /// и синхронизируется при старте пульсации. Так как это событие <b>не приходит</b>
     /// при закрытии последнего документа (нового активного нет), на каждом пульсе
-    /// в open-области выполняется лёгкая проверка наличия активного документа
-    /// (один вызов <c>IActiveDoc2</c>, без обхода дерева сборки): если документа нет,
+    /// в open-области выполняется лёгкая проверка наличия открытых документов
+    /// (один вызов <c>GetFirstDocument</c>, без обхода дерева сборки): если документов нет,
     /// область переводится в closed и сканирование возобновляется.
     /// </para>
   /// <para>
@@ -258,8 +258,11 @@ namespace Velum.UI.ProductRegistry
         bool openScope;
         try
         {
-          HashSet<string> openPaths = VelumProductRegistryOpenDocumentsScope.TryCollectNormalizedOpenPaths();
-          openScope = openPaths != null && openPaths.Count > 0;
+          // Область open определяем по наличию любого открытого документа, а не по
+          // множеству путей: у нового несохранённого документа GetPathName() пуст,
+          // и раньше он ошибочно считался closed-областью — сканеры целостности
+          // продолжали работать при открытом документе.
+          openScope = VelumProductRegistryOpenDocumentsScope.HasOpenDocuments();
         }
         catch
         {
@@ -267,6 +270,13 @@ namespace Velum.UI.ProductRegistry
         }
 
         SyncDocumentsScope(openScope);
+
+        // При входе в open заставляем текущий фоновый квант уступить на следующем
+        // элементе: SyncDocumentsScope обнулил курсоры/кэш, продолжать старый квант нет смысла.
+        // Выставляем ПОСЛЕ SyncDocumentsScope — внутри него AbortDiscoveryPassesUnlocked
+        // сбрасывает флаг в 0.
+        if (openScope)
+          Interlocked.Exchange(ref _tickYieldRequested, 1);
       });
     }
 
@@ -405,7 +415,7 @@ namespace Velum.UI.ProductRegistry
         VelumProductRegistryDxfFleetScanner.RevalidateItem(item, writePending: dxfPassActive);
         VelumProductRegistryPdfFleetScanner.RevalidateItem(store, item, writePending: pdfPassActive);
 
-        string path = VelumProductRegistryStore.NormalizeFilePathKey(item.FilePath);
+        string path = item.GetNormalizedPathKey();
         if (!string.IsNullOrEmpty(path))
           VelumProductRegistryProblemCache.RemoveMissingRegistryEntry(path);
       }
@@ -444,10 +454,22 @@ namespace Velum.UI.ProductRegistry
       // Документ открыт: сканеры проблем реестра на паузе, синхронизация — на событиях SW.
       // НО: ActiveModelDocChangeNotify не приходит при закрытии последнего документа
       // (нового активного нет), и область могла застрять в open — лёгкая проверка
-      // наличия активного документа (один IActiveDoc2, без обхода дерева, E10).
-      if (IsOpenDocumentsScopeActive && !TrySyncClosedScopeIfNoActiveDocument())
+      // наличия открытых документов (один GetFirstDocument, без обхода дерева, E10).
+      if (IsOpenDocumentsScopeActive && !TrySyncClosedScopeIfNoOpenDocuments())
       {
         Interlocked.Exchange(ref _closedScopePulseCount, 0);
+        return;
+      }
+
+      // Симметрично: closed → open. Событие ActiveModelDocChangeNotify могло не прийти
+      // (гонка, COM-исключение в колбэке, документ открыт «молча» через API), и область
+      // застряла в closed при открытом документе — сканер молотил бы реестр. Лёгкая
+      // проверка наличия открытых документов (один GetFirstDocument, без дерева, E10).
+      if (!IsOpenDocumentsScopeActive && TrySyncOpenScopeIfOpenDocuments())
+      {
+        Interlocked.Exchange(ref _closedScopePulseCount, 0);
+        // На случай, если тик уже стартовал между проверками — заставляем уступить.
+        Interlocked.Exchange(ref _tickYieldRequested, 1);
         return;
       }
 
@@ -473,21 +495,42 @@ namespace Velum.UI.ProductRegistry
     /// <summary>
     /// Лёгкая проверка open-области на пульсе: <c>ActiveModelDocChangeNotify</c> не приходит
     /// при закрытии последнего документа (нового активного нет), и область могла застрять в open.
-    /// Проверяется только наличие активного документа (<c>IActiveDoc2</c>) — без обхода дерева
-    /// сборки (E10). Возвращает true, если активного документа нет и область переведена в closed.
+    /// Проверяется наличие любого открытого документа (<c>GetFirstDocument</c>) — без обхода
+    /// дерева сборки (E10). Возвращает true, если открытых документов нет и область переведена в closed.
     /// </summary>
-    private static bool TrySyncClosedScopeIfNoActiveDocument()
+    private static bool TrySyncClosedScopeIfNoOpenDocuments()
     {
       bool becameClosed = false;
       VelumSolidEnvironmentBridge.RunOnTaskPaneUiThread(() =>
       {
-        if (VelumProductRegistryOpenDocumentsScope.HasActiveDocument())
+        if (VelumProductRegistryOpenDocumentsScope.HasOpenDocuments())
           return;
 
         SyncDocumentsScope(openScope: false);
         becameClosed = true;
       });
       return becameClosed;
+    }
+
+    /// <summary>
+    /// Симметрично <see cref="TrySyncClosedScopeIfNoOpenDocuments"/>: лёгкая проверка
+    /// closed-области на пульсе. Если открытый документ есть (в т.ч. новый несохранённый
+    /// или только что сохранённый, когда <c>ActiveModelDocChangeNotify</c> не пришёл),
+    /// область переводится в open. Возвращает true, если открытые документы есть и
+    /// область переведена в open.
+    /// </summary>
+    private static bool TrySyncOpenScopeIfOpenDocuments()
+    {
+      bool becameOpen = false;
+      VelumSolidEnvironmentBridge.RunOnTaskPaneUiThread(() =>
+      {
+        if (!VelumProductRegistryOpenDocumentsScope.HasOpenDocuments())
+          return;
+
+        SyncDocumentsScope(openScope: true);
+        becameOpen = true;
+      });
+      return becameOpen;
     }
 
     /// <summary>
@@ -571,6 +614,39 @@ namespace Velum.UI.ProductRegistry
       if (Volatile.Read(ref _openDocumentsScopeActive) == 1)
         return;
       if (openPaths != null && openPaths.Count > 0)
+        return;
+
+      // Живая проверка: между пульсом (closed) и стартом тика мог открыться документ,
+      // а событие ActiveModelDocChangeNotify не прийти (новый несохранённый — FileSavePostNotify
+      // тоже не сработает до сохранения). Один COM-вызов на тик (не на элемент) — допустимо.
+      // RunTick в фоновом потоке: RunOnTaskPaneUiThread синхронно входит в STA-поток SW (E5),
+      // тик подождёт, если UI-поток занят — для фонового тика это приемлемо.
+      // Проверка и перевод в open — одним входом на UI-поток: документ не «убежит» между ними.
+      bool activeNow = false;
+      try
+      {
+        VelumSolidEnvironmentBridge.RunOnTaskPaneUiThread(() =>
+        {
+          activeNow = VelumProductRegistryOpenDocumentsScope.HasOpenDocuments();
+          if (activeNow)
+            SyncDocumentsScope(openScope: true);
+        });
+      }
+      catch
+      {
+        // COM-исключение до SyncDocumentsScope — переводим область в open консервативно.
+        activeNow = true;
+        try
+        {
+          VelumSolidEnvironmentBridge.RunOnTaskPaneUiThread(
+              () => SyncDocumentsScope(openScope: true));
+        }
+        catch
+        {
+        }
+      }
+
+      if (activeNow)
         return;
 
       EnsureStoreLoaded(force: Interlocked.Exchange(ref _reloadRequested, 0) == 1);
@@ -740,13 +816,32 @@ private static void AbortDiscoveryPassesUnlocked()
         try
         {
           _store.Load();
-          _mappings = VelumProductRegistryFolderAutoNames.LoadOrCreate();
+          // Автоимена каталогов — не часть реестра: перечитывать их при каждом
+          // изменении items.json не нужно (файл меняется только из формы
+          // автоимён — там вызывается NotifyMappingsChanged). Иначе каждое
+          // фоновое сохранение зеркал перечитывало оба файла настроек.
+          if (_mappings == null || _mappings.Count == 0)
+            _mappings = VelumProductRegistryFolderAutoNames.LoadOrCreate();
         }
         catch (Exception ex)
         {
           Logger.Warning("Velum registry integrity load: " + ex.Message);
         }
       }
+    }
+
+    /// <summary>
+    /// Сброс кэша автоимён каталогов (после сохранения из формы автоимён)
+    /// и запрос перечитать реестр на следующем тике.
+    /// </summary>
+    internal static void NotifyMappingsChanged()
+    {
+      lock (Gate)
+      {
+        _mappings = new List<VelumProductFolderAutoNameMapping>();
+      }
+
+      Interlocked.Exchange(ref _reloadRequested, 1);
     }
   }
 }

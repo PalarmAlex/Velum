@@ -80,6 +80,8 @@ namespace Velum.UI
       try
       {
         VelumProductRegistryFolderAutoNames.Save(mappings);
+        // Шедулер целостности кэширует автоимена — сбросить его кэш после сохранения.
+        Velum.UI.ProductRegistry.VelumProductRegistryIntegrityScheduler.NotifyMappingsChanged();
       }
       catch (Exception ex)
       {

@@ -74,22 +74,18 @@ namespace Velum.UI
         VelumProductRegistryIndexTrace.Mark("form.prepare.begin");
       InitializeRuntime();
       _store.Load();
-      var allItems = _store.GetAllItems();
+      VelumProductItem[] allItems = _store.GetAllItems();
       if (VelumAppConfig.SolidHomeostasisDebugLog)
         VelumProductRegistryIndexTrace.Mark(
             "form.prepare.loaded",
-            "items=" + allItems.Count);
+            "items=" + allItems.Length);
 
-      VelumProductRegistryPathScanResult scan = RunPathVerification(
-          allItems,
-          allowAbortLoad: true,
-          showSummary: false);
-      if (scan == VelumProductRegistryPathScanResult.AbortLoad)
-      {
-        if (VelumAppConfig.SolidHomeostasisDebugLog)
-          VelumProductRegistryIndexTrace.Mark("form.prepare.abort_path_check");
-        return false;
-      }
+      // Полную проверку путей при открытии НЕ запускаем: на сетевом корне
+      // (VPN/недоступный шар) File.Exists виснет на десятки секунд на запись —
+      // форма не открывалась часами. Статусы до явной проверки — «?»;
+      // проверка — только по кнопке «Проверка путей» (с диалогом таймаута).
+      _pathStatuses.Clear();
+
 
       // Если selectFolderId не передан — пытаемся найти папку активного документа SW.
       if (!selectFolderId.HasValue || selectFolderId.Value <= 0)

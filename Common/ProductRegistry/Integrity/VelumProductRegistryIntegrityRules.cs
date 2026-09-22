@@ -41,9 +41,17 @@ namespace Velum.UI.ProductRegistry
       return IsDrawingPath(filePath) || IsPdfPath(filePath) || IsDxfPath(filePath);
     }
 
-    internal static string GetExtension(string filePath)
+internal static string GetExtension(string filePath)
     {
-      string path = VelumProductRegistryStore.NormalizeFilePathKey(filePath);
+      // Расширение не зависит от корневого каталога — полная нормализация
+      // (развертывание относительного пути + GetFullPath) здесь не нужна:
+      // она читала Settings.xml/резолвила корень на каждую проверку типа.
+      string path = (filePath ?? string.Empty).Trim();
+      if (path.StartsWith(@"\?\UNC\", StringComparison.OrdinalIgnoreCase))
+        path = @"\" + path.Substring(8);
+      else if (path.StartsWith(@"\?\", StringComparison.OrdinalIgnoreCase))
+        path = path.Substring(4);
+
       if (string.IsNullOrEmpty(path))
         return string.Empty;
       try
@@ -125,12 +133,18 @@ namespace Velum.UI.ProductRegistry
       return found != null ? found.Id : 0;
     }
 
+/// <summary>
+    /// Путь считается «битым» только при явном ответе «нет файла» (No).
+    /// Unknown (таймаут проверки сетевого пути) missing'ом НЕ считается:
+    /// по таймауту нельзя судить о существовании файла — недоступный шар по VPN
+    /// не должен создавать тысячи ложных проблем BrokenLink.
+    /// </summary>
     internal static bool PathExistsOrTimedOutIsMissing(string filePath)
     {
       VelumProductRegistryPathStatus status = VelumProductRegistryPathChecker.CheckOne(
           filePath,
           VelumProductRegistryPathChecker.TimeoutMilliseconds);
-      return status != VelumProductRegistryPathStatus.Ok;
+      return status == VelumProductRegistryPathStatus.No;
     }
 
     private static bool IsHeadCatalog(

@@ -157,7 +157,7 @@ namespace Velum.UI.ProductRegistry
         return Array.Empty<VelumProductRegistryProblemEntry>();
 
       // Нет файла модели — флот DXF бессмысленен (выше приоритетом будет BrokenLink).
-      string modelPath = VelumProductRegistryStore.NormalizeFilePathKey(item.FilePath);
+      string modelPath = item.GetNormalizedPathKey();
       if (string.IsNullOrEmpty(modelPath)
           || VelumProductRegistryIntegrityRules.PathExistsOrTimedOutIsMissing(modelPath))
         return Array.Empty<VelumProductRegistryProblemEntry>();
@@ -178,6 +178,23 @@ namespace Velum.UI.ProductRegistry
       bool firstExport = string.IsNullOrWhiteSpace(catalog);
       VelumProductExportMetaConfig[] configs = item.ExportMetaConfigs
           ?? Array.Empty<VelumProductExportMetaConfig>();
+
+      // Каталог DXF общий для всех конфигураций записи — Directory.Exists
+      // выполняем один раз на запись (лениво: только если каталог вообще нужен).
+      bool catalogChecked = false;
+      bool catalogExists = false;
+
+      bool CatalogExists()
+      {
+        if (!catalogChecked)
+        {
+          catalogExists = Directory.Exists(catalog);
+          catalogChecked = true;
+        }
+
+        return catalogExists;
+      }
+
 
       if (configs.Length == 0)
       {
@@ -217,7 +234,7 @@ namespace Velum.UI.ProductRegistry
           continue;
         }
 
-        if (!Directory.Exists(catalog))
+        if (!CatalogExists())
         {
           Append(byKind, VelumProductRegistryProblemKind.DxfCatalogUnavailable,
               "Каталог недоступен [" + configLabel + "]");

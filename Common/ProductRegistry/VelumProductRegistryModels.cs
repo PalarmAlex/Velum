@@ -101,6 +101,45 @@ namespace Velum.UI.ProductRegistry
     /// <summary>Per-config DXF-метаданные (детали).</summary>
     public VelumProductExportMetaConfig[] ExportMetaConfigs { get; set; } =
         Array.Empty<VelumProductExportMetaConfig>();
+
+    /// <summary>
+    /// Кэш нормализованного ключа <see cref="FilePath"/> (см. <see cref="GetNormalizedPathKey"/>).
+    /// Поле приватное — в JSON реестра не попадает.
+    /// </summary>
+    private string _normalizedPathKey;
+
+    /// <summary>Версия корневого каталога, на которой построен <see cref="_normalizedPathKey"/> (-1 — кэш пуст).</summary>
+    private long _pathKeyRootVersion = -1;
+
+    /// <summary>
+    /// Нормализованный ключ пути записи (<see cref="VelumProductRegistryStore.NormalizeFilePathKey"/>
+    /// от <see cref="FilePath"/>), кэшированный на объекте. Сканеры целостности вызывают его
+    /// по 1–3 раза на запись за проход. Кэш сбрасывается при смене корневого каталога
+    /// (RootVersion) и при нормализации записи через Add/Update (изменение FilePath).
+    /// </summary>
+    /// <returns>Нормализованный ключ пути (string.Empty при пустом FilePath).</returns>
+    public string GetNormalizedPathKey()
+    {
+      long version = Velum.ReactiveCore.Export.VelumRelativeDocumentPathResolver.RootVersion;
+      string key = _normalizedPathKey;
+      if (key != null && _pathKeyRootVersion == version)
+        return key;
+
+      key = VelumProductRegistryStore.NormalizeFilePathKey(FilePath);
+      _normalizedPathKey = key;
+      _pathKeyRootVersion = version;
+      return key;
+    }
+
+    /// <summary>
+    /// Сбрасывает кэш <see cref="GetNormalizedPathKey"/> (вызывается из
+    /// <see cref="VelumProductRegistryStore.NormalizeItem"/> после изменения FilePath).
+    /// </summary>
+    internal void InvalidateNormalizedPathKey()
+    {
+      _normalizedPathKey = null;
+      _pathKeyRootVersion = -1;
+    }
   }
 
   /// <summary>Контейнер файла каталогов.</summary>

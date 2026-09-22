@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading;
 using Velum.Configuration;
 
 namespace Velum.ReactiveCore.Export
@@ -14,6 +15,18 @@ namespace Velum.ReactiveCore.Export
   /// </summary>
   internal static class VelumRelativeDocumentPathResolver
   {
+    /// <summary>
+    /// Последнее прочитанное значение корневого каталога (для детектирования смены
+    /// настройки без подсчёта версии на каждый вызов).
+    /// </summary>
+    private static string _rootMemo;
+
+    /// <summary>
+    /// Счётчик смен корневого каталога: потребители кэшей нормализованных путей
+    /// (<see cref="Velum.UI.ProductRegistry.VelumProductRegistryStore.NormalizeFilePathKey"/>)
+    /// сбрасывают свои кэши при изменении номера.
+    /// </summary>
+    private static long _rootVersion;
     /// <summary>
     /// Готовит значение к записи в свойство/зеркало/ключ реестра: срезает корневой
     /// каталог (регистронезависимо) → относительный путь.
@@ -118,7 +131,23 @@ namespace Velum.ReactiveCore.Export
     /// <summary>Нормализованный корневой каталог документов (string.Empty — не задан).</summary>
     private static string GetRoot()
     {
-      return VelumAppConfig.GetDocumentRootPath();
+      string root = VelumAppConfig.GetDocumentRootPath();
+      string memo = Volatile.Read(ref _rootMemo);
+      if (!string.Equals(root, memo, StringComparison.Ordinal))
+      {
+        // Настройка сменилась (сохранение формы параметров) — поднимаем версию,
+        // чтобы потребители сбросили кэши развернутых путей.
+        Volatile.Write(ref _rootMemo, root);
+        Interlocked.Increment(ref _rootVersion);
+      }
+
+      return root;
     }
+
+    /// <summary>
+    /// Номер текущей версии корневого каталога. Растёт при каждой смене настройки —
+    /// признак сброса внешних кэшей путей.
+    /// </summary>
+    internal static long RootVersion => Interlocked.Read(ref _rootVersion);
   }
 }

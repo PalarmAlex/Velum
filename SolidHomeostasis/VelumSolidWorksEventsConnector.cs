@@ -929,6 +929,11 @@ namespace Velum.SolidHomeostasis
           VelumAssemblyBomMirrorCoordinator.TryMirrorSavedPart(modelDoc, fileName);
         }
         VelumProductRegistryExportMetaSync.TrySyncOpenDocumentFromDisk(modelDoc);
+
+        // Сохранение может дать документу путь впервые (SaveAs нового файла) —
+        // ActiveModelDocChangeNotify при этом не приходит. Пересинхронизировать
+        // область скана целостности, чтобы closed-область не осталась устаревшей.
+        VelumProductRegistryIntegrityScheduler.NotifyOpenDocumentsScopeChanged();
       }
       catch
       {

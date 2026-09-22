@@ -6,6 +6,8 @@ using System.Text;
 using ISIDA.Common;
 using Newtonsoft.Json;
 using Velum.Configuration;
+using Velum.ReactiveCore.Export;
+
 
 namespace Velum.UI.ProductRegistry
 {
@@ -41,6 +43,79 @@ namespace Velum.UI.ProductRegistry
     private bool _foldersDirty;
     private bool _itemsDirty;
 
+    /// <summary>Версия состава записей: инкремент при любом изменении <see cref="_items"/>.</summary>
+    private int _itemsChangeStamp;
+
+    /// <summary>Ленивый индекс «базовое имя файла (нижний регистр) → записи моделей» (см. <see cref="FindModelItemsByBaseName"/>).</summary>
+    private Dictionary<string, List<VelumProductItem>> _modelItemsByBaseName;
+
+    /// <summary>Версия состава, на которой построен <see cref="_modelItemsByBaseName"/>.</summary>
+    private int _modelIndexStamp = -1;
+
+    /// <summary>
+    /// Записи моделей (.sldprt/.sldasm) с данным базовым именем файла (без расширения,
+    /// без учёта регистра). Поиск связанной детали по имени чертежа — через индекс,
+    /// а не линейным обходом реестра (обход давал O(N²) в PDF-сканере).
+    /// </summary>
+    /// <param name="baseName">Базовое имя файла (например, имя чертежа без .slddrw).</param>
+    /// <returns>Список записей (может быть пуст).</returns>
+    public IReadOnlyList<VelumProductItem> FindModelItemsByBaseName(string baseName)
+    {
+      string name = (baseName ?? string.Empty).Trim().ToLowerInvariant();
+      if (name.Length == 0)
+        return Array.Empty<VelumProductItem>();
+
+      if (_modelItemsByBaseName == null || _modelIndexStamp != _itemsChangeStamp)
+        BuildModelBaseNameIndex();
+
+      List<VelumProductItem> list;
+      if (_modelItemsByBaseName.TryGetValue(name, out list))
+        return list;
+
+      return Array.Empty<VelumProductItem>();
+    }
+
+    /// <summary>Перестраивает индекс базовых имён моделей по текущему составу записей.</summary>
+    private void BuildModelBaseNameIndex()
+    {
+      var index = new Dictionary<string, List<VelumProductItem>>(StringComparer.OrdinalIgnoreCase);
+      foreach (VelumProductItem item in _items.Values)
+      {
+        if (item == null || string.IsNullOrEmpty(item.FilePath))
+          continue;
+
+        string ext = Path.GetExtension(item.FilePath);
+        if (!string.Equals(ext, ".sldprt", StringComparison.OrdinalIgnoreCase)
+            && !string.Equals(ext, ".sldasm", StringComparison.OrdinalIgnoreCase))
+          continue;
+
+        string baseName;
+        try
+        {
+          baseName = Path.GetFileNameWithoutExtension(item.FilePath);
+        }
+        catch
+        {
+          continue;
+        }
+
+        if (string.IsNullOrEmpty(baseName))
+          continue;
+
+        List<VelumProductItem> list;
+        if (!index.TryGetValue(baseName, out list))
+        {
+          list = new List<VelumProductItem>(1);
+          index[baseName] = list;
+        }
+
+        list.Add(item);
+      }
+
+      _modelItemsByBaseName = index;
+      _modelIndexStamp = _itemsChangeStamp;
+    }
+
     public static string RegistryFolderPath => VelumAppConfig.ProductRegistryFolderPath;
 
     public static string FoldersFilePath => Path.Combine(RegistryFolderPath, "folders.json");
@@ -49,14 +124,30 @@ namespace Velum.UI.ProductRegistry
 
     public IEnumerable<VelumProductFolder> Folders => _folders.Values;
 
-    /// <summary>Все записи изделий (стабильный порядок по Id — детерминированный обход для сканеров).</summary>
-    public IReadOnlyList<VelumProductItem> GetAllItems()
+    /// <summary>Кэш отсортированного по Id массива записей (см. <see cref="GetAllItems"/>).</summary>
+    private VelumProductItem[] _allItemsCache;
+
+    /// <summary>Версия состава, на которой построен <see cref="_allItemsCache"/>.</summary>
+    private int _allItemsCacheStamp = -1;
+
+    /// <summary>
+    /// Все записи изделий (стабильный порядок по Id — детерминированный обход для сканеров).
+    /// Результат кэшируется до следующего изменения состава: каждый из пяти сканеров
+    /// вызывал сортировку и копию списка на каждый тик.
+    /// </summary>
+    public VelumProductItem[] GetAllItems()
     {
-      var list = new List<VelumProductItem>(_items.Count);
-      foreach (KeyValuePair<int, VelumProductItem> kv in _items)
-        list.Add(kv.Value);
-      list.Sort((a, b) => a.Id.CompareTo(b.Id));
-      return list;
+      if (_allItemsCache == null || _allItemsCacheStamp != _itemsChangeStamp)
+      {
+        var list = new List<VelumProductItem>(_items.Count);
+        foreach (KeyValuePair<int, VelumProductItem> kv in _items)
+          list.Add(kv.Value);
+        list.Sort((a, b) => a.Id.CompareTo(b.Id));
+        _allItemsCache = list.ToArray();
+        _allItemsCacheStamp = _itemsChangeStamp;
+      }
+
+      return _allItemsCache;
     }
 
     public void Load()
@@ -64,6 +155,8 @@ namespace Velum.UI.ProductRegistry
       Directory.CreateDirectory(RegistryFolderPath);
       _folders.Clear();
       _items.Clear();
+      _itemsChangeStamp++;
+      _modelItemsByBaseName = null;
       _itemsByFolder.Clear();
       _itemsByDesignationKey.Clear();
 
@@ -131,6 +224,7 @@ namespace Velum.UI.ProductRegistry
     {
       Directory.CreateDirectory(RegistryFolderPath);
 
+      bool saved = false;
       if (_foldersDirty)
       {
         var folderFile = new VelumProductFolderFile
@@ -144,6 +238,7 @@ namespace Velum.UI.ProductRegistry
         };
         WriteJsonAtomic(FoldersFilePath, folderFile);
         _foldersDirty = false;
+        saved = true;
       }
 
       if (_itemsDirty)
@@ -158,9 +253,14 @@ namespace Velum.UI.ProductRegistry
         };
         WriteJsonAtomic(ItemsFilePath, itemFile);
         _itemsDirty = false;
+        saved = true;
       }
 
-      VelumProductRegistryIntegrityScheduler.NotifyRegistryChanged();
+      // Перезагрузку шедулера запрашиваем только при фактической записи на диск:
+      // Save вызывается из каждого UpdateItem/AddItem фоновых зеркал, и без этого
+      // условия шедулер перечитывал бы items.json на каждое сохранение зеркала.
+      if (saved)
+        VelumProductRegistryIntegrityScheduler.NotifyRegistryChanged();
     }
 
     public VelumProductFolder GetFolder(int id)
@@ -372,6 +472,8 @@ namespace Velum.UI.ProductRegistry
             if (_items.TryGetValue(itemId, out removedItem))
               RemoveFromDesignationKeyIndex(removedItem);
             _items.Remove(itemId);
+            _itemsChangeStamp++;
+            _modelItemsByBaseName = null;
           }
           _itemsByFolder.Remove(id);
           _itemsDirty = true;
@@ -418,6 +520,7 @@ namespace Velum.UI.ProductRegistry
       };
       NormalizeItem(item);
       _items[item.Id] = item;
+      _itemsChangeStamp++;
       GetOrCreateFolderItemList(folderId).Add(item.Id);
       AddToDesignationKeyIndex(item);
       _itemsDirty = true;
@@ -438,13 +541,43 @@ namespace Velum.UI.ProductRegistry
       if (string.IsNullOrEmpty(path))
         return null;
 
+      // Поиск через индекс нормализованных путей: линейный обход с нормализацией
+      // каждой записи давал O(N) развертываний на вызов (PDF-сканер и дедупликация
+      // при индексации каталога — O(N²) на 16k записей).
+      if (_itemsByPathKey == null || _pathIndexStamp != _itemsChangeStamp)
+        BuildPathKeyIndex();
+
+      VelumProductItem found;
+      return _itemsByPathKey.TryGetValue(path, out found) ? found : null;
+    }
+
+    /// <summary>Индекс «нормализованный ключ пути → запись» (см. <see cref="FindItemByFilePath"/>).</summary>
+    private Dictionary<string, VelumProductItem> _itemsByPathKey;
+
+    /// <summary>Версия состава, на которой построен <see cref="_itemsByPathKey"/>.</summary>
+    private int _pathIndexStamp = -1;
+
+    /// <summary>Перестраивает индекс нормализованных путей по текущему составу записей.</summary>
+    private void BuildPathKeyIndex()
+    {
+      var index = new Dictionary<string, VelumProductItem>(StringComparer.OrdinalIgnoreCase);
       foreach (VelumProductItem item in _items.Values)
       {
-        if (string.Equals(NormalizeFilePathKey(item.FilePath), path, StringComparison.OrdinalIgnoreCase))
-          return item;
+        if (item == null || string.IsNullOrEmpty(item.FilePath))
+          continue;
+
+        string key = NormalizeFilePathKey(item.FilePath);
+        if (string.IsNullOrEmpty(key))
+          continue;
+
+        // Исторические дубли путей допустимы — побеждает первая по Id
+        // (прежний линейный поиск возвращал первую найденную).
+        if (!index.ContainsKey(key))
+          index[key] = item;
       }
 
-      return null;
+      _itemsByPathKey = index;
+      _pathIndexStamp = _itemsChangeStamp;
     }
 
     public IEnumerable<string> GetAllFilePaths()
@@ -457,8 +590,18 @@ namespace Velum.UI.ProductRegistry
       }
     }
 
-    /// <summary>Нормализует путь файла для сравнения при дедупликации.</summary>
+/// <summary>Нормализует путь файла для сравнения при дедупликации.</summary>
     public static string NormalizeFilePathKey(string filePath)
+    {
+      // Кэш «значение → ключ» здесь убран: после удаления Path.GetFullPath из
+      // BuildFilePathKey вычисление ключа свелось к ToFull (корень мемоизирован
+      // через TTL-кэш настроек) — кэш не ускорял, только добавлял оверхед
+      // словаря и инвалидацию по RootVersion.
+      return BuildFilePathKey(filePath);
+    }
+
+    /// <summary>Вычисляет нормализованный ключ пути (без кэша).</summary>
+    private static string BuildFilePathKey(string filePath)
     {
       string path = (filePath ?? string.Empty).Trim();
       if (string.IsNullOrEmpty(path))
@@ -467,22 +610,18 @@ namespace Velum.UI.ProductRegistry
       // \?\C:\… и \?\UNC\server\share\… → обычный вид, иначе повторная индексация
       // того же файла даёт «новый» ключ и дублирует запись.
       if (path.StartsWith(@"\?\UNC\", StringComparison.OrdinalIgnoreCase))
-        path = @"\\" + path.Substring(8);
+        path = @"\" + path.Substring(8);
       else if (path.StartsWith(@"\?\", StringComparison.OrdinalIgnoreCase))
         path = path.Substring(4);
 
       if (path.IndexOf(Path.AltDirectorySeparatorChar) >= 0)
         path = path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
 
-      try
-      {
-        // Относительное значение (срез по префиксу корневого каталога) достраивается
-        // до GetFullPath — иначе ключ развернётся от текущего каталога процесса.
-        path = Path.GetFullPath(Velum.ReactiveCore.Export.VelumRelativeDocumentPathResolver.ToFull(path));
-      }
-      catch
-      {
-      }
+      // Path.GetFullPath здесь убран намеренно: он выполнял разрешение «..», дисков
+      // и форм 8.3 на каждый вызов, а в ключах реестра таких значений не бывает —
+      // пути приходят либо из EnumerateFiles, либо из ToFull(root, relative).
+      // Разворот относительного значения по корню делает ToFull.
+      path = Velum.ReactiveCore.Export.VelumRelativeDocumentPathResolver.ToFull(path);
 
       // Единый разделитель — иначе один и тот же файл может пройти дедупликацию дважды
       // (EnumerateFiles vs путь из JSON) или, наоборот, ложно считаться «уже в реестре».
@@ -528,6 +667,7 @@ namespace Velum.UI.ProductRegistry
       }
 
       _items[item.Id] = item;
+      _itemsChangeStamp++;
       if (!string.Equals(oldDesignationKey, newDesignationKey, StringComparison.OrdinalIgnoreCase))
         UpdateDesignationKeyIndex(item, oldDesignationKey);
       _itemsDirty = true;
@@ -845,6 +985,7 @@ namespace Velum.UI.ProductRegistry
 
       RemoveFromDesignationKeyIndex(item);
       _items.Remove(itemId);
+      _itemsChangeStamp++;
       _itemsDirty = true;
       Save();
     }
@@ -898,6 +1039,9 @@ namespace Velum.UI.ProductRegistry
       item.FilePath = string.IsNullOrEmpty(path)
           ? string.Empty
           : Velum.ReactiveCore.Export.VelumRelativeDocumentPathResolver.ToStored(path);
+
+      // FilePath мог измениться (ввод/срез корня) — кэш ключа записи устарел.
+      item.InvalidateNormalizedPathKey();
     }
 
     private static T ReadJson<T>(string path) where T : class

@@ -116,7 +116,7 @@ namespace Velum.UI.ProductRegistry
         return false;
 
       // Нет файла модели — «нет чертежа» вторично относительно битой ссылки.
-      string modelPath = VelumProductRegistryStore.NormalizeFilePathKey(modelItem.FilePath);
+      string modelPath = modelItem.GetNormalizedPathKey();
       if (string.IsNullOrEmpty(modelPath)
           || VelumProductRegistryIntegrityRules.PathExistsOrTimedOutIsMissing(modelPath))
         return false;

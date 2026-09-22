@@ -89,12 +89,16 @@ namespace Velum.UI.ProductRegistry
     }
 
     /// <summary>
-    /// Лёгкая проверка наличия активного документа SW: один вызов <c>IActiveDoc2</c>,
-    /// без обхода дерева сборки. true — активный документ есть; false — документов нет.
-    /// При недоступности COM консервативно true (область open не сбрасывается).
-    /// Вызывать с UI/COM-потока SolidWorks.
+    /// true — в SolidWorks открыт хотя бы один документ (в т.ч. новый несохранённый,
+    /// у которого <c>GetPathName()</c> пуст). Определяется обходом списка документов
+    /// приложения (<c>GetFirstDocument</c>), а не активным документом и не множеством
+    /// путей: у нового несохранённого документа путь пуст, но документ открыт —
+    /// раньше такой документ ошибочно считался closed-областью, и сканеры целостности
+    /// продолжали работать при открытом документе. Нет сессии SolidWorks → false
+    /// (полная область допустима); исключение COM → консервативно true (область open
+    /// не сбрасывается). Вызывать с UI/COM-потока SolidWorks.
     /// </summary>
-    internal static bool HasActiveDocument()
+    internal static bool HasOpenDocuments()
     {
       try
       {
@@ -102,7 +106,7 @@ namespace Velum.UI.ProductRegistry
         if (swApp?.Sw == null)
           return false;
 
-        return swApp.Sw.IActiveDoc2 != null;
+        return swApp.Sw.GetFirstDocument() != null;
       }
       catch
       {

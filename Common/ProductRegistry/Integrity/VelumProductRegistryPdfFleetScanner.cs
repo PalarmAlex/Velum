@@ -155,7 +155,7 @@ internal static bool TryClassify(
         return false;
 
       // Нет файла чертежа — флот PDF бессмысленен (выше приоритетом будет BrokenLink).
-      string drawingPath = VelumProductRegistryStore.NormalizeFilePathKey(item.FilePath);
+      string drawingPath = item.GetNormalizedPathKey();
       if (string.IsNullOrEmpty(drawingPath)
           || VelumProductRegistryIntegrityRules.PathExistsOrTimedOutIsMissing(drawingPath))
         return false;
@@ -238,28 +238,28 @@ internal static bool TryClassify(
       // Вариант 1: DrawingPath чертежа (обратная связь, может быть пустой).
       string partPath = (drawingItem.DrawingPath ?? string.Empty).Trim();
 
-      // Вариант 2: ищем по базовому имени файла чертежа среди всех деталей.
+      // Вариант 2: ищем по базовому имени файла чертежа среди моделей — через
+      // индекс базовых имён стора (линейный обход реестра на каждый чертёж
+      // давал O(N²) на полном проходе).
       if (string.IsNullOrEmpty(partPath))
       {
-        string drawingBaseName = System.IO.Path.GetFileNameWithoutExtension(
-            drawingItem.FilePath ?? string.Empty);
+        string drawingBaseName;
+        try
+        {
+          drawingBaseName = System.IO.Path.GetFileNameWithoutExtension(
+              drawingItem.FilePath ?? string.Empty);
+        }
+        catch
+        {
+          drawingBaseName = string.Empty;
+        }
+
         if (!string.IsNullOrEmpty(drawingBaseName))
         {
-          string normalizedDrawingBaseName = drawingBaseName.ToLowerInvariant();
-          foreach (var item in store.GetAllItems())
-          {
-            if (item == null || item.FilePath == null)
-              continue;
-            string itemExt = System.IO.Path.GetExtension(item.FilePath).ToLowerInvariant();
-            if (itemExt != ".sldprt" && itemExt != ".sldasm")
-              continue;
-            string itemBaseName = System.IO.Path.GetFileNameWithoutExtension(item.FilePath).ToLowerInvariant();
-            if (itemBaseName == normalizedDrawingBaseName)
-            {
-              partPath = item.FilePath;
-              break;
-            }
-          }
+          IReadOnlyList<VelumProductItem> models =
+              store.FindModelItemsByBaseName(drawingBaseName);
+          if (models.Count > 0)
+            partPath = models[0].FilePath;
         }
       }
 
