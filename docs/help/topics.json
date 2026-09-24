@@ -7,6 +7,7 @@
     "platform": "platform.html",
     "ribbon": "ribbon.html",
     "list-filters": "shared/list-filters.html",
+    "folder-picker": "forms/folder-picker.html",
     "project-settings": "forms/project-settings.html",
     "assembly-registry": "forms/assembly-registry.html",
     "assembly-columns": "forms/assembly-columns.html",

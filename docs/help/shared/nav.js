@@ -51,6 +51,7 @@
       ]},
       { title: "Основные формы", items: [
         { t: "Настройки проекта", h: "forms/project-settings.html" },
+        { t: "Выбор каталога", h: "forms/folder-picker.html" },
         { t: "Реестр изделия", h: "forms/assembly-registry.html" },
         { t: "Столбцы реестра", h: "forms/assembly-columns.html" },
         { t: "Отчёты реестра", h: "forms/assembly-reports.html" },

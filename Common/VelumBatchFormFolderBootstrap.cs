@@ -20,46 +20,32 @@ namespace Velum.UI
     internal sealed class DxfFolders
     {
       internal string ExportFolder { get; set; }
-
       internal string ExportFolderHint { get; set; }
-
       /// <summary>Каталог файла активной сборки — якорь двухуровневого поиска.</summary>
       internal string AssemblyFolder { get; set; }
-
       internal bool FromActiveDocument { get; set; }
-
       internal bool FromActiveAssembly { get; set; }
     }
 
     internal sealed class PdfFolders
     {
       internal string ExportFolder { get; set; }
-
       internal string ExportFolderHint { get; set; }
-
       /// <summary>Каталог файла активной сборки — якорь двухуровневого поиска.</summary>
       internal string AssemblyFolder { get; set; }
-
       internal bool FromActiveDocument { get; set; }
-
       internal bool FromActiveAssembly { get; set; }
     }
 
     internal sealed class MaterialFolders
     {
       internal string PartsFolder { get; set; }
-
       internal string PartsFolderName { get; set; }
-
       internal string PartsFolderHint { get; set; }
-
       /// <summary>Каталог файла активной сборки/детали — якорь двухуровневого поиска.</summary>
       internal string AssemblyFolder { get; set; }
-
       internal bool FromActiveDocument { get; set; }
-
       internal bool FromActiveAssembly { get; set; }
-
       internal bool FromActivePart { get; set; }
     }
 
@@ -78,11 +64,8 @@ namespace Velum.UI
 
       /// <summary>Путь активного документа (деталь или сборка), если загрузка из него.</summary>
       internal string ActiveDocumentPath { get; set; }
-
       internal bool FromActiveDocument { get; set; }
-
       internal bool FromActiveAssembly { get; set; }
-
       internal bool FromActivePart { get; set; }
     }
 

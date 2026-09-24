@@ -3,6 +3,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Microsoft.Win32;
 
 namespace Velum.UI
 {
@@ -37,10 +38,23 @@ namespace Velum.UI
 
     private sealed class SelectOnlyFolderForm : Form
     {
+      /// <summary>
+      /// Раздел реестра с настройками вида Проводника Windows
+      /// («Параметры папок» → «Вид»: показ скрытых и защищённых системных папок).
+      /// </summary>
+      private const string ExplorerAdvancedKeyPath =
+          @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced";
+
       private readonly TreeView _tree;
       private readonly TextBox _pathBox;
       private readonly Button _okButton;
       private readonly string _initialPath;
+
+      // Показ скрытых и системных каталогов повторяет настройку Проводника;
+      // значения перечитываются при каждом открытии диалога.
+      private readonly bool _showHiddenFolders;
+      private readonly bool _showSystemFolders;
+
       private string _selectedPath;
       private bool _initialSelectionApplied;
 
@@ -62,6 +76,8 @@ namespace Velum.UI
         Font = SystemFonts.MessageBoxFont;
         VelumFormIcon.Apply(this);
         _initialPath = initialPath;
+        _showHiddenFolders = ReadExplorerAdvancedFlag("Hidden");
+        _showSystemFolders = ReadExplorerAdvancedFlag("ShowSuperHidden");
 
         var root = new TableLayoutPanel
         {
@@ -263,7 +279,7 @@ namespace Velum.UI
         return label.Trim() + " (" + root + ")";
       }
 
-      private static TreeNode CreateFolderNode(string fullPath, string caption)
+      private TreeNode CreateFolderNode(string fullPath, string caption)
       {
         var node = new TreeNode(caption ?? GetFolderCaption(fullPath))
         {
@@ -274,7 +290,7 @@ namespace Velum.UI
         // Заглушка: раскрытие подгрузит дочерние каталоги.
         try
         {
-          if (Directory.Exists(fullPath) && HasAnySubdirectory(fullPath))
+          if (Directory.Exists(fullPath) && HasAnyVisibleSubdirectory(fullPath))
             node.Nodes.Add(new TreeNode());
         }
         catch
@@ -294,12 +310,66 @@ namespace Velum.UI
         return string.IsNullOrEmpty(name) ? fullPath : name;
       }
 
-      private static bool HasAnySubdirectory(string fullPath)
+      /// <summary>
+      /// Есть ли в каталоге дочерние каталоги, видимые при текущей настройке Проводника
+      /// (иначе узел не должен получать маркер раскрытия).
+      /// </summary>
+      private bool HasAnyVisibleSubdirectory(string fullPath)
       {
         try
         {
-          using (var e = Directory.EnumerateDirectories(fullPath).GetEnumerator())
-            return e.MoveNext();
+          foreach (DirectoryInfo child in new DirectoryInfo(fullPath).EnumerateDirectories())
+          {
+            if (IsDirectoryVisible(child.Attributes))
+              return true;
+          }
+        }
+        catch
+        {
+          // нет доступа — считаем, что видимых вложенных каталогов нет
+        }
+
+        return false;
+      }
+
+      /// <summary>
+      /// Показывать ли каталог с такими атрибутами — по настройкам Проводника Windows:
+      /// «скрытые» (Hidden) видны при «Показывать скрытые файлы, папки и диски»,
+      /// «системные» (System) — при снятом флажке «Скрывать защищённые системные файлы».
+      /// </summary>
+      private bool IsDirectoryVisible(FileAttributes attributes)
+      {
+        if ((attributes & FileAttributes.System) != 0 && !_showSystemFolders)
+          return false;
+
+        if ((attributes & FileAttributes.Hidden) != 0 && !_showHiddenFolders)
+          return false;
+
+        return true;
+      }
+
+      /// <summary>
+      /// Флаг настройки вида Проводника из реестра (HKCU). Ложь, если ключ или значение
+      /// недоступны — это режим Windows по умолчанию (скрытые и системные не показывать).
+      /// </summary>
+      private static bool ReadExplorerAdvancedFlag(string valueName)
+      {
+        try
+        {
+          using (RegistryKey key = Registry.CurrentUser.OpenSubKey(ExplorerAdvancedKeyPath))
+          {
+            object raw = key == null ? null : key.GetValue(valueName);
+            if (raw == null)
+              return false;
+
+            int value;
+            if (raw is int)
+              value = (int)raw;
+            else if (!int.TryParse(raw.ToString(), out value))
+              return false;
+
+            return value != 0;
+          }
         }
         catch
         {
@@ -324,20 +394,12 @@ namespace Velum.UI
         node.Nodes.Clear();
         try
         {
-          foreach (string dir in Directory.EnumerateDirectories(path))
+          foreach (DirectoryInfo child in new DirectoryInfo(path).EnumerateDirectories())
           {
-            try
-            {
-              var attr = File.GetAttributes(dir);
-              if ((attr & FileAttributes.Hidden) != 0 || (attr & FileAttributes.System) != 0)
-                continue;
-            }
-            catch
-            {
-              // include if attributes unavailable
-            }
+            if (!IsDirectoryVisible(child.Attributes))
+              continue;
 
-            node.Nodes.Add(CreateFolderNode(dir, null));
+            node.Nodes.Add(CreateFolderNode(child.FullName, null));
           }
         }
         catch
@@ -885,7 +947,7 @@ namespace Velum.UI
         {
           try
           {
-            if (Directory.Exists(path) && HasAnySubdirectory(path))
+            if (Directory.Exists(path) && HasAnyVisibleSubdirectory(path))
             {
               node.Nodes.Add(new TreeNode());
               OnBeforeExpand(this, new TreeViewCancelEventArgs(node, false, TreeViewAction.Expand));
