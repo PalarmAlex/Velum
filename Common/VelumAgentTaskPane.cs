@@ -58,6 +58,7 @@ namespace Velum.UI
     private static readonly Color MetricBrickDisabledColor = Color.FromArgb(180, 180, 180);
 
     private bool _pulseHooked;
+
     private readonly List<Button> _mosaicMetricBricks = new List<Button>();
     private string _metricSignature = string.Empty;
     private string _cadEnvironmentUiSignature = string.Empty;
@@ -133,8 +134,6 @@ namespace Velum.UI
     {
       if (_btnSend != null)
         _btnSend.Click -= OnSendMessageClick;
-      if (_txtMessageInput != null)
-        _txtMessageInput.PreviewKeyDown -= OnMessageInputPreviewKeyDown;
       if (_chkVerbalAuthoritative != null)
         _chkVerbalAuthoritative.CheckedChanged -= OnVerbalAuthoritativeCheckedChanged;
       if (_chkAutoAddSensors != null)
@@ -178,8 +177,6 @@ namespace Velum.UI
       HookPulseEvents();
       _scrollPanel.Resize += ScrollPanel_Resize;
       _btnSend.Click += OnSendMessageClick;
-      if (_txtMessageInput != null)
-        _txtMessageInput.PreviewKeyDown += OnMessageInputPreviewKeyDown;
       if (_chkVerbalAuthoritative != null)
       {
         _chkVerbalAuthoritative.Checked = false;
@@ -1801,48 +1798,8 @@ namespace Velum.UI
     }
 
     /// <summary>
-    /// Enter в поле ввода — «Отправить» (вербальный + командный буфер); Shift+Enter — новая строка.
+    /// Enter в поле ввода — дубль кнопки «Отправить» (перехват на уровне WndProc контрола ввода).
     /// </summary>
-    protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-    {
-      if (TrySendOperatorStimulusOnEnter(keyData))
-        return true;
-      return base.ProcessCmdKey(ref msg, keyData);
-    }
-
-    private void OnMessageInputPreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-    {
-      if (e.KeyCode != Keys.Enter)
-        return;
-      if ((Control.ModifierKeys & (Keys.Control | Keys.Alt | Keys.Shift)) != 0)
-        return;
-      e.IsInputKey = false;
-    }
-
-    private bool TrySendOperatorStimulusOnEnter(Keys keyData)
-    {
-      Keys key = keyData & Keys.KeyCode;
-      if (key != Keys.Enter)
-        return false;
-      Keys mods = keyData & Keys.Modifiers;
-      if (mods == Keys.Shift || mods == Keys.Control || mods == Keys.Alt)
-        return false;
-      if (!CanSendOperatorStimulusOnEnterFromFocus())
-        return false;
-      OnSendMessageClick(this, EventArgs.Empty);
-      return true;
-    }
-
-    private bool CanSendOperatorStimulusOnEnterFromFocus()
-    {
-      if (_txtMessageInput != null && _txtMessageInput.ContainsFocus &&
-          _txtMessageInput.Visible && _txtMessageInput.Enabled)
-        return true;
-      if (_btnSend != null && _btnSend.Focused && _btnSend.Visible && _btnSend.Enabled)
-        return true;
-      return false;
-    }
-
     private void OnSendMessageClick(object sender, EventArgs e)
     {
       if (_txtMessageInput == null || _txtAgentOutput == null)
