@@ -138,7 +138,7 @@ namespace Velum.ReactiveCore.Export
       }
 
       string catalog = NormalizeCatalogPath(catalogPath, modelDoc);
-      if (string.IsNullOrWhiteSpace(catalog) || !Directory.Exists(catalog))
+      if (string.IsNullOrWhiteSpace(catalog) || !VelumPathExists.DirectoryExists(catalog))
       {
         result.Reason = "catalog_missing";
         return result;
@@ -232,7 +232,7 @@ namespace Velum.ReactiveCore.Export
           // (мигрированные значения срезаны по корню). Подкаталог детали («DXF» рядом с ней)
           // не резолвится по корню и уходит в прежнюю логику от каталога документа.
           string byRoot = VelumRelativeDocumentPathResolver.ToFull(expanded);
-          if (Path.IsPathRooted(byRoot) && Directory.Exists(byRoot))
+          if (Path.IsPathRooted(byRoot) && VelumPathExists.DirectoryExists(byRoot))
             expanded = byRoot;
         }
 
@@ -251,10 +251,10 @@ namespace Velum.ReactiveCore.Export
           expanded = Path.GetFullPath(expanded);
         }
 
-        if (Directory.Exists(expanded))
+        if (VelumPathExists.DirectoryExists(expanded))
           return expanded;
 
-        if (File.Exists(expanded))
+        if (VelumPathExists.FileExists(expanded))
           return Path.GetDirectoryName(expanded);
       }
       catch
@@ -522,7 +522,7 @@ namespace Velum.ReactiveCore.Export
         return false;
 
       string candidate = Path.Combine(catalog, baseName + ".dxf");
-      if (File.Exists(candidate))
+      if (VelumPathExists.FileExists(candidate))
       {
         fullPath = candidate;
         return true;

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using ISIDA.Common;
+using Velum.ReactiveCore.Export;
 
 namespace Velum.UI.ProductRegistry
 {
@@ -169,7 +170,7 @@ internal static bool TryClassify(
       // Зеркало может хранить относительный путь — достраиваем префикс корневого каталога.
       string pdfPath = Velum.ReactiveCore.Export.VelumRelativeDocumentPathResolver.ToFull(
           (item.PdfPath ?? string.Empty).Trim());
-      bool fileFound = pdfPath.Length > 0 && File.Exists(pdfPath);
+      bool fileFound = pdfPath.Length > 0 && VelumPathExists.FileExists(pdfPath);
       bool outdated = IsPdfOutdated(item)
           || IsPdfOutdatedByModelGeometry(store, item);
 

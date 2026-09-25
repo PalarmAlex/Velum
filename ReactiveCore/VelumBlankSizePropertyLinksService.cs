@@ -964,7 +964,7 @@ namespace Velum.ReactiveCore
       try
       {
         string path = modelDoc?.GetPathName();
-        if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
+        if (string.IsNullOrWhiteSpace(path) || !VelumPathExists.FileExists(path))
           return null;
 
         return Path.GetFileName(path);

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using Velum.Configuration;
+using Velum.ReactiveCore.Export;
 
 namespace Velum.UI.ProductRegistry
 {
@@ -209,7 +210,7 @@ namespace Velum.UI.ProductRegistry
       if (string.IsNullOrEmpty(item.FilePath))
         return "Не указан";
       // Ключ FilePath хранится относительным корню документов — достраиваем до полного.
-      if (File.Exists(Velum.ReactiveCore.Export.VelumRelativeDocumentPathResolver.ToFull(item.FilePath)))
+      if (VelumPathExists.FileExists(Velum.ReactiveCore.Export.VelumRelativeDocumentPathResolver.ToFull(item.FilePath)))
         return "OK";
       return "Отсутствует";
     }

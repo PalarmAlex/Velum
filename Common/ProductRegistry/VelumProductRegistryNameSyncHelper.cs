@@ -3,6 +3,7 @@ using System.IO;
 using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
 using Velum.ReactiveCore;
+using Velum.ReactiveCore.Export;
 using Xarial.XCad.SolidWorks;
 
 namespace Velum.UI.ProductRegistry
@@ -114,7 +115,7 @@ namespace Velum.UI.ProductRegistry
       if (modelDoc != null)
         return true;
 
-      if (!File.Exists(path))
+      if (!VelumPathExists.FileExists(path))
       {
         error = "Файл не найден";
         return false;

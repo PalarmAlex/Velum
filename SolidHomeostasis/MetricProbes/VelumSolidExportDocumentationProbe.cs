@@ -540,7 +540,7 @@ namespace Velum.SolidHomeostasis
         drawingPath = string.Empty;
       }
 
-      if (string.IsNullOrWhiteSpace(drawingPath) || !File.Exists(drawingPath))
+      if (string.IsNullOrWhiteSpace(drawingPath) || !VelumPathExists.FileExists(drawingPath))
       {
         detail = "PDF (путь чертежа):" + System.Environment.NewLine +
                  "Чертёж не сохранён на диске — сначала сохраните .slddrw";
@@ -683,7 +683,7 @@ namespace Velum.SolidHomeostasis
       }
 
       string sourcePath = TryGetPartPath(drawingModel);
-      if (string.IsNullOrWhiteSpace(sourcePath) || !File.Exists(sourcePath))
+      if (string.IsNullOrWhiteSpace(sourcePath) || !VelumPathExists.FileExists(sourcePath))
       {
         detail = "PDF (версия):" + System.Environment.NewLine +
                  "Источник не сохранён на диск — версию проверить нельзя";
@@ -727,7 +727,7 @@ namespace Velum.SolidHomeostasis
 
       string catalogRaw = TryReadExportPathProperty(partModel, VelumExportDocumentationProperties.DxfPath);
       string catalog = VelumDxfArtifactResolver.NormalizeCatalogPath(catalogRaw, partModel);
-      if (string.IsNullOrWhiteSpace(catalog) || !Directory.Exists(catalog))
+      if (string.IsNullOrWhiteSpace(catalog) || !VelumPathExists.DirectoryExists(catalog))
       {
         detail = "DXF (наличие):" + System.Environment.NewLine +
                  "Требуется экспорт, но каталог «" + VelumExportDocumentationProperties.DxfPath + "» не задан — файл отсутствует";
@@ -925,7 +925,7 @@ namespace Velum.SolidHomeostasis
       }
 
       string sourcePath = TryGetPartPath(partModel);
-      if (string.IsNullOrWhiteSpace(sourcePath) || !File.Exists(sourcePath))
+      if (string.IsNullOrWhiteSpace(sourcePath) || !VelumPathExists.FileExists(sourcePath))
       {
         detail = formatLabel + " (версия):" + System.Environment.NewLine +
                  "Источник не сохранён на диск — версию проверить нельзя";
@@ -1150,7 +1150,7 @@ namespace Velum.SolidHomeostasis
             candidate = Path.GetFullPath(candidate);
         }
 
-        if (File.Exists(candidate))
+        if (VelumPathExists.FileExists(candidate))
         {
           resolvedPath = candidate;
           return true;

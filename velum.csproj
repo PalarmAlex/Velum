@@ -135,6 +135,7 @@
     <Compile Include="ReactiveCore\Export\VelumDrawingPathPropertyHelper.cs" />
     <Compile Include="ReactiveCore\Export\VelumDrawingPathSavePropagator.cs" />
     <Compile Include="ReactiveCore\Export\VelumRelativeDocumentPathResolver.cs" />
+    <Compile Include="ReactiveCore\Export\VelumPathExists.cs" />
     <Compile Include="ReactiveCore\Export\VelumPdfArtifactResolver.cs" />
     <Compile Include="ReactiveCore\Export\VelumPdfBatchScanner.cs" />
     <Compile Include="ReactiveCore\Export\VelumPdfBatchDocumentHelper.cs" />

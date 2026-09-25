@@ -188,7 +188,7 @@ namespace Velum.UI.ProductRegistry
       {
         if (!catalogChecked)
         {
-          catalogExists = Directory.Exists(catalog);
+          catalogExists = VelumPathExists.DirectoryExists(catalog);
           catalogChecked = true;
         }
 
@@ -218,7 +218,7 @@ namespace Velum.UI.ProductRegistry
         if (!needDxf)
         {
           string junkPath = TryResolveDxfFullPath(catalog, cfg.DxfFileName);
-          if (!string.IsNullOrEmpty(junkPath) && File.Exists(junkPath))
+          if (!string.IsNullOrEmpty(junkPath) && VelumPathExists.FileExists(junkPath))
           {
             Append(byKind, VelumProductRegistryProblemKind.JunkDxf,
                 "Мусорный DXF [" + configLabel + "]");
@@ -242,7 +242,7 @@ namespace Velum.UI.ProductRegistry
         }
 
         string fullPath = TryResolveDxfFullPath(catalog, cfg.DxfFileName);
-        bool fileFound = !string.IsNullOrEmpty(fullPath) && File.Exists(fullPath);
+        bool fileFound = !string.IsNullOrEmpty(fullPath) && VelumPathExists.FileExists(fullPath);
         bool hasProjection = !string.IsNullOrWhiteSpace(cfg.DxfProjectionView);
         bool outdated = IsDxfOutdated(cfg);
         bool fingerprintMismatch = false;

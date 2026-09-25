@@ -453,7 +453,7 @@ namespace Velum.ReactiveCore
       }
 
       string path = TryNormalizePath(filePath);
-      if (string.IsNullOrEmpty(path) || !File.Exists(path))
+      if (string.IsNullOrEmpty(path) || !VelumPathExists.FileExists(path))
       {
         error = "Файл не найден";
         return false;

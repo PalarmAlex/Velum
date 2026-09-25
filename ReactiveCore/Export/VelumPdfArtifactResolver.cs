@@ -280,7 +280,7 @@ namespace Velum.ReactiveCore.Export
         if (!Path.IsPathRooted(candidate))
           candidate = VelumRelativeDocumentPathResolver.ToFull(candidate);
 
-        if (File.Exists(candidate))
+        if (VelumPathExists.FileExists(candidate))
         {
           resolvedPath = candidate;
           return true;

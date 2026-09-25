@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Velum.ReactiveCore.Export;
 
 namespace Velum.UI.ProductRegistry
 {
@@ -16,67 +15,16 @@ namespace Velum.UI.ProductRegistry
   }
 
   /// <summary>
-  /// Проверка существования файлов по путям реестра с коротким таймаутом
-  /// (для UNC / недоступных шар <see cref="File.Exists"/> может зависать).
+  /// Проверка существования файлов по путям реестра с коротким таймаутом.
+  /// <see cref="System.IO.File.Exists"/> может виснуть не только на UNC/сетевых шарах,
+  /// но и на битых ссылках в свойствах документов: относительных путях (при незаданном
+  /// корне реестра), симлинках/junction на отключённый том, несуществующих буквах дисков.
+  /// Поэтому любые пути проверяются безусловно через <see cref="VelumPathExists"/>.
   /// </summary>
   internal static class VelumProductRegistryPathChecker
   {
     /// <summary>Таймаут одной проверки пути, мс.</summary>
     internal const int TimeoutMilliseconds = 2000;
-
-    /// <summary>
-    /// Кэш «буква диска → сетевой ли том» (DriveInfo — один WMI/registry-запрос
-    /// на букву; без кэша — по запросу на каждую запись реестра).
-    /// </summary>
-    private static readonly Dictionary<char, bool> _networkDriveCache =
-        new Dictionary<char, bool>();
-
-    /// <summary>
-    /// true, если путь лежит на медленном сетевом хранилище: UNC-путь
-    /// (два разделителя в начале) или буква диска, маппированная на сетевой шар.
-    /// Для таких путей File.Exists может зависать (недоступный шар по VPN) —
-    /// нужна ветка с таймаутом; локальные тома проверяются напрямую.
-    /// </summary>
-    internal static bool IsSlowNetworkPath(string path)
-    {
-      if (string.IsNullOrEmpty(path))
-        return false;
-
-      char sep = Path.DirectorySeparatorChar;
-      if (path.Length >= 2 && path[0] == sep && path[1] == sep)
-        return true;
-
-      if (path.Length >= 2 && path[1] == ':' && IsAsciiLetter(path[0]))
-      {
-        char letter = char.ToUpperInvariant(path[0]);
-        lock (_networkDriveCache)
-        {
-          bool isNetwork;
-          if (_networkDriveCache.TryGetValue(letter, out isNetwork))
-            return isNetwork;
-
-          try
-          {
-            isNetwork = new DriveInfo(letter.ToString()).DriveType == DriveType.Network;
-          }
-          catch
-          {
-            isNetwork = false;
-          }
-
-          _networkDriveCache[letter] = isNetwork;
-          return isNetwork;
-        }
-      }
-
-      return false;
-    }
-
-    /// <summary>true для латинских букв A–Z / a–z.</summary>
-    private static bool IsAsciiLetter(char c)
-    {
-      return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
-    }
 
     internal static VelumProductRegistryPathStatus CheckOne(string filePath, int timeoutMs)
     {
@@ -84,48 +32,14 @@ namespace Velum.UI.ProductRegistry
       if (string.IsNullOrEmpty(path))
         return VelumProductRegistryPathStatus.No;
 
-      // Локальный том: File.Exists не зависает — прямой вызов без Task.Run/Wait
-      // (раньше оверхед пула потоков платился на каждую запись реестра).
-      // Сетевые пути (UNC / маппированный шар) — с таймаутом: недоступный шар
-      // по VPN вешает File.Exists на десятки секунд.
-      if (!IsSlowNetworkPath(path))
+      switch (VelumPathExists.Check(false, path, timeoutMs))
       {
-        try
-        {
-          return File.Exists(path)
-              ? VelumProductRegistryPathStatus.Ok
-              : VelumProductRegistryPathStatus.No;
-        }
-        catch
-        {
-          return VelumProductRegistryPathStatus.No;
-        }
-      }
-
-      try
-      {
-        Task<bool> task = Task.Run(() =>
-        {
-          try
-          {
-            return File.Exists(path);
-          }
-          catch
-          {
-            return false;
-          }
-        });
-
-        if (!task.Wait(timeoutMs))
+        case VelumPathExists.Result.Yes:
+          return VelumProductRegistryPathStatus.Ok;
+        case VelumPathExists.Result.Unknown:
           return VelumProductRegistryPathStatus.Unknown;
-
-        return task.Result
-            ? VelumProductRegistryPathStatus.Ok
-            : VelumProductRegistryPathStatus.No;
-      }
-      catch
-      {
-        return VelumProductRegistryPathStatus.No;
+        default:
+          return VelumProductRegistryPathStatus.No;
       }
     }
 

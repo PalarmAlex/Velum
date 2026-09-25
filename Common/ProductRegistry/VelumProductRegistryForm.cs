@@ -1559,7 +1559,7 @@ namespace Velum.UI
         VelumProductItem item = copyItems[i];
         string sourcePath = VelumProductRegistryStore.NormalizeFilePathKey(item.FilePath);
         string label = FormatItemLabel(item);
-        if (string.IsNullOrEmpty(sourcePath) || !File.Exists(sourcePath))
+        if (string.IsNullOrEmpty(sourcePath) || !VelumPathExists.FileExists(sourcePath))
         {
           failed++;
           errors.Add(label + ": файл не найден");
@@ -3351,7 +3351,7 @@ namespace Velum.UI
             ? ("ID " + item.Id)
             : item.Designation;
 
-        if (string.IsNullOrEmpty(path) || !File.Exists(path))
+        if (string.IsNullOrEmpty(path) || !VelumPathExists.FileExists(path))
         {
           missing.Add(label + (string.IsNullOrEmpty(path) ? string.Empty : (": " + path)));
           continue;

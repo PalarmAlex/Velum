@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
 using Velum.Configuration;
+using Velum.ReactiveCore.Export;
 using Velum.UI.ProductRegistry;
 using Xarial.XCad.SolidWorks;
 
@@ -349,7 +350,7 @@ namespace Velum.UI
           if (bulk)
             SetOpenProgress(i, total, "Открытие " + (i + 1) + " из " + total + ": " + label);
 
-          if (string.IsNullOrEmpty(path) || !File.Exists(path))
+          if (string.IsNullOrEmpty(path) || !VelumPathExists.FileExists(path))
           {
             missing.Add(
                 string.IsNullOrEmpty(label)

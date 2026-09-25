@@ -105,7 +105,7 @@ namespace Velum.ReactiveCore.Export
         return false;
       }
 
-      if (!File.Exists(path))
+      if (!VelumPathExists.FileExists(path))
       {
         error = "Файл не найден";
         return false;
@@ -264,7 +264,7 @@ namespace Velum.ReactiveCore.Export
         return false;
       }
 
-      if (!File.Exists(storedPath))
+      if (!VelumPathExists.FileExists(storedPath))
       {
         reason = "missing_file";
         return false;
@@ -301,7 +301,7 @@ namespace Velum.ReactiveCore.Export
         return string.Empty;
       }
 
-      if (string.IsNullOrWhiteSpace(modelPath) || !File.Exists(modelPath))
+      if (string.IsNullOrWhiteSpace(modelPath) || !VelumPathExists.FileExists(modelPath))
         return string.Empty;
 
       string directory;
@@ -320,7 +320,7 @@ namespace Velum.ReactiveCore.Export
         return string.Empty;
 
       string candidate = Path.Combine(directory, baseName + ".slddrw");
-      return File.Exists(candidate) ? candidate : string.Empty;
+      return VelumPathExists.FileExists(candidate) ? candidate : string.Empty;
     }
 
     /// <summary>
@@ -343,7 +343,7 @@ namespace Velum.ReactiveCore.Export
       }
 
       string stored = TryRead(modelDoc);
-      if (!string.IsNullOrWhiteSpace(stored) && File.Exists(stored))
+      if (!string.IsNullOrWhiteSpace(stored) && VelumPathExists.FileExists(stored))
       {
         skipped = true;
         drawingPath = stored;
@@ -424,7 +424,7 @@ namespace Velum.ReactiveCore.Export
       }
 
       string path = modelPath.Trim();
-      if (!File.Exists(path))
+      if (!VelumPathExists.FileExists(path))
       {
         message = "model_file_missing";
         return false;

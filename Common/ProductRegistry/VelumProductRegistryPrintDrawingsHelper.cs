@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Velum.ReactiveCore.Export;
 using Velum.UI.AssemblyRegistry;
 using Velum.UI.ProductRegistry;
 
@@ -64,7 +65,7 @@ namespace Velum.UI
           continue;
         }
 
-        if (!File.Exists(path))
+        if (!VelumPathExists.FileExists(path))
         {
           rows.Add(new VelumAssemblyRegistryPrintDrawingsService.PrintRow
           {

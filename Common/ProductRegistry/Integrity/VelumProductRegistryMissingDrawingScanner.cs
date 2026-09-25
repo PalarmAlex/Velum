@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Velum.ReactiveCore.Export;
 
 namespace Velum.UI.ProductRegistry
 {
@@ -139,7 +140,7 @@ namespace Velum.UI.ProductRegistry
       // Зеркало может хранить относительный путь — достраиваем префикс корневого каталога.
       drawingPath = Velum.ReactiveCore.Export.VelumRelativeDocumentPathResolver.ToFull(drawingPath);
 
-      if (!File.Exists(drawingPath))
+      if (!VelumPathExists.FileExists(drawingPath))
       {
         problem = Build(
             modelItem,
