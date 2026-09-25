@@ -30,7 +30,7 @@ using ISIDA.Gomeostas;
 namespace Velum
 {
   /// <summary>
-  /// Точка входа надстройки SolidWorks (XCad <c>SwAddInEx</c>): команды тулбара и ленты, вкладка «Агент» на панели задач, хост ISIDA, пульсация
+  /// Точка входа надстройки SolidWorks (XCad <c>SwAddInEx</c>): команды тулбара и ленты, вкладка «Агент» на панели задач, хост ISIDA, пульсация.
   /// </summary>
   [ComVisible(true)]
   [Guid("E9F8D7C6-B5A4-4321-9F0E-8D7C6B5A4931")]
