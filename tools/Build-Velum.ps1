@@ -25,7 +25,7 @@ Write-Host "Проект:  $csproj"
 
 $cfg = if ($args.Count -ge 1) { $args[0] } else { 'Debug' }
 
-$contractCsproj = Join-Path $repoRoot '..\..\ISIDA\Programms\app\SymbiontEnv.Contract\SymbiontEnv.Contract.csproj'
+$contractCsproj = Join-Path $repoRoot '..\ISIDA\Programms\app\SymbiontEnv.Contract\SymbiontEnv.Contract.csproj'
 $contractCsproj = [System.IO.Path]::GetFullPath($contractCsproj)
 if (Test-Path -LiteralPath $contractCsproj) {
     Write-Host "SymbiontEnv.Contract: $contractCsproj"

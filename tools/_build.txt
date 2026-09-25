@@ -1,0 +1,14 @@
+MSBuild: C:\Program Files\Microsoft Visual Studio\18\Professional\MSBuild\Current\Bin\MSBuild.exe
+�?�?�?���':  D:\�ணࠬ��\Velum\velum.csproj
+SymbiontEnv.Contract: D:\�ணࠬ��\ISIDA\Programms\app\SymbiontEnv.Contract\SymbiontEnv.Contract.csproj
+Версия MSBuild 18.7.8+1ac568fee для .NET Framework
+
+  Определение проектов для восстановления...
+  Работы нет. Ни в одном из указанных проектов нет пакетов, которые можно было бы восстановить.
+  SymbiontEnv.Contract -> D:\Программы\ISIDA\Programms\app\SymbiontEnv.Contract\bin\Debug\SymbiontEnv.Contract.dll
+Версия MSBuild 18.7.8+1ac568fee для .NET Framework
+
+  Определение проектов для восстановления...
+  Работы нет. Ни в одном из указанных проектов нет пакетов, которые можно было бы восстановить.
+  velum -> D:\Программы\Velum\bin\Debug\velum.dll
+���+�?�?��� �?�?����?�?�� (Debug).
