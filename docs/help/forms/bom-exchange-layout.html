@@ -22,7 +22,7 @@
       <table>
         <thead><tr><th>Столбец</th><th>Назначение</th></tr></thead>
         <tbody>
-          <tr><td><strong>Вкл</strong></td><td>Включать ли колонку в выгрузку. У обязательных системных полей (<code>TypeDocs</code>, <code>ExternalId</code>, <code>Designation</code>, <code>Name</code>, <code>Quantity</code>) отключить нельзя.</td></tr>
+          <tr><td><strong>Вкл</strong></td><td>Включать ли колонку в выгрузку. У обязательных системных полей (<code>TypeDocs</code>, <code>ExternalId</code>, <code>Designation</code>, <code>Name</code>) отключить нельзя. Поле <code>Quantity</code> по умолчанию выключено и выгружается, только если оператор его включит.</td></tr>
           <tr><td><strong>Поле</strong></td><td>Внутреннее имя поля или свойства. Не редактируется: переименование свойства выполняется во вкладке «Отслеживаемые свойства».</td></tr>
           <tr><td><strong>Источник</strong></td><td><em>Системное</em> — служебное поле зеркала BOM; <em>Свойство</em> — отслеживаемое свойство компонента.</td></tr>
           <tr><td><strong>Заголовок в CSV</strong></td><td>Текст заголовка столбца. Для системных полей зафиксирован, для свойств — редактируется. Пустое значение заменяется именем поля.</td></tr>
@@ -31,7 +31,7 @@
         </tbody>
       </table>
       <div class="note">
-        Редактируются только флаг <strong>Вкл</strong>, <strong>Заголовок в CSV</strong> (у отслеживаемых свойств) и <strong>порядок</strong> колонок. Системные поля выделены серым фоном: их заголовок неизменяем, а поля <code>TypeDocs</code>, <code>ExternalId</code>, <code>Designation</code>, <code>Name</code>, <code>Quantity</code> нельзя ещё и выключить.
+        Редактируются только флаг <strong>Вкл</strong>, <strong>Заголовок в CSV</strong> (у отслеживаемых свойств) и <strong>порядок</strong> колонок. Системные поля выделены серым фоном: их заголовок неизменяем, а поля <code>TypeDocs</code>, <code>ExternalId</code>, <code>Designation</code>, <code>Name</code> нельзя ещё и выключить. <code>Quantity</code> — системное поле, но его можно выключать.
       </div>
       <p>Кнопки справа от таблицы:</p>
       <ul>

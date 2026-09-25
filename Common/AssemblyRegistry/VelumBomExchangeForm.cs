@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -28,12 +29,34 @@ namespace Velum.UI.AssemblyRegistry
     /// <summary>Число строк состава к выгрузке (для статус-строки).</summary>
     private int _structureCount;
 
+    /// <summary>Число карточек, скрытых фильтром «только реестр» (для статус-строки).</summary>
+    private int _hiddenByRegistryCount;
+
+    /// <summary>Число видимых карточек, отсутствующих в реестре изделий (показаны серым).</summary>
+    private int _notRegisteredCount;
+
+    /// <summary>Загруженный индекс реестра изделий (для сверки вкладки карточек).</summary>
+    private VelumBomExchangeRegistryIndex _registryIndex;
+
+    /// <summary>Всего записей в зеркале (счётчик статус-строки, без обращения к диску).</summary>
+    private int _mirrorTotalCount;
+
+    /// <summary>Записей с невыгруженным расхождением (без Stale).</summary>
+    private int _mirrorDiscrepancyCount;
+
+    /// <summary>Устаревших записей (файл исчез, Stale).</summary>
+    private int _mirrorStaleCount;
+
     public VelumBomExchangeForm()
     {
       InitializeComponent();
       VelumFormIcon.Apply(this);
       VelumAppConfig.EnsureInitialized();
       _folderBox.Text = VelumAppConfig.BomExchangeFolder;
+
+      // Признак «только зарегистрированные в реестре изделий» — из настроек.
+      // Изменение обрабатывает OnRegistryFilterChanged (см. Designer).
+      _registryFilterCheck.Checked = VelumAppConfig.BomExchangeOnlyRegisteredInProductRegistry;
 
       // Включить кнопку экспорта только если указан каталог обмена.
       UpdateExportButtonState();
@@ -90,6 +113,8 @@ namespace Velum.UI.AssemblyRegistry
 
     /// <summary>
     /// Загрузить список расхождений карточек, доступных для экспорта.
+    /// При включённом фильтре «только реестр» строки, файлы которых отсутствуют
+    /// в реестре изделий, не показываются и не выгружаются.
     /// </summary>
     private void LoadDiscrepancyList()
     {
@@ -100,6 +125,35 @@ namespace Velum.UI.AssemblyRegistry
         var entries = store.GetDiscrepancyEntries()
             .Where(e => !string.IsNullOrWhiteSpace(e.ExternalId))
             .ToList();
+
+        // Счётчики состояния зеркала — из загруженного JSON, без обращения к диску.
+        _mirrorTotalCount = store.CountAllEntries();
+        _mirrorDiscrepancyCount = store.CountDiscrepancyEntries();
+        _mirrorStaleCount = store.CountStaleEntries();
+
+        // Сверка с реестром изделий (по нормализованному пути файла).
+        bool filterByRegistry = _registryFilterCheck != null &&
+            _registryFilterCheck.Checked;
+        _registryIndex = VelumBomExchangeRegistryIndex.Load();
+        _hiddenByRegistryCount = 0;
+        _notRegisteredCount = 0;
+        if (_registryIndex.Available)
+        {
+          // Реестр доступен: считаем и скрытые (при фильтре), и видимые
+          // незарегистрированные (для серой пометки и статус-строки).
+          var visible = new List<VelumAssemblyBomMirrorEntry>();
+          foreach (VelumAssemblyBomMirrorEntry entry in entries)
+          {
+            bool registered = _registryIndex.IsRegistered(entry);
+            if (!registered)
+              _notRegisteredCount++;
+            if (!filterByRegistry || registered)
+              visible.Add(entry);
+            else
+              _hiddenByRegistryCount++;
+          }
+          entries = visible;
+        }
 
         if (_enabledColumns.Count == 0)
           RebuildColumns();
@@ -121,6 +175,12 @@ namespace Velum.UI.AssemblyRegistry
               for (int i = 1; i < _enabledColumns.Count; i++)
                 item.SubItems.Add(
                     VelumBomExchangeRowProjector.GetValue(entry, _enabledColumns[i]) ?? string.Empty);
+
+              // Позиции, файлов которых нет в реестре изделий, показываем серым,
+              // чтобы принадлежность к реестру была видна и без фильтра.
+              if (_registryIndex != null && _registryIndex.Available &&
+                  !_registryIndex.IsRegistered(entry))
+                item.ForeColor = SystemColors.GrayText;
               _listView.Items.Add(item);
             }
           }
@@ -137,6 +197,11 @@ namespace Velum.UI.AssemblyRegistry
         Logger.Warning("Velum bomExchange: unable to load discrepancy list: " + ex.Message);
         _listView.Items.Clear();
         _cardCount = 0;
+        _hiddenByRegistryCount = 0;
+        _notRegisteredCount = 0;
+        _mirrorTotalCount = 0;
+        _mirrorDiscrepancyCount = 0;
+        _mirrorStaleCount = 0;
       }
 
       UpdateNoteLabel();
@@ -161,8 +226,13 @@ namespace Velum.UI.AssemblyRegistry
         VelumBomExchangeStructureProjector.Selection selection =
             VelumBomExchangeStructureProjector.Select(structureStore, mirrorStore, changeStore);
 
+        // Иерархический порядок — общий с CSV-выгрузкой
+        // (см. RecipeExecutorHandlersBomExport.GenerateStructureCsv).
+        VelumBomExchangeHierarchyRanker ranker =
+            VelumBomExchangeHierarchyRanker.Build(structureStore.GetAllEntries());
         List<VelumBomChangeRecord> pending = selection.Records
-            .OrderBy(r => r.ParentExternalId, StringComparer.Ordinal)
+            .OrderBy(r => ranker.RankOfParentExternalId(r.ParentExternalId))
+            .ThenBy(r => r.ParentExternalId, StringComparer.Ordinal)
             .ThenBy(r => r.ChildExternalId, StringComparer.Ordinal)
             .ThenBy(r => r.TimestampUtc)
             .ToList();
@@ -212,13 +282,52 @@ namespace Velum.UI.AssemblyRegistry
       UpdateNoteLabel();
     }
 
-    /// <summary>Обновить статус-строку: сколько карточек и строк состава к выгрузке.</summary>
+    /// <summary>Обновить статус-строку: счётчики зеркала и сколько карточек/строк к выгрузке.</summary>
     private void UpdateNoteLabel()
     {
+      string registryNote;
+      if (_registryIndex != null && _registryIndex.Available)
+      {
+        if (_registryFilterCheck != null && _registryFilterCheck.Checked)
+        {
+          registryNote = " Из них " + _hiddenByRegistryCount +
+              " скрыто как незарегистрированные в реестре изделий.";
+        }
+        else if (_notRegisteredCount > 0)
+        {
+          registryNote = " Вне реестра изделий: " + _notRegisteredCount +
+              " (показаны серым).";
+        }
+        else
+        {
+          registryNote = string.Empty;
+        }
+      }
+      else
+      {
+        registryNote = " Сверка с реестром изделий недоступна.";
+      }
+
+      // Счётчики зеркала — без обращения к диску, обновляются при загрузке списка.
+      string staleNote = _mirrorStaleCount > 0
+          ? " Устаревших (файл не найден): " + _mirrorStaleCount + "."
+          : string.Empty;
+
       noteLabel.Text =
-          "Карточек к выгрузке: " + _cardCount +
+          "Зеркало: всего " + _mirrorTotalCount +
+          ", к выгрузке " + _mirrorDiscrepancyCount +
+          "." + staleNote +
+          " Карточек: " + _cardCount +
           ". Строк состава: " + _structureCount + "." +
+          registryNote +
           " Компоненты без заполненного ExternalId будут пропущены при экспорте.";
+    }
+
+    /// <summary>Переключение фильтра «только зарегистрированные в реестре изделий».</summary>
+    private void OnRegistryFilterChanged(object sender, EventArgs e)
+    {
+      VelumAppConfig.SetBomExchangeOnlyRegisteredInProductRegistry(_registryFilterCheck.Checked);
+      LoadDiscrepancyList();
     }
 
     private void OnSettingsClick(object sender, EventArgs e)

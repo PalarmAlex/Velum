@@ -101,6 +101,7 @@ namespace Velum.Configuration
           EnsureReactiveCorePathSettings();
           EnsureDocumentVisualColorSettings();
           EnsureBomExchangeFolderSetting();
+          EnsureBomExchangeRegistryOnlySetting();
           EnsureProductRegistryAccessLevelSetting();
           EnsureProductRegistryFolderPathSetting();
           EnsureTechRequirementsFolderPathSetting();
@@ -639,6 +640,18 @@ namespace Velum.Configuration
     /// </summary>
     public static void SetBomExchangeFolder(string folder) =>
         SetFolderSetting("BomExchangeFolder", folder);
+
+    /// <summary>
+    /// Выгружать в 1С только те позиции, которые зарегистрированы в реестре изделий.
+    /// По умолчанию <c>false</c> — прежнее поведение (обмен не зависит от наполнения
+    /// реестра изделий), включается оператором в окне «Экспорт BOM в 1C».
+    /// </summary>
+    public static bool BomExchangeOnlyRegisteredInProductRegistry =>
+        GetBoolSetting("BomExchangeOnlyRegisteredInProductRegistry", false);
+
+    /// <summary>Сохраняет признак «только зарегистрированные в реестре изделий».</summary>
+    public static void SetBomExchangeOnlyRegisteredInProductRegistry(bool value) =>
+        SetSetting("BomExchangeOnlyRegisteredInProductRegistry", value.ToString());
 
     /// <summary>Каталог деталей по умолчанию на пакетной форме материалов.</summary>
     public static string MaterialBatchDefaultPartsFolder => GetExpandedSettingOrEmpty("MaterialBatchDefaultPartsFolder");
@@ -1833,6 +1846,34 @@ namespace Velum.Configuration
         app.Add(new XElement("BomExchangeFolder", string.Empty));
         doc.Save(ConfigFullPath);
         Logger.Info("Velum: в Settings.xml добавлен BomExchangeFolder");
+      }
+      catch (Exception ex)
+      {
+        Logger.Error(ex.Message);
+      }
+    }
+
+    /// <summary>
+    /// Добавляет признак «обмен BOM только по реестру изделий», если ключа ещё нет.
+    /// </summary>
+    private static void EnsureBomExchangeRegistryOnlySetting()
+    {
+      try
+      {
+        if (!File.Exists(ConfigFullPath))
+          return;
+
+        XDocument doc = XDocument.Load(ConfigFullPath);
+        XElement app = doc.Root?.Element("AppSettings");
+        if (app == null)
+          return;
+
+        if (app.Element("BomExchangeOnlyRegisteredInProductRegistry") != null)
+          return;
+
+        app.Add(new XElement("BomExchangeOnlyRegisteredInProductRegistry", false));
+        doc.Save(ConfigFullPath);
+        Logger.Info("Velum: в Settings.xml добавлен BomExchangeOnlyRegisteredInProductRegistry");
       }
       catch (Exception ex)
       {

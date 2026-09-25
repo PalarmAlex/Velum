@@ -27,6 +27,16 @@ namespace Velum.UI.AssemblyRegistry
       /// <summary>Структуры с расхождением (ParentExternalId → запись).</summary>
       public Dictionary<string, VelumBomStructureEntry> StructuresByParentExternalId { get; } =
           new Dictionary<string, VelumBomStructureEntry>(StringComparer.Ordinal);
+
+      /// <summary>
+      /// ParentExternalId структур, по которым остались невыгруженные строки,
+      /// отложенные только из-за того, что у ребёнка ещё нет ExternalId.
+      /// Выгрузив такие строки частично, нельзя сбрасывать previousHash структуры:
+      /// иначе структура перестанет считаться расходящейся и её оставшиеся строки
+      /// не попадут в обмен даже после появления ExternalId у ребёнка.
+      /// </summary>
+      public HashSet<string> DeferredParentExternalIds { get; } =
+          new HashSet<string>(StringComparer.Ordinal);
     }
 
     /// <summary>
@@ -75,7 +85,12 @@ namespace Velum.UI.AssemblyRegistry
         // Актуальный ExternalId ребёнка — из зеркала карточек (источник правды).
         VelumAssemblyBomMirrorEntry childMirror = mirrorStore.GetEntry(record.ChildIdentity);
         if (childMirror == null || string.IsNullOrWhiteSpace(childMirror.ExternalId))
+        {
+          // Строка отложена до появления ExternalId у ребёнка — расхождение
+          // структуры должно сохраняться, пока она не выгружена.
+          selection.DeferredParentExternalIds.Add(record.ParentExternalId);
           continue;
+        }
 
         // Копия записи с актуализированными полями (оригинал не мутируем).
         selection.Records.Add(new VelumBomChangeRecord

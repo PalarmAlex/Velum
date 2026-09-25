@@ -29,7 +29,7 @@ namespace Velum.UI.AssemblyRegistry
       {
         switch ((col.Field ?? string.Empty).Trim())
         {
-          case "TypeDocs":      return entry.Quantity > 0 ? "Assembly" : "Part";
+          case "TypeDocs":      return GetTypeDocs(entry);
           case "ExternalId":    return entry.ExternalId ?? string.Empty;
           case "Designation":   return entry.Designation ?? string.Empty;
           case "Name":          return entry.Name ?? string.Empty;
@@ -47,6 +47,28 @@ namespace Velum.UI.AssemblyRegistry
 
       string raw;
       return entry.TrackedValues.TryGetValue(key, out raw) ? (raw ?? string.Empty) : string.Empty;
+    }
+
+    /// <summary>
+    /// Тип документа для колонки <c>TypeDocs</c>.
+    /// Берётся фактический тип SOLIDWORKS-документа из записи зеркала. Для записей,
+    /// созданных до появления поля <see cref="VelumAssemblyBomMirrorEntry.DocType"/>,
+    /// сохраняется прежнее определение по количеству (иначе тип всех старых позиций
+    /// стал бы пустым до их ближайшего пересохранения).
+    /// </summary>
+    private static string GetTypeDocs(VelumAssemblyBomMirrorEntry entry)
+    {
+      string docType = (entry.DocType ?? string.Empty).Trim();
+      if (string.Equals(docType, VelumAssemblyBomMirrorEntry.DocTypeAssembly,
+              StringComparison.OrdinalIgnoreCase))
+        return VelumAssemblyBomMirrorEntry.DocTypeAssembly;
+      if (string.Equals(docType, VelumAssemblyBomMirrorEntry.DocTypePart,
+              StringComparison.OrdinalIgnoreCase))
+        return VelumAssemblyBomMirrorEntry.DocTypePart;
+
+      return entry.Quantity > 0
+          ? VelumAssemblyBomMirrorEntry.DocTypeAssembly
+          : VelumAssemblyBomMirrorEntry.DocTypePart;
     }
   }
 }

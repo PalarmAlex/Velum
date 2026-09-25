@@ -50,6 +50,13 @@ namespace Velum.UI.AssemblyRegistry
   /// </summary>
   internal sealed class VelumBomExchangeLayoutFile
   {
+    /// <summary>
+    /// Версия формата layout, записанная в файле. Отсутствие поля (0) означает
+    /// набор до появления <see cref="VelumBomExchangeLayoutStore.CurrentLayoutFormatVersion"/>.
+    /// </summary>
+    [JsonProperty("layoutFormatVersion")]
+    public int LayoutFormatVersion { get; set; }
+
     /// <summary>Колонки выгрузки в порядке следования.</summary>
     public List<VelumBomExchangeColumnDef> Columns { get; set; } =
         new List<VelumBomExchangeColumnDef>();
@@ -78,10 +85,24 @@ namespace Velum.UI.AssemblyRegistry
       "TypeDocs", "ExternalId", "Designation", "Name", "FilePath", "Configuration", "Quantity"
     };
 
-    /// <summary>Поля, которые нельзя выключить (по ТЗ).</summary>
+    /// <summary>
+    /// Текущая версия набора колонок по умолчанию.
+    /// <b>2</b> — <c>Quantity</c> в наборе по умолчанию выключен (он больше не входит
+    /// в хэш карточки, см. <see cref="VelumAssemblyBomTrackedPropertiesConfig.HashFormatVersion"/>).
+    /// При обнаружении файла более старой версии состав правится один раз,
+    /// дальше настройка полностью за оператором.
+    /// </summary>
+    internal const int CurrentLayoutFormatVersion = 2;
+
+    /// <summary>
+    /// Поля, которые нельзя выключить (по ТЗ).
+    /// <c>Quantity</c> из списка убран: количество вхождений описывает связь позиции
+    /// со сборкой-родителем, а не саму карточку, и в <c>1C_bom_*.csv</c> оно есть;
+    /// дублировать его в <c>1C_update_*.csv</c> смысла нет.
+    /// </summary>
     internal static readonly string[] MandatoryStructuralKeys =
     {
-      "TypeDocs", "ExternalId", "Designation", "Name", "Quantity"
+      "TypeDocs", "ExternalId", "Designation", "Name"
     };
 
     /// <summary>
@@ -98,6 +119,22 @@ namespace Velum.UI.AssemblyRegistry
           { "Configuration", 110 },
           { "Quantity", 70 }
         };
+
+    /// <summary>
+    /// Структурные поля, которые по умолчанию выключены (колонка существует,
+    /// но в CSV не идёт, пока оператор сам не включит).
+    /// </summary>
+    private static readonly HashSet<string> DefaultDisabledStructuralKeys =
+        new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "Quantity" };
+
+    /// <summary>Включена ли структурная колонка по умолчанию.</summary>
+    /// <param name="field">Имя структурного поля.</param>
+    /// <returns>false только для полей из <see cref="DefaultDisabledStructuralKeys"/>.</returns>
+    private static bool DefaultEnabledFor(string field)
+    {
+      return !(!string.IsNullOrWhiteSpace(field) &&
+               DefaultDisabledStructuralKeys.Contains(field.Trim()));
+    }
 
     /// <summary>Путь к файлу настроек выгрузки.</summary>
     public static string FilePath => Path.Combine(
@@ -146,6 +183,8 @@ namespace Velum.UI.AssemblyRegistry
             : (JsonConvert.DeserializeObject<VelumBomExchangeLayoutFile>(json, JsonSettings)
                ?? CreateDefault());
         Normalize(data);
+        if (MigrateFormatVersion(data))
+          Save(data);
         return data;
       }
       catch (Exception ex)
@@ -155,6 +194,42 @@ namespace Velum.UI.AssemblyRegistry
         try { Save(fallback); } catch { }
         return fallback;
       }
+    }
+
+    /// <summary>
+    /// Одноразово привести набор колонок к <see cref="CurrentLayoutFormatVersion"/>.
+    /// Файлы, созданные до появления версии, имеют <c>0</c>.
+    /// Возвращает true, если состав изменился и файл нужно перезаписать.
+    /// </summary>
+    /// <param name="data">Нормализованный layout.</param>
+    private static bool MigrateFormatVersion(VelumBomExchangeLayoutFile data)
+    {
+      if (data == null || data.LayoutFormatVersion == CurrentLayoutFormatVersion)
+        return false;
+
+      if (data.LayoutFormatVersion > CurrentLayoutFormatVersion)
+      {
+        // Файл из более новой версии — обратно колонки не «чиним», чтобы не
+        // затереть осознанный выбор оператора.
+        return false;
+      }
+
+      // Версия 2: Quantity убран из хэша карточки и больше не обязателен в CSV.
+      if (data.LayoutFormatVersion < 2)
+      {
+        foreach (VelumBomExchangeColumnDef c in data.Columns)
+        {
+          if (c == null || c.Source != VelumBomExchangeFieldSource.Structural)
+            continue;
+          if (!string.Equals((c.Field ?? string.Empty).Trim(), "Quantity",
+                  StringComparison.OrdinalIgnoreCase))
+            continue;
+          c.Enabled = false;
+        }
+      }
+
+      data.LayoutFormatVersion = CurrentLayoutFormatVersion;
+      return true;
     }
 
     /// <summary>
@@ -177,7 +252,10 @@ namespace Velum.UI.AssemblyRegistry
     /// <returns>Новый layout.</returns>
     internal static VelumBomExchangeLayoutFile CreateDefault()
     {
-      var file = new VelumBomExchangeLayoutFile();
+      var file = new VelumBomExchangeLayoutFile
+      {
+        LayoutFormatVersion = CurrentLayoutFormatVersion
+      };
       int order = 1;
       foreach (string key in StructuralKeys)
       {
@@ -186,7 +264,7 @@ namespace Velum.UI.AssemblyRegistry
           Field = key,
           Header = key,
           Source = VelumBomExchangeFieldSource.Structural,
-          Enabled = true,
+          Enabled = DefaultEnabledFor(key),
           Order = order++,
           Width = DefaultWidthFor(key)
         });

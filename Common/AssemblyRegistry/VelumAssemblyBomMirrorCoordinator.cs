@@ -71,11 +71,11 @@ namespace Velum.UI.AssemblyRegistry
           // Read ExternalId from the component document.
           string externalId = ReadExternalId(comp);
 
-          // Compute hash from tracked properties + quantity.
+          // Хэш только от отслеживаемых свойств: количество вхождений относится к
+          // сборке-родителю и в хэш карточки не входит (см. HashFormatVersion).
           string hash = VelumAssemblyBomTrackedPropertiesConfig.ComputeHash(
               comp.PropertyValues,
-              trackedProperties,
-              comp.Quantity);
+              trackedProperties);
 
           // Upsert into mirror store.
           string identity = comp.Identity ??
@@ -91,7 +91,10 @@ namespace Velum.UI.AssemblyRegistry
               comp.Name,
               comp.Quantity,
               hash,
-              ExtractTrackedValues(comp.PropertyValues, trackedProperties));
+              ExtractTrackedValues(comp.PropertyValues, trackedProperties),
+              comp.IsAssemblyDocument
+                  ? VelumAssemblyBomMirrorEntry.DocTypeAssembly
+                  : VelumAssemblyBomMirrorEntry.DocTypePart);
         }
 
         // Save the mirror store.
@@ -173,11 +176,10 @@ namespace Velum.UI.AssemblyRegistry
         string designation = ReadDesignation(modelDoc, configurationName);
         string name = ReadCustomProperty(modelDoc, configurationName, "Наименование");
 
-        // Compute hash from tracked properties + quantity (0 for standalone part).
+        // Хэш только от отслеживаемых свойств (для отдельно открытой детали количество не учитывается).
         string hash = VelumAssemblyBomTrackedPropertiesConfig.ComputeHash(
             propertyValues,
-            trackedProperties,
-            0);
+            trackedProperties);
 
         // Upsert into mirror store.
         store.Upsert(
@@ -189,7 +191,8 @@ namespace Velum.UI.AssemblyRegistry
             name,
             0,
             hash,
-            ExtractTrackedValues(propertyValues, trackedProperties));
+            ExtractTrackedValues(propertyValues, trackedProperties),
+            VelumAssemblyBomMirrorEntry.DocTypePart);
 
         // Save the mirror store.
         store.Save();
@@ -387,6 +390,7 @@ namespace Velum.UI.AssemblyRegistry
           FileTitle = fileTitle,
           ConfigurationName = configName,
           Kind = kind,
+          IsAssemblyDocument = isAssembly,
           FolderSegments = folderSegments ?? Array.Empty<string>(),
           Quantity = 0
         };

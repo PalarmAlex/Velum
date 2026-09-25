@@ -31,6 +31,7 @@ namespace Velum.UI.AssemblyRegistry
     private System.Windows.Forms.ColumnHeader _colStructConfig;
     private System.Windows.Forms.ColumnHeader _colStructQty;
     private System.Windows.Forms.ColumnHeader _colStructAction;
+    private System.Windows.Forms.CheckBox _registryFilterCheck;
     private System.Windows.Forms.ToolTip _toolTip;
 
     protected override void Dispose(bool disposing)
@@ -57,6 +58,7 @@ namespace Velum.UI.AssemblyRegistry
       this._exportButton = new System.Windows.Forms.Button();
       this._settingsButton = new System.Windows.Forms.Button();
       this._layoutButton = new System.Windows.Forms.Button();
+      this._registryFilterCheck = new System.Windows.Forms.CheckBox();
       this._toolTip = new System.Windows.Forms.ToolTip(this.components);
       this._tabs = new System.Windows.Forms.TabControl();
       this._cardsTab = new System.Windows.Forms.TabPage();
@@ -149,6 +151,19 @@ namespace Velum.UI.AssemblyRegistry
       this._toolTip.SetToolTip(this._layoutButton, "Настроить состав, порядок и заголовки полей выгрузки карточек");
       this._layoutButton.UseVisualStyleBackColor = true;
       this._layoutButton.Click += new System.EventHandler(this.OnLayoutSettingsClick);
+      // 
+      // _registryFilterCheck
+      // 
+      this._registryFilterCheck.Anchor = System.Windows.Forms.AnchorStyles.Left;
+      this._registryFilterCheck.AutoSize = true;
+      this._registryFilterCheck.Location = new System.Drawing.Point(100, 39);
+      this._registryFilterCheck.Name = "_registryFilterCheck";
+      this._registryFilterCheck.Size = new System.Drawing.Size(240, 17);
+      this._registryFilterCheck.TabIndex = 4;
+      this._registryFilterCheck.Text = "Только зарегистрированные в реестре изделий";
+      this._toolTip.SetToolTip(this._registryFilterCheck, "Показывать и выгружать в 1C только позиции, файлы которых есть в реестре изделий.");
+      this._registryFilterCheck.UseVisualStyleBackColor = true;
+      this._registryFilterCheck.CheckedChanged += new System.EventHandler(this.OnRegistryFilterChanged);
       // 
       // _toolTip
       // 
@@ -338,13 +353,15 @@ namespace Velum.UI.AssemblyRegistry
       this.folderRow.Controls.Add(this.folderLabel, 0, 0);
       this.folderRow.Controls.Add(this._folderBox, 1, 0);
       this.folderRow.Controls.Add(this._browseButton, 2, 0);
+      this.folderRow.Controls.Add(this._registryFilterCheck, 0, 1);
       this.folderRow.Dock = System.Windows.Forms.DockStyle.Fill;
       this.folderRow.Location = new System.Drawing.Point(12, 54);
       this.folderRow.Margin = new System.Windows.Forms.Padding(0, 0, 0, 6);
       this.folderRow.Name = "folderRow";
-      this.folderRow.RowCount = 1;
+      this.folderRow.RowCount = 2;
       this.folderRow.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 36F));
-      this.folderRow.Size = new System.Drawing.Size(496, 36);
+      this.folderRow.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 18F));
+      this.folderRow.Size = new System.Drawing.Size(496, 54);
       this.folderRow.TabIndex = 2;
       // 
       // folderLabel

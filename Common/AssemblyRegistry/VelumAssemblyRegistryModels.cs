@@ -24,6 +24,13 @@ namespace Velum.UI.AssemblyRegistry
 
     internal VelumAssemblyRegistryNodeKind Kind { get; set; }
 
+    /// <summary>
+    /// Фактический тип SOLIDWORKS-документа: <c>true</c> — сборка (<c>swDocASSEMBLY</c>),
+    /// <c>false</c> — деталь. В отличие от <see cref="Kind"/> не зависит от свойства «Раздел»:
+    /// деталь-стандарт остаётся деталью. Нужен для корректного <c>TypeDocs</c> в выгрузке 1С.
+    /// </summary>
+    internal bool IsAssemblyDocument { get; set; }
+
     /// <summary>Сегменты каталога после префикса семейства (пусто = корень семейства).</summary>
     internal string[] FolderSegments { get; set; }
 

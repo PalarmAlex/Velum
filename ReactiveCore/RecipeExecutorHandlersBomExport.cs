@@ -69,14 +69,43 @@ namespace Velum.ReactiveCore
         VelumAssemblyBomMirrorStore store = new VelumAssemblyBomMirrorStore();
         store.Load();
 
-        // Get discrepancy entries (карточки с ExternalId).
+        // Get discrepancy entries (карточки с ExternalId; Stale-записи исключены
+        // внутри GetDiscrepancyEntries — их файл исчез, выгрузка отложена).
         IReadOnlyList<VelumAssemblyBomMirrorEntry> discrepancies = store.GetDiscrepancyEntries();
+        if (store.CountStaleEntries() > 0)
+        {
+          Logger.Info(
+              "Velum bomExport: stale entries skipped=" + store.CountStaleEntries() +
+              " (files not found; they will not be exported until seen again)");
+        }
         var exportEntries = new List<VelumAssemblyBomMirrorEntry>();
         foreach (VelumAssemblyBomMirrorEntry entry in discrepancies)
         {
           if (string.IsNullOrWhiteSpace(entry.ExternalId))
             continue;
           exportEntries.Add(entry);
+        }
+
+        // Фильтр «только зарегистрированные в реестре изделий»: применяется
+        // и в форме экспорта, и здесь, чтобы CSV и предпросмотр не расходились.
+        // При недоступном реестре фильтр не отсекает ничего.
+        if (VelumAppConfig.BomExchangeOnlyRegisteredInProductRegistry)
+        {
+          VelumBomExchangeRegistryIndex registryIndex = VelumBomExchangeRegistryIndex.Load();
+          if (registryIndex.Available)
+          {
+            var filtered = new List<VelumAssemblyBomMirrorEntry>();
+            foreach (VelumAssemblyBomMirrorEntry entry in exportEntries)
+            {
+              if (registryIndex.IsRegistered(entry))
+                filtered.Add(entry);
+              else
+                Logger.Info(
+                    "Velum bomExport: skipped (not in product registry): " +
+                    (entry.FilePath ?? string.Empty));
+            }
+            exportEntries = filtered;
+          }
         }
 
         // Structure side: единый отбор записей структуры для выгрузки
@@ -173,7 +202,8 @@ namespace Velum.ReactiveCore
         // Structure CSV (операции add/update/delete по строкам состава).
         if (exportRecords.Count > 0)
         {
-          string structureCsv = GenerateStructureCsv(exportRecords);
+          string structureCsv = GenerateStructureCsv(
+              exportRecords, structureStore.GetAllEntries());
           string structureFileName = "1C_bom_" + timestamp + ".csv";
           string writeError;
           if (!TryWriteCsvAtomic(
@@ -196,8 +226,12 @@ namespace Velum.ReactiveCore
           store.UpdatePreviousHash(entry.Identity, entry.CurrentHash);
         }
 
-        // previousHash = currentHash для выгруженных структур
-        // (только тех, чьи записи реально попали в CSV).
+        // previousHash = currentHash для выгруженных структур, но только для тех,
+        // по которым не осталось отложенных строк журнала. Отбор
+        // (VelumBomExchangeStructureProjector.Select) отсекает строки, у ребёнка
+        // которых ещё нет ExternalId; если по такой структуре в CSV прошла лишь
+        // часть строк, расхождение сохраняем — иначе структура перестанет
+        // считаться расходящейся и её оставшиеся строки потерялись бы навсегда.
         var exportedStructureIdentities = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (VelumBomChangeRecord record in exportRecords)
         {
@@ -209,8 +243,18 @@ namespace Velum.ReactiveCore
 
         foreach (VelumBomStructureEntry entry in structureSelection.StructuresByParentExternalId.Values)
         {
-          if (exportedStructureIdentities.Contains(entry.ParentIdentity))
-            structureStore.UpdatePreviousHash(entry.ParentIdentity, entry.CurrentHash);
+          if (!exportedStructureIdentities.Contains(entry.ParentIdentity))
+            continue;
+
+          if (structureSelection.DeferredParentExternalIds.Contains(entry.ParentExternalId))
+          {
+            Logger.Info(
+                "Velum bomExport: structure \"" + entry.ParentExternalId +
+                "\" keeps discrepancy (pending lines without child ExternalId remain)");
+            continue;
+          }
+
+          structureStore.UpdatePreviousHash(entry.ParentIdentity, entry.CurrentHash);
         }
 
         // Пометить выгруженные записи журнала и сохранить все store.
@@ -302,13 +346,17 @@ namespace Velum.ReactiveCore
     /// ChildConfiguration;Quantity;Action. Формат: UTF-8 с BOM, разделитель «;».
     /// Поля ParentConfiguration и ChildExternalId уже актуализированы отбором
     /// (<see cref="VelumBomExchangeStructureProjector.Select"/>).
-    /// Порядок строк: ParentExternalId, затем ChildExternalId, затем TimestampUtc, Id
+    /// Порядок строк: иерархический («сверху вниз», корневые сборки раньше
+    /// вложенных — см. <see cref="VelumBomExchangeHierarchyRanker"/>), внутри ранга —
+    /// ParentExternalId, затем ChildExternalId, затем TimestampUtc, Id
     /// (хронология внутри пары гарантирует корректное применение add → update → delete).
     /// </summary>
     /// <param name="records">Выгружаемые записи журнала изменений (актуализированные).</param>
+    /// <param name="allStructures">Полное состояние структур (для ранга узлов графа).</param>
     /// <returns>CSV-строка.</returns>
     private static string GenerateStructureCsv(
-        IReadOnlyList<VelumBomChangeRecord> records)
+        IReadOnlyList<VelumBomChangeRecord> records,
+        IReadOnlyList<VelumBomStructureEntry> allStructures)
     {
       var sb = new StringBuilder();
 
@@ -319,9 +367,15 @@ namespace Velum.ReactiveCore
       sb.Append("ParentExternalId;ParentConfiguration;ChildExternalId;ChildConfiguration;Quantity;Action");
       sb.AppendLine();
 
-      // Data rows (единый поток, сортировка по родителю, затем ребёнку, затем хронология).
+      // Иерархический ранг родителя (граф по полному состоянию структур,
+      // с обрывом циклов); затем — детерминированная сортировка внутри ранга.
+      VelumBomExchangeHierarchyRanker ranker =
+          VelumBomExchangeHierarchyRanker.Build(allStructures);
+
+      // Data rows.
       List<VelumBomChangeRecord> ordered = records
-          .OrderBy(r => r.ParentExternalId, StringComparer.Ordinal)
+          .OrderBy(r => ranker.RankOfParentExternalId(r.ParentExternalId))
+          .ThenBy(r => r.ParentExternalId, StringComparer.Ordinal)
           .ThenBy(r => r.ChildExternalId, StringComparer.Ordinal)
           .ThenBy(r => r.TimestampUtc)
           .ThenBy(r => r.Id, StringComparer.Ordinal)

@@ -157,14 +157,25 @@ namespace Velum.UI.AssemblyRegistry
     }
 
     /// <summary>
-    /// Вычислить SHA-256 хэш от нормализованных tracked properties + quantity.
-    /// Формат: "Prop1=Value1;Prop2=Value2;Quantity=N" (сортировано по имени свойства).
+    /// Версия формата хэша карточки. Единица — формат «свойства + Quantity».
+    /// <b>2</b> — Quantity исключён: количество вхождений относится к сборке-родителю,
+    /// а не к самой позиции, и «плавало» в зависимости от того, что сохранял
+    /// оператор последним (деталь даёт 0, сборка — реальное число). Из-за этого
+    /// простое сохранение сборки порождало ложное «расхождение карточки».
+    /// При увеличении версии <see cref="VelumAssemblyBomMirrorStore"/> за один проход
+    /// пересчитывает хэши, чтобы смена формата не вызвала массовую выгрузку.
+    /// </summary>
+    public const int HashFormatVersion = 2;
+
+    /// <summary>
+    /// Вычислить SHA-256 хэш от нормализованных tracked properties.
+    /// Формат: "Prop1=Value1;Prop2=Value2" (сортировано по имени свойства).
     /// Числовые значения округляются до заданной точности.
+    /// Количество вхождений в хэш не входит — см. <see cref="HashFormatVersion"/>.
     /// </summary>
     public static string ComputeHash(
         Dictionary<string, string> propertyValues,
-        IReadOnlyList<TrackedProperty> trackedProperties,
-        int quantity)
+        IReadOnlyList<TrackedProperty> trackedProperties)
     {
       if (trackedProperties == null || trackedProperties.Count == 0)
         return string.Empty;
@@ -187,10 +198,34 @@ namespace Velum.UI.AssemblyRegistry
         parts.Add(prop.Name + "=" + value);
       }
 
-      parts.Add("Quantity=" + quantity);
-
       string normalized = string.Join(";", parts);
       return ComputeSha256(normalized);
+    }
+
+    /// <summary>
+    /// Пересчитать хэш карточки из уже сохранённого снимка <c>TrackedValues</c>
+    /// (без обращения к SOLIDWORKS). Значения в снимке нормализованы тем же путём,
+    /// что и в <c>ExtractTrackedValues</c> координатора (trim, «?»→пусто,
+    /// округление), поэтому строка совпадает с <see cref="ComputeHash"/> на живых
+    /// данных при том же наборе имён. Используется при миграции формата хэша,
+    /// когда нужно привести <c>CurrentHash</c>/<c>PreviousHash</c> к новому
+    /// формату за один проход.
+    /// </summary>
+    public static string ComputeHashFromTrackedValues(Dictionary<string, string> trackedValues)
+    {
+      if (trackedValues == null || trackedValues.Count == 0)
+        return string.Empty;
+
+      var parts = new List<string>();
+      foreach (var kv in trackedValues.OrderBy(k => k.Key, StringComparer.OrdinalIgnoreCase))
+      {
+        string value = (kv.Value ?? string.Empty).Trim();
+        if (string.Equals(value, "?", StringComparison.Ordinal))
+          value = string.Empty;
+        parts.Add(kv.Key + "=" + value);
+      }
+
+      return ComputeSha256(string.Join(";", parts));
     }
 
     /// <summary>

@@ -388,6 +388,8 @@
     <Compile Include="Common\AssemblyRegistry\VelumAssemblyBomDiffProbe.cs" />
     <Compile Include="Common\AssemblyRegistry\VelumBomExchangeLayout.cs" />
     <Compile Include="Common\AssemblyRegistry\VelumBomExchangeRowProjector.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumBomExchangeHierarchyRanker.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumBomExchangeRegistryIndex.cs" />
     <Compile Include="Common\AssemblyRegistry\VelumBomStructureStore.cs" />
     <Compile Include="Common\AssemblyRegistry\VelumBomExchangeStructureProjector.cs" />
     <Compile Include="Common\AssemblyRegistry\VelumBomExchangeForm.cs">
