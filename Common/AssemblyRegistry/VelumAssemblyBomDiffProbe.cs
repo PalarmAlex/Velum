@@ -28,6 +28,11 @@ namespace Velum.UI.AssemblyRegistry
         VelumAssemblyBomMirrorStore store = new VelumAssemblyBomMirrorStore();
         store.Load();
 
+        // Обновить пометку stale по фактическому наличию файлов на диске и сохранить,
+        // чтобы форма экспорта читала счётчики без обращения к диску.
+        store.MarkMissingFilesStale();
+        store.Save();
+
         // Get all discrepancy entries.
         IReadOnlyList<VelumAssemblyBomMirrorEntry> discrepancies = store.GetDiscrepancyEntries();
 

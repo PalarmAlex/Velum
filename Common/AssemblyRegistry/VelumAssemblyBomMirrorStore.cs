@@ -6,6 +6,7 @@ using System.Text;
 using ISIDA.Common;
 using Newtonsoft.Json;
 using Velum.Configuration;
+using Velum.ReactiveCore.Export;
 
 namespace Velum.UI.AssemblyRegistry
 {
@@ -296,6 +297,39 @@ namespace Velum.UI.AssemblyRegistry
         list.Add(kv.Value);
       list.Sort((a, b) => string.Compare(a.Identity, b.Identity, StringComparison.Ordinal));
       return list;
+    }
+
+    /// <summary>
+    /// Обновить пометку <see cref="VelumAssemblyBomMirrorEntry.Stale"/> по фактическому
+    /// наличию файла на диске: файл исчез — пометить устаревшей, появился снова — снять.
+    /// Вызывается из фоновой диагностики зеркала (см. <c>VelumAssemblyBomDiffProbe</c>),
+    /// результат сохраняется в JSON, чтобы форма экспорта читала счётчики без обращения
+    /// к диску. Возвращает число записей, чья пометка изменилась.
+    /// </summary>
+    public int MarkMissingFilesStale()
+    {
+      int changed = 0;
+      foreach (var entry in _entries.Values)
+      {
+        if (entry == null)
+          continue;
+
+        bool fileExists = !string.IsNullOrWhiteSpace(entry.FilePath) &&
+            VelumPathExists.FileExists(entry.FilePath);
+        // Желаемая пометка — «файла нет на диске». Меняем только при расхождении
+        // текущей пометки с фактическим состоянием (в обе стороны).
+        bool desiredStale = !fileExists;
+        if (entry.Stale != desiredStale)
+        {
+          entry.Stale = desiredStale;
+          changed++;
+        }
+      }
+
+      if (changed > 0)
+        _dirty = true;
+
+      return changed;
     }
 
     /// <summary>
