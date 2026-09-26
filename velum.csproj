@@ -42,7 +42,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="isida">
-      <HintPath>..\ISIDA\Programms\isida\bin\$(Configuration)\isida.dll</HintPath>
+      <HintPath>..\..\ISIDA\Programms\isida\bin\$(Configuration)\isida.dll</HintPath>
     </Reference>
     <Reference Include="SolidWorks.Interop.sldworks, Version=32.0.1.4, Culture=neutral, PublicKeyToken=7c4797c3e4eeac03, processorArchitecture=MSIL">
       <HintPath>packages\Xarial.XCad.SolidWorks.0.8.1\lib\net461\SolidWorks.Interop.sldworks.dll</HintPath>
@@ -82,11 +82,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\ISIDA\Programms\isida\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\ISIDA\Programms\isida\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SymbiontEnv.Contract">
-      <HintPath>..\ISIDA\Programms\app\SymbiontEnv.Contract\bin\$(Configuration)\SymbiontEnv.Contract.dll</HintPath>
+      <HintPath>..\..\ISIDA\Programms\app\SymbiontEnv.Contract\bin\$(Configuration)\SymbiontEnv.Contract.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -783,16 +783,16 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\Xarial.XCad.SolidWorks.0.8.1\build\Xarial.XCad.SolidWorks.targets" Condition="Exists('packages\Xarial.XCad.SolidWorks.0.8.1\build\Xarial.XCad.SolidWorks.targets')" />
   <Target Name="EnsureIsidaBuilt" BeforeTargets="PrepareForBuild">
-    <Error Condition="!Exists('..\ISIDA\Programms\isida\bin\$(Configuration)\isida.dll')" Text="Отсутствует сборка isida: ..\ISIDA\Programms\isida\bin\$(Configuration)\isida.dll. Соберите проект isida (конфигурация $(Configuration))." />
+    <Error Condition="!Exists('..\..\ISIDA\Programms\isida\bin\$(Configuration)\isida.dll')" Text="Отсутствует сборка isida: ..\..\ISIDA\Programms\isida\bin\$(Configuration)\isida.dll. Соберите проект isida (конфигурация $(Configuration))." />
   </Target>
   <Target Name="EnsureSymbiontEnvContractBuilt" BeforeTargets="PrepareForBuild">
-    <Error Condition="!Exists('..\ISIDA\Programms\app\SymbiontEnv.Contract\bin\$(Configuration)\SymbiontEnv.Contract.dll')" Text="Отсутствует SymbiontEnv.Contract.dll: ..\ISIDA\Programms\app\SymbiontEnv.Contract\bin\$(Configuration)\. Соберите SymbiontEnv.Contract.csproj (конфигурация $(Configuration))." />
+    <Error Condition="!Exists('..\..\ISIDA\Programms\app\SymbiontEnv.Contract\bin\$(Configuration)\SymbiontEnv.Contract.dll')" Text="Отсутствует SymbiontEnv.Contract.dll: ..\..\ISIDA\Programms\app\SymbiontEnv.Contract\bin\$(Configuration)\. Соберите SymbiontEnv.Contract.csproj (конфигурация $(Configuration))." />
   </Target>
   <Target Name="CopyIsidaRuntimeAssemblies" AfterTargets="CopyFilesToOutputDirectory">
     <ItemGroup>
-      <_IsidaBinaries Include="..\ISIDA\Programms\isida\bin\$(Configuration)\*.dll" />
+      <_IsidaBinaries Include="..\..\ISIDA\Programms\isida\bin\$(Configuration)\*.dll" />
     </ItemGroup>
-    <Copy SourceFiles="@(_IsidaBinaries)" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" Condition="Exists('..\ISIDA\Programms\isida\bin\$(Configuration)\isida.dll')" />
+    <Copy SourceFiles="@(_IsidaBinaries)" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" Condition="Exists('..\..\ISIDA\Programms\isida\bin\$(Configuration)\isida.dll')" />
   </Target>
   <Target Name="CopyAdapterPackage" AfterTargets="CopyFilesToOutputDirectory">
     <ItemGroup>
