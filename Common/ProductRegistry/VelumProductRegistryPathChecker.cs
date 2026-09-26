@@ -32,7 +32,119 @@ namespace Velum.UI.ProductRegistry
       if (string.IsNullOrEmpty(path))
         return VelumProductRegistryPathStatus.No;
 
-      switch (VelumPathExists.Check(false, path, timeoutMs))
+      return ToStatus(VelumPathExists.Check(false, path, timeoutMs));
+    }
+
+    /// <summary>
+    /// Пакетно проверяет пути записей реестра (параллельно в пуле).
+    /// <para>
+    /// Одиночная проверка по сетевой шаре стоит раундтрип, и последовательный обход
+    /// реестра превращался в минуты; пакет выполняет проверки одновременно, поэтому
+    /// он стоит времени самой медленной из них.
+    /// </para>
+    /// </summary>
+    /// <param name="items">Записи, пути которых проверяются.</param>
+    /// <param name="timeoutMs">Таймаут одной проверки, мс.</param>
+    /// <param name="known">Ранее полученные результаты по путям (может быть <c>null</c>).</param>
+    /// <returns>Нормализованный путь → статус (пустой путь в словарь не попадает).</returns>
+    internal static Dictionary<string, VelumProductRegistryPathStatus> CheckFiles(
+        IList<VelumProductItem> items,
+        int timeoutMs,
+        object known = null)
+    {
+      var statuses = new Dictionary<string, VelumProductRegistryPathStatus>();
+      if (items == null || items.Count == 0)
+        return statuses;
+
+      var requests = new List<VelumPathExists.PathCheckRequest>(items.Count);
+      for (int i = 0; i < items.Count; i++)
+      {
+        VelumProductItem item = items[i];
+        if (item == null)
+          continue;
+
+        string path = VelumProductRegistryStore.NormalizeFilePathKey(item.FilePath);
+        if (string.IsNullOrEmpty(path))
+          continue;
+
+        requests.Add(new VelumPathExists.PathCheckRequest(false, path));
+      }
+
+      IDictionary<string, VelumPathExists.Result> knownResults = AsResults(known);
+      VelumPathExists.Result[] results = VelumPathExists.CheckBatch(requests, timeoutMs, knownResults);
+      for (int i = 0; i < requests.Count && i < results.Length; i++)
+        statuses[requests[i].Path] = ToStatus(results[i]);
+
+      return statuses;
+    }
+
+    /// <summary>
+    /// Приводит известные результаты проверки путей к словарю трёхзначных результатов,
+    /// чтобы связанные проверки переиспользовали уже полученный ответ по тому же пути.
+    /// </summary>
+    /// <param name="known">Известные статусы или результаты (может быть <c>null</c>).</param>
+    private static IDictionary<string, VelumPathExists.Result> AsResults(object known)
+    {
+      if (known == null)
+        return null;
+
+      var results = known as IDictionary<string, VelumPathExists.Result>;
+      if (results != null)
+        return results;
+
+      var statuses = known as IDictionary<string, VelumProductRegistryPathStatus>;
+      if (statuses == null)
+        return null;
+
+      var mapped = new Dictionary<string, VelumPathExists.Result>(statuses.Count);
+      foreach (KeyValuePair<string, VelumProductRegistryPathStatus> kv in statuses)
+      {
+        switch (kv.Value)
+        {
+          case VelumProductRegistryPathStatus.Ok:
+            mapped[kv.Key] = VelumPathExists.Result.Yes;
+            break;
+          case VelumProductRegistryPathStatus.No:
+            mapped[kv.Key] = VelumPathExists.Result.No;
+            break;
+          default:
+            mapped[kv.Key] = VelumPathExists.Result.Unknown;
+            break;
+        }
+      }
+
+      return mapped;
+    }
+    /// <summary>
+    /// Проверяет пути записей и возвращает статусы, ключом которых служит
+    /// нормализованный путь (пустые пути в результат не попадают).
+    /// </summary>
+    /// <param name="entries">Записи (или синтетические носители путей) для проверки.</param>
+    /// <param name="timeoutMs">Таймаут одной проверки, мс.</param>
+    /// <param name="known">
+    /// Статусы или результаты, уже полученные по этим путям (ключ — нормализованный
+    /// путь, может быть <c>null</c>): повторная проверка пути на сетевой шаре стоила
+    /// бы ещё одного раундтрипа.
+    /// </param>
+    internal static Dictionary<string, VelumProductRegistryPathStatus> CheckEntryPaths(
+        IList<VelumRegistryScanBatch.Entry> entries,
+        int timeoutMs,
+        object known = null)
+    {
+      if (entries == null || entries.Count == 0)
+        return new Dictionary<string, VelumProductRegistryPathStatus>();
+
+      var items = new List<VelumProductItem>(entries.Count);
+      for (int i = 0; i < entries.Count; i++)
+        items.Add(entries[i].Item);
+
+      return CheckFiles(items, timeoutMs, known);
+    }
+
+    /// <summary>Трёхзначный результат проверки пути → статус для вызывающего кода.</summary>
+    internal static VelumProductRegistryPathStatus ToStatus(VelumPathExists.Result result)
+    {
+      switch (result)
       {
         case VelumPathExists.Result.Yes:
           return VelumProductRegistryPathStatus.Ok;

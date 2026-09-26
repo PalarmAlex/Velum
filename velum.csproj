@@ -431,6 +431,7 @@
     <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryProblemCache.cs" />
     <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryMatchKey.cs" />
     <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryIntegrityRules.cs" />
+    <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryScanBatch.cs" />
     <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryBrokenLinkScanner.cs" />
     <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryMissingDrawingScanner.cs" />
     <Compile Include="Common\ProductRegistry\Integrity\VelumProductRegistryDuplicateDesignationScanner.cs" />

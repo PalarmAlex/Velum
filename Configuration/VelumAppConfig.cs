@@ -93,6 +93,7 @@ namespace Velum.Configuration
           EnsureSolidHomeostasisPulseTrace();
           EnsureSolidProbeTimeoutSettings();
           EnsureHeavyMetricsPulsePeriodSetting();
+          EnsureScannerProbeConcurrencySetting();
           EnsureCadDegradedThresholdSettings();
           EnsureRecipeDispatchSettings();
           EnsureDxfExportSettings();
@@ -450,6 +451,22 @@ namespace Velum.Configuration
       get
       {
         int v = GetIntSetting("HeavyMetricsPulsePeriod", 5);
+        return v < 1 ? 1 : v;
+      }
+    }
+
+    /// <summary>
+    /// Параллелизм фонового сканера путей реестра: число одновременно висящих проверок
+    /// существования файлов (слоты семафора <see cref="Velum.ReactiveCore.Export.VelumPathExists"/>).
+    /// Недоступный сетевой корень держит слот до таймаута, поэтому без ограничения пакет
+    /// из сотен путей исчерпал бы пул потоков; значение больше дефолта полезно на быстрых
+    /// локальных дисках, меньше — чтобы не задавить рабочую станцию фоновым сканом.
+    /// </summary>
+    public static int ScannerProbeConcurrency
+    {
+      get
+      {
+        int v = GetIntSetting("ScannerProbeConcurrency", 16);
         return v < 1 ? 1 : v;
       }
     }
@@ -899,6 +916,7 @@ namespace Velum.Configuration
                   new XElement("SolidHomeostasisPulseTrace", false),
                   new XElement("SolidProbeTimeoutMs", 2500),
                   new XElement("HeavyMetricsPulsePeriod", 5),
+                  new XElement("ScannerProbeConcurrency", 16),
                   new XElement("SolidProbeUseStaleSnapshotOnTimeout", true),
                   new XElement("CadDegradedEnterThreshold", "50"),
                   new XElement("CadDegradedExitThreshold", "60"),
@@ -1214,6 +1232,32 @@ namespace Velum.Configuration
         app.Add(new XElement("HeavyMetricsPulsePeriod", 5));
         doc.Save(ConfigFullPath);
         Logger.Info("Velum: в Settings.xml добавлен HeavyMetricsPulsePeriod=5");
+      }
+      catch (Exception ex)
+      {
+        Logger.Error(ex.Message);
+      }
+    }
+
+    /// <summary>Добавляет параллелизм фонового сканера путей, если ключа ещё нет.</summary>
+    private static void EnsureScannerProbeConcurrencySetting()
+    {
+      try
+      {
+        if (!File.Exists(ConfigFullPath))
+          return;
+
+        XDocument doc = XDocument.Load(ConfigFullPath);
+        XElement app = doc.Root?.Element("AppSettings");
+        if (app == null)
+          return;
+
+        if (app.Element("ScannerProbeConcurrency") != null)
+          return;
+
+        app.Add(new XElement("ScannerProbeConcurrency", 16));
+        doc.Save(ConfigFullPath);
+        Logger.Info("Velum: в Settings.xml добавлен ScannerProbeConcurrency=16");
       }
       catch (Exception ex)
       {

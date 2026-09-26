@@ -144,6 +144,23 @@ internal static string GetExtension(string filePath)
       VelumProductRegistryPathStatus status = VelumProductRegistryPathChecker.CheckOne(
           filePath,
           VelumProductRegistryPathChecker.TimeoutMilliseconds);
+      return IsMissing(status);
+    }
+
+    /// <summary>
+    /// ╤é╤é╨╡ ╨┤╤А╨╕╤В╨╡╤А╨╕╨╣, ╨╜╨╛ ╨┐╨╛ ╤Г╨∂╨╡ ╤Г╨6╨╡ ╨┐╨╛╨╗╤Г╤З╨╡╨╜╨╜╨╛╨╝╤Г ╤Б╤é╤é╨░╤é╤Л╤Б╤é: ╤Б╨║╨░╨╜╨╡╤А╤Л ╨┐╤А╨╛╨▓╨╡╤А╤П╤О╤é ╨║╨▓╨░╨╜╤é╤Л
+    /// ╨┐╨░╨║╨╡╤é╨╛╨╝ ╨¢ <see cref="VelumRegistryScanBatch"/> ╨¢ ╨╜╨╡ ╨┤╨╛╨╗╨╢╨╜╤Л ╨│╨╛╨┤╨╕╤é╤М ╨╜╨░ ╤Б╨╡╤é╤М ╨╖╨░ ╨║╨░╨╢╨┤╤О╤О
+    /// ╨╛╤é╨┤╨╡╨╗╤М╨╜╤Л╨╕ ╨┐╤Г╤é╤М.
+    /// </summary>
+    /// <param name="status">╤а╨╡╨╖╤г╨╗╤М╤é╤é╨░╤é ╨┐╤А╨╛╨▓╨╡╤А╨║╨╕ ╨┐╤Г╤é╨╕.</param>
+    internal static bool PathExistsOrTimedOutIsMissing(VelumProductRegistryPathStatus status)
+    {
+      return IsMissing(status);
+    }
+
+    /// <summary>╨С╨╕╤é╤Л╨╝ ╤Б╤З╨╕╤é╨░╨╡╤é╤Б╤П ╤é╨╛╨╗╤М╨║╨╛ ┤╨╜╨╡╤é ╤Д╨░╨╣╨╗╨░┤ (No); Unknown ╨╜╨╡ ╠╨Т╨░╤П╨╡╤é╤С.</summary>
+    private static bool IsMissing(VelumProductRegistryPathStatus status)
+    {
       return status == VelumProductRegistryPathStatus.No;
     }
 

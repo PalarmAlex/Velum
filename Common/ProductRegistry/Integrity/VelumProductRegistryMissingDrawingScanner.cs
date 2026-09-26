@@ -26,12 +26,17 @@ namespace Velum.UI.ProductRegistry
     /// Возвращает true, когда тик нужно прервать (наступил следующий тяжёлый пульс
     /// либо открылся документ SW). При null — прежнее поведение с фиксированным квантом.
     /// </param>
+    /// <param name="known">
+    /// Результаты проверок путей от BrokenLink (статусы по ключу),
+    /// чтобы модель, уже проверенная сканером битых ссылок, не перепроверялась на сетевой шаре.
+    /// </param>
     internal static bool Tick(
         VelumProductRegistryStore store,
         IList<VelumProductFolderAutoNameMapping> mappings,
         ref int searchCursor,
         ref bool passActive,
-        Func<bool> shouldStop = null)
+        Func<bool> shouldStop = null,
+        object known = null)
     {
       bool passCompleted = false;
       _ = mappings;
@@ -66,21 +71,50 @@ namespace Velum.UI.ProductRegistry
 
       int remaining = Math.Max(0, items.Count - searchCursor);
       int budget = shouldStop != null ? remaining : Math.Min(FullRegistryBatchSize, remaining);
-      int checkedCount = 0;
-      while (checkedCount < budget && searchCursor < items.Count
-          && (shouldStop == null || !shouldStop()))
+
+      // Квант отбирается по типу документа; пути внутри проверяются пакетом параллельно.
+      List<VelumRegistryScanBatch.Entry> quant =
+          VelumRegistryScanBatch.TakeQuant(store, searchCursor, budget,
+              (VelumProductItem it) =>
+                  VelumProductRegistryIntegrityRules.IsPartOrAssemblyPath(it.FilePath));
+      if (quant.Count == 0)
+        return false;
+
+      searchCursor = VelumRegistryScanBatch.NextCursor(
+          quant, quant[quant.Count - 1].Index, searchCursor);
+
+      // Пути кванта (модель и чертёж) проверяются одним пакетом в thread-static scope:
+      // классификация через PathExistsOrTimedOutIsMissing / VelumPathExists.FileExists
+      // читает уже полученные ответы и не ходит на сеть повторно за той же записью.
+      using (IDisposable scope = VelumPathExists.EnterScope())
       {
-        VelumProductItem item = items[searchCursor++];
-        checkedCount++;
-        if (item == null || item.Id <= 0)
-          continue;
-        if (!VelumProductRegistryIntegrityRules.IsPartOrAssemblyPath(item.FilePath))
-          continue;
+        var requests = new List<VelumPathExists.PathCheckRequest>();
+        var seen = new HashSet<string>();
+        for (int i = 0; i < quant.Count; i++)
+        {
+          VelumRegistryScanBatch.Entry e = quant[i];
+          VelumRegistryScanBatch.AddRequest(requests, seen, false, e.Path);
+          VelumRegistryScanBatch.AddRequest(requests, seen, false,
+              Velum.ReactiveCore.Export.VelumRelativeDocumentPathResolver.ToFull(
+                  e.Item.DrawingPath));
+        }
 
-        if (!TryEvaluateMissingDrawing(item, out VelumProductRegistryProblemEntry problem))
-          continue;
+        VelumPathExists.Result[] results =
+            VelumPathExists.CheckBatch(requests,
+                VelumProductRegistryPathChecker.TimeoutMilliseconds,
+                VelumRegistryScanBatch.AsResults(known));
+        for (int i = 0; i < requests.Count; i++)
+          VelumPathExists.ScopeResult(
+              requests[i].IsDirectory, requests[i].Path, results[i]);
 
-        VelumProductRegistryProblemCache.UpsertPending(problem);
+        for (int i = 0; i < quant.Count; i++)
+        {
+          VelumProductRegistryProblemEntry problem;
+          if (!TryEvaluateMissingDrawing(quant[i].Item, out problem))
+            continue;
+
+          VelumProductRegistryProblemCache.UpsertPending(problem);
+        }
       }
 
       if (searchCursor >= items.Count)

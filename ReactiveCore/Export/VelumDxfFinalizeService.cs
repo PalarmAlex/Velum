@@ -119,7 +119,8 @@ namespace Velum.ReactiveCore.Export
         return result;
       }
 
-      if (!TryBuildFileFingerprint(outputPath, out string fingerprint, out string fingerError))
+      if (!TryBuildFileFingerprint(
+              outputPath, out string fingerprint, out string fingerError, assumeFileExists: true))
       {
         result.Message = string.IsNullOrWhiteSpace(fingerError)
             ? "Не удалось прочитать файл DXF."
@@ -208,11 +209,23 @@ namespace Velum.ReactiveCore.Export
       return result;
     }
 
-    internal static bool TryBuildFileFingerprint(string fullPath, out string fingerprint, out string error)
+    /// <summary>
+    /// Строит «отпечаток» файла DXF (время модификации + размер) для сравнения с зеркалом.
+    /// При <paramref name="assumeFileExists"/> существование файла не перепроверяется:
+    /// вызывающий уже гарантировал его (путь найден в scope/кэше сканера или проверен
+    /// <c>File.Exists</c> до вызова) — повторный <c>File.Exists</c> на сетевой шаре
+    /// стоил бы лишнего раундтрипа в горячем пути полного прохода.
+    /// </summary>
+    internal static bool TryBuildFileFingerprint(
+        string fullPath,
+        out string fingerprint,
+        out string error,
+        bool assumeFileExists = false)
     {
       fingerprint = string.Empty;
       error = string.Empty;
-      if (string.IsNullOrWhiteSpace(fullPath) || !File.Exists(fullPath))
+      if (string.IsNullOrWhiteSpace(fullPath)
+          || (!assumeFileExists && !File.Exists(fullPath)))
       {
         error = "file_missing";
         return false;

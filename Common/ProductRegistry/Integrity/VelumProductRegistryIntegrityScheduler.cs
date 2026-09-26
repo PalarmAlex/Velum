@@ -686,26 +686,42 @@ namespace Velum.UI.ProductRegistry
         return;
 
       bool passCompleted = true;
-      passCompleted &= VelumProductRegistryBrokenLinkScanner.Tick(
-          store, ref _brokenCursor, ref _brokenPassActive,
-          scopedItemIds: null, openDocumentCount: 0, shouldStop: shouldStop);
+      // Результаты проверки путей BrokenLink передаются остальным сканерам (known):
+      // модель, уже проверенная сканером битых ссылок, на сетевой шаре повторно не ходит.
+      Dictionary<string, VelumProductRegistryPathStatus> knownPaths = null;
+      bool brokenPassCompleted = VelumProductRegistryBrokenLinkScanner.Tick(
+          store, ref _brokenCursor, ref _brokenPassActive, null, 0, shouldStop, null,
+          out knownPaths);
+      passCompleted &= brokenPassCompleted;
       if (AbortRunTickIfOpenDocumentsScope())
         return;
 
-      passCompleted &= VelumProductRegistryMissingDrawingScanner.Tick(
-          store, mappings, ref _drawingCursor, ref _drawingPassActive, shouldStop: shouldStop);
-      if (AbortRunTickIfOpenDocumentsScope())
-        return;
+      // Early-exit по битым ссылкам: если BrokenLink завершил полный проход и нашёл
+      // битые ссылки, реестр уже повреждён — дорогой сетевой обход
+      // чертежей (MissingDrawing/DXF/PDF) в этом проходе бесполезен: пока есть битые
+      // ссылки, он будет повторяться и на следующих тиках. DuplicateDesignation
+      // (чисто в памяти) выполняется всегда.
+      bool brokenEarlyExit = brokenPassCompleted && HasBrokenLinksInKnown(knownPaths);
+      if (!brokenEarlyExit)
+      {
+        passCompleted &= VelumProductRegistryMissingDrawingScanner.Tick(
+            store, mappings, ref _drawingCursor, ref _drawingPassActive,
+            shouldStop: shouldStop, known: knownPaths);
+        if (AbortRunTickIfOpenDocumentsScope())
+          return;
 
-      passCompleted &= VelumProductRegistryDxfFleetScanner.Tick(
-          store, ref _dxfCursor, ref _dxfPassActive, shouldStop: shouldStop);
-      if (AbortRunTickIfOpenDocumentsScope())
-        return;
+        passCompleted &= VelumProductRegistryDxfFleetScanner.Tick(
+            store, ref _dxfCursor, ref _dxfPassActive,
+            shouldStop: shouldStop, known: knownPaths);
+        if (AbortRunTickIfOpenDocumentsScope())
+          return;
 
-      passCompleted &= VelumProductRegistryPdfFleetScanner.Tick(
-          store, ref _pdfCursor, ref _pdfPassActive, shouldStop: shouldStop);
-      if (AbortRunTickIfOpenDocumentsScope())
-        return;
+        passCompleted &= VelumProductRegistryPdfFleetScanner.Tick(
+            store, ref _pdfCursor, ref _pdfPassActive,
+            shouldStop: shouldStop, known: knownPaths);
+        if (AbortRunTickIfOpenDocumentsScope())
+          return;
+      }
 
       // Дубли обозначений — группировка по ключам в памяти (без ФС), весь проход
       // укладывается в один квант; курсор между тиками не нужен.
@@ -727,6 +743,25 @@ namespace Velum.UI.ProductRegistry
         lock (Gate)
           _scanPassInProgress = false;
       }
+    }
+
+    /// <summary>
+    /// true, если среди уже проверенных путей есть битые ссылки (статус <see cref="VelumProductRegistryPathStatus.No"/>).
+    /// Используется для раннего выхода: при повреждённом реестре дорогие сетевые проверки чертежей не запускаются.
+    /// </summary>
+    private static bool HasBrokenLinksInKnown(
+        Dictionary<string, VelumProductRegistryPathStatus> knownPaths)
+    {
+      if (knownPaths == null || knownPaths.Count == 0)
+        return false;
+
+      foreach (KeyValuePair<string, VelumProductRegistryPathStatus> pair in knownPaths)
+      {
+        if (pair.Value == VelumProductRegistryPathStatus.No)
+          return true;
+      }
+
+      return false;
     }
 
     /// <summary>

@@ -37,11 +37,16 @@ namespace Velum.UI.ProductRegistry
     /// Возвращает true, когда тик нужно прервать (наступил следующий тяжёлый пульс
     /// либо открылся документ SW). При null — прежнее поведение с фиксированным квантом.
     /// </param>
+    /// <param name="known">
+    /// Результаты проверок путей от BrokenLink (статусы по ключу),
+    /// чтобы модель, уже проверенная сканером битых ссылок, не перепроверялась на сетевой шаре.
+    /// </param>
     internal static bool Tick(
         VelumProductRegistryStore store,
         ref int searchCursor,
         ref bool passActive,
-        Func<bool> shouldStop = null)
+        Func<bool> shouldStop = null,
+        object known = null)
     {
       bool passCompleted = false;
       if (store == null)
@@ -72,13 +77,52 @@ namespace Velum.UI.ProductRegistry
 
       int remaining = Math.Max(0, items.Count - searchCursor);
       int budget = shouldStop != null ? remaining : Math.Min(FullRegistryBatchSize, remaining);
-      int checkedCount = 0;
-      while (checkedCount < budget && searchCursor < items.Count
-          && (shouldStop == null || !shouldStop()))
+
+      // Квант отбирается по деталям; пути (модель, каталог DXF, файлы DXF) проверяются
+      // пакетом в thread-static scope — классификация Classify читает ответы из scope.
+      List<VelumRegistryScanBatch.Entry> quant =
+          VelumRegistryScanBatch.TakeQuant(store, searchCursor, budget,
+              (VelumProductItem it) =>
+                  VelumProductRegistryIntegrityRules.IsPartPath(it.FilePath));
+      if (quant.Count == 0)
+        return false;
+
+      searchCursor = VelumRegistryScanBatch.NextCursor(
+          quant, quant[quant.Count - 1].Index, searchCursor);
+
+      using (IDisposable scope = VelumPathExists.EnterScope())
       {
-        VelumProductItem item = items[searchCursor++];
-        checkedCount++;
-        EvaluateItem(item);
+        var requests = new List<VelumPathExists.PathCheckRequest>();
+        var seen = new HashSet<string>();
+        for (int i = 0; i < quant.Count; i++)
+        {
+          VelumRegistryScanBatch.Entry e = quant[i];
+          VelumRegistryScanBatch.AddRequest(requests, seen, false, e.Path);
+          string catalog = Velum.ReactiveCore.Export.VelumRelativeDocumentPathResolver.ToFull(
+              (e.Item.DxfPath ?? string.Empty).Trim());
+          VelumRegistryScanBatch.AddRequest(requests, seen, true, catalog);
+          var configs = e.Item.ExportMetaConfigs
+              ?? Array.Empty<VelumProductExportMetaConfig>();
+          for (int c = 0; c < configs.Length; c++)
+          {
+            VelumProductExportMetaConfig cfg = configs[c];
+            if (cfg == null)
+              continue;
+            VelumRegistryScanBatch.AddRequest(requests, seen, false,
+                TryResolveDxfFullPath(catalog, cfg.DxfFileName));
+          }
+        }
+
+        VelumPathExists.Result[] results =
+            VelumPathExists.CheckBatch(requests,
+                VelumProductRegistryPathChecker.TimeoutMilliseconds,
+                VelumRegistryScanBatch.AsResults(known));
+        for (int i = 0; i < requests.Count; i++)
+          VelumPathExists.ScopeResult(
+              requests[i].IsDirectory, requests[i].Path, results[i]);
+
+        for (int i = 0; i < quant.Count; i++)
+          EvaluateItem(quant[i].Item);
       }
 
       if (searchCursor >= items.Count)
@@ -248,7 +292,8 @@ namespace Velum.UI.ProductRegistry
         bool fingerprintMismatch = false;
         if (fileFound
             && !string.IsNullOrWhiteSpace(cfg.DxfFileFingerprint)
-            && VelumDxfFinalizeService.TryBuildFileFingerprint(fullPath, out string currentFp, out _)
+            && VelumDxfFinalizeService.TryBuildFileFingerprint(
+                fullPath, out string currentFp, out _, assumeFileExists: true)
             && !string.Equals(cfg.DxfFileFingerprint, currentFp, StringComparison.Ordinal))
         {
           fingerprintMismatch = true;
