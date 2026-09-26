@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using ISIDA.Common;
 using Newtonsoft.Json;
 using Velum.Configuration;
@@ -151,7 +152,29 @@ namespace Velum.UI.AssemblyRegistry
       Directory.CreateDirectory(FolderPath);
       Normalize(data);
       string json = JsonConvert.SerializeObject(data, JsonSettings);
-      File.WriteAllText(FilePath, json);
+
+      string tempPath = FilePath + "." + System.Diagnostics.Process.GetCurrentProcess().Id + ".tmp";
+      try
+      {
+        File.WriteAllText(tempPath, json, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
+        if (File.Exists(FilePath))
+          File.Replace(tempPath, FilePath, null);
+        else
+          File.Move(tempPath, FilePath);
+      }
+      catch
+      {
+        try
+        {
+          if (File.Exists(tempPath))
+            File.Delete(tempPath);
+        }
+        catch
+        {
+        }
+
+        throw;
+      }
     }
 
     internal static VelumAssemblyRegistryColumnTemplate FindTemplate(

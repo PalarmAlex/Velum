@@ -27,6 +27,12 @@ namespace Velum.Isida
     public const string CommandBufferFileName = "CommandPrimariesBuffer";
     public const string VerbalBufferFileName = "VerbalPrimariesBuffer";
 
+    // Синхронизирует операции чтения-модификации-записи над буферными файлами и
+    // справочниками первичников: пульсовый цикл ISIDA и UI-потоки могут вызывать
+    // методы одновременно, а параллельные AppendAllText/ReadAllLines приводят к
+    // гонкам и IOException.
+    private static readonly object AppendSync = new object();
+
     public static string ResolveSensorsFolder()
     {
       return IsidaDataPaths.ResolveSensorsFolder(VelumAppConfig.DataFolderPath);
@@ -50,26 +56,29 @@ namespace Velum.Isida
 
     public static IReadOnlyList<string> ReadBufferEntries(VelumSensorPrimariesChannel channel)
     {
-      string path = GetBufferFilePath(channel);
-      if (!File.Exists(path))
-        return Array.Empty<string>();
-
-      var result = new List<string>();
-      var seen = new HashSet<string>(StringComparer.Ordinal);
-      foreach (string raw in File.ReadAllLines(path))
+      lock (AppendSync)
       {
-        string line = raw?.Trim() ?? string.Empty;
-        if (line.Length == 0 || line.StartsWith("#", StringComparison.Ordinal))
-          continue;
+        string path = GetBufferFilePath(channel);
+        if (!File.Exists(path))
+          return Array.Empty<string>();
 
-        if (channel == VelumSensorPrimariesChannel.Verbal && line.Length != 1)
-          continue;
+        var result = new List<string>();
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        foreach (string raw in File.ReadAllLines(path))
+        {
+          string line = raw?.Trim() ?? string.Empty;
+          if (line.Length == 0 || line.StartsWith("#", StringComparison.Ordinal))
+            continue;
 
-        if (seen.Add(line))
-          result.Add(line);
+          if (channel == VelumSensorPrimariesChannel.Verbal && line.Length != 1)
+            continue;
+
+          if (seen.Add(line))
+            result.Add(line);
+        }
+
+        return result;
       }
-
-      return result;
     }
 
     public static void QueueCommandTokensIfMissing(IEnumerable<string> tokens)
@@ -118,23 +127,26 @@ namespace Velum.Isida
       if (keys == null || keys.Count == 0)
         return;
 
-      var existing = new HashSet<string>(ReadBufferEntries(channel), StringComparer.Ordinal);
-      var toAppend = keys.Where(k => !existing.Contains(k)).ToList();
-      if (toAppend.Count == 0)
-        return;
+      lock (AppendSync)
+      {
+        var existing = new HashSet<string>(ReadBufferEntries(channel), StringComparer.Ordinal);
+        var toAppend = keys.Where(k => !existing.Contains(k)).ToList();
+        if (toAppend.Count == 0)
+          return;
 
-      string path = GetBufferFilePath(channel);
-      string directory = Path.GetDirectoryName(path);
-      if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-        Directory.CreateDirectory(directory);
+        string path = GetBufferFilePath(channel);
+        string directory = Path.GetDirectoryName(path);
+        if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+          Directory.CreateDirectory(directory);
 
-      if (!File.Exists(path))
-        WriteBufferHeader(path, channel);
+        if (!File.Exists(path))
+          WriteBufferHeader(path, channel);
 
-      var sb = new StringBuilder();
-      foreach (string key in toAppend)
-        sb.AppendLine(key);
-      File.AppendAllText(path, sb.ToString());
+        var sb = new StringBuilder();
+        foreach (string key in toAppend)
+          sb.AppendLine(key);
+        File.AppendAllText(path, sb.ToString());
+      }
     }
 
     private static void WriteBufferHeader(string path, VelumSensorPrimariesChannel channel)
@@ -164,60 +176,66 @@ namespace Velum.Isida
       addedCount = 0;
       errorMessage = null;
 
-      IReadOnlyList<string> pending = ReadBufferEntries(channel);
-      if (pending.Count == 0)
+      lock (AppendSync)
       {
-        errorMessage = "Буфер пуст — нет новых первичников для добавления.";
-        return false;
-      }
+        IReadOnlyList<string> pending = ReadBufferEntries(channel);
+        if (pending.Count == 0)
+        {
+          errorMessage = "Буфер пуст — нет новых первичников для добавления.";
+          return false;
+        }
 
-      string primariesPath = GetPrimariesFilePath(channel);
-      if (!File.Exists(primariesPath))
-      {
-        errorMessage = "Файл первичников не найден: " + primariesPath;
-        return false;
-      }
+        string primariesPath = GetPrimariesFilePath(channel);
+        if (!File.Exists(primariesPath))
+        {
+          errorMessage = "Файл первичников не найден: " + primariesPath;
+          return false;
+        }
 
-      var existingKeys = LoadPrimariesKeys(channel, primariesPath);
-      int maxId = LoadPrimariesMaxId(primariesPath);
-      var toAdd = pending.Where(k => !existingKeys.Contains(k)).ToList();
-      if (toAdd.Count == 0)
-      {
-        ClearBuffer(channel);
-        ReloadChannelIfReady(channel);
-        return true;
-      }
+        var existingKeys = LoadPrimariesKeys(channel, primariesPath);
+        int maxId = LoadPrimariesMaxId(primariesPath);
+        var toAdd = pending.Where(k => !existingKeys.Contains(k)).ToList();
+        if (toAdd.Count == 0)
+        {
+          ClearBuffer(channel);
+          ReloadChannelIfReady(channel);
+          return true;
+        }
 
-      var sb = new StringBuilder();
-      foreach (string key in toAdd)
-      {
-        maxId++;
-        sb.AppendLine(FormatPrimariesLine(channel, key, maxId));
-        addedCount++;
-      }
+        var sb = new StringBuilder();
+        foreach (string key in toAdd)
+        {
+          maxId++;
+          sb.AppendLine(FormatPrimariesLine(channel, key, maxId));
+          addedCount++;
+        }
 
-      try
-      {
-        File.AppendAllText(primariesPath, sb.ToString());
-        ClearBuffer(channel);
-        ReloadChannelIfReady(channel);
-        return true;
-      }
-      catch (Exception ex)
-      {
-        errorMessage = ex.Message;
-        return false;
+        try
+        {
+          File.AppendAllText(primariesPath, sb.ToString());
+          ClearBuffer(channel);
+          ReloadChannelIfReady(channel);
+          return true;
+        }
+        catch (Exception ex)
+        {
+          errorMessage = ex.Message;
+          return false;
+        }
       }
     }
 
     public static void ClearBuffer(VelumSensorPrimariesChannel channel)
     {
-      string path = GetBufferFilePath(channel);
-      string directory = Path.GetDirectoryName(path);
-      if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-        Directory.CreateDirectory(directory);
+      lock (AppendSync)
+      {
+        string path = GetBufferFilePath(channel);
+        string directory = Path.GetDirectoryName(path);
+        if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+          Directory.CreateDirectory(directory);
 
-      WriteBufferHeader(path, channel);
+        WriteBufferHeader(path, channel);
+      }
     }
 
     /// <summary>
@@ -270,61 +288,67 @@ namespace Velum.Isida
         return false;
       }
 
-      IReadOnlyList<string> current = ReadBufferEntries(channel);
-      if (current.Count == 0)
+      lock (AppendSync)
       {
-        errorMessage = "Буфер пуст.";
-        return false;
-      }
+        IReadOnlyList<string> current = ReadBufferEntries(channel);
+        if (current.Count == 0)
+        {
+          errorMessage = "Буфер пуст.";
+          return false;
+        }
 
-      var remaining = new List<string>();
-      foreach (string entry in current)
-      {
-        if (toRemove.Contains(entry))
-          removedCount++;
-        else
-          remaining.Add(entry);
-      }
+        var remaining = new List<string>();
+        foreach (string entry in current)
+        {
+          if (toRemove.Contains(entry))
+            removedCount++;
+          else
+            remaining.Add(entry);
+        }
 
-      if (removedCount == 0)
-      {
-        errorMessage = "Выбранные записи не найдены в буфере.";
-        return false;
-      }
+        if (removedCount == 0)
+        {
+          errorMessage = "Выбранные записи не найдены в буфере.";
+          return false;
+        }
 
-      try
-      {
-        WriteBufferEntries(channel, remaining);
-        return true;
-      }
-      catch (Exception ex)
-      {
-        errorMessage = ex.Message;
-        return false;
+        try
+        {
+          WriteBufferEntries(channel, remaining);
+          return true;
+        }
+        catch (Exception ex)
+        {
+          errorMessage = ex.Message;
+          return false;
+        }
       }
     }
 
     private static void WriteBufferEntries(VelumSensorPrimariesChannel channel, IReadOnlyList<string> entries)
     {
-      string path = GetBufferFilePath(channel);
-      string directory = Path.GetDirectoryName(path);
-      if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-        Directory.CreateDirectory(directory);
-
-      WriteBufferHeader(path, channel);
-      if (entries == null || entries.Count == 0)
-        return;
-
-      var sb = new StringBuilder();
-      foreach (string key in entries)
+      lock (AppendSync)
       {
-        if (string.IsNullOrWhiteSpace(key))
-          continue;
-        sb.AppendLine(key.Trim());
-      }
+        string path = GetBufferFilePath(channel);
+        string directory = Path.GetDirectoryName(path);
+        if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+          Directory.CreateDirectory(directory);
 
-      if (sb.Length > 0)
-        File.AppendAllText(path, sb.ToString());
+        WriteBufferHeader(path, channel);
+        if (entries == null || entries.Count == 0)
+          return;
+
+        var sb = new StringBuilder();
+        foreach (string key in entries)
+        {
+          if (string.IsNullOrWhiteSpace(key))
+            continue;
+          sb.AppendLine(key.Trim());
+        }
+
+        if (sb.Length > 0)
+          File.AppendAllText(path, sb.ToString());
+      }
     }
 
     private static string FormatPrimariesLine(VelumSensorPrimariesChannel channel, string key, int id)
