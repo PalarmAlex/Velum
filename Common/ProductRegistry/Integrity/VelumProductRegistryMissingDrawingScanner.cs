@@ -12,7 +12,7 @@ namespace Velum.UI.ProductRegistry
   /// </summary>
   internal static class VelumProductRegistryMissingDrawingScanner
   {
-    private const int FullRegistryBatchSize = 400;
+    private const int FullRegistryBatchSize = 1000;
 
     /// <summary>
     /// Выполняет квант полного прохода. Возвращает true, если за этот тик

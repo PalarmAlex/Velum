@@ -241,22 +241,34 @@ namespace Velum.UI.ProductRegistry
     internal static int ScanIterationCount => Volatile.Read(ref _scanIterationCount);
 
     /// <summary>
-    /// Прогресс текущего прохода: максимум из курсоров четырёх курсорных сканеров
-    /// (битые ссылки, чертежи, DXF, PDF) и размер реестра. Для статуса панели:
-    /// «пройдено X из Y строк» — реальная скорость сканирования, видимая пользователю.
-    /// 0/0 — проход не начат (нет данных).
+    /// Прогресс текущего прохода: сколько строк реестра пройдено самым медленным
+    /// из ещё не завершившихся сканеров; завершившийся сканер (done) считается
+    /// как весь реестр — его курсор после commit сбрасывается в 0, и без учёта
+    /// done прогресс «падал» обратно в середине цикла. Для статуса панели:
+    /// «пройдено X из Y строк» — реальная скорость сканирования.
     /// </summary>
     internal static int ScanProgressCursor
     {
-      get
-      {
-        lock (Gate)
+        get
         {
-          return Math.Max(
-              Math.Max(_brokenCursor, _drawingCursor),
-              Math.Max(_dxfCursor, _pdfCursor));
+          lock (Gate)
+          {
+            int total = 0;
+            VelumProductRegistryStore store = _store;
+            if (store != null)
+              total = store.GetAllItems().Length;
+
+            int max = Math.Max(
+                Math.Max(_brokenCursor, _drawingCursor),
+                Math.Max(_dxfCursor, _pdfCursor));
+
+            // Завершившиеся сканеры прошли весь реестр: их вклад — total.
+            if (_brokenPassDone || _drawingPassDone || _dxfPassDone || _pdfPassDone)
+              max = Math.Max(max, total);
+
+            return max;
+          }
         }
-      }
     }
 
     /// <summary>Число записей реестра в текущем проходе (0 — стор не загружен).</summary>
