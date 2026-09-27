@@ -223,6 +223,9 @@ namespace Velum.UI
 
     /// <summary>
     /// Применяет результат проверки доступности к полю пути на 1-й вкладке (поток UI).
+    /// Недоступный путь подсвечивается красным с примечанием в подсказке; доступный —
+    /// снимает подсветку и примечание, оставшиеся от прежней проверки (например, после
+    /// выбора корректного каталога через «Обзор»).
     /// </summary>
     /// <param name="textBox">Поле пути.</param>
     /// <param name="available">true — каталог доступен; false — недоступен.</param>
@@ -231,9 +234,21 @@ namespace Velum.UI
       if (IsDisposed || textBox.IsDisposed)
         return;
 
-      // Доступный путь — ничего не меняем (пользователь не просил подсветку доступных).
       if (available)
+      {
+        // Доступный путь: снять красную подсветку и убрать примечание о недоступности
+        // из подсказки (оно могло остаться от прежней проверки с битой ссылкой).
+        if (textBox.ForeColor == System.Drawing.Color.Red)
+          textBox.ForeColor = SystemColors.WindowText;
+
+        string tip = _ttpStageEvolution.GetToolTip(textBox);
+        const string noteSuffix = " (файл недоступен)";
+        if (!string.IsNullOrEmpty(tip) &&
+            tip.EndsWith(noteSuffix, StringComparison.OrdinalIgnoreCase))
+          _ttpStageEvolution.SetToolTip(textBox, tip.Substring(0, tip.Length - noteSuffix.Length));
+
         return;
+      }
 
       textBox.ForeColor = System.Drawing.Color.Red;
 
@@ -248,6 +263,42 @@ namespace Velum.UI
       {
         _ttpStageEvolution.SetToolTip(textBox, baseTip + " (" + note + ")");
       }
+    }
+
+    /// <summary>
+    /// Быстрая проверка доступности одного выбранного каталога после «Обзор»:
+    /// если прежнее состояние показывало битую ссылку (красный текст, примечание в
+    /// подсказке), статус обновляется на новый — подсветка снимается при доступности.
+    /// </summary>
+    /// <param name="textBox">Поле пути с выбранным каталогом.</param>
+    private void CheckSelectedPathAvailabilityAsync(TextBox textBox)
+    {
+      if (IsDisposed)
+        return;
+
+      Task.Run(() =>
+      {
+        if (IsDisposed)
+          return;
+
+        string path = textBox.Text?.Trim();
+        if (string.IsNullOrEmpty(path))
+          return;
+
+        bool available = VelumPathExists.DirectoryExists(path);
+
+        if (IsDisposed)
+          return;
+
+        try
+        {
+          BeginInvoke(new Action(() => ApplyPathAvailability(textBox, available)));
+        }
+        catch
+        {
+          // форма закрыта — выходим
+        }
+      });
     }
 
     /// <summary>Описывает одно проверяемое поле пути 1-й вкладки.</summary>
@@ -277,7 +328,14 @@ namespace Velum.UI
 
       string selected;
       if (VelumFolderBrowser.TrySelect(owner, "Выберите каталог", initial, out selected))
+      {
         target.Text = selected;
+
+        // Быстрая проверка выбранного каталога: если прежний путь был битой ссылкой
+        // (красный текст, примечание в подсказке), статус обновляется на новый.
+        if (target.FindForm() is VelumProjectSettingsForm form)
+          form.CheckSelectedPathAvailabilityAsync(target);
+      }
     }
 
     private void LoadFromConfig()
