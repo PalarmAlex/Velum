@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using Velum.Configuration;
 using Velum.ReactiveCore.Export;
 
 namespace Velum.UI.ProductRegistry
@@ -33,6 +34,127 @@ namespace Velum.UI.ProductRegistry
         return VelumProductRegistryPathStatus.No;
 
       return ToStatus(VelumPathExists.Check(false, path, timeoutMs));
+    }
+
+    /// <summary>
+    /// Пакетно (параллельно) проверяет пути записей и заполняет переданный словарь
+    /// статусов по Id, возвращая карту «нормализованный путь → статус».
+    /// <para>
+    /// Нужна для интерактивных операций формы («Проверка путей», массовое обновление
+    /// свойств): они ранее проверяли путь каждой записи последовательно через
+    /// <see cref="CheckOne"/>, и на сетевом корне это давало сетевой раундтрип на запись —
+    /// полный проход растягивался на минуты. Здесь пути прогоняются квантами через
+    /// <see cref="CheckFiles"/> (параллельно в пуле), а полученные статусы переиспользуются
+    /// интерактивным циклом без повторного обращения к ФС.
+    /// </para>
+    /// </summary>
+    /// <param name="items">Записи, пути которых проверяются.</param>
+    /// <param name="statusesById">Словарь статусов по Id записи (заполняется).</param>
+    /// <param name="timeoutMs">Таймаут одной проверки, мс.</param>
+    /// <param name="stopRequested">
+    /// Признак досрочной остановки между квантами (может быть <c>null</c>).
+    /// </param>
+    /// <param name="progress">
+    /// Колбэк прогресса: после каждого кванта получает число уже проверенных записей
+    /// (монотонно до <c>items.Count</c>). Нужен для прогресс-бара формы: предпроверка
+    /// батчем блокирует UI-поток, и без колбэка полоса не обновлялась бы до конца прохода.
+    /// Может быть <c>null</c>.
+    /// </param>
+    /// <returns>
+    /// Нормализованный путь → статус; позволяет вызывающему коду читать статус по пути
+    /// (в т.ч. для записей вне переданного списка) без повторного обращения к ФС.
+    /// </returns>
+    internal static Dictionary<string, VelumProductRegistryPathStatus> Prefetch(
+        IReadOnlyList<VelumProductItem> items,
+        IDictionary<int, VelumProductRegistryPathStatus> statusesById,
+        int timeoutMs,
+        Func<bool> stopRequested,
+        Action<int> progress = null)
+    {
+      var byPath = new Dictionary<string, VelumProductRegistryPathStatus>();
+      if (items == null || items.Count == 0)
+        return byPath;
+
+      int batchSize = BatchSize();
+      for (int start = 0; start < items.Count; start += batchSize)
+      {
+        if (stopRequested != null && stopRequested())
+          break;
+
+        int count = Math.Min(batchSize, items.Count - start);
+        var quant = new List<VelumProductItem>(count);
+        for (int i = start; i < start + count; i++)
+        {
+          VelumProductItem item = items[i];
+          if (item == null || item.Id <= 0)
+            continue;
+          quant.Add(item);
+        }
+
+        if (quant.Count != 0)
+        {
+          // known = уже полученные статусы предыдущих квантов: дубликаты путей
+          // (модель/чертёж в разных записях) не ходят на сеть повторно.
+          Dictionary<string, VelumProductRegistryPathStatus> statuses =
+              CheckFiles(quant, timeoutMs, byPath);
+
+          foreach (KeyValuePair<string, VelumProductRegistryPathStatus> kv in statuses)
+            byPath[kv.Key] = kv.Value;
+
+          if (statusesById != null)
+          {
+            for (int i = 0; i < quant.Count; i++)
+            {
+              VelumProductItem item = quant[i];
+              string path = VelumProductRegistryStore.NormalizeFilePathKey(item.FilePath);
+              VelumProductRegistryPathStatus status;
+              if (byPath.TryGetValue(path, out status))
+                statusesById[item.Id] = status;
+            }
+          }
+        }
+
+        // Прогресс проставляем и для пустого кванта: иначе полоса стояла бы,
+        // пока весь квант состоит из записей без Id.
+        if (progress != null)
+          progress(Math.Min(start + count, items.Count));
+      }
+
+      return byPath;
+    }
+
+    /// <summary>
+    /// Читает ранее полученный (через <see cref="Prefetch"/>/кэш) статус пути без
+    /// обращения к ФС; при отсутствии кэшированного ответа выполняет одиночную проверку.
+    /// </summary>
+    internal static VelumProductRegistryPathStatus CheckOneCached(
+        string filePath,
+        IDictionary<string, VelumProductRegistryPathStatus> prefetched,
+        int timeoutMs)
+    {
+      string path = VelumProductRegistryStore.NormalizeFilePathKey(filePath);
+      if (string.IsNullOrEmpty(path))
+        return VelumProductRegistryPathStatus.No;
+
+      VelumProductRegistryPathStatus status;
+      if (prefetched != null && prefetched.TryGetValue(path, out status))
+        return status;
+
+      return CheckOne(filePath, timeoutMs);
+    }
+
+    /// <summary>Квант предпроверки: тот же, что у фоновых сканеров (<see cref="VelumAppConfig.ScannerBatchSize"/>).</summary>
+    private static int BatchSize()
+    {
+      try
+      {
+        int v = VelumAppConfig.ScannerBatchSize;
+        return v < 1 ? 1 : v;
+      }
+      catch (Exception)
+      {
+        return 1000;
+      }
     }
 
     /// <summary>
@@ -169,6 +291,11 @@ namespace Velum.UI.ProductRegistry
     /// <param name="okCount">Число записей со статусом OK.</param>
     /// <param name="noCount">Число записей со статусом NO.</param>
     /// <param name="unknownCount">Число записей со статусом «?».</param>
+    /// <param name="progress">
+    /// Колбэк прогресса предпроверки (получает число проверенных записей после каждого
+    /// кванта). Нужен для прогресс-бара формы: предпроверка батчем блокирует UI-поток.
+    /// Может быть <c>null</c>.
+    /// </param>
     /// <returns>Итог прохода: завершён, прерван рано или отмена загрузки формы.</returns>
     internal static VelumProductRegistryPathScanResult Run(
         IWin32Window owner,
@@ -178,7 +305,8 @@ namespace Velum.UI.ProductRegistry
         out int checkedCount,
         out int okCount,
         out int noCount,
-        out int unknownCount)
+        out int unknownCount,
+        Action<int> progress = null)
     {
       checkedCount = 0;
       okCount = 0;
@@ -191,13 +319,23 @@ namespace Velum.UI.ProductRegistry
       if (statuses == null)
         throw new ArgumentNullException(nameof(statuses));
 
+      // Предпроверка батчем: параллельно через CheckBatch закрывает сетевые
+      // раундтрипы заранее (полный проход реестра по VPN вместо минут идёт
+      // секундами), а интерактивный цикл ниже читает готовые статусы из prefetched
+      // и больше не обращается к ФС. Статусы по Id здесь НЕ заполняем — их проставит
+      // цикл по ходу, чтобы «Прекратить проверку»/«Остановить загрузку» помечали
+      // оставшиеся записи как Unknown (MarkRemainingUnknown трогает лишь записи без статуса).
+      Dictionary<string, VelumProductRegistryPathStatus> prefetched =
+          Prefetch(items, null, TimeoutMilliseconds, null, progress);
+
       for (int i = 0; i < items.Count; i++)
       {
         VelumProductItem item = items[i];
         if (item == null || item.Id <= 0)
           continue;
 
-        VelumProductRegistryPathStatus status = CheckOne(item.FilePath, TimeoutMilliseconds);
+        VelumProductRegistryPathStatus status = CheckOneCached(
+            item.FilePath, prefetched, TimeoutMilliseconds);
         if (status == VelumProductRegistryPathStatus.Unknown)
         {
           TimeoutDialogChoice choice = ShowTimeoutDialog(

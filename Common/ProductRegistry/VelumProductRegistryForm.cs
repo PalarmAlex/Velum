@@ -723,6 +723,17 @@ namespace Velum.UI
         Cursor = Cursors.WaitCursor;
         _btnVerifyPaths.Enabled = false;
 
+        int total = items.Count;
+        SetPathCheckUi(true, total);
+        // Колбэк прогресса предпроверки: Prefetch выполняется синхронно в UI-потоке,
+        // поэтому полоса обновляется напрямую; DoEvents нужен, чтобы она перерисовалась
+        // между квантами (иначе стояла бы пустой до конца прохода).
+        Action<int> progress = done =>
+        {
+          SetPathProgressPercent(total > 0 ? (done * 100) / total : 0);
+          Application.DoEvents();
+        };
+
         VelumProductRegistryPathScanResult result = VelumProductRegistryPathChecker.Run(
             this,
             items,
@@ -731,7 +742,8 @@ namespace Velum.UI
             out int checkedCount,
             out int okCount,
             out int noCount,
-            out int unknownCount);
+            out int unknownCount,
+            progress);
 
         if (showSummary && result != VelumProductRegistryPathScanResult.AbortLoad)
         {
@@ -755,6 +767,7 @@ namespace Velum.UI
       }
       finally
       {
+        SetPathCheckUi(false, 0);
         _btnVerifyPaths.Enabled = !_indexing;
         Cursor = previous;
         _pathCheckRunning = false;
@@ -908,6 +921,17 @@ namespace Velum.UI
         if (showProgress)
           SetPropertiesUpdateUi(true, true, remaining.Count);
 
+        // Предпроверка путей батчем (параллельно): одиночный обход remaining через
+        // CheckOne давал сетевой раундтрип на запись и на VPN растягивался на минуты.
+        // Далее в цикле статус читается из prefetched без обращения к ФС; открытие
+        // документа через COM (SyncAllowOpen) остаётся последовательным в UI-потоке.
+        Dictionary<string, VelumProductRegistryPathStatus> prefetchedPaths =
+            VelumProductRegistryPathChecker.Prefetch(
+                remaining,
+                _pathStatuses,
+                VelumProductRegistryPathChecker.TimeoutMilliseconds,
+                () => _stopRequested);
+
         for (int i = 0; i < remaining.Count; i++)
         {
           if (_stopRequested)
@@ -924,15 +948,16 @@ namespace Velum.UI
           }
 
           VelumProductItem item = remaining[i];
-          VelumProductRegistryPathStatus pathStatus = VelumProductRegistryPathChecker.CheckOne(
+          VelumProductRegistryPathStatus pathStatus = VelumProductRegistryPathChecker.CheckOneCached(
               item.FilePath,
+              prefetchedPaths,
               VelumProductRegistryPathChecker.TimeoutMilliseconds);
           SetPathStatus(item.Id, pathStatus);
           if (pathStatus != VelumProductRegistryPathStatus.Ok)
           {
             skippedMissing++;
             if (showProgress)
-              SetIndexProgressPercent(((i + 1) * 100) / remaining.Count);
+              SetPathProgressPercent(((i + 1) * 100) / remaining.Count);
             continue;
           }
 
@@ -963,7 +988,7 @@ namespace Velum.UI
               errors);
 
           if (showProgress)
-            SetIndexProgressPercent(((i + 1) * 100) / remaining.Count);
+            SetPathProgressPercent(((i + 1) * 100) / remaining.Count);
         }
 
         VelumProductRegistryNameSyncBatchResult related =
@@ -1124,23 +1149,9 @@ namespace Velum.UI
       _btnStop.Enabled = updating;
       if (showProgress)
       {
-        _indexProgressBar.Visible = updating;
-        _treePanel.RowStyles[4].Height = updating ? 22F : 0F;
-        if (updating)
-        {
-          ResetIndexProgressBar(100);
-          _indexProgressBar.Style = ProgressBarStyle.Continuous;
-          if (totalItems <= 0)
-          {
-            _indexProgressBar.Style = ProgressBarStyle.Marquee;
-            _indexProgressBar.MarqueeAnimationSpeed = 30;
-          }
-        }
-        else
-        {
-          _indexProgressBar.MarqueeAnimationSpeed = 0;
-          ResetIndexProgressBar(100);
-        }
+        // Тот же прогресс-бар, что у «Проверка путей» (в панели списка), —
+        // единая полоса для массовых операций со списком.
+        SetPathCheckUi(updating, totalItems);
       }
 
       _folderTreeView.Enabled = !updating;
@@ -2597,6 +2608,65 @@ namespace Velum.UI
 
       if (_indexProgressBar.Value != percent)
         _indexProgressBar.Value = percent;
+    }
+
+    /// <summary>
+    /// UI во время «Проверка путей»: полоса в панели списка. Показ/скрытие
+    /// переключают высоту строки TableLayoutPanel (0 / 22), как у полосы индексации.
+    /// </summary>
+    private void SetPathCheckUi(bool running, int totalItems)
+    {
+      _pathProgressBar.Visible = running;
+      _listPanel.RowStyles[2].Height = running ? 22F : 0F;
+      if (running)
+      {
+        ResetPathProgressBar(100);
+        if (totalItems <= 0)
+        {
+          _pathProgressBar.Style = ProgressBarStyle.Marquee;
+          _pathProgressBar.MarqueeAnimationSpeed = 30;
+        }
+      }
+      else
+      {
+        _pathProgressBar.MarqueeAnimationSpeed = 0;
+        ResetPathProgressBar(100);
+      }
+    }
+
+    /// <summary>
+    /// Сбрасывает полосу проверки путей в безопасное состояние (Value до Maximum),
+    /// чтобы не получить ArgumentOutOfRangeException на Value.
+    /// </summary>
+    private void ResetPathProgressBar(int maximum)
+    {
+      if (maximum < 1)
+        maximum = 1;
+
+      _pathProgressBar.Style = ProgressBarStyle.Continuous;
+      // Сначала Value, потом Maximum: иначе при снижении Maximum при большом Value WinForms может бросить исключение.
+      if (_pathProgressBar.Value != 0)
+        _pathProgressBar.Value = 0;
+      _pathProgressBar.Minimum = 0;
+      _pathProgressBar.Maximum = maximum;
+    }
+
+    /// <summary>Ставит процент на полосу проверки путей (0..100).</summary>
+    private void SetPathProgressPercent(int percent)
+    {
+      if (percent < 0)
+        percent = 0;
+      if (percent > 100)
+        percent = 100;
+
+      if (_pathProgressBar.Style != ProgressBarStyle.Continuous)
+        _pathProgressBar.Style = ProgressBarStyle.Continuous;
+
+      if (_pathProgressBar.Minimum != 0 || _pathProgressBar.Maximum != 100)
+        ResetPathProgressBar(100);
+
+      if (_pathProgressBar.Value != percent)
+        _pathProgressBar.Value = percent;
     }
 
     private static List<string> CollectFilesRecursive(

@@ -33,6 +33,7 @@ namespace Velum.UI
       this._folderSearchStatusLabel = new System.Windows.Forms.Label();
       this._folderTreeView = new System.Windows.Forms.TreeView();
       this._indexProgressBar = new System.Windows.Forms.ProgressBar();
+      this._pathProgressBar = new System.Windows.Forms.ProgressBar();
       this._listPanel = new System.Windows.Forms.TableLayoutPanel();
       this._filtersHost = new System.Windows.Forms.TableLayoutPanel();
       this._filtersTopRow = new System.Windows.Forms.TableLayoutPanel();
@@ -285,18 +286,30 @@ namespace Velum.UI
       this._indexProgressBar.TabIndex = 4;
       this._indexProgressBar.Visible = false;
       // 
+      // _pathProgressBar
+      // 
+      this._pathProgressBar.Dock = System.Windows.Forms.DockStyle.Fill;
+      this._pathProgressBar.Location = new System.Drawing.Point(3, 511);
+      this._pathProgressBar.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
+      this._pathProgressBar.Name = "_pathProgressBar";
+      this._pathProgressBar.Size = new System.Drawing.Size(716, 20);
+      this._pathProgressBar.TabIndex = 2;
+      this._pathProgressBar.Visible = false;
+      // 
       // _listPanel
       // 
       this._listPanel.ColumnCount = 1;
       this._listPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
       this._listPanel.Controls.Add(this._filtersHost, 0, 0);
       this._listPanel.Controls.Add(this._listView, 0, 1);
+      this._listPanel.Controls.Add(this._pathProgressBar, 0, 2);
       this._listPanel.Dock = System.Windows.Forms.DockStyle.Fill;
       this._listPanel.Location = new System.Drawing.Point(0, 0);
       this._listPanel.Name = "_listPanel";
-      this._listPanel.RowCount = 2;
+      this._listPanel.RowCount = 3;
       this._listPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
       this._listPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+      this._listPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 0F));
       this._listPanel.Size = new System.Drawing.Size(722, 534);
       this._listPanel.TabIndex = 0;
       // 
@@ -598,6 +611,7 @@ namespace Velum.UI
     private System.Windows.Forms.Label _folderSearchStatusLabel;
     private System.Windows.Forms.TreeView _folderTreeView;
     private System.Windows.Forms.ProgressBar _indexProgressBar;
+    private System.Windows.Forms.ProgressBar _pathProgressBar;
     private System.Windows.Forms.TableLayoutPanel _listPanel;
     private System.Windows.Forms.TableLayoutPanel _filtersHost;
     private System.Windows.Forms.TableLayoutPanel _filtersTopRow;
