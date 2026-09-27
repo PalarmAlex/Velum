@@ -16,7 +16,7 @@ namespace Velum.UI.ProductRegistry
   internal static class VelumProductRegistryBrokenLinkScanner
   {
     /// <summary>Квант File.Exists за тик при полном скане реестра (без открытых документов).</summary>
-    private const int FullRegistryBatchSize = 120;
+    private const int FullRegistryBatchSize = 400;
 
     /// <summary>
     /// Выполняет квант полного прохода. Возвращает true, если за этот тик

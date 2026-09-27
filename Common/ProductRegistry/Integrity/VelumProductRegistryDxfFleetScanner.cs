@@ -14,7 +14,7 @@ namespace Velum.UI.ProductRegistry
     /// </summary>
   internal static class VelumProductRegistryDxfFleetScanner
   {
-    private const int FullRegistryBatchSize = 40;
+    private const int FullRegistryBatchSize = 400;
 
     internal static readonly VelumProductRegistryProblemKind[] DxfKinds =
     {

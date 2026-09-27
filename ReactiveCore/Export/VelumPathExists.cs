@@ -270,7 +270,7 @@ namespace Velum.ReactiveCore.Export
     {
       get
       {
-        int v = 16;
+        int v = 64;
         try
         {
           v = VelumAppConfig.ScannerProbeConcurrency;

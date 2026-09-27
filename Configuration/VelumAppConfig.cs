@@ -466,7 +466,7 @@ namespace Velum.Configuration
     {
       get
       {
-        int v = GetIntSetting("ScannerProbeConcurrency", 16);
+        int v = GetIntSetting("ScannerProbeConcurrency", 64);
         return v < 1 ? 1 : v;
       }
     }
