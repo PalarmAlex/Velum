@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using ISIDA.Common;
+using Velum.Configuration;
 using Velum.ReactiveCore.Export;
 
 namespace Velum.UI.ProductRegistry
@@ -13,7 +14,8 @@ namespace Velum.UI.ProductRegistry
   /// </summary>
   internal static class VelumProductRegistryPdfFleetScanner
   {
-    private const int FullRegistryBatchSize = 1000;
+    /// <summary>Квант полного прохода реестра (настраивается в Settings.xml: ScannerBatchSize).</summary>
+    private static int FullRegistryBatchSize => VelumAppConfig.ScannerBatchSize;
 
     internal static readonly VelumProductRegistryProblemKind[] PdfKinds =
     {

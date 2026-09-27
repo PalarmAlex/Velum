@@ -1003,12 +1003,13 @@ namespace Velum.UI
       int period = VelumProductRegistryIntegrityScheduler.HeavyMetricsPulsePeriod;
       string baseText = $"Сканирование №{iteration} ({period} пул.): ";
 
-      // Проход ещё не завершён: вердикт «проблем нет/есть» преждевременен —
-      // найденные проблемы публикуются только по завершении прохода, и надпись
-      // «проблем нет» в середине прохода вводила в заблуждение (счётчик № растёт,
-      // а статус уже «итоговый»). Во время прохода показываем прогресс: сколько
-      // строк реестра пройдено — видна реальная скорость сканирования.
-      if (VelumProductRegistryIntegrityScheduler.IsDiscoveryPassActive)
+      // Цикл прохода ещё не закрыт (не все сканеры завершились): вердикт
+      // «проблем нет/есть» преждевременен — найденные проблемы публикуются
+      // только по завершении цикла. Сканеры завершают проход в разных тиках,
+      // поэтому флаги passActive отдельных сканеров «провисают» — вердикт
+      // по ним показывался бы до конца цикла. Прогресс: сколько строк пройдено —
+      // видна реальная скорость сканирования.
+      if (VelumProductRegistryIntegrityScheduler.IsScanCycleActive)
       {
         int done = VelumProductRegistryIntegrityScheduler.ScanProgressCursor;
         int total = VelumProductRegistryIntegrityScheduler.ScanProgressTotal;

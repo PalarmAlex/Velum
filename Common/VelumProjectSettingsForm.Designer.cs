@@ -124,6 +124,10 @@ namespace Velum.UI
       this.tabPageAdapter = new System.Windows.Forms.TabPage();
       this._lblHeavyMetricsPulsePeriod = new System.Windows.Forms.Label();
       this._tbHeavyMetricsPulsePeriod = new System.Windows.Forms.TextBox();
+      this._lblScannerProbeConcurrency = new System.Windows.Forms.Label();
+      this._tbScannerProbeConcurrency = new System.Windows.Forms.TextBox();
+      this._lblScannerBatchSize = new System.Windows.Forms.Label();
+      this._tbScannerBatchSize = new System.Windows.Forms.TextBox();
       this._lblCommandBufferFlushHint = new System.Windows.Forms.Label();
       this._tbCommandBufferMaxAgeSec = new System.Windows.Forms.TextBox();
       this._lblCommandBufferMaxAgeSec = new System.Windows.Forms.Label();
@@ -930,6 +934,10 @@ namespace Velum.UI
       // 
       this.tabPageAdapter.Controls.Add(this._lblHeavyMetricsPulsePeriod);
       this.tabPageAdapter.Controls.Add(this._tbHeavyMetricsPulsePeriod);
+      this.tabPageAdapter.Controls.Add(this._lblScannerProbeConcurrency);
+      this.tabPageAdapter.Controls.Add(this._tbScannerProbeConcurrency);
+      this.tabPageAdapter.Controls.Add(this._lblScannerBatchSize);
+      this.tabPageAdapter.Controls.Add(this._tbScannerBatchSize);
       this.tabPageAdapter.Controls.Add(this._lblCommandBufferFlushHint);
       this.tabPageAdapter.Controls.Add(this._tbCommandBufferMaxAgeSec);
       this.tabPageAdapter.Controls.Add(this._lblCommandBufferMaxAgeSec);
@@ -965,22 +973,60 @@ namespace Velum.UI
       this._tbHeavyMetricsPulsePeriod.Name = "_tbHeavyMetricsPulsePeriod";
       this._tbHeavyMetricsPulsePeriod.Size = new System.Drawing.Size(150, 20);
       this._tbHeavyMetricsPulsePeriod.TabIndex = 1;
-      // 
+      //
+      // _lblScannerProbeConcurrency
+      //
+      this._lblScannerProbeConcurrency.Location = new System.Drawing.Point(3, 35);
+      this._lblScannerProbeConcurrency.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+      this._lblScannerProbeConcurrency.Name = "_lblScannerProbeConcurrency";
+      this._lblScannerProbeConcurrency.Size = new System.Drawing.Size(175, 20);
+      this._lblScannerProbeConcurrency.TabIndex = 11;
+      this._lblScannerProbeConcurrency.Text = "Параллелизм проверок сканера:";
+      this._lblScannerProbeConcurrency.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      //
+      // _tbScannerProbeConcurrency
+      //
+      this._tbScannerProbeConcurrency.BackColor = System.Drawing.SystemColors.Window;
+      this._tbScannerProbeConcurrency.Location = new System.Drawing.Point(181, 36);
+      this._tbScannerProbeConcurrency.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+      this._tbScannerProbeConcurrency.Name = "_tbScannerProbeConcurrency";
+      this._tbScannerProbeConcurrency.Size = new System.Drawing.Size(150, 20);
+      this._tbScannerProbeConcurrency.TabIndex = 12;
+      //
+      // _lblScannerBatchSize
+      //
+      this._lblScannerBatchSize.Location = new System.Drawing.Point(3, 61);
+      this._lblScannerBatchSize.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+      this._lblScannerBatchSize.Name = "_lblScannerBatchSize";
+      this._lblScannerBatchSize.Size = new System.Drawing.Size(175, 20);
+      this._lblScannerBatchSize.TabIndex = 13;
+      this._lblScannerBatchSize.Text = "Квант сканирования (строк):";
+      this._lblScannerBatchSize.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      //
+      // _tbScannerBatchSize
+      //
+      this._tbScannerBatchSize.BackColor = System.Drawing.SystemColors.Window;
+      this._tbScannerBatchSize.Location = new System.Drawing.Point(181, 62);
+      this._tbScannerBatchSize.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+      this._tbScannerBatchSize.Name = "_tbScannerBatchSize";
+      this._tbScannerBatchSize.Size = new System.Drawing.Size(150, 20);
+      this._tbScannerBatchSize.TabIndex = 14;
+      //
       // _lblCommandBufferFlushHint
-      // 
+      //
       this._lblCommandBufferFlushHint.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this._lblCommandBufferFlushHint.Location = new System.Drawing.Point(3, 35);
+      this._lblCommandBufferFlushHint.Location = new System.Drawing.Point(3, 90);
       this._lblCommandBufferFlushHint.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
       this._lblCommandBufferFlushHint.Name = "_lblCommandBufferFlushHint";
       this._lblCommandBufferFlushHint.Size = new System.Drawing.Size(650, 20);
       this._lblCommandBufferFlushHint.TabIndex = 2;
       this._lblCommandBufferFlushHint.Text = "Параметры буфера команд (для отладки адаптера):";
       this._lblCommandBufferFlushHint.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
+      //
       // _tbCommandBufferMaxAgeSec
-      // 
+      //
       this._tbCommandBufferMaxAgeSec.BackColor = System.Drawing.SystemColors.Window;
-      this._tbCommandBufferMaxAgeSec.Location = new System.Drawing.Point(181, 61);
+      this._tbCommandBufferMaxAgeSec.Location = new System.Drawing.Point(181, 116);
       this._tbCommandBufferMaxAgeSec.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
       this._tbCommandBufferMaxAgeSec.Name = "_tbCommandBufferMaxAgeSec";
       this._tbCommandBufferMaxAgeSec.Size = new System.Drawing.Size(150, 20);
@@ -988,18 +1034,18 @@ namespace Velum.UI
       // 
       // _lblCommandBufferMaxAgeSec
       // 
-      this._lblCommandBufferMaxAgeSec.Location = new System.Drawing.Point(3, 60);
+      this._lblCommandBufferMaxAgeSec.Location = new System.Drawing.Point(3, 115);
       this._lblCommandBufferMaxAgeSec.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
       this._lblCommandBufferMaxAgeSec.Name = "_lblCommandBufferMaxAgeSec";
       this._lblCommandBufferMaxAgeSec.Size = new System.Drawing.Size(175, 20);
       this._lblCommandBufferMaxAgeSec.TabIndex = 4;
       this._lblCommandBufferMaxAgeSec.Text = "Макс. возраст буфера (пульсов):";
       this._lblCommandBufferMaxAgeSec.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
+      //
       // _tbCommandBufferMaxTokens
-      // 
+      //
       this._tbCommandBufferMaxTokens.BackColor = System.Drawing.SystemColors.Window;
-      this._tbCommandBufferMaxTokens.Location = new System.Drawing.Point(181, 87);
+      this._tbCommandBufferMaxTokens.Location = new System.Drawing.Point(181, 142);
       this._tbCommandBufferMaxTokens.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
       this._tbCommandBufferMaxTokens.Name = "_tbCommandBufferMaxTokens";
       this._tbCommandBufferMaxTokens.Size = new System.Drawing.Size(150, 20);
@@ -1007,18 +1053,18 @@ namespace Velum.UI
       // 
       // _lblCommandBufferMaxTokens
       // 
-      this._lblCommandBufferMaxTokens.Location = new System.Drawing.Point(3, 86);
+      this._lblCommandBufferMaxTokens.Location = new System.Drawing.Point(3, 141);
       this._lblCommandBufferMaxTokens.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
       this._lblCommandBufferMaxTokens.Name = "_lblCommandBufferMaxTokens";
       this._lblCommandBufferMaxTokens.Size = new System.Drawing.Size(175, 20);
       this._lblCommandBufferMaxTokens.TabIndex = 6;
       this._lblCommandBufferMaxTokens.Text = "Макс. токенов в буфере:";
       this._lblCommandBufferMaxTokens.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
+      //
       // _tbCommandBufferIdleFlushSec
-      // 
+      //
       this._tbCommandBufferIdleFlushSec.BackColor = System.Drawing.SystemColors.Window;
-      this._tbCommandBufferIdleFlushSec.Location = new System.Drawing.Point(181, 113);
+      this._tbCommandBufferIdleFlushSec.Location = new System.Drawing.Point(181, 168);
       this._tbCommandBufferIdleFlushSec.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
       this._tbCommandBufferIdleFlushSec.Name = "_tbCommandBufferIdleFlushSec";
       this._tbCommandBufferIdleFlushSec.Size = new System.Drawing.Size(150, 20);
@@ -1026,7 +1072,7 @@ namespace Velum.UI
       // 
       // _lblCommandBufferIdleFlushSec
       // 
-      this._lblCommandBufferIdleFlushSec.Location = new System.Drawing.Point(3, 112);
+      this._lblCommandBufferIdleFlushSec.Location = new System.Drawing.Point(3, 167);
       this._lblCommandBufferIdleFlushSec.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
       this._lblCommandBufferIdleFlushSec.Name = "_lblCommandBufferIdleFlushSec";
       this._lblCommandBufferIdleFlushSec.Size = new System.Drawing.Size(175, 20);
@@ -1036,7 +1082,7 @@ namespace Velum.UI
       // 
       // _lblCommandBufferRecordingHint
       // 
-      this._lblCommandBufferRecordingHint.Location = new System.Drawing.Point(3, 144);
+      this._lblCommandBufferRecordingHint.Location = new System.Drawing.Point(3, 199);
       this._lblCommandBufferRecordingHint.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
       this._lblCommandBufferRecordingHint.Name = "_lblCommandBufferRecordingHint";
       this._lblCommandBufferRecordingHint.Size = new System.Drawing.Size(175, 20);
@@ -1049,7 +1095,7 @@ namespace Velum.UI
       this._chkCommandBufferRecording.AutoSize = true;
       this._chkCommandBufferRecording.Checked = true;
       this._chkCommandBufferRecording.CheckState = System.Windows.Forms.CheckState.Checked;
-      this._chkCommandBufferRecording.Location = new System.Drawing.Point(180, 147);
+      this._chkCommandBufferRecording.Location = new System.Drawing.Point(180, 202);
       this._chkCommandBufferRecording.Margin = new System.Windows.Forms.Padding(8, 4, 40, 0);
       this._chkCommandBufferRecording.Name = "_chkCommandBufferRecording";
       this._chkCommandBufferRecording.Size = new System.Drawing.Size(15, 14);
@@ -1367,6 +1413,10 @@ namespace Velum.UI
     private System.Windows.Forms.TabPage tabPageAdapter;
     private System.Windows.Forms.Label _lblHeavyMetricsPulsePeriod;
     private System.Windows.Forms.TextBox _tbHeavyMetricsPulsePeriod;
+    private System.Windows.Forms.Label _lblScannerProbeConcurrency;
+    private System.Windows.Forms.TextBox _tbScannerProbeConcurrency;
+    private System.Windows.Forms.Label _lblScannerBatchSize;
+    private System.Windows.Forms.TextBox _tbScannerBatchSize;
     private System.Windows.Forms.Label _lblCommandBufferFlushHint;
     private System.Windows.Forms.TextBox _tbCommandBufferMaxAgeSec;
     private System.Windows.Forms.Label _lblCommandBufferMaxAgeSec;

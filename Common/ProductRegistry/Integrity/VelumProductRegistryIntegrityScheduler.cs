@@ -177,6 +177,22 @@ namespace Velum.UI.ProductRegistry
       }
     }
 
+    /// <summary>
+    /// true — идёт цикл полного прохода реестра (от первого тика до закрытия всех проходов).
+    /// В отличие от <see cref="IsDiscoveryPassActive"/> не «провисает» между тиками:
+    /// сканеры завершают проход в разных тиках и сбрасывают свои passActive раньше
+    /// конца цикла — вердикт «проблем нет/есть» на панели корректен только после
+    /// закрытия всего цикла, а не по завершении части сканеров.
+    /// </summary>
+    internal static bool IsScanCycleActive
+    {
+      get
+      {
+        lock (Gate)
+          return _scanPassInProgress;
+      }
+    }
+
     /// <summary>true — открыт документ SW; автосканирование проблем реестра отключено.</summary>
     internal static bool IsOpenDocumentsScopeActive =>
         Volatile.Read(ref _openDocumentsScopeActive) == 1;

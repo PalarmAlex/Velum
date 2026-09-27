@@ -472,6 +472,20 @@ namespace Velum.Configuration
     }
 
     /// <summary>
+    /// Квант полного прохода реестра фоновыми сканерами (битые ссылки/чертежи/DXF/PDF):
+    /// сколько строк реестра проверяется за один тик тяжёлых метрик. Больше — быстрее
+    /// полный проход, но дольше один тик и выше пиковая нагрузка на диск/сеть.
+    /// </summary>
+    public static int ScannerBatchSize
+    {
+      get
+      {
+        int v = GetIntSetting("ScannerBatchSize", 1000);
+        return v < 1 ? 1 : v;
+      }
+    }
+
+    /// <summary>
     /// При таймауте опроса SW на пульсе повторно опубликовать последний валидный снимок из кэша
     /// (без нового COM), с пометкой <see cref="P:Velum.SolidHomeostasis.VelumSolidEnvironmentGate.LastSnapshotTimedOut"/>.
     /// </summary>
@@ -916,7 +930,8 @@ namespace Velum.Configuration
                   new XElement("SolidHomeostasisPulseTrace", false),
                   new XElement("SolidProbeTimeoutMs", 2500),
                   new XElement("HeavyMetricsPulsePeriod", 5),
-                  new XElement("ScannerProbeConcurrency", 16),
+                  new XElement("ScannerProbeConcurrency", 64),
+                  new XElement("ScannerBatchSize", 1000),
                   new XElement("SolidProbeUseStaleSnapshotOnTimeout", true),
                   new XElement("CadDegradedEnterThreshold", "50"),
                   new XElement("CadDegradedExitThreshold", "60"),
@@ -1239,7 +1254,7 @@ namespace Velum.Configuration
       }
     }
 
-    /// <summary>Добавляет параллелизм фонового сканера путей, если ключа ещё нет.</summary>
+    /// <summary>Добавляет параллелизм и квант фонового сканера путей, если ключей ещё нет.</summary>
     private static void EnsureScannerProbeConcurrencySetting()
     {
       try
@@ -1252,12 +1267,24 @@ namespace Velum.Configuration
         if (app == null)
           return;
 
-        if (app.Element("ScannerProbeConcurrency") != null)
-          return;
+        bool changed = false;
 
-        app.Add(new XElement("ScannerProbeConcurrency", 16));
-        doc.Save(ConfigFullPath);
-        Logger.Info("Velum: в Settings.xml добавлен ScannerProbeConcurrency=16");
+        if (app.Element("ScannerProbeConcurrency") == null)
+        {
+          app.Add(new XElement("ScannerProbeConcurrency", 64));
+          changed = true;
+          Logger.Info("Velum: в Settings.xml добавлен ScannerProbeConcurrency=64");
+        }
+
+        if (app.Element("ScannerBatchSize") == null)
+        {
+          app.Add(new XElement("ScannerBatchSize", 1000));
+          changed = true;
+          Logger.Info("Velum: в Settings.xml добавлен ScannerBatchSize=1000");
+        }
+
+        if (changed)
+          doc.Save(ConfigFullPath);
       }
       catch (Exception ex)
       {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Velum.Configuration;
 
 namespace Velum.UI.ProductRegistry
 {
@@ -16,7 +17,8 @@ namespace Velum.UI.ProductRegistry
   internal static class VelumProductRegistryBrokenLinkScanner
   {
     /// <summary>Квант File.Exists за тик при полном скане реестра (без открытых документов).</summary>
-    private const int FullRegistryBatchSize = 1000;
+    /// <summary>Квант полного прохода реестра (настраивается в Settings.xml: ScannerBatchSize).</summary>
+    private static int FullRegistryBatchSize => VelumAppConfig.ScannerBatchSize;
 
     /// <summary>
     /// Выполняет квант полного прохода. Возвращает true, если за этот тик

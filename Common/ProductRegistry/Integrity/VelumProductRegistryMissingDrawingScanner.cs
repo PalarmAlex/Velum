@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Velum.Configuration;
 using Velum.ReactiveCore.Export;
 
 namespace Velum.UI.ProductRegistry
@@ -12,7 +13,8 @@ namespace Velum.UI.ProductRegistry
   /// </summary>
   internal static class VelumProductRegistryMissingDrawingScanner
   {
-    private const int FullRegistryBatchSize = 1000;
+    /// <summary>Квант полного прохода реестра (настраивается в Settings.xml: ScannerBatchSize).</summary>
+    private static int FullRegistryBatchSize => VelumAppConfig.ScannerBatchSize;
 
     /// <summary>
     /// Выполняет квант полного прохода. Возвращает true, если за этот тик
