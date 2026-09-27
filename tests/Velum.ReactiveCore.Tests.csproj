@@ -9,6 +9,10 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <AssemblyName>Velum.ReactiveCore.Tests</AssemblyName>
     <RootNamespace>Velum.ReactiveCore.Tests</RootNamespace>
+    <!-- Все пакеты уже в локальном кэше: без этого restore лезет в интернет
+         (аудит уязвимостей NU1900) и виснет на таймаутах без сети (~250 с). -->
+    <NuGetAuditEnabled>false</NuGetAuditEnabled>
+    <RestoreIgnoreFailedSources>true</RestoreIgnoreFailedSources>
   </PropertyGroup>
 
   <ItemGroup>

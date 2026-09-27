@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using ISIDA.Common;
 using Newtonsoft.Json;
 using Velum.Configuration;
+using Velum.ReactiveCore.Export;
 
 namespace Velum.UI.ProductRegistry
 {
@@ -65,7 +65,12 @@ namespace Velum.UI.ProductRegistry
 
     public static List<VelumProductFolderAutoNameMapping> LoadOrCreate()
     {
-      Directory.CreateDirectory(Path.GetDirectoryName(FilePath) ?? VelumProductRegistryStore.RegistryFolderPath);
+      // Корень автоимён может быть на сетевой шаре (VPN): прямое создание каталога
+      // зависло бы при недоступном корне. Гард с таймаутом не блокирует поток;
+      // при недоступном корне возвращаем дефолты без попытки чтения/записи файла.
+      if (!VelumPathExists.TryCreateDirectory(
+              Path.GetDirectoryName(FilePath) ?? VelumProductRegistryStore.RegistryFolderPath))
+        return CreateDefaultMappings();
 
       VelumProductFolderAutoNameFile file = ReadJson(FilePath);
       if (file == null || file.Mappings == null || file.Mappings.Length == 0)
@@ -102,7 +107,9 @@ namespace Velum.UI.ProductRegistry
 
     public static void Save(IEnumerable<VelumProductFolderAutoNameMapping> mappings)
     {
-      Directory.CreateDirectory(Path.GetDirectoryName(FilePath) ?? VelumProductRegistryStore.RegistryFolderPath);
+      // См. LoadOrCreate(): корень может быть на сетевой шаре, создание — с таймаутом.
+      VelumPathExists.TryCreateDirectory(
+          Path.GetDirectoryName(FilePath) ?? VelumProductRegistryStore.RegistryFolderPath);
 
       var normalized = new List<VelumProductFolderAutoNameMapping>();
       var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -238,9 +245,9 @@ namespace Velum.UI.ProductRegistry
     {
       try
       {
-        if (!File.Exists(path))
-          return null;
-        string json = File.ReadAllText(path, Encoding.UTF8);
+        // Чтение с жёстким таймаутом: на недоступной сетевой шаре File.ReadAllText
+        // завис бы на десятки секунд. ReadAllTextWithTimeout возвращает null.
+        string json = Velum.ReactiveCore.Export.VelumPathExists.ReadAllTextWithTimeout(path);
         if (string.IsNullOrWhiteSpace(json))
           return null;
         return JsonConvert.DeserializeObject<VelumProductFolderAutoNameFile>(json, JsonSettings);
@@ -256,8 +263,12 @@ namespace Velum.UI.ProductRegistry
     {
       string json = JsonConvert.SerializeObject(value, JsonSettings);
       string tempPath = path + ".tmp";
-      File.WriteAllText(tempPath, json, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
-      if (File.Exists(path))
+      // Запись temp — с таймаутом (корень может быть на сетевой шаре); на недоступном
+      // корне вернёт false без блокировки, и запись тихо пропускается (каталог недоступен).
+      if (!Velum.ReactiveCore.Export.VelumPathExists.WriteAllTextWithTimeout(tempPath, json))
+        return;
+
+      if (Velum.ReactiveCore.Export.VelumPathExists.FileExists(path))
         File.Replace(tempPath, path, null);
       else
         File.Move(tempPath, path);

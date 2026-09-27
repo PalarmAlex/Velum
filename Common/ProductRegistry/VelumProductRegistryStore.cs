@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using ISIDA.Common;
 using Newtonsoft.Json;
 using Velum.Configuration;
@@ -152,7 +151,11 @@ namespace Velum.UI.ProductRegistry
 
     public void Load()
     {
-      Directory.CreateDirectory(RegistryFolderPath);
+      // Реестр может лежать на сетевой шаре (VPN): прямое Directory.CreateDirectory
+      // зависло бы на десятки секунд при недоступном корне. Гард с таймаутом не
+      // блокирует поток; при недоступном каталоге Load продолжается с пустым реестром,
+      // а ReadJson/ReadAllTextWithTimeout ниже вернут null без блокировки.
+      VelumPathExists.TryCreateDirectory(RegistryFolderPath);
       _folders.Clear();
       _items.Clear();
       _itemsChangeStamp++;
@@ -222,7 +225,8 @@ namespace Velum.UI.ProductRegistry
 
     public void Save()
     {
-      Directory.CreateDirectory(RegistryFolderPath);
+      // См. Load(): каталог реестра может быть на сетевой шаре, создание — с таймаутом.
+      VelumPathExists.TryCreateDirectory(RegistryFolderPath);
 
       bool saved = false;
       if (_foldersDirty)
@@ -1048,9 +1052,9 @@ namespace Velum.UI.ProductRegistry
     {
       try
       {
-        if (!File.Exists(path))
-          return null;
-        string json = File.ReadAllText(path, Encoding.UTF8);
+        // Чтение с жёстким таймаутом: на недоступной сетевой шаре File.ReadAllText
+        // завис бы на десятки секунд. ReadAllTextWithTimeout возвращает null.
+        string json = VelumPathExists.ReadAllTextWithTimeout(path);
         if (string.IsNullOrWhiteSpace(json))
           return null;
         return JsonConvert.DeserializeObject<T>(json, JsonSettings);
@@ -1066,8 +1070,16 @@ namespace Velum.UI.ProductRegistry
     {
       string json = JsonConvert.SerializeObject(value, JsonSettings);
       string tempPath = path + ".tmp";
-      File.WriteAllText(tempPath, json, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
-      if (File.Exists(path))
+      // Запись temp — с таймаутом (корень реестра может быть на сетевой шаре);
+      // на недоступном корне вернёт false без блокировки.
+      if (!VelumPathExists.WriteAllTextWithTimeout(tempPath, json))
+        throw new IOException(
+            "Не удалось записать временный файл реестра (корень недоступен по таймауту): " + tempPath);
+
+      // Файл только что записан на том же томе, поэтому проверка существования и
+      // атомарная замена выполняются быстро; при оборвавшейся шаре бросят исключение,
+      // которое обработает вызывающий код (как и раньше).
+      if (VelumPathExists.FileExists(path))
         File.Replace(tempPath, path, null);
       else
         File.Move(tempPath, path);

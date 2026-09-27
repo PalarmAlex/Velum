@@ -9,9 +9,11 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Velum.Configuration;
 using Velum.Isida;
+using Velum.ReactiveCore.Export;
 
 namespace Velum.UI
 {
@@ -81,7 +83,11 @@ namespace Velum.UI
       PopulateCombos();
       WireEvolutionStageCombo();
       BindControlToolTips();
-      Shown += (_, __) => RefreshEvolutionStageUiFromEngine();
+      Shown += (_, __) =>
+      {
+        RefreshEvolutionStageUiFromEngine();
+        CheckPathAvailabilityAsync();
+      };
       this.ClientSize = new Size(720, 407);
       this.MinimumSize = new Size(720, 407);
     }
@@ -156,6 +162,99 @@ namespace Velum.UI
       // Нижняя панель
       _ttpStageEvolution.SetToolTip(_btnSave, "Сохранить настройки проекта");
       _ttpStageEvolution.SetToolTip(_btnCancel, "Закрыть без сохранения");
+    }
+
+    /// <summary>
+    /// Запускает фоновую проверку доступности каталогов на 1-й вкладке «Пути данных».
+    /// Недоступные пути (в т.ч. сетевые на оборванной VPN-шаре) не блокируют поток UI:
+    /// проверка выполняется через <see cref="VelumPathExists"/> с таймаутом в пуле
+    /// потоков, а результат применяется через <c>Control.BeginInvoke</c>. У
+    /// недоступного пути текст поля подсвечивается красным и в подсказку добавляется
+    /// примечание «файл недоступен»; доступный путь не меняется.
+    /// </summary>
+    private void CheckPathAvailabilityAsync()
+    {
+      if (IsDisposed)
+        return;
+
+      // Пары «поле пути — подпись-признак каталога». Все восемь полей 1-й вкладки.
+      var targets = new[]
+      {
+        new PathProbe { TextBox = _tbSettingsPath },
+        new PathProbe { TextBox = _tbGomeostas },
+        new PathProbe { TextBox = _tbLogs },
+        new PathProbe { TextBox = _tbBoot },
+        new PathProbe { TextBox = _tbScenarioReports },
+        new PathProbe { TextBox = _tbProductRegistry },
+        new PathProbe { TextBox = _tbBomExchange },
+        new PathProbe { TextBox = _tbDocumentRootPaths }
+      };
+
+      Task.Run(() =>
+      {
+        foreach (var probe in targets)
+        {
+          if (IsDisposed)
+            return;
+
+          string path = probe.TextBox.Text?.Trim();
+          if (string.IsNullOrEmpty(path))
+            continue;
+
+          // Проверка в пуле потоков с таймаутом; бинарная обёртка допустима, т.к. для
+          // отображения недоступности «нет» и «таймаут» эквивалентны.
+          bool available = VelumPathExists.DirectoryExists(path);
+
+          if (IsDisposed)
+            return;
+
+          try
+          {
+            BeginInvoke(new Action(() => ApplyPathAvailability(probe.TextBox, available)));
+          }
+          catch
+          {
+            // форма закрыта — выходим
+            return;
+          }
+        }
+      });
+    }
+
+    /// <summary>
+    /// Применяет результат проверки доступности к полю пути на 1-й вкладке (поток UI).
+    /// </summary>
+    /// <param name="textBox">Поле пути.</param>
+    /// <param name="available">true — каталог доступен; false — недоступен.</param>
+    private void ApplyPathAvailability(TextBox textBox, bool available)
+    {
+      if (IsDisposed || textBox.IsDisposed)
+        return;
+
+      // Доступный путь — ничего не меняем (пользователь не просил подсветку доступных).
+      if (available)
+        return;
+
+      textBox.ForeColor = System.Drawing.Color.Red;
+
+      // Достраиваем подсказку примечанием о недоступности, не дублируя его.
+      string baseTip = _ttpStageEvolution.GetToolTip(textBox);
+      const string note = "файл недоступен";
+      if (string.IsNullOrEmpty(baseTip))
+      {
+        _ttpStageEvolution.SetToolTip(textBox, note);
+      }
+      else if (baseTip.IndexOf(note, StringComparison.OrdinalIgnoreCase) < 0)
+      {
+        _ttpStageEvolution.SetToolTip(textBox, baseTip + " (" + note + ")");
+      }
+    }
+
+    /// <summary>Описывает одно проверяемое поле пути 1-й вкладки.</summary>
+    private sealed class PathProbe
+    {
+      /// <summary>Поле пути.</summary>
+      public TextBox TextBox { get; set; }
     }
 
     private void PathBrowse_Click(object sender, EventArgs e)

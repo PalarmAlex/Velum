@@ -1886,14 +1886,11 @@ namespace Velum.Configuration
       if (string.IsNullOrWhiteSpace(path))
         return;
 
-      try
-      {
-        Directory.CreateDirectory(path);
-      }
-      catch
-      {
-        // игнорируем отсутствие прав при старте
-      }
+      // Каталог данных (реестр, шаблоны и т.п.) может быть вынесен на сетевую шару (VPN):
+      // прямой Directory.CreateDirectory завис бы на десятки секунд при недоступном корне
+      // и заблокировал бы статическую инициализацию VelumAppConfig на старте плагина.
+      // Гард с таймаутом не блокирует поток и при недоступном корне тихо возвращается.
+      Velum.ReactiveCore.Export.VelumPathExists.TryCreateDirectory(path);
     }
 
     /// <summary>

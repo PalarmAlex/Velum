@@ -719,6 +719,140 @@ namespace Velum.ReactiveCore.Export
       }
     }
 
+    /// <summary>
+    /// Читает текст файла с жёстким таймаутом. На недоступной сетевой шаре
+    /// <c>System.IO.File.ReadAllText</c> блокирует поток на десятки секунд
+    /// (аналогично <c>System.IO.File.Exists</c>), поэтому чтение выполняется
+    /// в пуле потоков с таймаутом: по истечении возвращается <c>null</c>, а не
+    /// заблокированный поток. Файл сначала проверяется трёхзначным
+    /// <see cref="Check"/> — отсутствующий путь не тратит таймаут на чтение.
+    /// </summary>
+    /// <param name="path">Полный путь к файлу.</param>
+    /// <param name="timeoutMs">Таймаут одной операции чтения, мс.</param>
+    /// <returns>Содержимое файла (UTF-8) либо <c>null</c> при отсутствии файла, таймауте или ошибке чтения.</returns>
+    internal static string ReadAllTextWithTimeout(string path, int timeoutMs = DefaultTimeoutMs)
+    {
+      if (string.IsNullOrWhiteSpace(path))
+        return null;
+
+      if (Check(false, path, timeoutMs) != Result.Yes)
+        return null;
+
+      try
+      {
+        Task<string> task = Task.Run(() =>
+        {
+          try
+          {
+            return System.IO.File.ReadAllText(path, System.Text.Encoding.UTF8);
+          }
+          catch
+          {
+            return null;
+          }
+        });
+
+        if (!task.Wait(timeoutMs) || task.IsFaulted || task.IsCanceled)
+          return null;
+
+        return task.Result;
+      }
+      catch
+      {
+        return null;
+      }
+    }
+
+    /// <summary>
+    /// Записывает текст в файл с жёстким таймаутом. На недоступной сетевой шаре
+    /// <c>System.IO.File.WriteAllText</c> блокирует поток; запись выполняется
+    /// в пуле потоков и по истечении таймаута возвращает <c>false</c> без блокировки.
+    /// Каталог назначения перед записью не создаётся — вызывающий код отвечает за его
+    /// доступность (см. <see cref="TryCreateDirectory"/>).
+    /// </summary>
+    /// <param name="path">Полный путь к файлу.</param>
+    /// <param name="text">Содержимое для записи (UTF-8).</param>
+    /// <param name="timeoutMs">Таймаут одной операции записи, мс.</param>
+    /// <returns>true — файл записан; false — таймаут или ошибка записи.</returns>
+    internal static bool WriteAllTextWithTimeout(string path, string text, int timeoutMs = DefaultTimeoutMs)
+    {
+      if (string.IsNullOrWhiteSpace(path) || text == null)
+        return false;
+
+      try
+      {
+        Task<bool> task = Task.Run(() =>
+        {
+          try
+          {
+            System.IO.File.WriteAllText(
+                path,
+                text,
+                new System.Text.UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
+            return true;
+          }
+          catch
+          {
+            return false;
+          }
+        });
+
+        if (!task.Wait(timeoutMs) || task.IsFaulted || task.IsCanceled)
+          return false;
+
+        return task.Result;
+      }
+      catch
+      {
+        return false;
+      }
+    }
+
+    /// <summary>
+    /// Создаёт каталог (включая промежуточные) с жёстким таймаутом. На недоступной
+    /// сетевой шаре <c>System.IO.Directory.CreateDirectory</c> блокирует поток;
+    /// создание выполняется в пуле потоков и по истечении таймаута возвращает
+    /// <c>false</c> без блокировки.
+    /// </summary>
+    /// <param name="path">Полный путь к каталогу.</param>
+    /// <param name="timeoutMs">Таймаут одной операции создания, мс.</param>
+    /// <returns>true — каталог существует или успешно создан; false — таймаут или ошибка создания.</returns>
+    internal static bool TryCreateDirectory(string path, int timeoutMs = DefaultTimeoutMs)
+    {
+      if (string.IsNullOrWhiteSpace(path))
+        return false;
+
+      // Уже существующий каталог создавать незачем: это сэкономит сетевой раундтрип
+      // на живом корне и мгновенно вернёт false на недоступном (без обращения к ФС).
+      if (DirectoryExists(path, timeoutMs))
+        return true;
+
+      try
+      {
+        Task<bool> task = Task.Run(() =>
+        {
+          try
+          {
+            System.IO.Directory.CreateDirectory(path);
+            return true;
+          }
+          catch
+          {
+            return false;
+          }
+        });
+
+        if (!task.Wait(timeoutMs) || task.IsFaulted || task.IsCanceled)
+          return false;
+
+        return task.Result;
+      }
+      catch
+      {
+        return false;
+      }
+    }
+
     /// <summary>Сбрасывает весь кэш и состояние circuit-breaker (например, при смене корня реестра документов).</summary>
     internal static void InvalidateAll()
     {
