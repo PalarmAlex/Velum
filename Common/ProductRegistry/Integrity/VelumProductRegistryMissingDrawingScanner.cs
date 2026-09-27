@@ -70,7 +70,11 @@ namespace Velum.UI.ProductRegistry
         searchCursor = 0;
 
       int remaining = Math.Max(0, items.Count - searchCursor);
-      int budget = shouldStop != null ? remaining : Math.Min(FullRegistryBatchSize, remaining);
+      // Бюджет кванта всегда ограничен: пакет проверок не должен превышать разумный
+      // размер, иначе хвост большого пакета гарантированно не успевает в общий
+      // таймаут ожидания (MaxBatchWaitMs) и получает Unknown на живой шаре.
+      // shouldStop прерывает тик между пакетами, а не раздувает пакет.
+      int budget = Math.Min(FullRegistryBatchSize, remaining);
 
       // Квант отбирается по типу документа; пути внутри проверяются пакетом параллельно.
       List<VelumRegistryScanBatch.Entry> quant =
@@ -174,7 +178,11 @@ namespace Velum.UI.ProductRegistry
       // Зеркало может хранить относительный путь — достраиваем префикс корневого каталога.
       drawingPath = Velum.ReactiveCore.Export.VelumRelativeDocumentPathResolver.ToFull(drawingPath);
 
-      if (!VelumPathExists.FileExists(drawingPath))
+      // Проверка трёхзначная: Unknown (таймаут сетевой шары) не считается
+      // «файл отсутствует» — по таймауту нельзя судить о существовании файла,
+      // иначе недоступный по VPN корень помечал бы весь реестр «нет чертежа».
+      VelumPathExists.Result drawingState = VelumPathExists.Check(false, drawingPath);
+      if (drawingState == VelumPathExists.Result.No)
       {
         problem = Build(
             modelItem,

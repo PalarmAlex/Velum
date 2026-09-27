@@ -72,7 +72,11 @@ namespace Velum.UI.ProductRegistry
         searchCursor = 0;
 
       int remaining = Math.Max(0, items.Count - searchCursor);
-      int budget = shouldStop != null ? remaining : Math.Min(FullRegistryBatchSize, remaining);
+      // Бюджет кванта всегда ограничен: пакет проверок не должен превышать разумный
+      // размер, иначе хвост большого пакета гарантированно не успевает в общий
+      // таймаут ожидания (MaxBatchWaitMs) и получает Unknown на живой шаре.
+      // shouldStop прерывает тик между пакетами, а не раздувает пакет.
+      int budget = Math.Min(FullRegistryBatchSize, remaining);
 
       // Квант отбирается по чертежам; пути (чертёж, PDF-файл) проверяются пакетом
       // в thread-static scope — TryClassify читает ответы из scope.
@@ -204,7 +208,16 @@ internal static bool TryClassify(
       // Зеркало может хранить относительный путь — достраиваем префикс корневого каталога.
       string pdfPath = Velum.ReactiveCore.Export.VelumRelativeDocumentPathResolver.ToFull(
           (item.PdfPath ?? string.Empty).Trim());
-      bool fileFound = pdfPath.Length > 0 && VelumPathExists.FileExists(pdfPath);
+      // Проверка трёхзначная: Unknown (таймаут сетевой шары) не считается
+      // «файл не найден» — по таймауту нельзя судить о существовании файла,
+      // иначе недоступный по VPN корень помечал бы весь реестр «Нужен экспорт PDF».
+      VelumPathExists.Result pdfState = pdfPath.Length > 0
+          ? VelumPathExists.Check(false, pdfPath)
+          : VelumPathExists.Result.No;
+      if (pdfState == VelumPathExists.Result.Unknown)
+        return false;
+
+      bool fileFound = pdfState == VelumPathExists.Result.Yes;
       bool outdated = IsPdfOutdated(item)
           || IsPdfOutdatedByModelGeometry(store, item);
 

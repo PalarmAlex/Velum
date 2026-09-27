@@ -402,14 +402,25 @@ namespace Velum.ReactiveCore.Export
         int index = pending[i];
         Result result = Result.Unknown;
         Task<Result> task = running[i];
-        if (task.IsCompleted && !task.IsFaulted && !task.IsCanceled)
+        bool completed = task.IsCompleted && !task.IsFaulted && !task.IsCanceled;
+        if (completed)
           result = task.Result;
 
         results[index] = result;
 
         string path = requests[index].Path;
         if (path.Length > 0)
-          Remember(requests[index].IsDirectory, path, result);
+        {
+          // Кэшируем и кормим circuit-breaker только реально завершённые проверки.
+          // Недождавшиеся из-за общего лимита ожидания пакета (MaxBatchWaitMs) —
+          // не таймаут шары, а переполнение очереди к семафору: кэшировать их Unknown
+          // и засчитывать в счётчик корня значило бы ложно «выключать» живую шару
+          // (порог 8 подряд легко набрать хвостами больших пакетов).
+          if (completed)
+          {
+            Remember(requests[index].IsDirectory, path, result);
+          }
+        }
       }
     }
 

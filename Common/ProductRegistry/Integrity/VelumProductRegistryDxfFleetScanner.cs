@@ -76,7 +76,11 @@ namespace Velum.UI.ProductRegistry
         searchCursor = 0;
 
       int remaining = Math.Max(0, items.Count - searchCursor);
-      int budget = shouldStop != null ? remaining : Math.Min(FullRegistryBatchSize, remaining);
+      // Бюджет кванта всегда ограничен: пакет проверок не должен превышать разумный
+      // размер, иначе хвост большого пакета гарантированно не успевает в общий
+      // таймаут ожидания (MaxBatchWaitMs) и получает Unknown на живой шаре.
+      // shouldStop прерывает тик между пакетами, а не раздувает пакет.
+      int budget = Math.Min(FullRegistryBatchSize, remaining);
 
       // Квант отбирается по деталям; пути (модель, каталог DXF, файлы DXF) проверяются
       // пакетом в thread-static scope — классификация Classify читает ответы из scope.
@@ -223,20 +227,23 @@ namespace Velum.UI.ProductRegistry
       VelumProductExportMetaConfig[] configs = item.ExportMetaConfigs
           ?? Array.Empty<VelumProductExportMetaConfig>();
 
-      // Каталог DXF общий для всех конфигураций записи — Directory.Exists
-      // выполняем один раз на запись (лениво: только если каталог вообще нужен).
+      // Каталог DXF общий для всех конфигураций записи — проверку выполняем один раз
+      // на запись (лениво: только если каталог вообще нужен). Результат трёхзначный:
+      // Unknown (таймаут сетевой шары) не считается «недоступным» — по таймауту нельзя
+      // судить о существовании каталога, иначе недоступный по VPN корень помечал бы
+      // весь реестр «Каталог недоступен» (как в BrokenLink: битым считается только No).
       bool catalogChecked = false;
-      bool catalogExists = false;
+      VelumPathExists.Result catalogResult = VelumPathExists.Result.Unknown;
 
-      bool CatalogExists()
+      VelumPathExists.Result CatalogResult()
       {
         if (!catalogChecked)
         {
-          catalogExists = VelumPathExists.DirectoryExists(catalog);
+          catalogResult = VelumPathExists.Check(true, catalog);
           catalogChecked = true;
         }
 
-        return catalogExists;
+        return catalogResult;
       }
 
 
@@ -278,12 +285,19 @@ namespace Velum.UI.ProductRegistry
           continue;
         }
 
-        if (!CatalogExists())
+        VelumPathExists.Result catalogState = CatalogResult();
+        if (catalogState == VelumPathExists.Result.No)
         {
           Append(byKind, VelumProductRegistryProblemKind.DxfCatalogUnavailable,
               "Каталог недоступен [" + configLabel + "]");
           continue;
         }
+
+        // Unknown (таймаут проверки каталога): классификацию конфигурации по
+        // файлам DXF пропускаем — файл внутри непроверенного каталога не даёт
+        // ни одного достоверного ответа, а ложные проблемы хуже их отсутствия.
+        if (catalogState == VelumPathExists.Result.Unknown)
+          continue;
 
         string fullPath = TryResolveDxfFullPath(catalog, cfg.DxfFileName);
         bool fileFound = !string.IsNullOrEmpty(fullPath) && VelumPathExists.FileExists(fullPath);
