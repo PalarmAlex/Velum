@@ -756,16 +756,6 @@ namespace Velum.UI.ProductRegistry
 
       Interlocked.Increment(ref _scanIterationCount);
 
-      // Диагностика цикла: состояние всех проходов на каждом тике. По движению
-      // курсоров видно прогресс; по флагам done — что мешает закрытию цикла.
-      Logger.Info(
-          "Velum registry integrity tick: iteration=" + _scanIterationCount
-          + " items=" + store.GetAllItems().Length
-          + " cursors broken=" + _brokenCursor + "/" + _brokenPassDone
-          + " drawing=" + _drawingCursor + "/" + _drawingPassDone
-          + " dxf=" + _dxfCursor + "/" + _dxfPassDone
-          + " pdf=" + _pdfCursor + "/" + _pdfPassDone);
-
       // Колбэк остановки кванта: следующий тяжёлый пульс пришёл или документ открылся.
       // Сканеры проверяют его между элементами и уступают, сохраняя курсор.
       Func<bool> shouldStop = () =>
@@ -793,8 +783,6 @@ namespace Velum.UI.ProductRegistry
         if (brokenPassCompleted)
         {
           _brokenPassDone = true;
-          Logger.Info("Velum registry integrity: BrokenLink pass completed, iteration="
-              + _scanIterationCount + " cursor=" + _brokenCursor);
         }
       }
       if (AbortRunTickIfOpenDocumentsScope())
@@ -815,8 +803,6 @@ namespace Velum.UI.ProductRegistry
               shouldStop: shouldStop, known: knownPaths))
           {
             _drawingPassDone = true;
-            Logger.Info("Velum registry integrity: MissingDrawing pass completed, iteration="
-                + _scanIterationCount);
           }
         }
         if (AbortRunTickIfOpenDocumentsScope())
@@ -829,8 +815,6 @@ namespace Velum.UI.ProductRegistry
               shouldStop: shouldStop, known: knownPaths))
           {
             _dxfPassDone = true;
-            Logger.Info("Velum registry integrity: Dxf pass completed, iteration="
-                + _scanIterationCount);
           }
         }
         if (AbortRunTickIfOpenDocumentsScope())
@@ -843,8 +827,6 @@ namespace Velum.UI.ProductRegistry
               shouldStop: shouldStop, known: knownPaths))
           {
             _pdfPassDone = true;
-            Logger.Info("Velum registry integrity: Pdf pass completed, iteration="
-                + _scanIterationCount);
           }
         }
         if (AbortRunTickIfOpenDocumentsScope())
@@ -877,11 +859,6 @@ namespace Velum.UI.ProductRegistry
       {
         // Все сканеры завершили полный проход реестра — счётчик сбросится
         // на следующем тике, и будет видно начало нового сканирования с №1.
-        Logger.Info(
-            "Velum registry integrity: pass cycle completed, iteration=" + _scanIterationCount
-            + " brokenDone=" + _brokenPassDone + " drawingDone=" + _drawingPassDone
-            + " dxfDone=" + _dxfPassDone + " pdfDone=" + _pdfPassDone
-            + " dupDone=" + passCompleted + " — счётчик сбрасывается, новый цикл с №1");
         lock (Gate)
         {
           _scanPassInProgress = false;
