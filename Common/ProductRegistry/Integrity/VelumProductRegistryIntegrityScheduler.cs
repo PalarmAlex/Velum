@@ -711,7 +711,11 @@ namespace Velum.UI.ProductRegistry
             store, ref _brokenCursor, ref _brokenPassActive, null, 0, shouldStop, null,
             out knownPaths);
         if (brokenPassCompleted)
+        {
           _brokenPassDone = true;
+          Logger.Info("Velum registry integrity: BrokenLink pass completed, iteration="
+              + _scanIterationCount + " cursor=" + _brokenCursor);
+        }
       }
       if (AbortRunTickIfOpenDocumentsScope())
         return;
@@ -729,7 +733,11 @@ namespace Velum.UI.ProductRegistry
           if (VelumProductRegistryMissingDrawingScanner.Tick(
               store, mappings, ref _drawingCursor, ref _drawingPassActive,
               shouldStop: shouldStop, known: knownPaths))
+          {
             _drawingPassDone = true;
+            Logger.Info("Velum registry integrity: MissingDrawing pass completed, iteration="
+                + _scanIterationCount);
+          }
         }
         if (AbortRunTickIfOpenDocumentsScope())
           return;
@@ -739,7 +747,11 @@ namespace Velum.UI.ProductRegistry
           if (VelumProductRegistryDxfFleetScanner.Tick(
               store, ref _dxfCursor, ref _dxfPassActive,
               shouldStop: shouldStop, known: knownPaths))
+          {
             _dxfPassDone = true;
+            Logger.Info("Velum registry integrity: Dxf pass completed, iteration="
+                + _scanIterationCount);
+          }
         }
         if (AbortRunTickIfOpenDocumentsScope())
           return;
@@ -749,7 +761,11 @@ namespace Velum.UI.ProductRegistry
           if (VelumProductRegistryPdfFleetScanner.Tick(
               store, ref _pdfCursor, ref _pdfPassActive,
               shouldStop: shouldStop, known: knownPaths))
+          {
             _pdfPassDone = true;
+            Logger.Info("Velum registry integrity: Pdf pass completed, iteration="
+                + _scanIterationCount);
+          }
         }
         if (AbortRunTickIfOpenDocumentsScope())
           return;
@@ -781,6 +797,11 @@ namespace Velum.UI.ProductRegistry
       {
         // Все сканеры завершили полный проход реестра — счётчик сбросится
         // на следующем тике, и будет видно начало нового сканирования с №1.
+        Logger.Info(
+            "Velum registry integrity: pass cycle completed, iteration=" + _scanIterationCount
+            + " brokenDone=" + _brokenPassDone + " drawingDone=" + _drawingPassDone
+            + " dxfDone=" + _dxfPassDone + " pdfDone=" + _pdfPassDone
+            + " dupDone=" + passCompleted + " — счётчик сбрасывается, новый цикл с №1");
         lock (Gate)
         {
           _scanPassInProgress = false;
