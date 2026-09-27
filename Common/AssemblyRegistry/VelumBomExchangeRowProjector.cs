@@ -1,5 +1,4 @@
 using System;
-using System.Globalization;
 
 namespace Velum.UI.AssemblyRegistry
 {
@@ -33,7 +32,6 @@ namespace Velum.UI.AssemblyRegistry
           case "ExternalId":    return entry.ExternalId ?? string.Empty;
           case "Designation":   return entry.Designation ?? string.Empty;
           case "Name":          return entry.Name ?? string.Empty;
-          case "Quantity":      return entry.Quantity.ToString(CultureInfo.InvariantCulture);
           case "FilePath":      return entry.FilePath ?? string.Empty;
           case "Configuration": return entry.ConfigurationName ?? string.Empty;
           default:              return string.Empty;

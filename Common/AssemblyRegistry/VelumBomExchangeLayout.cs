@@ -78,21 +78,29 @@ namespace Velum.UI.AssemblyRegistry
     /// <summary>
     /// Ключи структурных полей в порядке колонок текущего CSV (жёстко в коде).
     /// Порядок соответствует прежней выгрузке: TypeDocs, ExternalId, Designation, Name,
-    /// FilePath, Configuration, Quantity.
+    /// FilePath, Configuration.
+    /// <c>Quantity</c> здесь отсутствует намеренно: количество вхождений описывает связь
+    /// позиции со сборкой-родителем, а не саму карточку, и в <c>1C_update_*.csv</c>
+    /// всегда было бы 0 (для детали) или «плавающим» числом (для сборки). Реальное
+    /// количество передаётся только в <c>1C_bom_*.csv</c>. Поле <c>Quantity</c> в модели
+    /// зеркала сохранено — оно нужно для <c>GetTypeDocs</c> (fallback типа старых записей).
     /// </summary>
     internal static readonly string[] StructuralKeys =
     {
-      "TypeDocs", "ExternalId", "Designation", "Name", "FilePath", "Configuration", "Quantity"
+      "TypeDocs", "ExternalId", "Designation", "Name", "FilePath", "Configuration"
     };
 
     /// <summary>
     /// Текущая версия набора колонок по умолчанию.
     /// <b>2</b> — <c>Quantity</c> в наборе по умолчанию выключен (он больше не входит
     /// в хэш карточки, см. <see cref="VelumAssemblyBomTrackedPropertiesConfig.HashFormatVersion"/>).
+    /// <b>3</b> — <c>Quantity</c> полностью убран из структурных полей карточки
+    /// (см. <see cref="StructuralKeys"/>): колонка не просто выключается, а удаляется
+    /// из набора, чтобы не возвращаться при нормализации.
     /// При обнаружении файла более старой версии состав правится один раз,
     /// дальше настройка полностью за оператором.
     /// </summary>
-    internal const int CurrentLayoutFormatVersion = 2;
+    internal const int CurrentLayoutFormatVersion = 3;
 
     /// <summary>
     /// Поля, которые нельзя выключить (по ТЗ).
@@ -116,25 +124,8 @@ namespace Velum.UI.AssemblyRegistry
           { "Designation", 120 },
           { "Name", 150 },
           { "FilePath", 200 },
-          { "Configuration", 110 },
-          { "Quantity", 70 }
+          { "Configuration", 110 }
         };
-
-    /// <summary>
-    /// Структурные поля, которые по умолчанию выключены (колонка существует,
-    /// но в CSV не идёт, пока оператор сам не включит).
-    /// </summary>
-    private static readonly HashSet<string> DefaultDisabledStructuralKeys =
-        new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "Quantity" };
-
-    /// <summary>Включена ли структурная колонка по умолчанию.</summary>
-    /// <param name="field">Имя структурного поля.</param>
-    /// <returns>false только для полей из <see cref="DefaultDisabledStructuralKeys"/>.</returns>
-    private static bool DefaultEnabledFor(string field)
-    {
-      return !(!string.IsNullOrWhiteSpace(field) &&
-               DefaultDisabledStructuralKeys.Contains(field.Trim()));
-    }
 
     /// <summary>Путь к файлу настроек выгрузки.</summary>
     public static string FilePath => Path.Combine(
@@ -214,20 +205,9 @@ namespace Velum.UI.AssemblyRegistry
         return false;
       }
 
-      // Версия 2: Quantity убран из хэша карточки и больше не обязателен в CSV.
-      if (data.LayoutFormatVersion < 2)
-      {
-        foreach (VelumBomExchangeColumnDef c in data.Columns)
-        {
-          if (c == null || c.Source != VelumBomExchangeFieldSource.Structural)
-            continue;
-          if (!string.Equals((c.Field ?? string.Empty).Trim(), "Quantity",
-                  StringComparison.OrdinalIgnoreCase))
-            continue;
-          c.Enabled = false;
-        }
-      }
-
+      // Состав колонок (в т.ч. удаление снятого с поддержки Quantity) приводит
+      // Normalize, уже выполненный до этого метода — здесь остаётся только
+      // поднять записанный номер версии и тем самым инициировать перезапись файла.
       data.LayoutFormatVersion = CurrentLayoutFormatVersion;
       return true;
     }
@@ -264,7 +244,7 @@ namespace Velum.UI.AssemblyRegistry
           Field = key,
           Header = key,
           Source = VelumBomExchangeFieldSource.Structural,
-          Enabled = DefaultEnabledFor(key),
+          Enabled = true,
           Order = order++,
           Width = DefaultWidthFor(key)
         });
@@ -314,6 +294,14 @@ namespace Velum.UI.AssemblyRegistry
           c != null &&
           c.Source == VelumBomExchangeFieldSource.Tracked &&
           !trackedNameSet.Contains((c.Field ?? string.Empty).Trim()));
+
+      // Удаляем структурные колонки, которых больше нет в StructuralKeys
+      // (например, снятый с поддержки Quantity). Иначе они бы «жили» в файле
+      // вечно: ниже добавляются отсутствующие, а лишние не убирались.
+      data.Columns.RemoveAll(c =>
+          c != null &&
+          c.Source == VelumBomExchangeFieldSource.Structural &&
+          !IsStructural(c.Field));
 
       // Добавляем отсутствующие структурные.
       var present = new HashSet<string>(
