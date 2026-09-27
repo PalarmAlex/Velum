@@ -288,6 +288,12 @@ namespace Velum.UI.ProductRegistry
             if (!_pdfPassDone)
               min = Math.Min(min, _pdfCursor);
 
+            // Начало цикла: курсоры ещё 0, но первый квант уже в работе —
+            // показываем его размер, иначе весь первый тик статус выглядит
+            // как «0 пройдено», будто ничего не делается.
+            if (min == 0 && total > 0)
+              min = Math.Min(VelumAppConfig.ScannerBatchSize, total);
+
             return min;
           }
         }
