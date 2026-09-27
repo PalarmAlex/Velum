@@ -1003,6 +1003,13 @@ namespace Velum.UI
       int period = VelumProductRegistryIntegrityScheduler.HeavyMetricsPulsePeriod;
       string baseText = $"Сканирование №{iteration} ({period} пул.): ";
 
+      // Диагностика: текст метки и состояние сканирования на каждом обновлении.
+      Logger.Info(
+          "VelumAgentTaskPane scan status: iteration=" + iteration
+          + " tickInFlight=" + VelumProductRegistryIntegrityScheduler.IsTickInFlight
+          + " passActive=" + VelumProductRegistryIntegrityScheduler.IsDiscoveryPassActive
+          + " hasProblems=" + VelumProductRegistryProblemCache.HasAny);
+
       // «выполняется…» — только когда тик реально исполняется в фоновом потоке.
       // Между тиками проходы продолжаются по курсорам, но найденные проблемы уже
       // опубликованы в кэш (pending учитывается), поэтому показываем результат.
