@@ -93,6 +93,17 @@ namespace Velum.UI.ProductRegistry
     /// должен начинаться с №1, а не продолжать общий счётчик тиков.
     /// </summary>
     private static bool _scanPassInProgress;
+    /// <summary>
+    /// Сканер завершил полный проход в текущем цикле (сбрасывается по завершении
+    /// цикла и при abort). Сканеры заканчивают проход в разных тиках (разные размеры
+    /// квант и фильтры), а завершившийся сканер на следующем тике сразу начал бы
+    /// новый проход и вернул false — поэтому «все завершены в одном тике» невозможно,
+    /// и завершение фиксируется флагами до конца цикла.
+    /// </summary>
+    private static bool _brokenPassDone;
+    private static bool _drawingPassDone;
+    private static bool _dxfPassDone;
+    private static bool _pdfPassDone;
 
     /// <summary>Вызывается при изменении состояния фонового сканирования реестра.</summary>
     internal static event Action ScanStateChanged;
@@ -685,14 +696,23 @@ namespace Velum.UI.ProductRegistry
       if (AbortRunTickIfOpenDocumentsScope())
         return;
 
+      // Дубли обозначений укладываются в один квант — их результат учитывается
+      // в этом же тике; курсорные сканеры завершают проход в разных тиках,
+      // их завершение фиксируется флагами *PassDone до конца цикла.
       bool passCompleted = true;
+
       // Результаты проверки путей BrokenLink передаются остальным сканерам (known):
       // модель, уже проверенная сканером битых ссылок, на сетевой шаре повторно не ходит.
       Dictionary<string, VelumProductRegistryPathStatus> knownPaths = null;
-      bool brokenPassCompleted = VelumProductRegistryBrokenLinkScanner.Tick(
-          store, ref _brokenCursor, ref _brokenPassActive, null, 0, shouldStop, null,
-          out knownPaths);
-      passCompleted &= brokenPassCompleted;
+      bool brokenEarlyExit = false;
+      if (!_brokenPassDone)
+      {
+        bool brokenPassCompleted = VelumProductRegistryBrokenLinkScanner.Tick(
+            store, ref _brokenCursor, ref _brokenPassActive, null, 0, shouldStop, null,
+            out knownPaths);
+        if (brokenPassCompleted)
+          _brokenPassDone = true;
+      }
       if (AbortRunTickIfOpenDocumentsScope())
         return;
 
@@ -701,26 +721,46 @@ namespace Velum.UI.ProductRegistry
       // чертежей (MissingDrawing/DXF/PDF) в этом проходе бесполезен: пока есть битые
       // ссылки, он будет повторяться и на следующих тиках. DuplicateDesignation
       // (чисто в памяти) выполняется всегда.
-      bool brokenEarlyExit = brokenPassCompleted && HasBrokenLinksInKnown(knownPaths);
+      brokenEarlyExit = _brokenPassDone && HasBrokenLinksInKnown(knownPaths);
       if (!brokenEarlyExit)
       {
-        passCompleted &= VelumProductRegistryMissingDrawingScanner.Tick(
-            store, mappings, ref _drawingCursor, ref _drawingPassActive,
-            shouldStop: shouldStop, known: knownPaths);
+        if (!_drawingPassDone)
+        {
+          if (VelumProductRegistryMissingDrawingScanner.Tick(
+              store, mappings, ref _drawingCursor, ref _drawingPassActive,
+              shouldStop: shouldStop, known: knownPaths))
+            _drawingPassDone = true;
+        }
         if (AbortRunTickIfOpenDocumentsScope())
           return;
 
-        passCompleted &= VelumProductRegistryDxfFleetScanner.Tick(
-            store, ref _dxfCursor, ref _dxfPassActive,
-            shouldStop: shouldStop, known: knownPaths);
+        if (!_dxfPassDone)
+        {
+          if (VelumProductRegistryDxfFleetScanner.Tick(
+              store, ref _dxfCursor, ref _dxfPassActive,
+              shouldStop: shouldStop, known: knownPaths))
+            _dxfPassDone = true;
+        }
         if (AbortRunTickIfOpenDocumentsScope())
           return;
 
-        passCompleted &= VelumProductRegistryPdfFleetScanner.Tick(
-            store, ref _pdfCursor, ref _pdfPassActive,
-            shouldStop: shouldStop, known: knownPaths);
+        if (!_pdfPassDone)
+        {
+          if (VelumProductRegistryPdfFleetScanner.Tick(
+              store, ref _pdfCursor, ref _pdfPassActive,
+              shouldStop: shouldStop, known: knownPaths))
+            _pdfPassDone = true;
+        }
         if (AbortRunTickIfOpenDocumentsScope())
           return;
+      }
+      else
+      {
+        // Реестр повреждён — сетевые проходы этого цикла пропускаются целиком:
+        // без фиксации «done» они считались бы незавершёнными, и цикл не закрылся бы.
+        _drawingPassDone = true;
+        _dxfPassDone = true;
+        _pdfPassDone = true;
       }
 
       // Дубли обозначений — группировка по ключам в памяти (без ФС), весь проход
@@ -736,12 +776,19 @@ namespace Velum.UI.ProductRegistry
         VelumAssemblyBomDiffProbe.RunScan();
       }
 
-      if (passCompleted)
+      if (_brokenPassDone && _drawingPassDone && _dxfPassDone && _pdfPassDone
+          && passCompleted)
       {
-        // Все четыре сканера завершили полный проход реестра — счётчик сбросится
+        // Все сканеры завершили полный проход реестра — счётчик сбросится
         // на следующем тике, и будет видно начало нового сканирования с №1.
         lock (Gate)
+        {
           _scanPassInProgress = false;
+          _brokenPassDone = false;
+          _drawingPassDone = false;
+          _dxfPassDone = false;
+          _pdfPassDone = false;
+        }
       }
     }
 
@@ -797,11 +844,15 @@ namespace Velum.UI.ProductRegistry
       VelumProductRegistryPdfFleetScanner.ClearAllKinds();
     }
 
-private static void AbortDiscoveryPassesUnlocked()
+    private static void AbortDiscoveryPassesUnlocked()
     {
       _scanPassInProgress = false;
       _scanIterationCount = 0;
       _tickYieldRequested = 0;
+      _brokenPassDone = false;
+      _drawingPassDone = false;
+      _dxfPassDone = false;
+      _pdfPassDone = false;
 
       if (_brokenPassActive)
       {
