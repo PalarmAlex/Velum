@@ -1006,10 +1006,16 @@ namespace Velum.UI
       // Проход ещё не завершён: вердикт «проблем нет/есть» преждевременен —
       // найденные проблемы публикуются только по завершении прохода, и надпись
       // «проблем нет» в середине прохода вводила в заблуждение (счётчик № растёт,
-      // а статус уже «итоговый»). Во время прохода показываем процесс.
+      // а статус уже «итоговый»). Во время прохода показываем прогресс: сколько
+      // строк реестра пройдено — видна реальная скорость сканирования.
       if (VelumProductRegistryIntegrityScheduler.IsDiscoveryPassActive)
       {
-        _lblRegistryScanStatus.Text = baseText + "идёт проход реестра…";
+        int done = VelumProductRegistryIntegrityScheduler.ScanProgressCursor;
+        int total = VelumProductRegistryIntegrityScheduler.ScanProgressTotal;
+        string progress = total > 0
+            ? $"пройдено {done} из {total} строк…"
+            : "идёт проход реестра…";
+        _lblRegistryScanStatus.Text = baseText + progress;
         _lblRegistryScanStatus.ForeColor = Color.FromArgb(0, 112, 192);
         _lblRegistryScanStatus.Visible = true;
         return;

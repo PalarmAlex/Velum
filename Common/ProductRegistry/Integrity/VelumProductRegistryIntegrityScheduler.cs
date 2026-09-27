@@ -235,11 +235,41 @@ namespace Velum.UI.ProductRegistry
       }
     }
 
-    /// <summary>
-    /// Номер итерации сканирования (инкрементируется при каждом запуске RunTick,
+    /// <summary>Номер итерации сканирования (инкрементируется при каждом запуске RunTick,
     /// сбрасывается на 0 при полном проходе всего реестра — новый проход с №1).
     /// </summary>
     internal static int ScanIterationCount => Volatile.Read(ref _scanIterationCount);
+
+    /// <summary>
+    /// Прогресс текущего прохода: максимум из курсоров четырёх курсорных сканеров
+    /// (битые ссылки, чертежи, DXF, PDF) и размер реестра. Для статуса панели:
+    /// «пройдено X из Y строк» — реальная скорость сканирования, видимая пользователю.
+    /// 0/0 — проход не начат (нет данных).
+    /// </summary>
+    internal static int ScanProgressCursor
+    {
+      get
+      {
+        lock (Gate)
+        {
+          return Math.Max(
+              Math.Max(_brokenCursor, _drawingCursor),
+              Math.Max(_dxfCursor, _pdfCursor));
+        }
+      }
+    }
+
+    /// <summary>Число записей реестра в текущем проходе (0 — стор не загружен).</summary>
+    internal static int ScanProgressTotal
+    {
+      get
+      {
+        VelumProductRegistryStore store = _store;
+        if (store == null)
+          return 0;
+        return store.GetAllItems().Length;
+      }
+    }
 
     internal static void NotifyRegistryChanged()
     {
