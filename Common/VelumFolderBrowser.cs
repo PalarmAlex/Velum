@@ -1,9 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using Velum.ReactiveCore.Export;
 
 namespace Velum.UI
 {
@@ -11,6 +14,10 @@ namespace Velum.UI
   /// Выбор существующего каталога. Заменяет <see cref="FolderBrowserDialog"/>,
   /// у которого оболочка Windows всё равно даёт New Folder / Rename / Cut через
   /// дерево и контекстное меню. Предоставляет встроенную кнопку создания каталога.
+  /// Все обращения к файловой системе (проверки существования, перечисление
+  /// подкаталогов, метки томов) выполняются с жёстким таймаутом: на битой сетевой
+  /// ссылке (оборванный VPN, отключённый сетевой диск) прямой вызов блокирует
+  /// UI-поток на десятки секунд.
   /// </summary>
   internal static class VelumFolderBrowser
   {
@@ -51,9 +58,16 @@ namespace Velum.UI
       private readonly string _initialPath;
 
       // Показ скрытых и системных каталогов повторяет настройку Проводника;
-      // значения перечитываются при каждом открытии диалога.
-      private readonly bool _showHiddenFolders;
-      private readonly bool _showSystemFolders;
+      // значения перечитываются при каждом открытии диалога. Статические копии —
+      // для фоновых задач перечисления (Task.Run), у которых нет доступа к this.
+      private static bool _showHiddenFolders;
+      private static bool _showSystemFolders;
+
+      /// <summary>Статическая копия <see cref="_showHiddenFolders"/> на момент открытия диалога.</summary>
+      private static bool _showHiddenFoldersStatic;
+
+      /// <summary>Статическая копия <see cref="_showSystemFolders"/> на момент открытия диалога.</summary>
+      private static bool _showSystemFoldersStatic;
 
       private string _selectedPath;
       private bool _initialSelectionApplied;
@@ -78,6 +92,8 @@ namespace Velum.UI
         _initialPath = initialPath;
         _showHiddenFolders = ReadExplorerAdvancedFlag("Hidden");
         _showSystemFolders = ReadExplorerAdvancedFlag("ShowSuperHidden");
+        _showHiddenFoldersStatic = _showHiddenFolders;
+        _showSystemFoldersStatic = _showSystemFolders;
 
         var root = new TableLayoutPanel
         {
@@ -226,11 +242,29 @@ namespace Velum.UI
           TryAddDesktopRootNode();
           foreach (DriveInfo drive in DriveInfo.GetDrives())
           {
-            if (!drive.IsReady)
+            // Сетевые диски добавляем всегда, даже недоступные (оборванный VPN):
+            // DriveInfo.IsReady на недоступном сетевом диске сам блокирует поток
+            // на десятки секунд, а скрывать диск из-за обрыва связи неверно —
+            // пользователь должен иметь возможность выбрать его после восстановления.
+            bool isNetwork = false;
+            try
+            {
+              isNetwork = drive.DriveType == DriveType.Network;
+            }
+            catch
+            {
+              // ignore
+            }
+
+            if (!isNetwork && !drive.IsReady)
               continue;
 
             string rootPath = drive.RootDirectory.FullName;
-            TreeNode node = CreateFolderNode(rootPath, FormatDriveCaption(drive));
+            bool available = isNetwork
+                ? VelumPathExists.DirectoryExists(rootPath)
+                : true;
+            string caption = FormatDriveCaption(drive, available);
+            TreeNode node = CreateFolderNode(rootPath, caption);
             _tree.Nodes.Add(node);
           }
         }
@@ -246,22 +280,15 @@ namespace Velum.UI
 
       private void TryAddDesktopRootNode()
       {
-        try
-        {
-          string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-          if (string.IsNullOrWhiteSpace(desktopPath) || !Directory.Exists(desktopPath))
-            return;
+        string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+        if (string.IsNullOrWhiteSpace(desktopPath) || !VelumPathExists.DirectoryExists(desktopPath))
+          return;
 
-          TreeNode node = CreateFolderNode(desktopPath, "Рабочий стол");
-          _tree.Nodes.Add(node);
-        }
-        catch
-        {
-          // ignore
-        }
+        TreeNode node = CreateFolderNode(desktopPath, "Рабочий стол");
+        _tree.Nodes.Add(node);
       }
 
-      private static string FormatDriveCaption(DriveInfo drive)
+      private static string FormatDriveCaption(DriveInfo drive, bool available)
       {
         string root = drive.RootDirectory.FullName.TrimEnd('\\', '/');
         string label = null;
@@ -274,29 +301,31 @@ namespace Velum.UI
           // ignore
         }
 
+        string caption;
         if (string.IsNullOrWhiteSpace(label))
-          return root;
-        return label.Trim() + " (" + root + ")";
+          caption = root;
+        else
+          caption = label.Trim() + " (" + root + ")";
+
+        // Недоступный сетевой диск помечаем в подписи: пользователь видит причину,
+        // по которой узел не раскрывается, без попыток раскрытия и зависаний.
+        if (!available)
+          caption = caption + " (недоступен)";
+
+        return caption;
       }
 
       private TreeNode CreateFolderNode(string fullPath, string caption)
       {
         var node = new TreeNode(caption ?? GetFolderCaption(fullPath))
         {
-          Tag = fullPath,
-          Name = fullPath,
+            Tag = fullPath,
+            Name = fullPath,
         };
 
         // Заглушка: раскрытие подгрузит дочерние каталоги.
-        try
-        {
-          if (Directory.Exists(fullPath) && HasAnyVisibleSubdirectory(fullPath))
-            node.Nodes.Add(new TreeNode());
-        }
-        catch
-        {
-          // ignore access errors
-        }
+        if (VelumPathExists.DirectoryExists(fullPath) && HasAnyVisibleSubdirectory(fullPath))
+          node.Nodes.Add(new TreeNode());
 
         return node;
       }
@@ -312,37 +341,55 @@ namespace Velum.UI
 
       /// <summary>
       /// Есть ли в каталоге дочерние каталоги, видимые при текущей настройке Проводника
-      /// (иначе узел не должен получать маркер раскрытия).
+      /// (иначе узел не должен получать маркер раскрытия). Перечисление — в пуле
+      /// потоков с таймаутом: на битой сетевой ссылке <c>EnumerateDirectories</c>
+      /// блокирует поток на десятки секунд.
       /// </summary>
-      private bool HasAnyVisibleSubdirectory(string fullPath)
+      private static bool HasAnyVisibleSubdirectory(string fullPath)
       {
         try
         {
-          foreach (DirectoryInfo child in new DirectoryInfo(fullPath).EnumerateDirectories())
+          Task<bool> task = Task.Run(() =>
           {
-            if (IsDirectoryVisible(child.Attributes))
-              return true;
-          }
+            try
+            {
+              foreach (DirectoryInfo child in new DirectoryInfo(fullPath).EnumerateDirectories())
+              {
+                if (IsDirectoryVisible(child.Attributes))
+                  return true;
+              }
+            }
+            catch
+            {
+              // нет доступа — считаем, что видимых вложенных каталогов нет
+            }
+
+            return false;
+          });
+
+          if (!task.Wait(QuickProbeTimeoutMs) || task.IsFaulted || task.IsCanceled)
+            return false;
+
+          return task.Result;
         }
         catch
         {
-          // нет доступа — считаем, что видимых вложенных каталогов нет
+          return false;
         }
-
-        return false;
       }
 
       /// <summary>
       /// Показывать ли каталог с такими атрибутами — по настройкам Проводника Windows:
       /// «скрытые» (Hidden) видны при «Показывать скрытые файлы, папки и диски»,
       /// «системные» (System) — при снятом флажке «Скрывать защищённые системные файлы».
+      /// Вызывается в т.ч. из фоновых задач — читает статические копии флагов.
       /// </summary>
-      private bool IsDirectoryVisible(FileAttributes attributes)
+      private static bool IsDirectoryVisible(FileAttributes attributes)
       {
-        if ((attributes & FileAttributes.System) != 0 && !_showSystemFolders)
+        if ((attributes & FileAttributes.System) != 0 && !_showSystemFoldersStatic)
           return false;
 
-        if ((attributes & FileAttributes.Hidden) != 0 && !_showHiddenFolders)
+        if ((attributes & FileAttributes.Hidden) != 0 && !_showHiddenFoldersStatic)
           return false;
 
         return true;
@@ -377,6 +424,9 @@ namespace Velum.UI
         }
       }
 
+      /// <summary>Таймаут одной фоновой операции ФС (перечисление каталога), мс.</summary>
+      private const int QuickProbeTimeoutMs = 1500;
+
       private void OnBeforeExpand(object sender, TreeViewCancelEventArgs e)
       {
         TreeNode node = e.Node;
@@ -392,19 +442,62 @@ namespace Velum.UI
           return;
 
         node.Nodes.Clear();
+
+        // Перечисление подкаталогов — в пуле потоков с таймаутом: на битой сетевой
+        // ссылке прямой EnumerateDirectories в UI-потоке вешает диалог на десятки секунд.
+        List<string> childPaths = TryEnumerateVisibleSubdirectories(path);
+        if (childPaths == null)
+        {
+          // Каталог не ответил (недоступен/таймаут): показываем «недоступен» без
+          // маркера раскрытия — повторная попытка возможна после сворачивания
+          // и повторного раскрытия узла.
+          node.Nodes.Add(new TreeNode("(недоступен)"));
+          return;
+        }
+
+        foreach (string childPath in childPaths)
+          node.Nodes.Add(CreateFolderNode(childPath, null));
+      }
+
+      /// <summary>
+      /// Перечисляет видимые подкаталоги каталога в пуле потоков с таймаутом.
+      /// null — каталог недоступен или не ответил вовремя (битая сетевая ссылка).
+      /// </summary>
+      private static List<string> TryEnumerateVisibleSubdirectories(string fullPath)
+      {
+        if (!VelumPathExists.DirectoryExists(fullPath))
+          return null;
+
         try
         {
-          foreach (DirectoryInfo child in new DirectoryInfo(path).EnumerateDirectories())
+          Task<List<string>> task = Task.Run(() =>
           {
-            if (!IsDirectoryVisible(child.Attributes))
-              continue;
+            var result = new List<string>();
+            try
+            {
+              foreach (DirectoryInfo child in new DirectoryInfo(fullPath).EnumerateDirectories())
+              {
+                if (!IsDirectoryVisible(child.Attributes))
+                  continue;
+                result.Add(child.FullName);
+              }
+            }
+            catch
+            {
+              // нет доступа — отдаём что успели собрать
+            }
 
-            node.Nodes.Add(CreateFolderNode(child.FullName, null));
-          }
+            return result;
+          });
+
+          if (!task.Wait(QuickProbeTimeoutMs) || task.IsFaulted || task.IsCanceled)
+            return null;
+
+          return task.Result;
         }
         catch
         {
-          // leave empty on access denied
+          return null;
         }
       }
 
@@ -417,7 +510,7 @@ namespace Velum.UI
       private void OnPathBoxTextChanged(object sender, EventArgs e)
       {
         string typed = (_pathBox.Text ?? string.Empty).Trim();
-        if (!string.IsNullOrEmpty(typed) && Directory.Exists(typed))
+        if (!string.IsNullOrEmpty(typed) && VelumPathExists.DirectoryExists(typed))
         {
           _selectedPath = typed;
           _okButton.Enabled = true;
@@ -473,7 +566,7 @@ namespace Velum.UI
       private void OnCreateFolderClick(object sender, EventArgs e)
       {
         string parentPath = _tree.SelectedNode?.Tag as string;
-        if (string.IsNullOrEmpty(parentPath) || !Directory.Exists(parentPath))
+        if (string.IsNullOrEmpty(parentPath) || !VelumPathExists.DirectoryExists(parentPath))
         {
           MessageBox.Show(
               this,
@@ -717,7 +810,7 @@ namespace Velum.UI
 
       private void SetSelectedPath(string path, bool updatePathBox)
       {
-        if (!string.IsNullOrEmpty(path) && Directory.Exists(path))
+        if (!string.IsNullOrEmpty(path) && VelumPathExists.DirectoryExists(path))
         {
           _selectedPath = path;
           if (updatePathBox && !string.Equals(_pathBox.Text, path, StringComparison.OrdinalIgnoreCase))
@@ -735,7 +828,7 @@ namespace Velum.UI
 
       private void OnOkClick(object sender, EventArgs e)
       {
-        if (string.IsNullOrEmpty(_selectedPath) || !Directory.Exists(_selectedPath))
+        if (string.IsNullOrEmpty(_selectedPath) || !VelumPathExists.DirectoryExists(_selectedPath))
         {
           MessageBox.Show(
               this,
@@ -809,27 +902,13 @@ namespace Velum.UI
           return null;
 
         // Если указали файл — берём его каталог.
-        try
-        {
-          if (File.Exists(path))
-            path = Path.GetDirectoryName(path) ?? path;
-        }
-        catch
-        {
-          // ignore
-        }
+        if (VelumPathExists.FileExists(path))
+          path = Path.GetDirectoryName(path) ?? path;
 
         while (!string.IsNullOrWhiteSpace(path))
         {
-          try
-          {
-            if (Directory.Exists(path))
-              return path;
-          }
-          catch
-          {
-            return null;
-          }
+          if (VelumPathExists.DirectoryExists(path))
+            return path;
 
           string parent;
           try
@@ -945,17 +1024,10 @@ namespace Velum.UI
 
         if (node.Nodes.Count == 0)
         {
-          try
+          if (VelumPathExists.DirectoryExists(path) && HasAnyVisibleSubdirectory(path))
           {
-            if (Directory.Exists(path) && HasAnyVisibleSubdirectory(path))
-            {
-              node.Nodes.Add(new TreeNode());
-              OnBeforeExpand(this, new TreeViewCancelEventArgs(node, false, TreeViewAction.Expand));
-            }
-          }
-          catch
-          {
-            // ignore
+            node.Nodes.Add(new TreeNode());
+            OnBeforeExpand(this, new TreeViewCancelEventArgs(node, false, TreeViewAction.Expand));
           }
         }
       }
