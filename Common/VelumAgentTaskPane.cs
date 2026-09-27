@@ -1003,19 +1003,13 @@ namespace Velum.UI
       int period = VelumProductRegistryIntegrityScheduler.HeavyMetricsPulsePeriod;
       string baseText = $"Сканирование №{iteration} ({period} пул.): ";
 
-      // Диагностика: текст метки и состояние сканирования на каждом обновлении.
-      Logger.Info(
-          "VelumAgentTaskPane scan status: iteration=" + iteration
-          + " tickInFlight=" + VelumProductRegistryIntegrityScheduler.IsTickInFlight
-          + " passActive=" + VelumProductRegistryIntegrityScheduler.IsDiscoveryPassActive
-          + " hasProblems=" + VelumProductRegistryProblemCache.HasAny);
-
-      // «выполняется…» — только когда тик реально исполняется в фоновом потоке.
-      // Между тиками проходы продолжаются по курсорам, но найденные проблемы уже
-      // опубликованы в кэш (pending учитывается), поэтому показываем результат.
-      if (VelumProductRegistryIntegrityScheduler.IsTickInFlight)
+      // Проход ещё не завершён: вердикт «проблем нет/есть» преждевременен —
+      // найденные проблемы публикуются только по завершении прохода, и надпись
+      // «проблем нет» в середине прохода вводила в заблуждение (счётчик № растёт,
+      // а статус уже «итоговый»). Во время прохода показываем процесс.
+      if (VelumProductRegistryIntegrityScheduler.IsDiscoveryPassActive)
       {
-        _lblRegistryScanStatus.Text = baseText + "выполняется…";
+        _lblRegistryScanStatus.Text = baseText + "идёт проход реестра…";
         _lblRegistryScanStatus.ForeColor = Color.FromArgb(0, 112, 192);
         _lblRegistryScanStatus.Visible = true;
         return;
