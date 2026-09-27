@@ -257,11 +257,14 @@ namespace Velum.UI.ProductRegistry
     internal static int ScanIterationCount => Volatile.Read(ref _scanIterationCount);
 
     /// <summary>
-    /// Прогресс текущего прохода: сколько строк реестра пройдено самым медленным
-    /// из ещё не завершившихся сканеров; завершившийся сканер (done) считается
-    /// как весь реестр — его курсор после commit сбрасывается в 0, и без учёта
-    /// done прогресс «падал» обратно в середине цикла. Для статуса панели:
-    /// «пройдено X из Y строк» — реальная скорость сканирования.
+    /// Прогресс текущего прохода: сколько строк реестра пройдено самым МЕДЛЕННЫМ
+    /// из ещё не завершившихся сканеров (min по курсорам not-done); завершившийся
+    /// сканер (done) считается как весь реестр — его курсор после commit сбрасывается
+    /// в 0. Max по курсорам показывал лидера: у сетевых сканеров курсор — индекс в
+    /// общем списке, а квант — отфильтрованные записи, поэтому их курсоры перескакивают
+    /// через тысячи строк; плюс любой done при max залипал на total, пока шёл
+    /// последний сканер. Для статуса панели: «пройдено X из Y строк» — честный
+    /// прогресс цикла (монотонный: курсоры not-done только растут, вклад done = total).
     /// </summary>
     internal static int ScanProgressCursor
     {
@@ -274,15 +277,18 @@ namespace Velum.UI.ProductRegistry
             if (store != null)
               total = store.GetAllItems().Length;
 
-            int max = Math.Max(
-                Math.Max(_brokenCursor, _drawingCursor),
-                Math.Max(_dxfCursor, _pdfCursor));
+            // Все done (момент перед закрытием цикла) — весь реестр пройден.
+            int min = total;
+            if (!_brokenPassDone)
+              min = Math.Min(min, _brokenCursor);
+            if (!_drawingPassDone)
+              min = Math.Min(min, _drawingCursor);
+            if (!_dxfPassDone)
+              min = Math.Min(min, _dxfCursor);
+            if (!_pdfPassDone)
+              min = Math.Min(min, _pdfCursor);
 
-            // Завершившиеся сканеры прошли весь реестр: их вклад — total.
-            if (_brokenPassDone || _drawingPassDone || _dxfPassDone || _pdfPassDone)
-              max = Math.Max(max, total);
-
-            return max;
+            return min;
           }
         }
     }
