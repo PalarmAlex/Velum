@@ -91,7 +91,21 @@ namespace Velum.UI.ProductRegistry
       List<VelumRegistryScanBatch.Entry> quant =
           TakeQuant(items, searchCursor, budget, scopedItemIds != null);
       if (quant.Count == 0)
-        return false;
+      {
+        // Пустой квант — от курсора до конца списка не осталось ни одной записи:
+        // полный проход реестра завершён, pending коммитится (иначе passCompleted
+        // никогда не станет true и счётчик итераций в шедулере не сбросится).
+        if (passActive)
+        {
+          VelumProductRegistryProblemCache.CommitPendingPass(
+              VelumProductRegistryProblemKind.BrokenLink);
+          passCompleted = true;
+        }
+
+        searchCursor = 0;
+        passActive = false;
+        return passCompleted;
+      }
 
       searchCursor = VelumRegistryScanBatch.NextCursor(
           quant, quant[quant.Count - 1].Index, searchCursor);

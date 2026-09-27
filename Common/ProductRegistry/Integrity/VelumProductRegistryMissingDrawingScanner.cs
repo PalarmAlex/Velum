@@ -82,7 +82,21 @@ namespace Velum.UI.ProductRegistry
               (VelumProductItem it) =>
                   VelumProductRegistryIntegrityRules.IsPartOrAssemblyPath(it.FilePath));
       if (quant.Count == 0)
-        return false;
+      {
+        // Пустой квант — от курсора до конца списка не осталось записей по фильтру:
+        // полный проход завершён, pending коммитится (иначе passCompleted никогда
+        // не станет true и счётчик итераций в шедулере не сбросится).
+        if (passActive)
+        {
+          VelumProductRegistryProblemCache.CommitPendingPass(
+              VelumProductRegistryProblemKind.MissingDrawing);
+          passCompleted = true;
+        }
+
+        searchCursor = 0;
+        passActive = false;
+        return passCompleted;
+      }
 
       searchCursor = VelumRegistryScanBatch.NextCursor(
           quant, quant[quant.Count - 1].Index, searchCursor);
