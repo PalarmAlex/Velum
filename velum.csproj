@@ -125,6 +125,7 @@
     <Compile Include="ReactiveCore\Export\VelumDxfThicknessDeliveryFolder.cs" />
     <Compile Include="ReactiveCore\Export\VelumDxfFinalizeService.cs" />
     <Compile Include="ReactiveCore\Export\VelumDxfNeedFlagResolver.cs" />
+    <Compile Include="ReactiveCore\Export\VelumDxfArtifactNameRules.cs" />
     <Compile Include="ReactiveCore\Export\VelumDxfArtifactResolver.cs" />
     <Compile Include="ReactiveCore\VelumMaterialBatchScanner.cs" />
     <Compile Include="ReactiveCore\VelumDocumentPropertyBatchHelper.cs" />

@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <AssemblyName>Velum.ReactiveCore.Tests</AssemblyName>
+    <RootNamespace>Velum.ReactiveCore.Tests</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <!-- Linкуемые чистые классы из основного проекта (без SolidWorks / WinForms / isida.dll) -->
+  <ItemGroup>
+    <Compile Include="..\ReactiveCore\RecipeArgsParser.cs" Link="src\RecipeArgsParser.cs" />
+    <Compile Include="..\ReactiveCore\RecipeDispatchCooldownTracker.cs" Link="src\RecipeDispatchCooldownTracker.cs" />
+    <Compile Include="..\ReactiveCore\Export\VelumDxfQuantityToken.cs" Link="src\VelumDxfQuantityToken.cs" />
+    <Compile Include="..\ReactiveCore\VelumBlankSizeProperties.cs" Link="src\VelumBlankSizeProperties.cs" />
+    <Compile Include="..\ReactiveCore\RecipeDispatchEpisodeTracker.cs" Link="src\RecipeDispatchEpisodeTracker.cs" />
+    <Compile Include="..\ReactiveCore\Export\VelumDxfArtifactNameRules.cs" Link="src\VelumDxfArtifactNameRules.cs" />
+  </ItemGroup>
+
+  <!-- Заглушки ISIDA.Common (без isida.dll) -->
+  <ItemGroup>
+    <Compile Include="Fakes\GlobalTimer.cs" Link="fakes\GlobalTimer.cs" />
+    <Compile Include="Fakes\Logger.cs" Link="fakes\Logger.cs" />
+  </ItemGroup>
+
+  <!-- Собственные файлы тестов -->
+  <ItemGroup>
+    <Compile Include="SmokeTests.cs" />
+    <Compile Include="RecipeArgsParserTests.cs" />
+    <Compile Include="RecipeDispatchCooldownTrackerTests.cs" />
+    <Compile Include="VelumDxfQuantityTokenTests.cs" />
+    <Compile Include="VelumBlankSizePropertiesTests.cs" />
+    <Compile Include="RecipeDispatchEpisodeTrackerTests.cs" />
+    <Compile Include="VelumDxfArtifactNameRulesTests.cs" />
+  </ItemGroup>
+
+</Project>
