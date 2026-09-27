@@ -686,6 +686,16 @@ namespace Velum.UI.ProductRegistry
 
       Interlocked.Increment(ref _scanIterationCount);
 
+      // Диагностика цикла: состояние всех проходов на каждом тике. По движению
+      // курсоров видно прогресс; по флагам done — что мешает закрытию цикла.
+      Logger.Info(
+          "Velum registry integrity tick: iteration=" + _scanIterationCount
+          + " items=" + store.GetAllItems().Length
+          + " cursors broken=" + _brokenCursor + "/" + _brokenPassDone
+          + " drawing=" + _drawingCursor + "/" + _drawingPassDone
+          + " dxf=" + _dxfCursor + "/" + _dxfPassDone
+          + " pdf=" + _pdfCursor + "/" + _pdfPassDone);
+
       // Колбэк остановки кванта: следующий тяжёлый пульс пришёл или документ открылся.
       // Сканеры проверяют его между элементами и уступают, сохраняя курсор.
       Func<bool> shouldStop = () =>
