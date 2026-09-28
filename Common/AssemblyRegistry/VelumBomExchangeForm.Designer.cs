@@ -98,7 +98,7 @@ namespace Velum.UI.AssemblyRegistry
       this._folderBox.Margin = new System.Windows.Forms.Padding(0, 2, 4, 2);
       this._folderBox.Name = "_folderBox";
       this._folderBox.ReadOnly = true;
-      this._folderBox.Size = new System.Drawing.Size(313, 20);
+      this._folderBox.Size = new System.Drawing.Size(633, 20);
       this._folderBox.TabIndex = 1;
       this._toolTip.SetToolTip(this._folderBox, "Каталог, в который сохраняются CSV-файлы обмена с 1C.");
       // 
@@ -106,7 +106,7 @@ namespace Velum.UI.AssemblyRegistry
       // 
       this._browseButton.AutoSize = true;
       this._browseButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this._browseButton.Location = new System.Drawing.Point(421, 2);
+      this._browseButton.Location = new System.Drawing.Point(744, 2);
       this._browseButton.Margin = new System.Windows.Forms.Padding(4, 2, 0, 2);
       this._browseButton.Name = "_browseButton";
       this._browseButton.Size = new System.Drawing.Size(75, 23);
@@ -156,7 +156,8 @@ namespace Velum.UI.AssemblyRegistry
       // 
       this._registryFilterCheck.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this._registryFilterCheck.AutoSize = true;
-      this._registryFilterCheck.Location = new System.Drawing.Point(100, 39);
+      this._registryFilterCheck.Location = new System.Drawing.Point(103, 4);
+      this._registryFilterCheck.Margin = new System.Windows.Forms.Padding(3, 4, 3, 3);
       this._registryFilterCheck.Name = "_registryFilterCheck";
       this._registryFilterCheck.Size = new System.Drawing.Size(240, 17);
       this._registryFilterCheck.TabIndex = 4;
@@ -177,10 +178,10 @@ namespace Velum.UI.AssemblyRegistry
       this._tabs.Controls.Add(this._cardsTab);
       this._tabs.Controls.Add(this._structureTab);
       this._tabs.Dock = System.Windows.Forms.DockStyle.Fill;
-      this._tabs.Location = new System.Drawing.Point(15, 99);
+      this._tabs.Location = new System.Drawing.Point(15, 116);
       this._tabs.Name = "_tabs";
       this._tabs.SelectedIndex = 0;
-      this._tabs.Size = new System.Drawing.Size(490, 180);
+      this._tabs.Size = new System.Drawing.Size(810, 180);
       this._tabs.TabIndex = 5;
       // 
       // _cardsTab
@@ -189,7 +190,7 @@ namespace Velum.UI.AssemblyRegistry
       this._cardsTab.Location = new System.Drawing.Point(4, 22);
       this._cardsTab.Name = "_cardsTab";
       this._cardsTab.Padding = new System.Windows.Forms.Padding(3);
-      this._cardsTab.Size = new System.Drawing.Size(482, 154);
+      this._cardsTab.Size = new System.Drawing.Size(802, 154);
       this._cardsTab.TabIndex = 0;
       this._cardsTab.Text = "Карточки";
       this._cardsTab.UseVisualStyleBackColor = true;
@@ -200,7 +201,7 @@ namespace Velum.UI.AssemblyRegistry
       this._structureTab.Location = new System.Drawing.Point(4, 22);
       this._structureTab.Name = "_structureTab";
       this._structureTab.Padding = new System.Windows.Forms.Padding(3);
-      this._structureTab.Size = new System.Drawing.Size(482, 154);
+      this._structureTab.Size = new System.Drawing.Size(802, 154);
       this._structureTab.TabIndex = 1;
       this._structureTab.Text = "Структура";
       this._structureTab.UseVisualStyleBackColor = true;
@@ -220,7 +221,7 @@ namespace Velum.UI.AssemblyRegistry
       this._listView.HideSelection = false;
       this._listView.Location = new System.Drawing.Point(3, 3);
       this._listView.Name = "_listView";
-      this._listView.Size = new System.Drawing.Size(476, 148);
+      this._listView.Size = new System.Drawing.Size(796, 148);
       this._listView.TabIndex = 0;
       this._toolTip.SetToolTip(this._listView, "Карточки, которые попадут в 1C_update_*.csv. Состав колонок настраивается кнопкой «Поля…».");
       this._listView.UseCompatibleStateImageBehavior = false;
@@ -266,7 +267,7 @@ namespace Velum.UI.AssemblyRegistry
       this._structureListView.HideSelection = false;
       this._structureListView.Location = new System.Drawing.Point(3, 3);
       this._structureListView.Name = "_structureListView";
-      this._structureListView.Size = new System.Drawing.Size(476, 148);
+      this._structureListView.Size = new System.Drawing.Size(796, 148);
       this._structureListView.TabIndex = 0;
       this._toolTip.SetToolTip(this._structureListView, "Строки состава, которые попадут в 1C_bom_*.csv (операции add/update/delete).");
       this._structureListView.UseCompatibleStateImageBehavior = false;
@@ -304,21 +305,23 @@ namespace Velum.UI.AssemblyRegistry
       this.root.Controls.Add(this.titleLabel, 0, 0);
       this.root.Controls.Add(this.descLabel, 0, 1);
       this.root.Controls.Add(this.folderRow, 0, 2);
-      this.root.Controls.Add(this._tabs, 0, 3);
-      this.root.Controls.Add(this.noteLabel, 0, 4);
-      this.root.Controls.Add(this.buttonsRow, 0, 5);
+      this.root.Controls.Add(this._registryFilterCheck, 0, 3);
+      this.root.Controls.Add(this._tabs, 0, 4);
+      this.root.Controls.Add(this.noteLabel, 0, 5);
+      this.root.Controls.Add(this.buttonsRow, 0, 6);
       this.root.Dock = System.Windows.Forms.DockStyle.Fill;
       this.root.Location = new System.Drawing.Point(0, 0);
       this.root.Name = "root";
       this.root.Padding = new System.Windows.Forms.Padding(12);
-      this.root.RowCount = 6;
+      this.root.RowCount = 7;
       this.root.RowStyles.Add(new System.Windows.Forms.RowStyle());
       this.root.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-      this.root.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 42F));
+      this.root.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
+      this.root.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 24F));
       this.root.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
       this.root.RowStyles.Add(new System.Windows.Forms.RowStyle());
       this.root.RowStyles.Add(new System.Windows.Forms.RowStyle());
-      this.root.Size = new System.Drawing.Size(520, 340);
+      this.root.Size = new System.Drawing.Size(840, 340);
       this.root.TabIndex = 0;
       // 
       // titleLabel
@@ -329,7 +332,7 @@ namespace Velum.UI.AssemblyRegistry
       this.titleLabel.Location = new System.Drawing.Point(12, 12);
       this.titleLabel.Margin = new System.Windows.Forms.Padding(0, 0, 0, 4);
       this.titleLabel.Name = "titleLabel";
-      this.titleLabel.Size = new System.Drawing.Size(496, 13);
+      this.titleLabel.Size = new System.Drawing.Size(816, 13);
       this.titleLabel.TabIndex = 0;
       this.titleLabel.Text = "Экспорт BOM-данных в 1C";
       // 
@@ -340,7 +343,7 @@ namespace Velum.UI.AssemblyRegistry
       this.descLabel.Location = new System.Drawing.Point(12, 29);
       this.descLabel.Margin = new System.Windows.Forms.Padding(0, 0, 0, 8);
       this.descLabel.Name = "descLabel";
-      this.descLabel.Size = new System.Drawing.Size(496, 17);
+      this.descLabel.Size = new System.Drawing.Size(816, 17);
       this.descLabel.TabIndex = 1;
       this.descLabel.Text = "Формирует CSV-файлы обмена с 1C: карточки номенклатуры и структура состава сборок.";
       // 
@@ -353,15 +356,13 @@ namespace Velum.UI.AssemblyRegistry
       this.folderRow.Controls.Add(this.folderLabel, 0, 0);
       this.folderRow.Controls.Add(this._folderBox, 1, 0);
       this.folderRow.Controls.Add(this._browseButton, 2, 0);
-      this.folderRow.Controls.Add(this._registryFilterCheck, 0, 1);
       this.folderRow.Dock = System.Windows.Forms.DockStyle.Fill;
       this.folderRow.Location = new System.Drawing.Point(12, 54);
       this.folderRow.Margin = new System.Windows.Forms.Padding(0, 0, 0, 6);
       this.folderRow.Name = "folderRow";
-      this.folderRow.RowCount = 2;
-      this.folderRow.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 36F));
-      this.folderRow.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 18F));
-      this.folderRow.Size = new System.Drawing.Size(496, 54);
+      this.folderRow.RowCount = 1;
+      this.folderRow.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
+      this.folderRow.Size = new System.Drawing.Size(816, 32);
       this.folderRow.TabIndex = 2;
       // 
       // folderLabel
@@ -383,7 +384,7 @@ namespace Velum.UI.AssemblyRegistry
       this.noteLabel.Location = new System.Drawing.Point(12, 282);
       this.noteLabel.Margin = new System.Windows.Forms.Padding(0, 0, 0, 4);
       this.noteLabel.Name = "noteLabel";
-      this.noteLabel.Size = new System.Drawing.Size(496, 13);
+      this.noteLabel.Size = new System.Drawing.Size(816, 13);
       this.noteLabel.TabIndex = 3;
       this.noteLabel.Text = "Компоненты без заполненного ExternalId будут пропущены при экспорте.";
       // 
@@ -399,7 +400,7 @@ namespace Velum.UI.AssemblyRegistry
       this.buttonsRow.Location = new System.Drawing.Point(12, 299);
       this.buttonsRow.Margin = new System.Windows.Forms.Padding(0);
       this.buttonsRow.Name = "buttonsRow";
-      this.buttonsRow.Size = new System.Drawing.Size(496, 29);
+      this.buttonsRow.Size = new System.Drawing.Size(816, 29);
       this.buttonsRow.TabIndex = 4;
       this.buttonsRow.WrapContents = false;
       // 
@@ -407,7 +408,7 @@ namespace Velum.UI.AssemblyRegistry
       // 
       this.cancelButton.AutoSize = true;
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.cancelButton.Location = new System.Drawing.Point(418, 3);
+      this.cancelButton.Location = new System.Drawing.Point(738, 3);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.Size = new System.Drawing.Size(75, 23);
       this.cancelButton.TabIndex = 0;
@@ -418,7 +419,7 @@ namespace Velum.UI.AssemblyRegistry
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(520, 340);
+      this.ClientSize = new System.Drawing.Size(840, 340);
       this.Controls.Add(this.root);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
