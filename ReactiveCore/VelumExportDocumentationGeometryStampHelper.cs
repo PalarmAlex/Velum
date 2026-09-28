@@ -78,6 +78,14 @@ namespace Velum.ReactiveCore
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
+    /// Имя активной конфигурации по ключу документа. Смена активной (переключение
+    /// конфигурации в UI) поднимает GetUpdateStamp и шлёт Regen/Modify, но геометрию
+    /// не меняет — такой всплеск не должен писать pending в новую активную конфигурацию.
+    /// </summary>
+    private static readonly Dictionary<string, string> _activeConfigNameByDoc =
+        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
     /// Выполняет запись метаданных экспорта без рекурсивного pending-sync по ModifyNotify.
     /// </summary>
     internal static void RunWithGeometryPendingStampSyncSuppressed(Action action)
@@ -167,12 +175,23 @@ namespace Velum.ReactiveCore
         return;
       }
 
+      // Переключение активной конфигурации поднимает GetUpdateStamp и шлёт Regen/Modify,
+      // но геометрию не меняет — не пишем pending в новую активную конфигурацию.
+      if (TryAbsorbActiveConfigurationChange(modelDoc))
+      {
+        CaptureFlatPatternFoldSignature(modelDoc);
+        return;
+      }
+
       CaptureFlatPatternFoldSignature(modelDoc);
 
       _geometryPendingStampSyncDepth++;
       try
       {
-        string configName = VelumDxfArtifactResolver.TryGetActiveConfigurationName(modelDoc);
+        // DXF-конфигурация: развёртку SheetMetal сводим к родителю, служебные вкладки
+        // исключаем. Иначе pending уходил бы в SM-FLAT-PATTERN, которую TryIsDxfOutdated
+        // не читает, а реальная конфигурация оставалась бы без pending.
+        string configName = VelumDxfArtifactResolver.TryResolveDefaultExportConfigurationName(modelDoc);
         TrySyncPendingGeometryStamp(modelDoc, configName, out _);
       }
       finally
@@ -275,6 +294,43 @@ namespace Velum.ReactiveCore
 
       _flatPatternFoldSignatureByDoc[key] =
           VelumSolidSheetMetalHelper.ComputeFlatPatternFoldSignature(modelDoc);
+
+      // Baseline активной конфигурации: синхронизируется при открытии/Save/экспорте,
+      // чтобы последующее переключение конфигурации не выглядело как правка геометрии.
+      _activeConfigNameByDoc[key] =
+          VelumDxfArtifactResolver.TryGetActiveConfigurationName(modelDoc) ?? string.Empty;
+    }
+
+    /// <summary>
+    /// true — активная конфигурация сменилась относительно baseline (переключение
+    /// конфигурации в UI): это не правка геометрии DXF, pending писать нельзя.
+    ///_baseline_ обновляется на текущую активную. Если baseline ещё не зафиксирован —
+    /// только фиксируем и возвращаем false (первый контакт, как в <see cref="NotifyDrawingSheetEdited"/>).
+    /// </summary>
+    private static bool TryAbsorbActiveConfigurationChange(ModelDoc2 modelDoc)
+    {
+      if (modelDoc == null)
+        return false;
+
+      string key = TryGetDocumentKey(modelDoc);
+      if (string.IsNullOrEmpty(key) || string.Equals(key, "no_doc", StringComparison.Ordinal))
+        return false;
+
+      string current =
+          VelumDxfArtifactResolver.TryGetActiveConfigurationName(modelDoc) ?? string.Empty;
+
+      string previous;
+      if (!_activeConfigNameByDoc.TryGetValue(key, out previous))
+      {
+        _activeConfigNameByDoc[key] = current;
+        return false;
+      }
+
+      if (string.Equals(previous ?? string.Empty, current, StringComparison.OrdinalIgnoreCase))
+        return false;
+
+      _activeConfigNameByDoc[key] = current;
+      return true;
     }
 
     private static bool IsFlatPatternFoldOnlyChange(ModelDoc2 modelDoc)

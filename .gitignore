@@ -50,11 +50,13 @@ Setup/
 *.log
 msbuild-debug-out.txt
 
-# Документация Markdown (AGENTS.md, DEBUG_CASEBOOK.md и др.)
-# — рабочие файлы ИИ-сессий и правил проекта, не публикуются в GitHub.
+# Документация Markdown
 # README.md — исключение: витрина проекта на GitHub, обновляется и публикуется.
+# AGENTS.md, DEBUG_CASEBOOK.md - нужны для синхронизации на разных машинах разработки
 *.md
 !README.md
+!AGENTS.md
+!DEBUG_CASEBOOK.md
 
 # --------------------------------------------
 # 7. Временные файлы Windows / macOS / Linux
