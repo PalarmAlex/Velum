@@ -34,6 +34,9 @@ namespace Velum.UI
     public const string DxfSuffixes = "dxf-suffixes";
     public const string PdfBatch = "pdf-batch";
     public const string PdfExport = "pdf-export";
+    public const string BomExchange = "bom-exchange";
+    public const string BomExchangeLayout = "bom-exchange-layout";
+    public const string BomTrackedProperties = "bom-tracked-properties";
     public const string AgentTaskPane = "agent-taskpane";
     public const string EnvironmentMetrics = "environment-metrics";
     public const string OperatorInfluences = "operator-influences";
@@ -63,6 +66,9 @@ namespace Velum.UI
           { DxfSuffixes, Path.Combine("forms", "dxf-suffixes.html") },
           { PdfBatch, Path.Combine("forms", "pdf-batch.html") },
           { PdfExport, Path.Combine("forms", "pdf-export.html") },
+          { BomExchange, Path.Combine("forms", "bom-exchange.html") },
+          { BomExchangeLayout, Path.Combine("forms", "bom-exchange-layout.html") },
+          { BomTrackedProperties, Path.Combine("forms", "bom-tracked-properties.html") },
           { AgentTaskPane, Path.Combine("forms", "agent-taskpane.html") },
           { EnvironmentMetrics, Path.Combine("forms", "environment-metrics.html") },
           { OperatorInfluences, Path.Combine("forms", "operator-influences.html") },

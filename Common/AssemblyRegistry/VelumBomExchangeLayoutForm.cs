@@ -39,6 +39,7 @@ namespace Velum.UI.AssemblyRegistry
     {
       InitializeComponent();
       VelumFormIcon.Apply(this);
+      VelumFormHelp.Bind(this, VelumHelpTopics.BomExchangeLayout);
     }
 
     /// <summary>Загрузить layout и заполнить интерфейс.</summary>

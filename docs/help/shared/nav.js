@@ -67,7 +67,10 @@
         { t: "Экспорт DXF", h: "forms/dxf-export.html" },
         { t: "Суффиксы DXF", h: "forms/dxf-suffixes.html" },
         { t: "PDF пакет", h: "forms/pdf-batch.html" },
-        { t: "Экспорт PDF", h: "forms/pdf-export.html" }
+        { t: "Экспорт PDF", h: "forms/pdf-export.html" },
+        { t: "Экспорт BOM в 1С", h: "forms/bom-exchange.html" },
+        { t: "Поля выгрузки BOM", h: "forms/bom-exchange-layout.html" },
+        { t: "Отслеживаемые свойства BOM", h: "forms/bom-tracked-properties.html" }
       ]},
       { title: "Агент", items: [
         { t: "Панель «Агент»", h: "forms/agent-taskpane.html" },

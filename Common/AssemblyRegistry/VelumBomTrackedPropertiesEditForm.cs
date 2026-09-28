@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
+using Velum.UI;
 
 namespace Velum.UI.AssemblyRegistry
 {
@@ -16,6 +17,7 @@ namespace Velum.UI.AssemblyRegistry
     {
       InitializeComponent();
       VelumFormIcon.Apply(this);
+      VelumFormHelp.Bind(this, VelumHelpTopics.BomTrackedProperties);
       LoadList();
     }
 

@@ -51,6 +51,7 @@ namespace Velum.UI.AssemblyRegistry
     {
       InitializeComponent();
       VelumFormIcon.Apply(this);
+      VelumFormHelp.Bind(this, VelumHelpTopics.BomExchange);
       VelumAppConfig.EnsureInitialized();
       _folderBox.Text = VelumAppConfig.BomExchangeFolder;
 
