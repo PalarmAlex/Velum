@@ -22,7 +22,7 @@ namespace Velum.UI.AssemblyRegistry
     /// Ранг по ExternalId родителя — для записей журнала, где Identity отсутствует.
     /// </summary>
     private readonly Dictionary<string, int> _rankByParentExternalId =
-        new Dictionary<string, int>(StringComparer.Ordinal);
+        new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 
     private VelumBomExchangeHierarchyRanker()
     {

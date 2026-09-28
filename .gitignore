@@ -56,7 +56,8 @@ msbuild-debug-out.txt
 *.md
 !README.md
 !AGENTS.md
-!DEBUG_CASEBOOK.md
+!DEBUG_CASEBOOK_1.md
+!DEBUG_CASEBOOK_2.md
 
 # --------------------------------------------
 # 7. Временные файлы Windows / macOS / Linux

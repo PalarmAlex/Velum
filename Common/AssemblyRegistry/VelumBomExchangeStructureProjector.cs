@@ -26,7 +26,7 @@ namespace Velum.UI.AssemblyRegistry
 
       /// <summary>Структуры с расхождением (ParentExternalId → запись).</summary>
       public Dictionary<string, VelumBomStructureEntry> StructuresByParentExternalId { get; } =
-          new Dictionary<string, VelumBomStructureEntry>(StringComparer.Ordinal);
+          new Dictionary<string, VelumBomStructureEntry>(StringComparer.OrdinalIgnoreCase);
 
       /// <summary>
       /// ParentExternalId структур, по которым остались невыгруженные строки,
@@ -36,7 +36,7 @@ namespace Velum.UI.AssemblyRegistry
       /// не попадут в обмен даже после появления ExternalId у ребёнка.
       /// </summary>
       public HashSet<string> DeferredParentExternalIds { get; } =
-          new HashSet<string>(StringComparer.Ordinal);
+          new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     }
 
     /// <summary>

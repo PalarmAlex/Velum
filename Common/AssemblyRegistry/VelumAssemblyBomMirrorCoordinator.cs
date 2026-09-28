@@ -182,7 +182,7 @@ namespace Velum.UI.AssemblyRegistry
             trackedProperties);
 
         // Записываем значение в хранилище зеркала.
-        mirrorStore.SetValue
+        store.Upsert(
             identity,
             filePath,
             configurationName,

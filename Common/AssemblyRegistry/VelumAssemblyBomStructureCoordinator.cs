@@ -238,9 +238,21 @@ namespace Velum.UI.AssemblyRegistry
         bool existed = oldLines.TryGetValue(line.ChildIdentity, out oldLine);
         if (existed &&
             oldLine.Quantity == line.Quantity &&
-            string.Equals(oldLine.ChildExternalId, line.ChildExternalId, StringComparison.Ordinal))
+            string.Equals(
+                oldLine.ChildExternalId, line.ChildExternalId, StringComparison.OrdinalIgnoreCase))
         {
           // Строка не изменилась — операция не нужна.
+          continue;
+        }
+
+        // Дедупликация: идентичная невыгруженная операция по тому же ребёнку
+        // уже стоит в очереди — повторное сохранение без изменений не плодит
+        // дубли до первой успешной выгрузки.
+        if (changeStore.HasPending(
+                existed ? VelumBomChangeAction.Update : VelumBomChangeAction.Add,
+                parentExternalId,
+                line.ChildIdentity))
+        {
           continue;
         }
 
@@ -266,6 +278,15 @@ namespace Velum.UI.AssemblyRegistry
         if (lines.Any(l => l != null && string.Equals(
                 l.ChildIdentity, oldLine.ChildIdentity, StringComparison.OrdinalIgnoreCase)))
           continue;
+
+        // Дедупликация: невыгруженный delete по тому же ребёнку уже в очереди.
+        if (changeStore.HasPending(
+                VelumBomChangeAction.Delete,
+                parentExternalId,
+                oldLine.ChildIdentity))
+        {
+          continue;
+        }
 
         changeStore.Append(new VelumBomChangeRecord
         {

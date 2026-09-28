@@ -149,7 +149,8 @@ namespace Velum.UI.AssemblyRegistry
     /// <summary>
     /// Сохранение в JSON (атомарно). Перед записью автоматически чистит
     /// выгруженные записи старше <see cref="RetentionDays"/> дней
-    /// (невыгруженные !Exported — очередь — не удаляются никогда).
+    /// (невыгруженные !Exported — очередь — не удаляются никогда,
+    /// кроме заведомо невыгружаемых — см. <see cref="PurgeUnexportablePending"/>).
     /// </summary>
     public void Save()
     {
@@ -159,6 +160,7 @@ namespace Velum.UI.AssemblyRegistry
       try
       {
         PurgeExportedOlderThan(TimeSpan.FromDays(RetentionDays));
+        PurgeUnexportablePending();
 
         Directory.CreateDirectory(VelumAppConfig.AssemblyRegistryFolderPath);
         var wrapper = new VelumBomChangeLogFile
@@ -245,6 +247,52 @@ namespace Velum.UI.AssemblyRegistry
       if (removed > 0)
         _dirty = true;
       return removed;
+    }
+
+    /// <summary>
+    /// Удалить невыгружаемые pending-записи: с пустым ParentExternalId
+    /// они не попадут в обмен никогда (отбор в
+    /// <c>VelumBomExchangeStructureProjector.Select</c> их пропускает),
+    /// а срок хранения !Exported не истекает — без очистки такие записи
+    /// зависают в журнале навсегда. Возраст не проверяется: запись без
+    /// ParentExternalId невыгружаема по определению, задержка нужна лишь
+    /// на случай ручной правки ExternalId в свойствах документа —
+    /// следующее зеркалирование структуры создаст корректную запись заново.
+    /// </summary>
+    /// <returns>Число удалённых записей.</returns>
+    public int PurgeUnexportablePending()
+    {
+      int removed = _records.RemoveAll(r =>
+          r != null && !r.Exported && string.IsNullOrWhiteSpace(r.ParentExternalId));
+      if (removed > 0)
+        _dirty = true;
+      return removed;
+    }
+
+    /// <summary>
+    /// Проверить, есть ли невыгруженная запись с тем же действием, родителем
+    /// и ребёнком (дедупликация повторного сохранения: идентичная операция
+    /// не должна плодить новые записи до первой успешной выгрузки).
+    /// </summary>
+    /// <param name="action">Операция над строкой состава.</param>
+    /// <param name="parentExternalId">ExternalId родителя.</param>
+    /// <param name="childIdentity">Identity ребёнка.</param>
+    /// <returns>true, если идентичная невыгруженная запись уже есть.</returns>
+    public bool HasPending(VelumBomChangeAction action, string parentExternalId, string childIdentity)
+    {
+      string parent = (parentExternalId ?? string.Empty).Trim();
+      string child = (childIdentity ?? string.Empty).Trim();
+      foreach (VelumBomChangeRecord record in _records)
+      {
+        if (record == null || record.Exported || record.Action != action)
+          continue;
+        if (string.Equals((record.ParentExternalId ?? string.Empty).Trim(), parent,
+                StringComparison.OrdinalIgnoreCase) &&
+            string.Equals((record.ChildIdentity ?? string.Empty).Trim(), child,
+                StringComparison.OrdinalIgnoreCase))
+          return true;
+      }
+      return false;
     }
 
     /// <summary>
