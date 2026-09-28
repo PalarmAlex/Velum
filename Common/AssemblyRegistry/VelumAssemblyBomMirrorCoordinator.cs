@@ -40,16 +40,16 @@ namespace Velum.UI.AssemblyRegistry
         // Служебное свойство связи с 1С (по умолчанию пустое).
         EnsureExternalIdProperty(modelDoc);
 
-        // Resolve lightweight components for property reading.
+        // Разрешаем lightweight-компоненты, чтобы прочитать свойства.
         if (!TryResolveLightweight(modelDoc, assemblyDoc))
           return false;
 
-        // Walk the assembly tree.
+        // Обходим дерево сборки.
         VelumAssemblyRegistryGraph graph = BuildGraph(modelDoc, assemblyDoc);
         if (graph == null || graph.Components.Count == 0)
           return false;
 
-        // Load the shared tracked properties config.
+        // Загружаем общий конфиг отслеживаемых свойств.
         IReadOnlyList<TrackedProperty> trackedProperties =
             VelumAssemblyBomTrackedPropertiesConfig.Load();
         if (trackedProperties.Count == 0)
@@ -58,17 +58,17 @@ namespace Velum.UI.AssemblyRegistry
           return false;
         }
 
-        // Load or create the mirror store.
+        // Загружаем или создаём хранилище зеркала.
         VelumAssemblyBomMirrorStore store = new VelumAssemblyBomMirrorStore();
         store.Load();
 
-        // Mirror each component in the graph.
+        // Зеркалируем каждый компонент графа.
         foreach (VelumAssemblyRegistryComponent comp in graph.Components.Values)
         {
           if (comp == null || string.IsNullOrWhiteSpace(comp.FilePath))
             continue;
 
-          // Read ExternalId from the component document.
+          // Читаем ExternalId из документа компонента.
           string externalId = ReadExternalId(comp);
 
           // Хэш только от отслеживаемых свойств: количество вхождений относится к
@@ -77,7 +77,7 @@ namespace Velum.UI.AssemblyRegistry
               comp.PropertyValues,
               trackedProperties);
 
-          // Upsert into mirror store.
+          // Добавляем или обновляем значение в хранилище.
           string identity = comp.Identity ??
               VelumAssemblyRegistryPropertyReader.BuildIdentity(
                   comp.FilePath, comp.ConfigurationName);
@@ -181,8 +181,8 @@ namespace Velum.UI.AssemblyRegistry
             propertyValues,
             trackedProperties);
 
-        // Upsert into mirror store.
-        store.Upsert(
+        // Записываем значение в хранилище зеркала.
+        mirrorStore.SetValue
             identity,
             filePath,
             configurationName,
