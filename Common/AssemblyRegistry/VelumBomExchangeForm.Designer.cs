@@ -240,7 +240,7 @@ namespace Velum.UI.AssemblyRegistry
             this._structureListView.HideSelection = false;
             this._structureListView.Location = new System.Drawing.Point(3, 3);
             this._structureListView.Name = "_structureListView";
-            this._structureListView.Size = new System.Drawing.Size(796, 234);
+            this._structureListView.Size = new System.Drawing.Size(796, 220);
             this._structureListView.TabIndex = 0;
             this._toolTip.SetToolTip(this._structureListView, "Строки состава, которые попадут в 1C_bom_*.csv (операции add/update/delete).");
             this._structureListView.UseCompatibleStateImageBehavior = false;
@@ -299,7 +299,7 @@ namespace Velum.UI.AssemblyRegistry
             this._structureTab.Location = new System.Drawing.Point(4, 22);
             this._structureTab.Name = "_structureTab";
             this._structureTab.Padding = new System.Windows.Forms.Padding(3);
-            this._structureTab.Size = new System.Drawing.Size(802, 240);
+            this._structureTab.Size = new System.Drawing.Size(802, 226);
             this._structureTab.TabIndex = 1;
             this._structureTab.Text = "Структура";
             this._structureTab.UseVisualStyleBackColor = true;
@@ -396,7 +396,7 @@ namespace Velum.UI.AssemblyRegistry
             this.noteLabel.Dock = System.Windows.Forms.DockStyle.Top;
             this.noteLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic);
             this.noteLabel.ForeColor = System.Drawing.Color.DimGray;
-            this.noteLabel.Location = new System.Drawing.Point(0, 0);
+            this.noteLabel.Location = new System.Drawing.Point(12, 0);
             this.noteLabel.MaximumSize = new System.Drawing.Size(816, 0);
             this.noteLabel.Name = "noteLabel";
             this.noteLabel.Size = new System.Drawing.Size(381, 13);
@@ -421,10 +421,10 @@ namespace Velum.UI.AssemblyRegistry
             this._buttonsRow.Controls.Add(this._exportButton);
             this._buttonsRow.Dock = System.Windows.Forms.DockStyle.Fill;
             this._buttonsRow.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this._buttonsRow.Location = new System.Drawing.Point(0, 0);
+            this._buttonsRow.Location = new System.Drawing.Point(12, 0);
             this._buttonsRow.Margin = new System.Windows.Forms.Padding(0);
             this._buttonsRow.Name = "_buttonsRow";
-            this._buttonsRow.Size = new System.Drawing.Size(816, 35);
+            this._buttonsRow.Size = new System.Drawing.Size(816, 29);
             this._buttonsRow.TabIndex = 4;
             this._buttonsRow.WrapContents = false;
             // 
