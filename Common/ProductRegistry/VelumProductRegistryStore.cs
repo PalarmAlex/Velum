@@ -156,6 +156,32 @@ namespace Velum.UI.ProductRegistry
       // блокирует поток; при недоступном каталоге Load продолжается с пустым реестром,
       // а ReadJson/ReadAllTextWithTimeout ниже вернут null без блокировки.
       VelumPathExists.TryCreateDirectory(RegistryFolderPath);
+
+      // КРИТИЧНО (кейс CASEBOOK-2 «items.json/folders.json затёрты после VPN-сбоя»):
+      // оба файла читаются ДО очистки состояния и ДО любого Save(). Сбой чтения
+      // (таймаут/сеть) — это НЕ «пустой реестр»: в таком состоянии запрещено
+      // создавать дефолтный корень с _foldersDirty=true (иначе Save() перезапишет
+      // живой файл одним корнем «Изделия») и запрещено продолжать с обнулённой
+      // памятью (иначе любое изменение записи сохранит пустой items.json).
+      // Легитимное отсутствие файла — отдельный исход (первый запуск/пустой стор).
+      VelumPathExists.ReadTextResult folderRead =
+          VelumPathExists.ReadAllTextWithStatus(FoldersFilePath);
+      VelumPathExists.ReadTextResult itemRead =
+          VelumPathExists.ReadAllTextWithStatus(ItemsFilePath);
+
+      bool folderFailed = folderRead.Outcome == VelumPathExists.ReadTextOutcome.Failed;
+      bool itemFailed = itemRead.Outcome == VelumPathExists.ReadTextOutcome.Failed;
+      if (folderFailed || itemFailed)
+      {
+        string what = folderFailed && itemFailed
+            ? "folders.json и items.json"
+            : folderFailed ? "folders.json" : "items.json";
+        throw new IOException(
+            "Не удалось прочитать реестр документов (" + what + "): " +
+            "сетевой каталог недоступен или чтение не уложилось в таймаут. " +
+            "Реестр в памяти не обновлён, файлы на диске не изменялись.");
+      }
+
       _folders.Clear();
       _items.Clear();
       _itemsChangeStamp++;
@@ -163,8 +189,9 @@ namespace Velum.UI.ProductRegistry
       _itemsByFolder.Clear();
       _itemsByDesignationKey.Clear();
 
-      VelumProductFolderFile folderFile = ReadJson<VelumProductFolderFile>(FoldersFilePath)
-          ?? new VelumProductFolderFile();
+      VelumProductFolderFile folderFile = folderRead.Success
+          ? ParseJson<VelumProductFolderFile>(folderRead.Content, FoldersFilePath)
+          : new VelumProductFolderFile();
       _nextFolderId = Math.Max(1, folderFile.NextId);
       if (folderFile.Folders != null)
       {
@@ -184,8 +211,9 @@ namespace Velum.UI.ProductRegistry
         }
       }
 
-      VelumProductItemFile itemFile = ReadJson<VelumProductItemFile>(ItemsFilePath)
-          ?? new VelumProductItemFile();
+      VelumProductItemFile itemFile = itemRead.Success
+          ? ParseJson<VelumProductItemFile>(itemRead.Content, ItemsFilePath)
+          : new VelumProductItemFile();
       _nextItemId = Math.Max(1, itemFile.NextId);
       if (itemFile.Items != null)
       {
@@ -231,6 +259,15 @@ namespace Velum.UI.ProductRegistry
       bool saved = false;
       if (_foldersDirty)
       {
+        // Гард от затирания (кейс CASEBOOK-2): folders.json с нулём каталогов —
+        // всегда результат сбоя/недозагрузки, а не легитимного состояния. Пользователь
+        // не может удалить последний каталог через UI (DeleteFolderCascade оставляет
+        // корень), поэтому пустая запись сюда не доходит легальным путём.
+        if (_folders.Count == 0)
+          throw new InvalidOperationException(
+              "Отказ записи folders.json: набор каталогов пуст. " +
+              "Похоже, реестр не был загружен (сбой чтения) — файл на диске не изменён.");
+
         var folderFile = new VelumProductFolderFile
         {
           NextId = _nextFolderId,
@@ -1046,6 +1083,24 @@ namespace Velum.UI.ProductRegistry
 
       // FilePath мог измениться (ввод/срез корня) — кэш ключа записи устарел.
       item.InvalidateNormalizedPathKey();
+    }
+
+    private static T ParseJson<T>(string json, string path) where T : class
+    {
+      if (string.IsNullOrWhiteSpace(json))
+        return null;
+      try
+      {
+        return JsonConvert.DeserializeObject<T>(json, JsonSettings);
+      }
+      catch (Exception ex)
+      {
+        // Битый JSON — тоже сбой, а не «пустой реестр»: десериализация частично
+        // читаемого файла (обрыв записи/сети) иначе дала бы пустой стор и Save()
+        // затер бы остатки файла. Исключение прерывает Load без изменения диска.
+        throw new IOException(
+            "Не удалось разобрать " + path + ": " + ex.Message, ex);
+      }
     }
 
     private static T ReadJson<T>(string path) where T : class

@@ -764,6 +764,96 @@ namespace Velum.ReactiveCore.Export
     }
 
     /// <summary>
+    /// Итог чтения с различением причин: «файла нет» — легитимное отсутствие
+    /// (первый запуск), «сбой» — таймаут/ошибка чтения на доступном пути.
+    /// Дефолтные JSON-хранилища (реестр документов) обязаны различать эти случаи:
+    /// сбой чтения не должен выглядеть как пустой реестр и затираться при сохранении.
+    /// </summary>
+    internal enum ReadTextOutcome
+    {
+      /// <summary>Файл прочитан (см. Content).</summary>
+      Success,
+      /// <summary>Файл отсутствует (или путь не существует) — не ошибка.</summary>
+      FileMissing,
+      /// <summary>Таймаут проверки/чтения или ошибка чтения доступного файла.</summary>
+      Failed
+    }
+
+    /// <summary>Результат <see cref="ReadAllTextWithStatus"/>: текст и причина неудачи.</summary>
+    internal readonly struct ReadTextResult
+    {
+      public ReadTextResult(ReadTextOutcome outcome, string content)
+      {
+        Outcome = outcome;
+        Content = content;
+      }
+
+      internal ReadTextOutcome Outcome { get; }
+
+      /// <summary>Содержимое файла; null при неудаче любого рода.</summary>
+      internal string Content { get; }
+
+      /// <summary>True — файл реально прочитан.</summary>
+      internal bool Success => Outcome == ReadTextOutcome.Success;
+    }
+
+    /// <summary>
+    /// Чтение текста с таймаутом и различением «файла нет» и «чтение не удалось».
+    /// Обёртка над <see cref="ReadAllTextWithTimeout"/>: тот же трёхзначный
+    /// <see cref="Check"/>, тот же пул потоков и таймаут, но сбой чтения
+    /// (таймаут на доступном пути, IOException и т.п.) отличим от отсутствия файла.
+    /// </summary>
+    /// <param name="path">Полный путь к файлу.</param>
+    /// <param name="timeoutMs">Таймаут одной операции чтения, мс.</param>
+    internal static ReadTextResult ReadAllTextWithStatus(string path, int timeoutMs = DefaultTimeoutMs)
+    {
+      if (string.IsNullOrWhiteSpace(path))
+        return new ReadTextResult(ReadTextOutcome.FileMissing, null);
+
+      // «Нет» от трёхзначной проверки — доказанное отсутствие (файл/путь не найдены).
+      // «Unknown» — таймаут: файл может существовать, считать его отсутствующим нельзя.
+      Result probe = Check(false, path, timeoutMs);
+      if (probe == Result.No)
+        return new ReadTextResult(ReadTextOutcome.FileMissing, null);
+      if (probe == Result.Unknown)
+        return new ReadTextResult(ReadTextOutcome.Failed, null);
+
+      try
+      {
+        Task<string> task = Task.Run(() =>
+        {
+          try
+          {
+            return System.IO.File.ReadAllText(path, System.Text.Encoding.UTF8);
+          }
+          catch (System.IO.FileNotFoundException)
+          {
+            // Гонка с удалением между Check и чтением — считаем отсутствием.
+            return null;
+          }
+          catch (System.IO.DirectoryNotFoundException)
+          {
+            return null;
+          }
+          // Прочие ошибки (IOException, UnauthorizedAccessException, ...) — не глушим:
+          // они должны остаться «сбоем», а не «файлом отсутствует».
+        });
+
+        task.Wait(timeoutMs);
+
+        string content = task.Status == TaskStatus.RanToCompletion ? task.Result : null;
+        return content != null
+            ? new ReadTextResult(ReadTextOutcome.Success, content)
+            : new ReadTextResult(ReadTextOutcome.FileMissing, null);
+      }
+      catch
+      {
+        // AggregateException от упавшей задачи (IOException и т.п.) или сбой ожидания.
+        return new ReadTextResult(ReadTextOutcome.Failed, null);
+      }
+    }
+
+    /// <summary>
     /// Записывает текст в файл с жёстким таймаутом. На недоступной сетевой шаре
     /// <c>System.IO.File.WriteAllText</c> блокирует поток; запись выполняется
     /// в пуле потоков и по истечении таймаута возвращает <c>false</c> без блокировки.

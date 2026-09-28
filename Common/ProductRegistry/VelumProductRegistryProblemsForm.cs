@@ -882,8 +882,26 @@ namespace Velum.UI
       VelumProductRegistryFormHost.TryShow(_swApp, selectFolderId);
       VelumProductRegistryIntegrityScheduler.NotifyRegistryChanged();
       // Форма реестра могла менять JSON — свой store тоже перечитать.
+      // Load может бросить IOException при сбое чтения (сеть/таймаут) —
+      // перечитывание прерываем, память и файлы не трогаем.
       if (_store != null)
-        _store.Load();
+      {
+        try
+        {
+          _store.Load();
+        }
+        catch (IOException ex)
+        {
+          MessageBox.Show(
+              this,
+              "Не удалось перечитать реестр документов:\n" + ex.Message,
+              Text,
+              MessageBoxButtons.OK,
+              MessageBoxIcon.Warning);
+          return;
+        }
+      }
+
       RefreshList();
     }
 

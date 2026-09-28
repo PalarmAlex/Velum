@@ -73,7 +73,27 @@ namespace Velum.UI
       if (VelumAppConfig.SolidHomeostasisDebugLog)
         VelumProductRegistryIndexTrace.Mark("form.prepare.begin");
       InitializeRuntime();
-      _store.Load();
+      try
+      {
+        _store.Load();
+      }
+      catch (IOException ex)
+      {
+        // Сбой чтения реестра (сеть/таймаут/битый JSON): стор не тронут, файлы на
+        // диске не изменены. Форму не открываем — с обнулённым стором любое
+        // действие пользователя сохранило бы пустые items/folders на место живых.
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          VelumProductRegistryIndexTrace.Mark("form.prepare.load.failed", ex.Message);
+        MessageBox.Show(
+            this,
+            "Не удалось загрузить реестр документов:\n" + ex.Message
+                + "\n\nПроверьте доступность сетевого каталога и повторите открытие. "
+                + "Файлы реестра на диске не изменялись.",
+            "Реестр документов",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Warning);
+        return false;
+      }
       VelumProductItem[] allItems = _store.GetAllItems();
       if (VelumAppConfig.SolidHomeostasisDebugLog)
         VelumProductRegistryIndexTrace.Mark(
