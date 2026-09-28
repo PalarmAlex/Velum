@@ -321,7 +321,7 @@ namespace Velum.UI.AssemblyRegistry
       this.root.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
       this.root.RowStyles.Add(new System.Windows.Forms.RowStyle());
       this.root.RowStyles.Add(new System.Windows.Forms.RowStyle());
-      this.root.Size = new System.Drawing.Size(840, 340);
+      this.root.Size = new System.Drawing.Size(840, 400);
       this.root.TabIndex = 0;
       // 
       // titleLabel
@@ -419,7 +419,7 @@ namespace Velum.UI.AssemblyRegistry
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(840, 340);
+      this.ClientSize = new System.Drawing.Size(840, 400);
       this.Controls.Add(this.root);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
