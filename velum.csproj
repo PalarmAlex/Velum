@@ -235,7 +235,6 @@
     </Compile>
     <Compile Include="Common\VelumAgentTaskPane.Metrics.cs">
       <DependentUpon>VelumAgentTaskPane.cs</DependentUpon>
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Common\VelumListFilterHelper.cs" />
     <Compile Include="Common\VelumListViewCellFilterMenu.cs" />
