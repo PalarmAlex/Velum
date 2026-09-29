@@ -209,7 +209,7 @@ namespace Velum.UI
       this._lblRegistryScanStatus.Size = new System.Drawing.Size(116, 13);
       this._lblRegistryScanStatus.TabIndex = 31;
       this._lblRegistryScanStatus.Text = "Сканирование...";
-      this._parameterToolTip.SetToolTip(this._lblRegistryScanStatus, "Статус фонового сканирования реестра. № — номер итерации, в скобках — периодичность сканирования в пульсах. «Реестр пустой» — записей нет, сканирование не выполняется.");
+      this._parameterToolTip.SetToolTip(this._lblRegistryScanStatus, "Статус фонового сканирования реестра. № — номер итерации, в скобках — периодичность сканирования в пульсах. «Реестр пустой» — записей нет, сканирование не выполняется. «Каталог реестра недоступен» — сетевой каталог реестра недоступен (оборванный VPN/том), сканирование остановлено до восстановления доступа.");
       this._lblRegistryScanStatus.Visible = false;
       // 
       // _pnlHeaderCenterSpacer

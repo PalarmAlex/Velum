@@ -486,6 +486,24 @@ namespace Velum.Configuration
     }
 
     /// <summary>
+    /// Период опроса недоступного каталога реестра документов: через сколько тяжёлых
+    /// пульсов шедулер целостности снова проверяет доступность корня реестра
+    /// (<see cref="ReactiveCore.Export.VelumPathExists.DirectoryExists"/>) после того,
+    /// как тот оказался недоступен. Пока корень недоступен, глобальный скан не
+    /// запускается вовсе и счётчик итераций не крутится; настройка определяет только
+    /// частоту проб «вернулся ли том» (VPN). Дефолт — редкий опрос, чтобы проверка
+    /// мёртвой шары не добавляла задержку каждому такту. Минимум 1.
+    /// </summary>
+    public static int ScannerUnavailableRootPollPulses
+    {
+      get
+      {
+        int v = GetIntSetting("ScannerUnavailableRootPollPulses", 30);
+        return v < 1 ? 1 : v;
+      }
+    }
+
+    /// <summary>
     /// При таймауте опроса SW на пульсе повторно опубликовать последний валидный снимок из кэша
     /// (без нового COM), с пометкой <see cref="P:Velum.SolidHomeostasis.VelumSolidEnvironmentGate.LastSnapshotTimedOut"/>.
     /// </summary>
@@ -932,6 +950,7 @@ namespace Velum.Configuration
                   new XElement("HeavyMetricsPulsePeriod", 5),
                   new XElement("ScannerProbeConcurrency", 64),
                   new XElement("ScannerBatchSize", 1000),
+                  new XElement("ScannerUnavailableRootPollPulses", 30),
                   new XElement("SolidProbeUseStaleSnapshotOnTimeout", true),
                   new XElement("CadDegradedEnterThreshold", "50"),
                   new XElement("CadDegradedExitThreshold", "60"),
@@ -1281,6 +1300,13 @@ namespace Velum.Configuration
           app.Add(new XElement("ScannerBatchSize", 1000));
           changed = true;
           Logger.Info("Velum: в Settings.xml добавлен ScannerBatchSize=1000");
+        }
+
+        if (app.Element("ScannerUnavailableRootPollPulses") == null)
+        {
+          app.Add(new XElement("ScannerUnavailableRootPollPulses", 30));
+          changed = true;
+          Logger.Info("Velum: в Settings.xml добавлен ScannerUnavailableRootPollPulses=30");
         }
 
         if (changed)

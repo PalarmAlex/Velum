@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using ISIDA.Common;
 using Velum.Configuration;
+using Velum.ReactiveCore.Export;
 using Velum.SolidHomeostasis;
 using Velum.UI.AssemblyRegistry;
 
@@ -49,6 +50,14 @@ namespace Velum.UI.ProductRegistry
   /// <para>
   /// Счётчик итераций (<see cref="ScanIterationCount"/>) сбрасывается при полном
   /// проходе всего реестра: видно, что реестр пройден целиком и начался новый цикл с №1.
+  /// </para>
+  /// <para>
+  /// Гейт доступности корня реестра (<see cref="IsRegistryRootUnavailable"/>): если
+  /// сетевой каталог реестра недоступен (оборванный VPN), глобальный скан не
+  /// запускается вовсе — счётчик итераций не растёт, иначе создаётся видимость
+  /// «бесконечного тормозного сканирования» без реальной работы. Проба доступности
+  /// редкая (раз в <see cref="VelumAppConfig.ScannerUnavailableRootPollPulses"/> пульсов),
+  /// чтобы проверка мёртвого тома не добавляла задержку каждому такту.
   /// </para>
   /// </summary>
   internal static class VelumProductRegistryIntegrityScheduler
@@ -97,6 +106,19 @@ namespace Velum.UI.ProductRegistry
     /// к непустому реестру, чтобы следующий вход в «пусто» снова корректно почистился.
     /// </summary>
     private static bool _emptyRegistryCleaned;
+    /// <summary>
+    /// 1 — корневой каталог реестра документов (<see cref="VelumProductRegistryStore.RegistryFolderPath"/>)
+    /// недоступен (сетевой том/VPN оборван): глобальное сканирование не запускается,
+    /// счётчик итераций не крутится. Сбрасывается, когда проба доступа снова успешна.
+    /// </summary>
+    private static int _registryRootUnavailable;
+    /// <summary>
+    /// Сколько пульсов осталось до следующей пробы недоступного корня реестра
+    /// (см. <see cref="VelumAppConfig.ScannerUnavailableRootPollPulses"/>). Пока счётчик
+    /// положителен, <see cref="OnPulseCompleted"/> не ставит тик сканирования — проверка
+    /// мёртвого тома не добавляет задержку каждому такту.
+    /// </summary>
+    private static int _unavailableRootPollCountdown;
     private static List<VelumProductFolderAutoNameMapping> _mappings =
         new List<VelumProductFolderAutoNameMapping>();
     /// <summary>Счётчик запущенных тиков сканирования (инкрементируется при каждом запуске RunTick).</summary>
@@ -342,6 +364,13 @@ namespace Velum.UI.ProductRegistry
         return store != null && store.GetAllItems().Length == 0;
       }
     }
+
+    /// <summary>
+    /// true — корневой каталог реестра недоступен: глобальный скан не запускается,
+    /// счётчик итераций не растёт (см. <see cref="_registryRootUnavailable"/>).
+    /// </summary>
+    internal static bool IsRegistryRootUnavailable =>
+        Volatile.Read(ref _registryRootUnavailable) == 1;
 
     internal static void NotifyRegistryChanged()
     {
@@ -592,6 +621,13 @@ namespace Velum.UI.ProductRegistry
       if (!due)
         return;
 
+      // Корень реестра недоступен (оборванный VPN/сетевой том): сканировать нечего,
+      // счётчик итераций не крутим. Проба доступности — редкая (раз в
+      // ScannerUnavailableRootPollPulses пульсов), чтобы проверка мёртвого тома
+      // не добавляла задержку каждому такту.
+      if (ShouldSkipScanForUnavailableRoot())
+        return;
+
       if (!QueueTick(null))
       {
         // Предыдущий тик ещё выполняется в фоновом потоке — не пропускаем работу,
@@ -762,7 +798,17 @@ namespace Velum.UI.ProductRegistry
       if (activeNow)
         return;
 
+      // Корень реестра недоступен: сканировать нечего (сетевой том/VPN оборван).
+      // Проверка идёт ДО EnsureStoreLoaded: иначе Load платил бы таймаут на чтение
+      // несуществующего тома на каждом тике, а счётчик итераций рос бы без работы.
+      if (AbortIfRegistryRootUnavailable())
+        return;
+
       EnsureStoreLoaded(force: Interlocked.Exchange(ref _reloadRequested, 0) == 1);
+
+      // Proba корня прошла — снимаем пометку недоступности (том вернулся). Делаем это
+      // после Load: если чтение всё же упало (гонка), пометку поставит EnsureStoreLoaded.
+      MarkRegistryRootAvailable();
 
       VelumProductRegistryStore store;
       List<VelumProductFolderAutoNameMapping> mappings;
@@ -1080,6 +1126,93 @@ namespace Velum.UI.ProductRegistry
       }
 
       Interlocked.Exchange(ref _reloadRequested, 1);
+    }
+
+    /// <summary>
+    /// Гейт доступности корневого каталога реестра. Если корень уже помечен недоступным,
+    /// проба выполняется не чаще, чем раз в <see cref="VelumAppConfig.ScannerUnavailableRootPollPulses"/>
+    /// пульсов (счётчик <see cref="_unavailableRootPollCountdown"/> декрементируется вызовом).
+    /// Возвращает true, если скан запускать нельзя (корень недоступен).
+    /// </summary>
+    private static bool ShouldSkipScanForUnavailableRoot()
+    {
+      if (Volatile.Read(ref _registryRootUnavailable) == 1)
+      {
+        // Корень уже признан недоступным: пробуем снова только по расписанию.
+        if (Interlocked.Decrement(ref _unavailableRootPollCountdown) > 0)
+          return true;
+      }
+
+      if (ProbeRegistryRootAvailable())
+        return false;
+
+      // Проба не прошла — помечаем корень недоступным и планируем следующую пробу.
+      Volatile.Write(ref _registryRootUnavailable, 1);
+      Volatile.Write(ref _unavailableRootPollCountdown, PollPeriod());
+      RaiseScanStateChanged();
+      return true;
+    }
+
+    /// <summary>
+    /// Быстрая проба доступности корневого каталога реестра (с таймаутом и кэшем
+    /// <see cref="VelumPathExists"/>). Возвращает false и при отсутствии пути, и при таймауте:
+    /// для решения «сканировать ли» недостоверный ответ равнозначен недоступности.
+    /// </summary>
+    private static bool ProbeRegistryRootAvailable()
+    {
+      try
+      {
+        if (!Volatile.Read(ref _storeLoadedOk))
+          return false; // уже знаем, что чтение реестра падало
+
+        string root = VelumProductRegistryStore.RegistryFolderPath;
+        if (string.IsNullOrWhiteSpace(root))
+          return true; // настройка пуста — путь определит сам стор
+
+        return VelumPathExists.DirectoryExists(root);
+      }
+      catch (Exception ex)
+      {
+        Logger.Warning("Velum registry integrity root probe: " + ex.Message);
+        return false;
+      }
+    }
+
+    /// <summary>Период опроса недоступного корня в пульсах (минимум 1).</summary>
+    private static int PollPeriod()
+    {
+      int v = VelumAppConfig.ScannerUnavailableRootPollPulses;
+      return v < 1 ? 1 : v;
+    }
+
+    /// <summary>
+    /// Ранний выход из тика при недоступном корне реестра, если он ещё не помечен:
+    /// проверка перед работой сканеров (между пульсом и стартом тика том мог пропасть).
+    /// Возвращает true, если скан нужно прервать.
+    /// </summary>
+    private static bool AbortIfRegistryRootUnavailable()
+    {
+      if (Volatile.Read(ref _registryRootUnavailable) == 1)
+        return true;
+      if (ProbeRegistryRootAvailable())
+        return false;
+
+      Volatile.Write(ref _registryRootUnavailable, 1);
+      Volatile.Write(ref _unavailableRootPollCountdown, PollPeriod());
+      RaiseScanStateChanged();
+      return true;
+    }
+
+    /// <summary>
+    /// Успешная проба корня: снимает пометку недоступности и сбрасывает счётчик опроса.
+    /// </summary>
+    private static void MarkRegistryRootAvailable()
+    {
+      if (Interlocked.Exchange(ref _registryRootUnavailable, 0) == 1)
+      {
+        Volatile.Write(ref _unavailableRootPollCountdown, 0);
+        RaiseScanStateChanged();
+      }
     }
   }
 }

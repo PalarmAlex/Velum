@@ -999,6 +999,17 @@ namespace Velum.UI
         return;
       }
 
+      // Корневой каталог реестра недоступен (оборванный VPN/сетевой том): скан не
+      // запускается, счётчик итераций не растёт — иначе строка показывала бы
+      // «бесконечное тормозное сканирование» без реальной работы.
+      if (VelumProductRegistryIntegrityScheduler.IsRegistryRootUnavailable)
+      {
+        _lblRegistryScanStatus.Text = "Каталог реестра недоступен";
+        _lblRegistryScanStatus.ForeColor = Color.FromArgb(220, 55, 55);
+        _lblRegistryScanStatus.Visible = true;
+        return;
+      }
+
       // Реестр успешно прочитан, но записей нет — сканировать нечего, счётчик
       // итераций не крутится. Показываем «Реестр пустой» вместо зависшего «№1 …».
       if (VelumProductRegistryIntegrityScheduler.IsRegistryEmpty)
