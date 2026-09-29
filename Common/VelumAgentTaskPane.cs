@@ -999,6 +999,16 @@ namespace Velum.UI
         return;
       }
 
+      // Реестр успешно прочитан, но записей нет — сканировать нечего, счётчик
+      // итераций не крутится. Показываем «Реестр пустой» вместо зависшего «№1 …».
+      if (VelumProductRegistryIntegrityScheduler.IsRegistryEmpty)
+      {
+        _lblRegistryScanStatus.Text = "Реестр пустой";
+        _lblRegistryScanStatus.ForeColor = SystemColors.GrayText;
+        _lblRegistryScanStatus.Visible = true;
+        return;
+      }
+
       int iteration = VelumProductRegistryIntegrityScheduler.ScanIterationCount;
       int period = VelumProductRegistryIntegrityScheduler.HeavyMetricsPulsePeriod;
       string baseText = $"Сканирование №{iteration} ({period} пул.): ";

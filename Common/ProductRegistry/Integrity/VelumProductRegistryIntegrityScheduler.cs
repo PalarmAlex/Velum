@@ -82,6 +82,21 @@ namespace Velum.UI.ProductRegistry
     private static bool _pdfPassActive;
     private static string _lastScopeKey = string.Empty;
     private static VelumProductRegistryStore _store;
+    /// <summary>
+    /// true — последний <see cref="VelumProductRegistryStore.Load"/> завершился успешно
+    /// (файлы реестра прочитаны). Отличает «пустой реестр» (загрузили, записей нет) от
+    /// «не удалось прочитать» (сетевой том недоступен / таймаут — Load бросает IOException).
+    /// Без этого признака пустой <see cref="_store"/> при недоступном шаре выдавался бы за
+    /// «Реестр пустой» (тот же класс, что CASEBOOK-2 «затёртые после VPN-сбоя файлы»).
+    /// </summary>
+    private static bool _storeLoadedOk;
+    /// <summary>
+    /// true — пустое состояние реестра уже обслужено: состояние прохода и кэш проблем
+    /// очищены, метрики опубликованы. Нужен, чтобы не дёргать <c>PublishScoresToGate</c>
+    /// и полную очистку на каждом тике, пока реестр пуст. Сбрасывается при переходе
+    /// к непустому реестру, чтобы следующий вход в «пусто» снова корректно почистился.
+    /// </summary>
+    private static bool _emptyRegistryCleaned;
     private static List<VelumProductFolderAutoNameMapping> _mappings =
         new List<VelumProductFolderAutoNameMapping>();
     /// <summary>Счётчик запущенных тиков сканирования (инкрементируется при каждом запуске RunTick).</summary>
@@ -308,6 +323,23 @@ namespace Velum.UI.ProductRegistry
         if (store == null)
           return 0;
         return store.GetAllItems().Length;
+      }
+    }
+
+    /// <summary>
+    /// true — реестр успешно прочитан и в нём нет ни одной записи (папки/файлы есть,
+    /// изделий 0). Сканировать нечего: счётчик итераций не крутится, на панели
+    /// показывается «Реестр пустой». false при недоступном пути (Load бросил
+    /// IOException) — это НЕ пустой реестр, а сбой чтения (см. <see cref="_storeLoadedOk"/>).
+    /// </summary>
+    internal static bool IsRegistryEmpty
+    {
+      get
+      {
+        if (!Volatile.Read(ref _storeLoadedOk))
+          return false;
+        VelumProductRegistryStore store = _store;
+        return store != null && store.GetAllItems().Length == 0;
       }
     }
 
@@ -746,6 +778,41 @@ namespace Velum.UI.ProductRegistry
       if (Volatile.Read(ref _openDocumentsScopeActive) == 1)
         return;
 
+      // Пустой реестр (успешно прочитан, записей 0): сканировать нечего. Курсорные
+      // сканеры при items.Count==0 в первом тике возвращают passCompleted=false
+      // (passActive ещё false, коммитить нечего) — флаги *PassDone никогда не
+      // выставились бы, цикл _scanPassInProgress не закрылся бы, и счётчик итераций
+      // крутился бы бесконечно (1, 2, 3 …) при фактическом отсутствии работы.
+      // Ранний выход: один раз чистим состояние прохода/кэш/метрики и не трогаем счётчик.
+      if (IsRegistryEmpty)
+      {
+        if (!Volatile.Read(ref _emptyRegistryCleaned))
+        {
+          lock (Gate)
+          {
+            AbortDiscoveryPassesUnlocked();
+            ClearAllProblemCacheUnlocked();
+          }
+
+          try
+          {
+            VelumProductRegistryIntegrityProbes.PublishScoresToGate(registryOnlySnapshot: false);
+          }
+          catch (Exception ex)
+          {
+            Logger.Warning("Velum registry integrity empty publish: " + ex.Message);
+          }
+
+          Volatile.Write(ref _emptyRegistryCleaned, true);
+          RaiseScanStateChanged();
+        }
+
+        return;
+      }
+
+      // Реестр непустой — разрешаем повторную очистку при следующем опустении.
+      Volatile.Write(ref _emptyRegistryCleaned, false);
+
       if (!_scanPassInProgress)
       {
         // Начинается новый полный проход реестра — счётчик итераций стартует с №1.
@@ -927,6 +994,9 @@ namespace Velum.UI.ProductRegistry
       _scanPassInProgress = false;
       _scanIterationCount = 0;
       _tickYieldRequested = 0;
+      // Пустой реестр после прерывания (смена scope, открытие документа) нужно
+      // обслужить заново: повторно очистить кэш и опубликовать метрики.
+      Volatile.Write(ref _emptyRegistryCleaned, false);
       _brokenPassDone = false;
       _drawingPassDone = false;
       _dxfPassDone = false;
@@ -980,6 +1050,7 @@ namespace Velum.UI.ProductRegistry
         try
         {
           _store.Load();
+          Volatile.Write(ref _storeLoadedOk, true);
           // Автоимена каталогов — не часть реестра: перечитывать их при каждом
           // изменении items.json не нужно (файл меняется только из формы
           // автоимён — там вызывается NotifyMappingsChanged). Иначе каждое
@@ -989,6 +1060,9 @@ namespace Velum.UI.ProductRegistry
         }
         catch (Exception ex)
         {
+          // Сбой чтения (сеть/таймаут) — не «пустой реестр»: флаг успешной загрузки
+          // сбрасываем, чтобы панель не показала «Реестр пустой» при недоступном шаре.
+          Volatile.Write(ref _storeLoadedOk, false);
           Logger.Warning("Velum registry integrity load: " + ex.Message);
         }
       }
