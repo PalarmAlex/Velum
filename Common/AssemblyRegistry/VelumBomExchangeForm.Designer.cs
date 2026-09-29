@@ -19,6 +19,7 @@ namespace Velum.UI.AssemblyRegistry
     private System.Windows.Forms.TabControl _tabs;
     private System.Windows.Forms.TabPage _cardsTab;
     private System.Windows.Forms.TabPage _structureTab;
+    private System.Windows.Forms.TabPage _allTab;
     private System.Windows.Forms.ListView _listView;
     private System.Windows.Forms.ColumnHeader _colTypeDocs;
     private System.Windows.Forms.ColumnHeader _colExternalId;
@@ -31,6 +32,30 @@ namespace Velum.UI.AssemblyRegistry
     private System.Windows.Forms.ColumnHeader _colStructConfig;
     private System.Windows.Forms.ColumnHeader _colStructQty;
     private System.Windows.Forms.ColumnHeader _colStructAction;
+    private System.Windows.Forms.ColumnHeader _colStructExternalId;
+    private System.Windows.Forms.ColumnHeader _colStructTimestamp;
+    private System.Windows.Forms.ListView _allListView;
+    private System.Windows.Forms.ColumnHeader _colAllParent;
+    private System.Windows.Forms.ColumnHeader _colAllChild;
+    private System.Windows.Forms.ColumnHeader _colAllConfig;
+    private System.Windows.Forms.ColumnHeader _colAllQty;
+    private System.Windows.Forms.ColumnHeader _colAllAction;
+    private System.Windows.Forms.ColumnHeader _colAllExternalId;
+    private System.Windows.Forms.ColumnHeader _colAllTimestamp;
+    private System.Windows.Forms.ColumnHeader _colAllState;
+    private System.Windows.Forms.TableLayoutPanel _filterRow;
+    private System.Windows.Forms.Label _filterParentLabel;
+    private System.Windows.Forms.TextBox _filterParentBox;
+    private System.Windows.Forms.Label _filterChildLabel;
+    private System.Windows.Forms.TextBox _filterChildBox;
+    private System.Windows.Forms.Label _filterActionLabel;
+    private System.Windows.Forms.TextBox _filterActionBox;
+    private System.Windows.Forms.Label _filterExternalIdLabel;
+    private System.Windows.Forms.TextBox _filterExternalIdBox;
+    private System.Windows.Forms.Label _filterDateLabel;
+    private System.Windows.Forms.TextBox _filterDateBox;
+    private System.Windows.Forms.Button _filterApplyButton;
+    private System.Windows.Forms.Button _filterResetButton;
     private System.Windows.Forms.CheckBox _registryFilterCheck;
     private System.Windows.Forms.ToolTip _toolTip;
 
@@ -60,6 +85,19 @@ namespace Velum.UI.AssemblyRegistry
       this._layoutButton = new System.Windows.Forms.Button();
       this._registryFilterCheck = new System.Windows.Forms.CheckBox();
       this._toolTip = new System.Windows.Forms.ToolTip(this.components);
+      this._filterRow = new System.Windows.Forms.TableLayoutPanel();
+      this._filterParentLabel = new System.Windows.Forms.Label();
+      this._filterParentBox = new System.Windows.Forms.TextBox();
+      this._filterChildLabel = new System.Windows.Forms.Label();
+      this._filterChildBox = new System.Windows.Forms.TextBox();
+      this._filterActionLabel = new System.Windows.Forms.Label();
+      this._filterActionBox = new System.Windows.Forms.TextBox();
+      this._filterExternalIdLabel = new System.Windows.Forms.Label();
+      this._filterExternalIdBox = new System.Windows.Forms.TextBox();
+      this._filterDateLabel = new System.Windows.Forms.Label();
+      this._filterDateBox = new System.Windows.Forms.TextBox();
+      this._filterApplyButton = new System.Windows.Forms.Button();
+      this._filterResetButton = new System.Windows.Forms.Button();
       this._listView = new System.Windows.Forms.ListView();
       this._colTypeDocs = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this._colExternalId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -72,9 +110,21 @@ namespace Velum.UI.AssemblyRegistry
       this._colStructConfig = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this._colStructQty = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this._colStructAction = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this._colStructExternalId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this._colStructTimestamp = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this._allListView = new System.Windows.Forms.ListView();
+      this._colAllParent = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this._colAllChild = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this._colAllConfig = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this._colAllQty = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this._colAllAction = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this._colAllExternalId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this._colAllTimestamp = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this._colAllState = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this._tabs = new System.Windows.Forms.TabControl();
       this._cardsTab = new System.Windows.Forms.TabPage();
       this._structureTab = new System.Windows.Forms.TabPage();
+      this._allTab = new System.Windows.Forms.TabPage();
       this.root = new System.Windows.Forms.TableLayoutPanel();
       this.titleLabel = new System.Windows.Forms.Label();
       this.descLabel = new System.Windows.Forms.Label();
@@ -88,6 +138,8 @@ namespace Velum.UI.AssemblyRegistry
       this._tabs.SuspendLayout();
       this._cardsTab.SuspendLayout();
       this._structureTab.SuspendLayout();
+      this._allTab.SuspendLayout();
+      this._filterRow.SuspendLayout();
       this.root.SuspendLayout();
       this.folderRow.SuspendLayout();
       this.notePanel.SuspendLayout();
@@ -189,7 +241,7 @@ namespace Velum.UI.AssemblyRegistry
       this._listView.Dock = System.Windows.Forms.DockStyle.Fill;
       this._listView.FullRowSelect = true;
       this._listView.GridLines = true;
-      this._listView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+      this._listView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Clickable;
       this._listView.HideSelection = false;
       this._listView.Location = new System.Drawing.Point(3, 3);
       this._listView.Name = "_listView";
@@ -199,6 +251,7 @@ namespace Velum.UI.AssemblyRegistry
         " «Поля…».");
       this._listView.UseCompatibleStateImageBehavior = false;
       this._listView.View = System.Windows.Forms.View.Details;
+      this._listView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.OnCardsColumnClick);
       // 
       // _colTypeDocs
       // 
@@ -232,11 +285,13 @@ namespace Velum.UI.AssemblyRegistry
             this._colStructChild,
             this._colStructConfig,
             this._colStructQty,
-            this._colStructAction});
+            this._colStructAction,
+            this._colStructExternalId,
+            this._colStructTimestamp});
       this._structureListView.Dock = System.Windows.Forms.DockStyle.Fill;
       this._structureListView.FullRowSelect = true;
       this._structureListView.GridLines = true;
-      this._structureListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+      this._structureListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Clickable;
       this._structureListView.HideSelection = false;
       this._structureListView.Location = new System.Drawing.Point(3, 3);
       this._structureListView.Name = "_structureListView";
@@ -245,6 +300,7 @@ namespace Velum.UI.AssemblyRegistry
       this._toolTip.SetToolTip(this._structureListView, "Строки состава, которые попадут в 1C_bom_*.csv (операции add/update/delete).");
       this._structureListView.UseCompatibleStateImageBehavior = false;
       this._structureListView.View = System.Windows.Forms.View.Details;
+      this._structureListView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.OnStructureColumnClick);
       // 
       // _colStructParent
       // 
@@ -271,10 +327,87 @@ namespace Velum.UI.AssemblyRegistry
       this._colStructAction.Text = "Действие";
       this._colStructAction.Width = 70;
       // 
-      // _tabs
+      // _colStructExternalId
       // 
+      this._colStructExternalId.Text = "ExternalId";
+      this._colStructExternalId.Width = 110;
+      // 
+      // _colStructTimestamp
+      // 
+      this._colStructTimestamp.Text = "Дата/время";
+      this._colStructTimestamp.Width = 120;
+      //
+      // _allListView
+      //
+      this._allListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this._colAllParent,
+            this._colAllChild,
+            this._colAllConfig,
+            this._colAllQty,
+            this._colAllAction,
+            this._colAllExternalId,
+            this._colAllTimestamp,
+            this._colAllState});
+      this._allListView.Dock = System.Windows.Forms.DockStyle.Fill;
+      this._allListView.FullRowSelect = true;
+      this._allListView.GridLines = true;
+      this._allListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Clickable;
+      this._allListView.HideSelection = false;
+      this._allListView.Location = new System.Drawing.Point(3, 3);
+      this._allListView.Name = "_allListView";
+      this._allListView.Size = new System.Drawing.Size(796, 220);
+      this._allListView.TabIndex = 0;
+      this._toolTip.SetToolTip(this._allListView, "Все операции состава из журнала (и очередь на выгрузку, и уже выгруженные). " +
+        "Пометку «Выгружено» снять нельзя: в CSV попадают только невыгруженные.");
+      this._allListView.UseCompatibleStateImageBehavior = false;
+      this._allListView.View = System.Windows.Forms.View.Details;
+      this._allListView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.OnAllColumnClick);
+      //
+      // _colAllParent
+      //
+      this._colAllParent.Text = "Родитель";
+      this._colAllParent.Width = 140;
+      //
+      // _colAllChild
+      //
+      this._colAllChild.Text = "Компонент";
+      this._colAllChild.Width = 140;
+      //
+      // _colAllConfig
+      //
+      this._colAllConfig.Text = "Конфигурация";
+      this._colAllConfig.Width = 90;
+      //
+      // _colAllQty
+      //
+      this._colAllQty.Text = "Кол-во";
+      this._colAllQty.Width = 50;
+      //
+      // _colAllAction
+      //
+      this._colAllAction.Text = "Действие";
+      this._colAllAction.Width = 70;
+      //
+      // _colAllExternalId
+      //
+      this._colAllExternalId.Text = "ExternalId";
+      this._colAllExternalId.Width = 110;
+      //
+      // _colAllTimestamp
+      //
+      this._colAllTimestamp.Text = "Дата/время";
+      this._colAllTimestamp.Width = 120;
+      //
+      // _colAllState
+      //
+      this._colAllState.Text = "Состояние";
+      this._colAllState.Width = 90;
+      //
+      // _tabs
+      //
       this._tabs.Controls.Add(this._cardsTab);
       this._tabs.Controls.Add(this._structureTab);
+      this._tabs.Controls.Add(this._allTab);
       this._tabs.Dock = System.Windows.Forms.DockStyle.Fill;
       this._tabs.Location = new System.Drawing.Point(15, 113);
       this._tabs.Name = "_tabs";
@@ -303,6 +436,17 @@ namespace Velum.UI.AssemblyRegistry
       this._structureTab.TabIndex = 1;
       this._structureTab.Text = "Структура";
       this._structureTab.UseVisualStyleBackColor = true;
+      //
+      // _allTab
+      //
+      this._allTab.Controls.Add(this._allListView);
+      this._allTab.Location = new System.Drawing.Point(4, 22);
+      this._allTab.Name = "_allTab";
+      this._allTab.Padding = new System.Windows.Forms.Padding(3);
+      this._allTab.Size = new System.Drawing.Size(802, 226);
+      this._allTab.TabIndex = 2;
+      this._allTab.Text = "Все";
+      this._allTab.UseVisualStyleBackColor = true;
       // 
       // root
       // 
@@ -312,16 +456,18 @@ namespace Velum.UI.AssemblyRegistry
       this.root.Controls.Add(this.descLabel, 0, 1);
       this.root.Controls.Add(this.folderRow, 0, 2);
       this.root.Controls.Add(this._registryFilterCheck, 0, 3);
-      this.root.Controls.Add(this._tabs, 0, 4);
+      this.root.Controls.Add(this._filterRow, 0, 4);
+      this.root.Controls.Add(this._tabs, 0, 5);
       this.root.Dock = System.Windows.Forms.DockStyle.Fill;
       this.root.Location = new System.Drawing.Point(0, 0);
       this.root.Name = "root";
       this.root.Padding = new System.Windows.Forms.Padding(12, 12, 12, 0);
-      this.root.RowCount = 5;
+      this.root.RowCount = 6;
       this.root.RowStyles.Add(new System.Windows.Forms.RowStyle());
       this.root.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
       this.root.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
       this.root.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 24F));
+      this.root.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
       this.root.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
       this.root.Size = new System.Drawing.Size(840, 368);
       this.root.TabIndex = 0;
@@ -377,6 +523,180 @@ namespace Velum.UI.AssemblyRegistry
       this.folderLabel.Size = new System.Drawing.Size(92, 13);
       this.folderLabel.TabIndex = 0;
       this.folderLabel.Text = "Каталог обмена:";
+      // 
+    // _filterRow
+      // 
+      this._filterRow.ColumnCount = 12;
+      this._filterRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+      this._filterRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 28F));
+      this._filterRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+      this._filterRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 28F));
+      this._filterRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+      this._filterRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14F));
+      this._filterRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+      this._filterRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 18F));
+      this._filterRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+      this._filterRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 18F));
+      this._filterRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+      this._filterRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+      this._filterRow.Controls.Add(this._filterParentLabel, 0, 0);
+      this._filterRow.Controls.Add(this._filterParentBox, 1, 0);
+      this._filterRow.Controls.Add(this._filterChildLabel, 2, 0);
+      this._filterRow.Controls.Add(this._filterChildBox, 3, 0);
+      this._filterRow.Controls.Add(this._filterActionLabel, 4, 0);
+      this._filterRow.Controls.Add(this._filterActionBox, 5, 0);
+      this._filterRow.Controls.Add(this._filterExternalIdLabel, 6, 0);
+      this._filterRow.Controls.Add(this._filterExternalIdBox, 7, 0);
+      this._filterRow.Controls.Add(this._filterDateLabel, 8, 0);
+      this._filterRow.Controls.Add(this._filterDateBox, 9, 0);
+      this._filterRow.Controls.Add(this._filterApplyButton, 10, 0);
+      this._filterRow.Controls.Add(this._filterResetButton, 11, 0);
+      this._filterRow.Dock = System.Windows.Forms.DockStyle.Fill;
+      this._filterRow.Location = new System.Drawing.Point(15, 143);
+      this._filterRow.Margin = new System.Windows.Forms.Padding(0, 6, 0, 2);
+      this._filterRow.Name = "_filterRow";
+      this._filterRow.RowCount = 1;
+      this._filterRow.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+      this._filterRow.Size = new System.Drawing.Size(810, 22);
+      this._filterRow.TabIndex = 6;
+      // 
+      // _filterParentLabel
+      // 
+      this._filterParentLabel.AutoSize = true;
+      this._filterParentLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+      this._filterParentLabel.Location = new System.Drawing.Point(0, 4);
+      this._filterParentLabel.Margin = new System.Windows.Forms.Padding(0, 0, 4, 0);
+      this._filterParentLabel.Name = "_filterParentLabel";
+      this._filterParentLabel.Size = new System.Drawing.Size(52, 13);
+      this._filterParentLabel.TabIndex = 0;
+      this._filterParentLabel.Text = "Родитель:";
+      // 
+      // _filterParentBox
+      // 
+      this._filterParentBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
+      this._filterParentBox.Location = new System.Drawing.Point(56, 2);
+      this._filterParentBox.Margin = new System.Windows.Forms.Padding(0, 2, 8, 2);
+      this._filterParentBox.Name = "_filterParentBox";
+      this._filterParentBox.Size = new System.Drawing.Size(150, 20);
+      this._filterParentBox.TabIndex = 1;
+      this._toolTip.SetToolTip(this._filterParentBox, "Фильтр по обозначению или ExternalId родителя. Подстрока без учёта регистра;" +
+        " несколько значений через | (ИЛИ).");
+      // 
+      // _filterChildLabel
+      // 
+      this._filterChildLabel.AutoSize = true;
+      this._filterChildLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+      this._filterChildLabel.Location = new System.Drawing.Point(214, 4);
+      this._filterChildLabel.Margin = new System.Windows.Forms.Padding(0, 0, 4, 0);
+      this._filterChildLabel.Name = "_filterChildLabel";
+      this._filterChildLabel.Size = new System.Drawing.Size(70, 13);
+      this._filterChildLabel.TabIndex = 2;
+      this._filterChildLabel.Text = "Компонент:";
+      // 
+      // _filterChildBox
+      // 
+      this._filterChildBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
+      this._filterChildBox.Location = new System.Drawing.Point(288, 2);
+      this._filterChildBox.Margin = new System.Windows.Forms.Padding(0, 2, 8, 2);
+      this._filterChildBox.Name = "_filterChildBox";
+      this._filterChildBox.Size = new System.Drawing.Size(150, 20);
+      this._filterChildBox.TabIndex = 3;
+      this._toolTip.SetToolTip(this._filterChildBox, "Фильтр по обозначению или конфигурации компонента. Подстрока без учёта регистра;" +
+        " несколько значений через | (ИЛИ).");
+      // 
+      // _filterActionLabel
+      // 
+      this._filterActionLabel.AutoSize = true;
+      this._filterActionLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+      this._filterActionLabel.Location = new System.Drawing.Point(446, 4);
+      this._filterActionLabel.Margin = new System.Windows.Forms.Padding(0, 0, 4, 0);
+      this._filterActionLabel.Name = "_filterActionLabel";
+      this._filterActionLabel.Size = new System.Drawing.Size(52, 13);
+      this._filterActionLabel.TabIndex = 4;
+      this._filterActionLabel.Text = "Операция:";
+      // 
+      // _filterActionBox
+      // 
+      this._filterActionBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
+      this._filterActionBox.Location = new System.Drawing.Point(502, 2);
+      this._filterActionBox.Margin = new System.Windows.Forms.Padding(0, 2, 8, 2);
+      this._filterActionBox.Name = "_filterActionBox";
+      this._filterActionBox.Size = new System.Drawing.Size(80, 20);
+      this._filterActionBox.TabIndex = 5;
+      this._toolTip.SetToolTip(this._filterActionBox, "Фильтр по операции: add, update, delete. Несколько значений через | (ИЛИ)," +
+        " !add — исключить.");
+      // 
+      // _filterExternalIdLabel
+      // 
+      this._filterExternalIdLabel.AutoSize = true;
+      this._filterExternalIdLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+      this._filterExternalIdLabel.Location = new System.Drawing.Point(590, 4);
+      this._filterExternalIdLabel.Margin = new System.Windows.Forms.Padding(0, 0, 4, 0);
+      this._filterExternalIdLabel.Name = "_filterExternalIdLabel";
+      this._filterExternalIdLabel.Size = new System.Drawing.Size(60, 13);
+      this._filterExternalIdLabel.TabIndex = 6;
+      this._filterExternalIdLabel.Text = "ExternalId:";
+      // 
+      // _filterExternalIdBox
+      // 
+      this._filterExternalIdBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
+      this._filterExternalIdBox.Location = new System.Drawing.Point(654, 2);
+      this._filterExternalIdBox.Margin = new System.Windows.Forms.Padding(0, 2, 8, 2);
+      this._filterExternalIdBox.Name = "_filterExternalIdBox";
+      this._filterExternalIdBox.Size = new System.Drawing.Size(100, 20);
+      this._filterExternalIdBox.TabIndex = 7;
+      this._toolTip.SetToolTip(this._filterExternalIdBox, "Фильтр по ExternalId ребёнка — идентификатору связи с 1С. =abc — точное" +
+        " совпадение, !abc — исключить.");
+      // 
+      // _filterDateLabel
+      // 
+      this._filterDateLabel.AutoSize = true;
+      this._filterDateLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+      this._filterDateLabel.Location = new System.Drawing.Point(762, 4);
+      this._filterDateLabel.Margin = new System.Windows.Forms.Padding(0, 0, 4, 0);
+      this._filterDateLabel.Name = "_filterDateLabel";
+      this._filterDateLabel.Size = new System.Drawing.Size(36, 13);
+      this._filterDateLabel.TabIndex = 8;
+      this._filterDateLabel.Text = "Дата:";
+      // 
+      // _filterDateBox
+      // 
+      this._filterDateBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
+      this._filterDateBox.Location = new System.Drawing.Point(802, 2);
+      this._filterDateBox.Margin = new System.Windows.Forms.Padding(0, 2, 8, 2);
+      this._filterDateBox.Name = "_filterDateBox";
+      this._filterDateBox.Size = new System.Drawing.Size(110, 20);
+      this._filterDateBox.TabIndex = 9;
+      this._toolTip.SetToolTip(this._filterDateBox, "Фильтр по дате записи (местное время): >=2026-09-01, <2026-09-20," +
+        " либо подстрока 2026-09.");
+      // 
+      // _filterApplyButton
+      // 
+      this._filterApplyButton.AutoSize = true;
+      this._filterApplyButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
+      this._filterApplyButton.Location = new System.Drawing.Point(920, 0);
+      this._filterApplyButton.Margin = new System.Windows.Forms.Padding(0, 0, 4, 0);
+      this._filterApplyButton.Name = "_filterApplyButton";
+      this._filterApplyButton.Size = new System.Drawing.Size(75, 23);
+      this._filterApplyButton.TabIndex = 10;
+      this._filterApplyButton.Text = "Применить";
+      this._toolTip.SetToolTip(this._filterApplyButton, "Применить введённые условия к списку текущей вкладки.");
+      this._filterApplyButton.UseVisualStyleBackColor = true;
+      this._filterApplyButton.Click += new System.EventHandler(this.OnFilterApplyClick);
+      // 
+      // _filterResetButton
+      // 
+      this._filterResetButton.AutoSize = true;
+      this._filterResetButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
+      this._filterResetButton.Location = new System.Drawing.Point(999, 0);
+      this._filterResetButton.Margin = new System.Windows.Forms.Padding(0);
+      this._filterResetButton.Name = "_filterResetButton";
+      this._filterResetButton.Size = new System.Drawing.Size(92, 23);
+      this._filterResetButton.TabIndex = 11;
+      this._filterResetButton.Text = "Сброс фильтра";
+      this._toolTip.SetToolTip(this._filterResetButton, "Очистить поля условий и показать все строки. Список не удаляется, только фильтр.");
+      this._filterResetButton.UseVisualStyleBackColor = true;
+      this._filterResetButton.Click += new System.EventHandler(this.OnFilterResetClick);
       // 
       // notePanel
       // 
@@ -443,7 +763,7 @@ namespace Velum.UI.AssemblyRegistry
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(840, 420);
+      this.ClientSize = new System.Drawing.Size(1080, 430);
       this.Controls.Add(this.root);
       this.Controls.Add(this.notePanel);
       this.Controls.Add(this.buttonsPanel);
@@ -456,7 +776,10 @@ namespace Velum.UI.AssemblyRegistry
       this._tabs.ResumeLayout(false);
       this._cardsTab.ResumeLayout(false);
       this._structureTab.ResumeLayout(false);
-      this.root.ResumeLayout(false);
+      this._allTab.ResumeLayout(false);
+      this._filterRow.ResumeLayout(false);
+      this._filterRow.PerformLayout();
+      this.folderRow.ResumeLayout(false);
       this.root.PerformLayout();
       this.folderRow.ResumeLayout(false);
       this.folderRow.PerformLayout();

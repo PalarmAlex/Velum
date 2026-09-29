@@ -197,11 +197,33 @@ namespace Velum.UI.AssemblyRegistry
     /// </summary>
     public IReadOnlyList<VelumBomChangeRecord> GetPending()
     {
+      return FilteredRecords(includeExported: false);
+    }
+
+    /// <summary>
+    /// Все записи журнала (и очередь, и выгруженные из RetentionDays-окна) —
+    /// для просмотра истории на вкладке «Структура» формы обмена.
+    /// CSV-выгрузка по-прежнему берёт только <see cref="GetPending"/>.
+    /// </summary>
+    public IReadOnlyList<VelumBomChangeRecord> GetAll()
+    {
+      return FilteredRecords(includeExported: true);
+    }
+
+    /// <summary>
+    /// Собирает список записей в стабильном хронологическом порядке.
+    /// </summary>
+    /// <param name="includeExported">Включать ли выгруженные записи.</param>
+    private List<VelumBomChangeRecord> FilteredRecords(bool includeExported)
+    {
       var result = new List<VelumBomChangeRecord>();
       foreach (VelumBomChangeRecord record in _records)
       {
-        if (record != null && !record.Exported)
-          result.Add(record);
+        if (record == null)
+          continue;
+        if (!includeExported && record.Exported)
+          continue;
+        result.Add(record);
       }
       result.Sort((a, b) =>
       {
