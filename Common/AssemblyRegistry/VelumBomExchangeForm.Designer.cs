@@ -732,7 +732,7 @@ namespace Velum.UI.AssemblyRegistry
             this.noteLabel.ForeColor = System.Drawing.Color.DimGray;
             this.noteLabel.Location = new System.Drawing.Point(12, 0);
             this.noteLabel.Name = "noteLabel";
-            this.noteLabel.Size = new System.Drawing.Size(1050, 13);
+            this.noteLabel.Size = new System.Drawing.Size(381, 13);
             this.noteLabel.TabIndex = 3;
             this.noteLabel.Text = "Компоненты без заполненного ExternalId будут пропущены при экспорте.";
             // 
