@@ -115,10 +115,27 @@ namespace Velum.SolidHomeostasis
              kind == ExportDocProbeKind.PdfDrawingPathAvailable;
     }
 
+    /// <summary>
+    /// Проба «Путь pdf» (PdfDrawingPathAvailable) применима к сборке только при edit-in-context
+    /// (свойство хранится на редактируемой детали). На самой сборке источника-детали нет —
+    /// опрос сборки на пульсе давал лишний COM в UI-потоке SolidWorks (см. DEBUG_CASEBOOK_2, случай 25).
+    /// </summary>
+    internal static bool IsProbeAllowedForAssemblySource(
+        ExportDocProbeKind kind,
+        VelumSolidDocumentEditContext editContext)
+    {
+      if (kind != ExportDocProbeKind.PdfDrawingPathAvailable)
+        return true;
+
+      return editContext == null || editContext.EditTargetPartModel != null;
+    }
+
     internal static bool IsProbeKindForDocumentType(ExportDocProbeKind kind, swDocumentTypes_e docType)
     {
       if (kind == ExportDocProbeKind.PdfDrawingPathAvailable)
       {
+        // Чертёж — проверка путей у своих источников; деталь/сборка — свойство «Путь pdf»
+        // на источнике (сборка без edit-target отсечена выше, в IsProbeAllowedForAssemblySource).
         return docType == swDocumentTypes_e.swDocPART ||
                docType == swDocumentTypes_e.swDocASSEMBLY ||
                docType == swDocumentTypes_e.swDocDRAWING;
@@ -237,9 +254,43 @@ namespace Velum.SolidHomeostasis
       return IsOutdatedProbeApplicableInSnapshot(key, probeSnapshot);
     }
 
+    private static string _lastRefreshContextKey;
+    private static readonly HashSet<string> _refreshedProbeKeys = new HashSet<string>(StringComparer.Ordinal);
+
+    /// <summary>
+    /// Сброс гейта пересчёта неприменимых проб (смена документа/сессии).
+    /// </summary>
+    internal static void ResetRefreshGate()
+    {
+      _lastRefreshContextKey = null;
+      _refreshedProbeKeys.Clear();
+    }
+
+    /// <summary>
+    /// Ключ контекста пересчёта неприменимых проб: деталь-источник (edit-target сборки или сам документ).
+    /// Без COM — по данным кэшированного контекста.
+    /// </summary>
+    private static bool TryBuildRefreshContextKey(
+        VelumSolidDocumentEditContext editContext,
+        out string contextKey)
+    {
+      contextKey = null;
+      if (editContext == null || editContext.ActiveDocument == null)
+        return false;
+
+      contextKey = editContext.HasPartLevelProbeTarget
+          ? editContext.EditTargetDocumentKey ?? editContext.DocumentKey
+          : editContext.DocumentKey;
+
+      return !string.IsNullOrEmpty(contextKey);
+    }
+
     /// <summary>
     /// Пересчитывает метрики PDF/DXF в снимке, когда проверка больше не применима
     /// (экспорт не требуется, файл отсутствует). Без этого давление не отпускает после «Нужен dxf/pdf = No».
+    /// На такте пульса непустой обход снапшота с пробоотбором выполняется только при смене контекста
+    /// (гейт <see cref="TryBuildRefreshContextKey"/>), иначе — только докрутка ранее неприменимых ключей
+    /// из <see cref="_refreshedProbeKeys"/>.
     /// </summary>
     internal static void RefreshInapplicableProbesInSnapshot(
         VelumSolidDocumentEditContext editContext,
@@ -249,22 +300,55 @@ namespace Velum.SolidHomeostasis
       if (values == null || values.Count == 0)
         return;
 
+      bool gateValid = TryBuildRefreshContextKey(editContext, out string contextKey);
+      bool fullPass = gateValid &&
+          !string.Equals(contextKey, _lastRefreshContextKey, StringComparison.Ordinal);
+
       var keys = new List<string>(values.Keys);
+      var processed = new HashSet<string>(StringComparer.Ordinal);
       for (int i = 0; i < keys.Count; i++)
       {
         string probeKey = keys[i];
         if (!TryParseProbeKey(probeKey, out ExportDocProbeKind kind))
           continue;
 
-        ModelDoc2 modelDoc = TryResolveModelDocForProbeKind(kind, editContext);
-        if (modelDoc == null || !ShouldRefreshProbeInSnapshot(modelDoc, kind))
+        // Дорогая проверка применимости (COM CPM) — только в полном проходе либо
+        // для ключей, признанных неприменимыми ранее (пока документ не переоткрыт).
+        bool previouslyInapplicable = _refreshedProbeKeys.Contains(probeKey);
+        if (!fullPass && !previouslyInapplicable)
           continue;
+
+        processed.Add(probeKey);
+
+        ModelDoc2 modelDoc = TryResolveModelDocForProbeKind(kind, editContext);
+        if (modelDoc == null)
+        {
+          _refreshedProbeKeys.Remove(probeKey);
+          continue;
+        }
+
+        if (!ShouldRefreshProbeInSnapshot(modelDoc, kind))
+        {
+          _refreshedProbeKeys.Remove(probeKey);
+          continue;
+        }
+
+        VelumSolidDiagLog.WriteProbeEntry(
+            "RefreshInapplicable",
+            "key=" + probeKey + " doc=" + SafeModelPathForTrace(modelDoc));
 
         float score = ScoreExportProbeWithoutBootstrap(modelDoc, kind, out string detail);
         values[probeKey] = score;
         if (tooltips != null && !string.IsNullOrEmpty(detail))
           tooltips[probeKey] = detail;
+        _refreshedProbeKeys.Add(probeKey);
       }
+
+      if (!fullPass)
+        _refreshedProbeKeys.RemoveWhere(k => !processed.Contains(k));
+
+      if (gateValid)
+        _lastRefreshContextKey = contextKey;
     }
 
     private static bool ShouldRefreshProbeInSnapshot(ModelDoc2 modelDoc, ExportDocProbeKind kind)
@@ -325,10 +409,17 @@ namespace Velum.SolidHomeostasis
 
       if (kind == ExportDocProbeKind.PdfDrawingPathAvailable)
       {
-        if (editContext.IsDrawingDocument ||
-            editContext.IsPartDocument ||
-            editContext.IsAssemblyDocument)
+        // Сборка без edit-target: «Путь pdf» относится к чертежу или к источнику-детали,
+        // а не к самой сборке. Возврат ActiveModelDoc заставлял читать CPM-свойства
+        // сборки на каждом пульсе (COM в UI-потоке SW) — см. DEBUG_CASEBOOK_2, случай 25.
+        if (editContext.IsAssemblyDocument)
+          return IsProbeAllowedForAssemblySource(kind, editContext)
+              ? editContext.EditTargetPartModel
+              : null;
+
+        if (editContext.IsDrawingDocument || editContext.IsPartDocument)
           return editContext.ActiveModelDoc;
+
         return null;
       }
 
@@ -353,6 +444,10 @@ namespace Velum.SolidHomeostasis
                  "Документ недоступен — условная оценка 100";
         return VelumSolidWorksHomeostasisMetrics.MaterialCompleteScore;
       }
+
+      VelumSolidDiagLog.WriteProbeEntry(
+          "ScoreDocumentProbe",
+          "kind=" + kind + " doc=" + SafeModelPathForTrace(modelDoc));
 
       switch (kind)
       {
@@ -1094,6 +1189,25 @@ namespace Velum.SolidHomeostasis
       catch
       {
         return string.Empty;
+      }
+    }
+
+    /// <summary>
+    /// Безопасное имя документа для трассировки входа в пробу (путь или заголовок без исключений).
+    /// </summary>
+    private static string SafeModelPathForTrace(ModelDoc2 modelDoc)
+    {
+      string path = TryGetPartPath(modelDoc);
+      if (!string.IsNullOrWhiteSpace(path))
+        return path;
+
+      try
+      {
+        return (modelDoc.GetTitle() ?? string.Empty).Trim();
+      }
+      catch
+      {
+        return "(unknown)";
       }
     }
 

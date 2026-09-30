@@ -438,6 +438,13 @@ namespace Velum.Configuration
         GetBoolSetting("SolidHomeostasisPulseTrace", false);
 
     /// <summary>
+    /// Трассировка входа в каждую пробу метрик SW (<c>ProbeEntry …</c> в Output) — для поиска
+    /// источника COM-подвисаний на пульсе (см. DEBUG_CASEBOOK_2, случай 25). По умолчанию выключено.
+    /// </summary>
+    public static bool SolidProbeEntryTrace =>
+        GetBoolSetting("SolidProbeEntryTrace", false);
+
+    /// <summary>
     /// Бюджет времени (мс) на опрос SolidWorks на такте <c>OnPulseBeforeGomeostasis</c>.
     /// При превышении ожидание UI/COM прерывается; см. <see cref="SolidProbeUseStaleSnapshotOnTimeout"/>.
     /// Значение ≤ 0 — таймаут отключён (синхронный <c>Invoke</c>, как до п. 1 плана устойчивости).
@@ -949,6 +956,7 @@ namespace Velum.Configuration
                   new XElement("SolidEnvironmentMetricDeltaEpsilon", "0.51"),
                   new XElement("SolidHostImpulseMinParameterDelta", "0.25"),
                   new XElement("SolidHomeostasisPulseTrace", false),
+                  new XElement("SolidProbeEntryTrace", false),
                   new XElement("SolidProbeTimeoutMs", 2500),
                   new XElement("HeavyMetricsPulsePeriod", 5),
                   new XElement("ScannerProbeConcurrency", 64),

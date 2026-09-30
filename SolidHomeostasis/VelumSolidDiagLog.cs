@@ -118,6 +118,21 @@ namespace Velum.SolidHomeostasis
           ": " + FormatEx(ex));
     }
 
+    /// <summary>
+    /// Трассировка входа в пробу (кто именно трогает документ на пульсе).
+    /// Пишется только при включённом <see cref="VelumAppConfig.SolidProbeEntryTrace"/> —
+    /// используется для поиска источника COM-подвисаний (см. DEBUG_CASEBOOK_2, случай 25).
+    /// </summary>
+    internal static void WriteProbeEntry(string site, string detail)
+    {
+      if (!VelumAppConfig.SolidProbeEntryTrace)
+        return;
+
+      int pulse = VelumSolidProbeContext.PulseNumber;
+      string pulsePart = pulse > 0 ? " pulse=" + pulse : string.Empty;
+      WriteError("ProbeEntry" + pulsePart + " site=" + site + " " + (detail ?? string.Empty));
+    }
+
     internal static string FormatEx(Exception ex)
     {
       if (ex == null)

@@ -74,6 +74,9 @@ namespace Velum.SolidHomeostasis
       _solidApp = app;
       _invokeTarget = taskPaneControl;
 
+      // Новая сессия SW: кэш контекста документа невалиден.
+      VelumSolidDocumentEditContextResolver.Invalidate();
+
       VelumSolidCommandBuffer.SyncRecordingFromConfig();
 
       if (taskPaneControl != null)
@@ -125,6 +128,7 @@ namespace Velum.SolidHomeostasis
       _invokeTarget = null;
       _pollSolidWhilePulse = false;
       _solidMetricsWarmupPulsesRemaining = 0;
+      VelumSolidDocumentEditContextResolver.Invalidate();
       VelumProductRegistryIntegrityScheduler.SyncEnabledFromPulse();
     }
 

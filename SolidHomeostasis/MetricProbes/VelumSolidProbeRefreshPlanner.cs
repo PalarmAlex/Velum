@@ -223,7 +223,9 @@ namespace Velum.SolidHomeostasis
         out int currentUpdateStamp)
     {
       categoriesToCollect = VelumSolidProbeCategory.None;
-      editContext = VelumSolidDocumentEditContextResolver.Resolve(app);
+      // Точка обновления кэша контекста на такте: вызывается на UI-потоке SolidWorks,
+      // поэтому свежий COM-резолв (IActiveDoc2/GetEditTarget) здесь допустим — один раз за такт.
+      editContext = VelumSolidDocumentEditContextResolver.ResolveFresh(app);
       currentUpdateStamp = -1;
 
       if (editContext?.ActiveDocument == null)

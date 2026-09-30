@@ -29,6 +29,12 @@ namespace Velum.SolidHomeostasis
     /// <summary>Стабильный ключ активного документа для отслеживания штампа.</summary>
     public string DocumentKey { get; internal set; }
 
+    /// <summary>
+    /// Стабильный ключ детали под редактированием (edit-target сборки), иначе null.
+    /// Используется для гейта пересчёта неприменимых проб без COM на такте пульса.
+    /// </summary>
+    public string EditTargetDocumentKey { get; internal set; }
+
     /// <summary>COM ModelDoc2 активного документа (деталь, сборка или чертёж).</summary>
     public ModelDoc2 ActiveModelDoc { get; internal set; }
 

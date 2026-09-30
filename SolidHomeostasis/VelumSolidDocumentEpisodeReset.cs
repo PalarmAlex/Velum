@@ -22,6 +22,10 @@ namespace Velum.SolidHomeostasis
       bool noActiveDocument = VelumSolidMetricPressureReset.IsNoActiveSolidDocument();
       GomeostasSystem g = VelumIsidaHost.Context.Gomeostas;
 
+      // Смена эпизода: контекст документа в кэше устарел (активный документ/edit-target могли смениться).
+      VelumSolidDocumentEditContextResolver.Invalidate();
+      VelumSolidExportDocumentationProbe.ResetRefreshGate();
+
       // Сброс давления — всегда (нужен для корректного состояния gate)
       if (noActiveDocument)
       {

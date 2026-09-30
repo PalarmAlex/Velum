@@ -517,16 +517,16 @@ namespace Velum.SolidHomeostasis
         {
           if (exportKindA == VelumSolidExportDocumentationProbe.ExportDocProbeKind.PdfDrawingPathAvailable)
           {
-            // Свойство на самой сборке; при edit-in-context — на редактируемой детали.
-            ModelDoc2 pathTarget = editContext.EditTargetPartModel ??
-                VelumSolidWorksModelDocHelper.TryGetActiveModelDoc2(app, ixDoc);
-            if (pathTarget == null)
+            // Проба «Путь pdf» применима только при edit-in-context (свойство на редактируемой
+            // детали). На самой сборке свойства нет — опрос сборки давал лишний COM в UI-потоке
+            // на каждом пульсе, см. DEBUG_CASEBOOK_2, случай 25.
+            if (editContext.EditTargetPartModel == null)
               return false;
 
-            swDocumentTypes_e pathDocType = editContext.EditTargetPartModel != null
-                ? swDocumentTypes_e.swDocPART
-                : swDocumentTypes_e.swDocASSEMBLY;
-            if (!VelumSolidExportDocumentationProbe.IsProbeKindForDocumentType(exportKindA, pathDocType))
+            ModelDoc2 pathTarget = editContext.EditTargetPartModel;
+            if (!VelumSolidExportDocumentationProbe.IsProbeKindForDocumentType(
+                    exportKindA,
+                    swDocumentTypes_e.swDocPART))
               return false;
 
             value = VelumSolidExportDocumentationProbe.ScoreDocumentProbe(
