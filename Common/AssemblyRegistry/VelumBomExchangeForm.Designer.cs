@@ -125,6 +125,7 @@ namespace Velum.UI.AssemblyRegistry
       this._cardsTab = new System.Windows.Forms.TabPage();
       this._structureTab = new System.Windows.Forms.TabPage();
       this._allTab = new System.Windows.Forms.TabPage();
+      this.shell = new System.Windows.Forms.TableLayoutPanel();
       this.root = new System.Windows.Forms.TableLayoutPanel();
       this.titleLabel = new System.Windows.Forms.Label();
       this.descLabel = new System.Windows.Forms.Label();
@@ -140,6 +141,7 @@ namespace Velum.UI.AssemblyRegistry
       this._structureTab.SuspendLayout();
       this._allTab.SuspendLayout();
       this._filterRow.SuspendLayout();
+      this.shell.SuspendLayout();
       this.root.SuspendLayout();
       this.folderRow.SuspendLayout();
       this.notePanel.SuspendLayout();
@@ -149,7 +151,7 @@ namespace Velum.UI.AssemblyRegistry
       // 
       // _folderBox
       // 
-      this._folderBox.Dock = System.Windows.Forms.DockStyle.Fill;
+      this._folderBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
       this._folderBox.Location = new System.Drawing.Point(100, 2);
       this._folderBox.Margin = new System.Windows.Forms.Padding(0, 2, 4, 2);
       this._folderBox.Name = "_folderBox";
@@ -161,7 +163,7 @@ namespace Velum.UI.AssemblyRegistry
       // _browseButton
       // 
       this._browseButton.AutoSize = true;
-      this._browseButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this._browseButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this._browseButton.Location = new System.Drawing.Point(741, 2);
       this._browseButton.Margin = new System.Windows.Forms.Padding(4, 2, 0, 2);
       this._browseButton.Name = "_browseButton";
@@ -409,10 +411,10 @@ namespace Velum.UI.AssemblyRegistry
       this._tabs.Controls.Add(this._structureTab);
       this._tabs.Controls.Add(this._allTab);
       this._tabs.Dock = System.Windows.Forms.DockStyle.Fill;
-      this._tabs.Location = new System.Drawing.Point(15, 113);
+      this._tabs.Location = new System.Drawing.Point(15, 173);
       this._tabs.Name = "_tabs";
       this._tabs.SelectedIndex = 0;
-      this._tabs.Size = new System.Drawing.Size(810, 252);
+      this._tabs.Size = new System.Drawing.Size(810, 192);
       this._tabs.TabIndex = 5;
       // 
       // _cardsTab
@@ -421,7 +423,7 @@ namespace Velum.UI.AssemblyRegistry
       this._cardsTab.Location = new System.Drawing.Point(4, 22);
       this._cardsTab.Name = "_cardsTab";
       this._cardsTab.Padding = new System.Windows.Forms.Padding(3);
-      this._cardsTab.Size = new System.Drawing.Size(802, 226);
+      this._cardsTab.Size = new System.Drawing.Size(802, 166);
       this._cardsTab.TabIndex = 0;
       this._cardsTab.Text = "Карточки";
       this._cardsTab.UseVisualStyleBackColor = true;
@@ -432,7 +434,7 @@ namespace Velum.UI.AssemblyRegistry
       this._structureTab.Location = new System.Drawing.Point(4, 22);
       this._structureTab.Name = "_structureTab";
       this._structureTab.Padding = new System.Windows.Forms.Padding(3);
-      this._structureTab.Size = new System.Drawing.Size(802, 226);
+      this._structureTab.Size = new System.Drawing.Size(802, 166);
       this._structureTab.TabIndex = 1;
       this._structureTab.Text = "Структура";
       this._structureTab.UseVisualStyleBackColor = true;
@@ -443,10 +445,27 @@ namespace Velum.UI.AssemblyRegistry
       this._allTab.Location = new System.Drawing.Point(4, 22);
       this._allTab.Name = "_allTab";
       this._allTab.Padding = new System.Windows.Forms.Padding(3);
-      this._allTab.Size = new System.Drawing.Size(802, 226);
+      this._allTab.Size = new System.Drawing.Size(802, 166);
       this._allTab.TabIndex = 2;
       this._allTab.Text = "Все";
       this._allTab.UseVisualStyleBackColor = true;
+      // 
+      // shell
+      // 
+      this.shell.ColumnCount = 1;
+      this.shell.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+      this.shell.Controls.Add(this.root, 0, 0);
+      this.shell.Controls.Add(this.notePanel, 0, 1);
+      this.shell.Controls.Add(this.buttonsPanel, 0, 2);
+      this.shell.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.shell.Location = new System.Drawing.Point(0, 0);
+      this.shell.Name = "shell";
+      this.shell.RowCount = 3;
+      this.shell.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+      this.shell.RowStyles.Add(new System.Windows.Forms.RowStyle());
+      this.shell.RowStyles.Add(new System.Windows.Forms.RowStyle());
+      this.shell.Size = new System.Drawing.Size(1080, 430);
+      this.shell.TabIndex = 0;
       // 
       // root
       // 
@@ -469,7 +488,7 @@ namespace Velum.UI.AssemblyRegistry
       this.root.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 24F));
       this.root.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
       this.root.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-      this.root.Size = new System.Drawing.Size(840, 368);
+      this.root.Size = new System.Drawing.Size(840, 398);
       this.root.TabIndex = 0;
       // 
       // titleLabel
@@ -528,13 +547,13 @@ namespace Velum.UI.AssemblyRegistry
       // 
       this._filterRow.ColumnCount = 12;
       this._filterRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-      this._filterRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 28F));
+      this._filterRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
       this._filterRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-      this._filterRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 28F));
+      this._filterRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
       this._filterRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
       this._filterRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14F));
       this._filterRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-      this._filterRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 18F));
+      this._filterRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 26F));
       this._filterRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
       this._filterRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 18F));
       this._filterRow.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -557,14 +576,13 @@ namespace Velum.UI.AssemblyRegistry
       this._filterRow.Name = "_filterRow";
       this._filterRow.RowCount = 1;
       this._filterRow.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-      this._filterRow.Size = new System.Drawing.Size(810, 22);
+      this._filterRow.Size = new System.Drawing.Size(810, 24);
       this._filterRow.TabIndex = 6;
       // 
       // _filterParentLabel
       // 
       this._filterParentLabel.AutoSize = true;
       this._filterParentLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
-      this._filterParentLabel.Location = new System.Drawing.Point(0, 4);
       this._filterParentLabel.Margin = new System.Windows.Forms.Padding(0, 0, 4, 0);
       this._filterParentLabel.Name = "_filterParentLabel";
       this._filterParentLabel.Size = new System.Drawing.Size(52, 13);
@@ -573,8 +591,7 @@ namespace Velum.UI.AssemblyRegistry
       // 
       // _filterParentBox
       // 
-      this._filterParentBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
-      this._filterParentBox.Location = new System.Drawing.Point(56, 2);
+      this._filterParentBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
       this._filterParentBox.Margin = new System.Windows.Forms.Padding(0, 2, 8, 2);
       this._filterParentBox.Name = "_filterParentBox";
       this._filterParentBox.Size = new System.Drawing.Size(150, 20);
@@ -586,7 +603,6 @@ namespace Velum.UI.AssemblyRegistry
       // 
       this._filterChildLabel.AutoSize = true;
       this._filterChildLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
-      this._filterChildLabel.Location = new System.Drawing.Point(214, 4);
       this._filterChildLabel.Margin = new System.Windows.Forms.Padding(0, 0, 4, 0);
       this._filterChildLabel.Name = "_filterChildLabel";
       this._filterChildLabel.Size = new System.Drawing.Size(70, 13);
@@ -595,8 +611,7 @@ namespace Velum.UI.AssemblyRegistry
       // 
       // _filterChildBox
       // 
-      this._filterChildBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
-      this._filterChildBox.Location = new System.Drawing.Point(288, 2);
+      this._filterChildBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
       this._filterChildBox.Margin = new System.Windows.Forms.Padding(0, 2, 8, 2);
       this._filterChildBox.Name = "_filterChildBox";
       this._filterChildBox.Size = new System.Drawing.Size(150, 20);
@@ -608,7 +623,6 @@ namespace Velum.UI.AssemblyRegistry
       // 
       this._filterActionLabel.AutoSize = true;
       this._filterActionLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
-      this._filterActionLabel.Location = new System.Drawing.Point(446, 4);
       this._filterActionLabel.Margin = new System.Windows.Forms.Padding(0, 0, 4, 0);
       this._filterActionLabel.Name = "_filterActionLabel";
       this._filterActionLabel.Size = new System.Drawing.Size(52, 13);
@@ -617,8 +631,7 @@ namespace Velum.UI.AssemblyRegistry
       // 
       // _filterActionBox
       // 
-      this._filterActionBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
-      this._filterActionBox.Location = new System.Drawing.Point(502, 2);
+      this._filterActionBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
       this._filterActionBox.Margin = new System.Windows.Forms.Padding(0, 2, 8, 2);
       this._filterActionBox.Name = "_filterActionBox";
       this._filterActionBox.Size = new System.Drawing.Size(80, 20);
@@ -630,7 +643,6 @@ namespace Velum.UI.AssemblyRegistry
       // 
       this._filterExternalIdLabel.AutoSize = true;
       this._filterExternalIdLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
-      this._filterExternalIdLabel.Location = new System.Drawing.Point(590, 4);
       this._filterExternalIdLabel.Margin = new System.Windows.Forms.Padding(0, 0, 4, 0);
       this._filterExternalIdLabel.Name = "_filterExternalIdLabel";
       this._filterExternalIdLabel.Size = new System.Drawing.Size(60, 13);
@@ -639,8 +651,7 @@ namespace Velum.UI.AssemblyRegistry
       // 
       // _filterExternalIdBox
       // 
-      this._filterExternalIdBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
-      this._filterExternalIdBox.Location = new System.Drawing.Point(654, 2);
+      this._filterExternalIdBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
       this._filterExternalIdBox.Margin = new System.Windows.Forms.Padding(0, 2, 8, 2);
       this._filterExternalIdBox.Name = "_filterExternalIdBox";
       this._filterExternalIdBox.Size = new System.Drawing.Size(100, 20);
@@ -652,7 +663,6 @@ namespace Velum.UI.AssemblyRegistry
       // 
       this._filterDateLabel.AutoSize = true;
       this._filterDateLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
-      this._filterDateLabel.Location = new System.Drawing.Point(762, 4);
       this._filterDateLabel.Margin = new System.Windows.Forms.Padding(0, 0, 4, 0);
       this._filterDateLabel.Name = "_filterDateLabel";
       this._filterDateLabel.Size = new System.Drawing.Size(36, 13);
@@ -661,8 +671,7 @@ namespace Velum.UI.AssemblyRegistry
       // 
       // _filterDateBox
       // 
-      this._filterDateBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
-      this._filterDateBox.Location = new System.Drawing.Point(802, 2);
+      this._filterDateBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
       this._filterDateBox.Margin = new System.Windows.Forms.Padding(0, 2, 8, 2);
       this._filterDateBox.Name = "_filterDateBox";
       this._filterDateBox.Size = new System.Drawing.Size(110, 20);
@@ -674,7 +683,6 @@ namespace Velum.UI.AssemblyRegistry
       // 
       this._filterApplyButton.AutoSize = true;
       this._filterApplyButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
-      this._filterApplyButton.Location = new System.Drawing.Point(920, 0);
       this._filterApplyButton.Margin = new System.Windows.Forms.Padding(0, 0, 4, 0);
       this._filterApplyButton.Name = "_filterApplyButton";
       this._filterApplyButton.Size = new System.Drawing.Size(75, 23);
@@ -688,7 +696,6 @@ namespace Velum.UI.AssemblyRegistry
       // 
       this._filterResetButton.AutoSize = true;
       this._filterResetButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
-      this._filterResetButton.Location = new System.Drawing.Point(999, 0);
       this._filterResetButton.Margin = new System.Windows.Forms.Padding(0);
       this._filterResetButton.Name = "_filterResetButton";
       this._filterResetButton.Size = new System.Drawing.Size(92, 23);
@@ -700,14 +707,12 @@ namespace Velum.UI.AssemblyRegistry
       // 
       // notePanel
       // 
-      this.notePanel.AutoSize = true;
-      this.notePanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
       this.notePanel.Controls.Add(this.noteLabel);
-      this.notePanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+      this.notePanel.Dock = System.Windows.Forms.DockStyle.Fill;
       this.notePanel.Location = new System.Drawing.Point(0, 368);
       this.notePanel.Name = "notePanel";
       this.notePanel.Padding = new System.Windows.Forms.Padding(12, 0, 12, 4);
-      this.notePanel.Size = new System.Drawing.Size(840, 17);
+      this.notePanel.Size = new System.Drawing.Size(1080, 17);
       this.notePanel.TabIndex = 1;
       // 
       // noteLabel
@@ -726,7 +731,7 @@ namespace Velum.UI.AssemblyRegistry
       // buttonsPanel
       // 
       this.buttonsPanel.Controls.Add(this._buttonsRow);
-      this.buttonsPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+      this.buttonsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
       this.buttonsPanel.Location = new System.Drawing.Point(0, 385);
       this.buttonsPanel.Name = "buttonsPanel";
       this.buttonsPanel.Padding = new System.Windows.Forms.Padding(12, 0, 12, 6);
@@ -764,9 +769,7 @@ namespace Velum.UI.AssemblyRegistry
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(1080, 430);
-      this.Controls.Add(this.root);
-      this.Controls.Add(this.notePanel);
-      this.Controls.Add(this.buttonsPanel);
+      this.Controls.Add(this.shell);
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.MinimumSize = new System.Drawing.Size(840, 420);
       this.Name = "VelumBomExchangeForm";
@@ -779,7 +782,7 @@ namespace Velum.UI.AssemblyRegistry
       this._allTab.ResumeLayout(false);
       this._filterRow.ResumeLayout(false);
       this._filterRow.PerformLayout();
-      this.folderRow.ResumeLayout(false);
+      this.root.ResumeLayout(false);
       this.root.PerformLayout();
       this.folderRow.ResumeLayout(false);
       this.folderRow.PerformLayout();
@@ -788,6 +791,8 @@ namespace Velum.UI.AssemblyRegistry
       this.buttonsPanel.ResumeLayout(false);
       this._buttonsRow.ResumeLayout(false);
       this._buttonsRow.PerformLayout();
+      this.shell.ResumeLayout(false);
+      this.shell.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -795,6 +800,7 @@ namespace Velum.UI.AssemblyRegistry
 
     #endregion
 
+    private TableLayoutPanel shell;
     private TableLayoutPanel root;
     private Label titleLabel;
     private Label descLabel;
