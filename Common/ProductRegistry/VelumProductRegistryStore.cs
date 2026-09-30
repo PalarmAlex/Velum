@@ -648,11 +648,13 @@ namespace Velum.UI.ProductRegistry
       if (string.IsNullOrEmpty(path))
         return string.Empty;
 
-      // \?\C:\… и \?\UNC\server\share\… → обычный вид, иначе повторная индексация
-      // того же файла даёт «новый» ключ и дублирует запись.
-      if (path.StartsWith(@"\?\UNC\", StringComparison.OrdinalIgnoreCase))
-        path = @"\" + path.Substring(8);
-      else if (path.StartsWith(@"\?\", StringComparison.OrdinalIgnoreCase))
+      // \\?\C:\… и \\?\UNC\server\share\… → обычный вид, иначе повторная индексация
+      // того же файла даёт «новый» ключ и дублирует запись. Литералы — с ДВУМЯ
+      // обратными слэшами (см. CASEBOOK-2, случай 23): одиночный «\» делает префикс
+      // недостижимым (мёртвый код), и путь \\?... нормализуется некорректно.
+      if (path.StartsWith(@"\\?\UNC\", StringComparison.OrdinalIgnoreCase))
+        path = @"\\" + path.Substring(8);
+      else if (path.StartsWith(@"\\?\", StringComparison.OrdinalIgnoreCase))
         path = path.Substring(4);
 
       if (path.IndexOf(Path.AltDirectorySeparatorChar) >= 0)

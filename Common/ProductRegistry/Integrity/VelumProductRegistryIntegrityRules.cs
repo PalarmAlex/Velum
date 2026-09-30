@@ -47,9 +47,11 @@ internal static string GetExtension(string filePath)
       // (развертывание относительного пути + GetFullPath) здесь не нужна:
       // она читала Settings.xml/резолвила корень на каждую проверку типа.
       string path = (filePath ?? string.Empty).Trim();
-      if (path.StartsWith(@"\?\UNC\", StringComparison.OrdinalIgnoreCase))
-        path = @"\" + path.Substring(8);
-      else if (path.StartsWith(@"\?\", StringComparison.OrdinalIgnoreCase))
+      // Литералы — с ДВУМЯ обратными слэшами: одиночный «\» делает префикс
+      // недостижимым (мёртвый код), см. CASEBOOK-2, случай 23.
+      if (path.StartsWith(@"\\?\UNC\", StringComparison.OrdinalIgnoreCase))
+        path = @"\\" + path.Substring(8);
+      else if (path.StartsWith(@"\\?\", StringComparison.OrdinalIgnoreCase))
         path = path.Substring(4);
 
       if (string.IsNullOrEmpty(path))

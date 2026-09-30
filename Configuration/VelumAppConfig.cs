@@ -193,8 +193,11 @@ namespace Velum.Configuration
         return string.Empty;
 
       // UNC-префикс «\server\dfs» без хвостового «\» не срезает корень корректно;
-      // буква диска «Z:» дополняется до «Z:\».
-      if (trimmed.StartsWith(@"\", StringComparison.Ordinal) && !trimmed.EndsWith(@"\"))
+      // буква диска «Z:» дополняется до «Z:\». Литералы — с одним обратным
+      // слэшем (@@"\"), иначе сравнение идёт с одиночным «\» и корень диска
+      // («Z:\») ошибочно считается UNC-путём (см. CASEBOOK-2, случай 23).
+      if (trimmed.StartsWith(@"\\", StringComparison.Ordinal)
+          && !trimmed.EndsWith(@"\\", StringComparison.Ordinal))
         trimmed += @"\";
       else if (trimmed.Length == 2 && trimmed[1] == ':')
         trimmed += @"\";

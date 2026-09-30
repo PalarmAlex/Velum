@@ -1162,9 +1162,12 @@ namespace Velum.UI.ProductRegistry
     {
       try
       {
-        if (!Volatile.Read(ref _storeLoadedOk))
-          return false; // уже знаем, что чтение реестра падало
-
+        // Пробуем доступность КАТАЛОГА, а не «была ли удачная загрузка»: флаг
+        // _storeLoadedOk выставляется только внутри RunTick (после EnsureStoreLoaded),
+        // но сам RunTick не запускается, пока проба корня не пройдёт — зависимость
+        // от него замыкала порочный круг: на первом же тяжёлом пульсе корень
+        // помечался недоступным и сканирование не запускалось никогда (панель
+        // «Каталог реестра недоступен» даже при живом каталоге).
         string root = VelumProductRegistryStore.RegistryFolderPath;
         if (string.IsNullOrWhiteSpace(root))
           return true; // настройка пуста — путь определит сам стор
