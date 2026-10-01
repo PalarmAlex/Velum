@@ -135,6 +135,10 @@
     <Compile Include="ReactiveCore\Export\VelumPdfFileNameHelper.cs" />
     <Compile Include="ReactiveCore\Export\VelumDrawingPathPropertyHelper.cs" />
     <Compile Include="ReactiveCore\Export\VelumDrawingPathSavePropagator.cs" />
+    <Compile Include="ReactiveCore\Export\VelumDocumentRootPathRules.cs" />
+    <Compile Include="ReactiveCore\Export\VelumRelativePathRules.cs" />
+    <Compile Include="ReactiveCore\Export\VelumReadTextOutcomeModels.cs" />
+    <Compile Include="ReactiveCore\Export\VelumReadTextOutcomeRules.cs" />
     <Compile Include="ReactiveCore\Export\VelumRelativeDocumentPathResolver.cs" />
     <Compile Include="ReactiveCore\Export\VelumPathExists.cs" />
     <Compile Include="ReactiveCore\Export\VelumPdfArtifactResolver.cs" />
@@ -385,10 +389,14 @@
     <Compile Include="Common\AssemblyRegistry\VelumAssemblyBomMirrorStore.cs" />
     <Compile Include="Common\AssemblyRegistry\VelumAssemblyBomStructureCoordinator.cs" />
     <Compile Include="Common\AssemblyRegistry\VelumBomChangeLogStore.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumBomChangeModels.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumBomChangeLogRules.cs" />
     <Compile Include="Common\AssemblyRegistry\VelumAssemblyBomTrackedPropertiesConfig.cs" />
     <Compile Include="Common\AssemblyRegistry\VelumAssemblyBomMirrorCoordinator.cs" />
     <Compile Include="Common\AssemblyRegistry\VelumAssemblyBomDiffProbe.cs" />
     <Compile Include="Common\AssemblyRegistry\VelumBomExchangeLayout.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumBomExchangeLayoutModels.cs" />
+    <Compile Include="Common\AssemblyRegistry\VelumBomExchangeLayoutRules.cs" />
     <Compile Include="Common\AssemblyRegistry\VelumBomExchangeRowProjector.cs" />
     <Compile Include="Common\AssemblyRegistry\VelumBomExchangeHierarchyRanker.cs" />
     <Compile Include="Common\AssemblyRegistry\VelumBomExchangeFilterValues.cs" />

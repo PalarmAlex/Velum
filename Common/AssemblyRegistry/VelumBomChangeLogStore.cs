@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using ISIDA.Common;
 using Newtonsoft.Json;
@@ -9,82 +8,12 @@ using Velum.Configuration;
 
 namespace Velum.UI.AssemblyRegistry
 {
-  /// <summary>Операция над строкой состава для передачи в 1С.</summary>
-  internal enum VelumBomChangeAction
-  {
-    /// <summary>Строка состава добавлена в родителя.</summary>
-    Add = 0,
-
-    /// <summary>Строка состава изменена (количество и/или ExternalId ребёнка).</summary>
-    Update = 1,
-
-    /// <summary>Строка состава удалена из родителя.</summary>
-    Delete = 2
-  }
-
-  /// <summary>
-  /// Одна запись журнала изменений состава: операция над строкой
-  /// (родитель → ребёнок) между двумя зеркалированиями структуры.
-  /// </summary>
-  internal sealed class VelumBomChangeRecord
-  {
-    /// <summary>Уникальный идентификатор записи (Guid).</summary>
-    public string Id { get; set; }
-
-    /// <summary>Операция над строкой состава.</summary>
-    public VelumBomChangeAction Action { get; set; }
-
-    /// <summary>ExternalId родителя (ключ номенклатуры в 1С).</summary>
-    public string ParentExternalId { get; set; }
-
-    /// <summary>Конфигурация родителя (часть ключа номенклатуры в 1С).</summary>
-    public string ParentConfiguration { get; set; }
-
-    /// <summary>
-    /// Identity дочернего компонента (FilePath|Config) — снимок на момент записи.
-    /// Служебное поле: по нему при выгрузке берётся актуальный ExternalId
-    /// из bomMirror.json. В CSV не выгружается.
-    /// </summary>
-    public string ChildIdentity { get; set; }
-
-    /// <summary>ExternalId дочернего компонента — снимок на момент записи.</summary>
-    public string ChildExternalId { get; set; }
-
-    /// <summary>Конфигурация дочернего компонента (часть ключа номенклатуры в 1С).</summary>
-    public string ChildConfiguration { get; set; }
-
-    /// <summary>Количество в родителе (для Delete — количество до удаления).</summary>
-    public int Quantity { get; set; }
-
-    /// <summary>Момент записи (UTC).</summary>
-    public DateTime TimestampUtc { get; set; }
-
-    /// <summary>
-    /// Хэш состояния структуры родителя, к которому относится запись:
-    /// для Add/Update — CurrentHash (новое состояние),
-    /// для Delete — PreviousHash (старое состояние, из которого строка удалена).
-    /// </summary>
-    public string SourceHash { get; set; }
-
-    /// <summary>Выгружено в 1С (после успешной записи CSV).</summary>
-    public bool Exported { get; set; }
-
-    /// <summary>Момент выгрузки в 1С (UTC).</summary>
-    public DateTime? ExportedUtc { get; set; }
-  }
-
-  /// <summary>Корень JSON-файла <c>bomChangeLog.json</c>.</summary>
-  internal sealed class VelumBomChangeLogFile
-  {
-    /// <summary>Записи журнала изменений состава.</summary>
-    public List<VelumBomChangeRecord> Records { get; set; } =
-        new List<VelumBomChangeRecord>();
-  }
-
   /// <summary>
   /// JSON-хранилище журнала изменений состава (<c>bomChangeLog.json</c>)
   /// в каталоге AssemblyRegistry. Невыгруженные записи (!Exported) —
   /// очередь на выгрузку; выгруженные хранятся RetentionDays дней.
+  /// Файловый ввод-вывод — здесь; чистые правила отбора/очистки/рендера —
+  /// в <see cref="VelumBomChangeLogRules"/>, DTO — в <see cref="VelumBomChangeRecord"/>.
   /// </summary>
   internal sealed class VelumBomChangeLogStore
   {
@@ -96,7 +25,7 @@ namespace Velum.UI.AssemblyRegistry
     };
 
     /// <summary>Срок хранения выгруженных записей (Exported=true), дней.</summary>
-    public const int RetentionDays = 10;
+    public const int RetentionDays = VelumBomChangeLogRules.RetentionDays;
 
     private readonly List<VelumBomChangeRecord> _records =
         new List<VelumBomChangeRecord>();
@@ -165,10 +94,7 @@ namespace Velum.UI.AssemblyRegistry
         Directory.CreateDirectory(VelumAppConfig.AssemblyRegistryFolderPath);
         var wrapper = new VelumBomChangeLogFile
         {
-          Records = _records
-              .OrderBy(r => r.TimestampUtc)
-              .ThenBy(r => r.Id, StringComparer.Ordinal)
-              .ToList()
+          Records = VelumBomChangeLogRules.Filter(_records, includeExported: true)
         };
         string json = JsonConvert.SerializeObject(wrapper, JsonSettings);
         WriteJsonAtomic(ChangeLogFilePath, json);
@@ -197,7 +123,7 @@ namespace Velum.UI.AssemblyRegistry
     /// </summary>
     public IReadOnlyList<VelumBomChangeRecord> GetPending()
     {
-      return FilteredRecords(includeExported: false);
+      return VelumBomChangeLogRules.Filter(_records, includeExported: false);
     }
 
     /// <summary>
@@ -207,32 +133,7 @@ namespace Velum.UI.AssemblyRegistry
     /// </summary>
     public IReadOnlyList<VelumBomChangeRecord> GetAll()
     {
-      return FilteredRecords(includeExported: true);
-    }
-
-    /// <summary>
-    /// Собирает список записей в стабильном хронологическом порядке.
-    /// </summary>
-    /// <param name="includeExported">Включать ли выгруженные записи.</param>
-    private List<VelumBomChangeRecord> FilteredRecords(bool includeExported)
-    {
-      var result = new List<VelumBomChangeRecord>();
-      foreach (VelumBomChangeRecord record in _records)
-      {
-        if (record == null)
-          continue;
-        if (!includeExported && record.Exported)
-          continue;
-        result.Add(record);
-      }
-      result.Sort((a, b) =>
-      {
-        int cmp = a.TimestampUtc.CompareTo(b.TimestampUtc);
-        if (cmp != 0)
-          return cmp;
-        return string.Compare(a.Id, b.Id, StringComparison.Ordinal);
-      });
-      return result;
+      return VelumBomChangeLogRules.Filter(_records, includeExported: true);
     }
 
     /// <summary>Пометить записи выгруженными (после успешной записи CSV).</summary>
@@ -263,9 +164,7 @@ namespace Velum.UI.AssemblyRegistry
     /// <returns>Число удалённых записей.</returns>
     public int PurgeExportedOlderThan(TimeSpan age)
     {
-      DateTime cutoff = DateTime.UtcNow - age;
-      int removed = _records.RemoveAll(r =>
-          r != null && r.Exported && r.ExportedUtc.HasValue && r.ExportedUtc.Value < cutoff);
+      int removed = VelumBomChangeLogRules.PurgeExportedOlderThan(_records, age, DateTime.UtcNow);
       if (removed > 0)
         _dirty = true;
       return removed;
@@ -273,19 +172,13 @@ namespace Velum.UI.AssemblyRegistry
 
     /// <summary>
     /// Удалить невыгружаемые pending-записи: с пустым ParentExternalId
-    /// они не попадут в обмен никогда (отбор в
-    /// <c>VelumBomExchangeStructureProjector.Select</c> их пропускает),
-    /// а срок хранения !Exported не истекает — без очистки такие записи
-    /// зависают в журнале навсегда. Возраст не проверяется: запись без
-    /// ParentExternalId невыгружаема по определению, задержка нужна лишь
-    /// на случай ручной правки ExternalId в свойствах документа —
-    /// следующее зеркалирование структуры создаст корректную запись заново.
+    /// они не попадут в обмен никогда, а срок хранения !Exported не истекает —
+    /// без очистки такие записи зависают в журнале навсегда (CASEBOOK-2, случай 19 / E39).
     /// </summary>
     /// <returns>Число удалённых записей.</returns>
     public int PurgeUnexportablePending()
     {
-      int removed = _records.RemoveAll(r =>
-          r != null && !r.Exported && string.IsNullOrWhiteSpace(r.ParentExternalId));
+      int removed = VelumBomChangeLogRules.PurgeUnexportablePending(_records);
       if (removed > 0)
         _dirty = true;
       return removed;
@@ -302,19 +195,7 @@ namespace Velum.UI.AssemblyRegistry
     /// <returns>true, если идентичная невыгруженная запись уже есть.</returns>
     public bool HasPending(VelumBomChangeAction action, string parentExternalId, string childIdentity)
     {
-      string parent = (parentExternalId ?? string.Empty).Trim();
-      string child = (childIdentity ?? string.Empty).Trim();
-      foreach (VelumBomChangeRecord record in _records)
-      {
-        if (record == null || record.Exported || record.Action != action)
-          continue;
-        if (string.Equals((record.ParentExternalId ?? string.Empty).Trim(), parent,
-                StringComparison.OrdinalIgnoreCase) &&
-            string.Equals((record.ChildIdentity ?? string.Empty).Trim(), child,
-                StringComparison.OrdinalIgnoreCase))
-          return true;
-      }
-      return false;
+      return VelumBomChangeLogRules.HasPending(_records, action, parentExternalId, childIdentity);
     }
 
     /// <summary>
@@ -325,17 +206,7 @@ namespace Velum.UI.AssemblyRegistry
     /// <returns>Строковое представление для CSV/UI.</returns>
     public static string RenderAction(VelumBomChangeAction action)
     {
-      switch (action)
-      {
-        case VelumBomChangeAction.Add:
-          return "add";
-        case VelumBomChangeAction.Update:
-          return "update";
-        case VelumBomChangeAction.Delete:
-          return "delete";
-        default:
-          return string.Empty;
-      }
+      return VelumBomChangeLogRules.RenderAction(action);
     }
 
     /// <summary>Прочитать файл; при ошибке — <c>null</c>.</summary>

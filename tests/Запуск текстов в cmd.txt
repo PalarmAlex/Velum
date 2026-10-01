@@ -1,0 +1,4 @@
+Запускать по очереди:
+
+dotnet restore D:\Программы\Velum\Velum\tests\Velum.ReactiveCore.Tests.csproj -p:TargetFramework=net10.0
+dotnet test D:\Программы\Velum\Velum\tests\Velum.ReactiveCore.Tests.csproj -p:TargetFramework=net10.0 --no-restore

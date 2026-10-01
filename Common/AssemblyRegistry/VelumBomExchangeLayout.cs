@@ -10,61 +10,11 @@ using Velum.Configuration;
 namespace Velum.UI.AssemblyRegistry
 {
   /// <summary>
-  /// Источник значения колонки выгрузки BOM: структурное поле зеркала или отслеживаемое свойство.
-  /// </summary>
-  internal enum VelumBomExchangeFieldSource
-  {
-    /// <summary>Структурное поле записи зеркала BOM (TypeDocs, ExternalId, …).</summary>
-    Structural = 0,
-
-    /// <summary>Значение отслеживаемого свойства из снимка <c>TrackedValues</c>.</summary>
-    Tracked = 1
-  }
-
-  /// <summary>
-  /// Описание одной колонки CSV/списка экспорта BOM в 1С.
-  /// </summary>
-  internal sealed class VelumBomExchangeColumnDef
-  {
-    /// <summary>Ключ структурного поля или имя отслеживаемого свойства.</summary>
-    public string Field { get; set; }
-
-    /// <summary>Заголовок колонки в CSV и в списке формы.</summary>
-    public string Header { get; set; }
-
-    /// <summary>Источник значения колонки.</summary>
-    public VelumBomExchangeFieldSource Source { get; set; }
-
-    /// <summary>Включена ли колонка в выгрузку.</summary>
-    public bool Enabled { get; set; } = true;
-
-    /// <summary>Порядковый номер колонки (1..N).</summary>
-    public int Order { get; set; }
-
-    /// <summary>Ширина колонки в списке формы, пикселей.</summary>
-    public int Width { get; set; } = 120;
-  }
-
-  /// <summary>
-  /// Корень файла <c>bomExchangeLayout.json</c> — упорядоченный список колонок выгрузки.
-  /// </summary>
-  internal sealed class VelumBomExchangeLayoutFile
-  {
-    /// <summary>
-    /// Версия формата layout, записанная в файле. Отсутствие поля (0) означает
-    /// набор до появления <see cref="VelumBomExchangeLayoutStore.CurrentLayoutFormatVersion"/>.
-    /// </summary>
-    [JsonProperty("layoutFormatVersion")]
-    public int LayoutFormatVersion { get; set; }
-
-    /// <summary>Колонки выгрузки в порядке следования.</summary>
-    public List<VelumBomExchangeColumnDef> Columns { get; set; } =
-        new List<VelumBomExchangeColumnDef>();
-  }
-
-  /// <summary>
   /// Хранилище настроек выгрузки BOM (<c>bomExchangeLayout.json</c>).
   /// Задаёт состав, порядок и заголовки колонок CSV и списка формы экспорта.
+  /// Файловый ввод-вывод — здесь; чистые правила состава — в
+  /// <see cref="VelumBomExchangeLayoutRules"/>, DTO — в
+  /// <see cref="VelumBomExchangeLayoutFile"/> / <see cref="VelumBomExchangeColumnDef"/>.
   /// </summary>
   internal static class VelumBomExchangeLayoutStore
   {
@@ -77,55 +27,15 @@ namespace Velum.UI.AssemblyRegistry
 
     /// <summary>
     /// Ключи структурных полей в порядке колонок текущего CSV (жёстко в коде).
-    /// Порядок соответствует прежней выгрузке: TypeDocs, ExternalId, Designation, Name,
-    /// FilePath, Configuration.
-    /// <c>Quantity</c> здесь отсутствует намеренно: количество вхождений описывает связь
-    /// позиции со сборкой-родителем, а не саму карточку, и в <c>1C_update_*.csv</c>
-    /// всегда было бы 0 (для детали) или «плавающим» числом (для сборки). Реальное
-    /// количество передаётся только в <c>1C_bom_*.csv</c>. Поле <c>Quantity</c> в модели
-    /// зеркала сохранено — оно нужно для <c>GetTypeDocs</c> (fallback типа старых записей).
+    /// См. <see cref="VelumBomExchangeLayoutRules.StructuralKeys"/>.
     /// </summary>
-    internal static readonly string[] StructuralKeys =
-    {
-      "TypeDocs", "ExternalId", "Designation", "Name", "FilePath", "Configuration"
-    };
+    internal static string[] StructuralKeys => VelumBomExchangeLayoutRules.StructuralKeys;
 
-    /// <summary>
-    /// Текущая версия набора колонок по умолчанию.
-    /// <b>2</b> — <c>Quantity</c> в наборе по умолчанию выключен (он больше не входит
-    /// в хэш карточки, см. <see cref="VelumAssemblyBomTrackedPropertiesConfig.HashFormatVersion"/>).
-    /// <b>3</b> — <c>Quantity</c> полностью убран из структурных полей карточки
-    /// (см. <see cref="StructuralKeys"/>): колонка не просто выключается, а удаляется
-    /// из набора, чтобы не возвращаться при нормализации.
-    /// При обнаружении файла более старой версии состав правится один раз,
-    /// дальше настройка полностью за оператором.
-    /// </summary>
-    internal const int CurrentLayoutFormatVersion = 3;
+    /// <summary>Текущая версия набора колонок по умолчанию.</summary>
+    internal const int CurrentLayoutFormatVersion = VelumBomExchangeLayoutRules.CurrentLayoutFormatVersion;
 
-    /// <summary>
-    /// Поля, которые нельзя выключить (по ТЗ).
-    /// <c>Quantity</c> из списка убран: количество вхождений описывает связь позиции
-    /// со сборкой-родителем, а не саму карточку, и в <c>1C_bom_*.csv</c> оно есть;
-    /// дублировать его в <c>1C_update_*.csv</c> смысла нет.
-    /// </summary>
-    internal static readonly string[] MandatoryStructuralKeys =
-    {
-      "TypeDocs", "ExternalId", "Designation", "Name"
-    };
-
-    /// <summary>
-    /// Ширины структурных колонок по умолчанию (сохраняют прежний вид списка формы).
-    /// </summary>
-    private static readonly Dictionary<string, int> StructuralDefaultWidths =
-        new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
-        {
-          { "TypeDocs", 80 },
-          { "ExternalId", 100 },
-          { "Designation", 120 },
-          { "Name", 150 },
-          { "FilePath", 200 },
-          { "Configuration", 110 }
-        };
+    /// <summary>Поля, которые нельзя выключить (по ТЗ).</summary>
+    internal static string[] MandatoryStructuralKeys => VelumBomExchangeLayoutRules.MandatoryStructuralKeys;
 
     /// <summary>Путь к файлу настроек выгрузки.</summary>
     public static string FilePath => Path.Combine(
@@ -137,9 +47,7 @@ namespace Velum.UI.AssemblyRegistry
     /// <returns>true, если поле структурное.</returns>
     public static bool IsStructural(string field)
     {
-      if (string.IsNullOrWhiteSpace(field)) return false;
-      return StructuralKeys.Any(k =>
-          string.Equals(k, field, StringComparison.OrdinalIgnoreCase));
+      return VelumBomExchangeLayoutRules.IsStructural(field);
     }
 
     /// <summary>Проверить, является ли поле обязательным (нельзя выключить).</summary>
@@ -147,9 +55,7 @@ namespace Velum.UI.AssemblyRegistry
     /// <returns>true, если поле обязательное.</returns>
     public static bool IsMandatory(string field)
     {
-      if (string.IsNullOrWhiteSpace(field)) return false;
-      return MandatoryStructuralKeys.Any(k =>
-          string.Equals(k, field, StringComparison.OrdinalIgnoreCase));
+      return VelumBomExchangeLayoutRules.IsMandatory(field);
     }
 
     /// <summary>
@@ -189,27 +95,12 @@ namespace Velum.UI.AssemblyRegistry
 
     /// <summary>
     /// Одноразово привести набор колонок к <see cref="CurrentLayoutFormatVersion"/>.
-    /// Файлы, созданные до появления версии, имеют <c>0</c>.
     /// Возвращает true, если состав изменился и файл нужно перезаписать.
     /// </summary>
     /// <param name="data">Нормализованный layout.</param>
     private static bool MigrateFormatVersion(VelumBomExchangeLayoutFile data)
     {
-      if (data == null || data.LayoutFormatVersion == CurrentLayoutFormatVersion)
-        return false;
-
-      if (data.LayoutFormatVersion > CurrentLayoutFormatVersion)
-      {
-        // Файл из более новой версии — обратно колонки не «чиним», чтобы не
-        // затереть осознанный выбор оператора.
-        return false;
-      }
-
-      // Состав колонок (в т.ч. удаление снятого с поддержки Quantity) приводит
-      // Normalize, уже выполненный до этого метода — здесь остаётся только
-      // поднять записанный номер версии и тем самым инициировать перезапись файла.
-      data.LayoutFormatVersion = CurrentLayoutFormatVersion;
-      return true;
+      return VelumBomExchangeLayoutRules.MigrateFormatVersion(data);
     }
 
     /// <summary>
@@ -232,155 +123,31 @@ namespace Velum.UI.AssemblyRegistry
     /// <returns>Новый layout.</returns>
     internal static VelumBomExchangeLayoutFile CreateDefault()
     {
-      var file = new VelumBomExchangeLayoutFile
-      {
-        LayoutFormatVersion = CurrentLayoutFormatVersion
-      };
-      int order = 1;
-      foreach (string key in StructuralKeys)
-      {
-        file.Columns.Add(new VelumBomExchangeColumnDef
-        {
-          Field = key,
-          Header = key,
-          Source = VelumBomExchangeFieldSource.Structural,
-          Enabled = true,
-          Order = order++,
-          Width = DefaultWidthFor(key)
-        });
-      }
-      foreach (TrackedProperty prop in VelumAssemblyBomTrackedPropertiesConfig.Load())
-      {
-        if (string.IsNullOrWhiteSpace(prop?.Name)) continue;
-        file.Columns.Add(new VelumBomExchangeColumnDef
-        {
-          Field = prop.Name.Trim(),
-          Header = prop.Name.Trim(),
-          Source = VelumBomExchangeFieldSource.Tracked,
-          Enabled = true,
-          Order = order++,
-          Width = 120
-        });
-      }
-      return file;
+      return VelumBomExchangeLayoutRules.CreateDefault(LoadTrackedNames());
     }
 
     /// <summary>
     /// Синхронизация layout: добавляет отсутствующие структурные и tracked поля,
-    /// удаляет tracked, которых больше нет в bomTrackedProperties.json,
-    /// переуплотняет Order, чинит пустые Header и ширины.
+    /// удаляет tracked, которых больше нет в настройках, удаляет осиротевшие
+    /// структурные (снятые с поддержки), переуплотняет Order, чинит пустые
+    /// Header и ширины.
     /// </summary>
     /// <param name="data">Нормализуемый layout.</param>
     internal static void Normalize(VelumBomExchangeLayoutFile data)
     {
-      if (data == null) return;
-      if (data.Columns == null)
-        data.Columns = new List<VelumBomExchangeColumnDef>();
-
-      IReadOnlyList<TrackedProperty> tracked =
-          VelumAssemblyBomTrackedPropertiesConfig.Load();
-      var trackedNames = new List<string>();
-      var trackedNameSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-      foreach (TrackedProperty p in tracked)
-      {
-        if (string.IsNullOrWhiteSpace(p?.Name)) continue;
-        string name = p.Name.Trim();
-        if (trackedNameSet.Add(name))
-          trackedNames.Add(name);
-      }
-
-      // Удаляем tracked, которых больше нет в настройках свойств.
-      data.Columns.RemoveAll(c =>
-          c != null &&
-          c.Source == VelumBomExchangeFieldSource.Tracked &&
-          !trackedNameSet.Contains((c.Field ?? string.Empty).Trim()));
-
-      // Удаляем структурные колонки, которых больше нет в StructuralKeys
-      // (например, снятый с поддержки Quantity). Иначе они бы «жили» в файле
-      // вечно: ниже добавляются отсутствующие, а лишние не убирались.
-      data.Columns.RemoveAll(c =>
-          c != null &&
-          c.Source == VelumBomExchangeFieldSource.Structural &&
-          !IsStructural(c.Field));
-
-      // Добавляем отсутствующие структурные.
-      var present = new HashSet<string>(
-          data.Columns.Where(c => c != null && c.Source == VelumBomExchangeFieldSource.Structural)
-              .Select(c => (c.Field ?? string.Empty).Trim()),
-          StringComparer.OrdinalIgnoreCase);
-      foreach (string key in StructuralKeys)
-      {
-        if (!present.Contains(key))
-        {
-          data.Columns.Add(new VelumBomExchangeColumnDef
-          {
-            Field = key,
-            Header = key,
-            Source = VelumBomExchangeFieldSource.Structural,
-            Enabled = true,
-            Order = int.MaxValue,
-            Width = DefaultWidthFor(key)
-          });
-        }
-      }
-
-      // Добавляем отсутствующие tracked.
-      var presentTracked = new HashSet<string>(
-          data.Columns.Where(c => c != null && c.Source == VelumBomExchangeFieldSource.Tracked)
-              .Select(c => (c.Field ?? string.Empty).Trim()),
-          StringComparer.OrdinalIgnoreCase);
-      foreach (string name in trackedNames)
-      {
-        if (!presentTracked.Contains(name))
-        {
-          data.Columns.Add(new VelumBomExchangeColumnDef
-          {
-            Field = name,
-            Header = name,
-            Source = VelumBomExchangeFieldSource.Tracked,
-            Enabled = true,
-            Order = int.MaxValue,
-            Width = 120
-          });
-        }
-      }
-
-      // Чистим null, чиним Header/Width, заставляем mandatory быть включёнными.
-      data.Columns.RemoveAll(c => c == null);
-      foreach (VelumBomExchangeColumnDef c in data.Columns)
-      {
-        c.Field = (c.Field ?? string.Empty).Trim();
-        c.Header = string.IsNullOrWhiteSpace(c.Header) ? c.Field : c.Header.Trim();
-        if (c.Width <= 0)
-          c.Width = c.Source == VelumBomExchangeFieldSource.Structural
-              ? DefaultWidthFor(c.Field)
-              : 120;
-        else if (c.Width < 40)
-          c.Width = 40;
-        if (c.Source == VelumBomExchangeFieldSource.Structural && IsMandatory(c.Field))
-          c.Enabled = true;
-      }
-
-      // Переуплотняем Order по текущему порядку (стабильно).
-      var ordered = data.Columns
-          .Select((c, idx) => new { Col = c, Idx = idx })
-          .OrderBy(x => x.Col.Order)
-          .ThenBy(x => x.Idx)
-          .Select(x => x.Col)
-          .ToList();
-      for (int i = 0; i < ordered.Count; i++)
-        ordered[i].Order = i + 1;
-      data.Columns = ordered;
+      VelumBomExchangeLayoutRules.Normalize(data, LoadTrackedNames());
     }
 
-    /// <summary>Ширина структурной колонки по умолчанию (120, если ключ неизвестен).</summary>
-    /// <param name="field">Имя структурного поля.</param>
-    /// <returns>Ширина в пикселях.</returns>
-    private static int DefaultWidthFor(string field)
+    /// <summary>Имена отслеживаемых свойств из bomTrackedProperties.json (уникальные).</summary>
+    private static IReadOnlyList<string> LoadTrackedNames()
     {
-      if (!string.IsNullOrWhiteSpace(field) && StructuralDefaultWidths.TryGetValue(field.Trim(), out int w))
-        return w;
-      return 120;
+      var names = new List<string>();
+      foreach (TrackedProperty prop in VelumAssemblyBomTrackedPropertiesConfig.Load())
+      {
+        if (string.IsNullOrWhiteSpace(prop?.Name)) continue;
+        names.Add(prop.Name.Trim());
+      }
+      return names;
     }
 
     /// <summary>Атомарная запись файла (как в <c>VelumAssemblyBomMirrorStore</c>).</summary>

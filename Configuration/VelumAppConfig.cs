@@ -7,6 +7,7 @@ using System.Xml.Linq;
 using ISIDA.Common;
 using ISIDA.SymbiontEnv.Contract;
 using Velum.ReactiveCore;
+using Velum.ReactiveCore.Export;
 
 namespace Velum.Configuration
 {
@@ -188,38 +189,17 @@ namespace Velum.Configuration
     /// </summary>
     public static string GetDocumentRootPath()
     {
-      string trimmed = DocumentRootPath;
-      if (trimmed.Length == 0)
-        return string.Empty;
-
+      // Чистая логика вынесена в VelumDocumentRootPathRules (линкуется в тесты):
       // UNC-префикс «\server\dfs» без хвостового «\» не срезает корень корректно;
-      // буква диска «Z:» дополняется до «Z:\». Литералы — с одним обратным
-      // слэшем (@@"\"), иначе сравнение идёт с одиночным «\» и корень диска
-      // («Z:\») ошибочно считается UNC-путём (см. CASEBOOK-2, случай 23).
-      if (trimmed.StartsWith(@"\\", StringComparison.Ordinal)
-          && !trimmed.EndsWith(@"\\", StringComparison.Ordinal))
-        trimmed += @"\";
-      else if (trimmed.Length == 2 && trimmed[1] == ':')
-        trimmed += @"\";
-
-      return trimmed;
+      // буква диска «Z:» дополняется до «Z:\» и UNC-путём не считается
+      // (см. CASEBOOK-2, случай 23 — E45).
+      return VelumDocumentRootPathRules.Resolve(DocumentRootPath);
     }
 
     /// <summary>Первая непустая часть значения (обратная совместимость со списком через «;»).</summary>
     private static string FirstRootPathPart(string raw)
     {
-      string value = (raw ?? string.Empty).Trim();
-      if (value.Length == 0)
-        return string.Empty;
-
-      foreach (string part in value.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
-      {
-        string trimmed = part.Trim();
-        if (trimmed.Length > 0)
-          return trimmed;
-      }
-
-      return string.Empty;
+      return VelumDocumentRootPathRules.FirstPart(raw);
     }
 
     /// <summary>Последний выбранный шаблон столбцов реестра изделия.</summary>

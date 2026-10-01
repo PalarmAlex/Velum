@@ -164,13 +164,13 @@ namespace Velum.UI.ProductRegistry
       // живой файл одним корнем «Изделия») и запрещено продолжать с обнулённой
       // памятью (иначе любое изменение записи сохранит пустой items.json).
       // Легитимное отсутствие файла — отдельный исход (первый запуск/пустой стор).
-      VelumPathExists.ReadTextResult folderRead =
+      ReadTextResult folderRead =
           VelumPathExists.ReadAllTextWithStatus(FoldersFilePath);
-      VelumPathExists.ReadTextResult itemRead =
+      ReadTextResult itemRead =
           VelumPathExists.ReadAllTextWithStatus(ItemsFilePath);
 
-      bool folderFailed = folderRead.Outcome == VelumPathExists.ReadTextOutcome.Failed;
-      bool itemFailed = itemRead.Outcome == VelumPathExists.ReadTextOutcome.Failed;
+      bool folderFailed = folderRead.Outcome == ReadTextOutcome.Failed;
+      bool itemFailed = itemRead.Outcome == ReadTextOutcome.Failed;
       if (folderFailed || itemFailed)
       {
         string what = folderFailed && itemFailed

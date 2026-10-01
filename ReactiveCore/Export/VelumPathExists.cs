@@ -764,40 +764,6 @@ namespace Velum.ReactiveCore.Export
     }
 
     /// <summary>
-    /// Итог чтения с различением причин: «файла нет» — легитимное отсутствие
-    /// (первый запуск), «сбой» — таймаут/ошибка чтения на доступном пути.
-    /// Дефолтные JSON-хранилища (реестр документов) обязаны различать эти случаи:
-    /// сбой чтения не должен выглядеть как пустой реестр и затираться при сохранении.
-    /// </summary>
-    internal enum ReadTextOutcome
-    {
-      /// <summary>Файл прочитан (см. Content).</summary>
-      Success,
-      /// <summary>Файл отсутствует (или путь не существует) — не ошибка.</summary>
-      FileMissing,
-      /// <summary>Таймаут проверки/чтения или ошибка чтения доступного файла.</summary>
-      Failed
-    }
-
-    /// <summary>Результат <see cref="ReadAllTextWithStatus"/>: текст и причина неудачи.</summary>
-    internal readonly struct ReadTextResult
-    {
-      public ReadTextResult(ReadTextOutcome outcome, string content)
-      {
-        Outcome = outcome;
-        Content = content;
-      }
-
-      internal ReadTextOutcome Outcome { get; }
-
-      /// <summary>Содержимое файла; null при неудаче любого рода.</summary>
-      internal string Content { get; }
-
-      /// <summary>True — файл реально прочитан.</summary>
-      internal bool Success => Outcome == ReadTextOutcome.Success;
-    }
-
-    /// <summary>
     /// Чтение текста с таймаутом и различением «файла нет» и «чтение не удалось».
     /// Обёртка над <see cref="ReadAllTextWithTimeout"/>: тот же трёхзначный
     /// <see cref="Check"/>, тот же пул потоков и таймаут, но сбой чтения

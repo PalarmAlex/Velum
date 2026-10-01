@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Threading;
 using Velum.Configuration;
 
@@ -34,18 +33,7 @@ namespace Velum.ReactiveCore.Export
     /// </summary>
     internal static string ToStored(string fullPath)
     {
-      string value = (fullPath ?? string.Empty).Trim();
-      if (value.Length == 0)
-        return string.Empty;
-
-      string root = GetRoot();
-      if (root.Length == 0)
-        return value;
-
-      if (TryStripPrefix(value, root, out string relative))
-        return relative;
-
-      return value;
+      return VelumRelativePathRules.ToStored(fullPath, GetRoot());
     }
 
     /// <summary>
@@ -54,25 +42,7 @@ namespace Velum.ReactiveCore.Export
     /// </summary>
     internal static string ToFull(string storedPath)
     {
-      string value = (storedPath ?? string.Empty).Trim();
-      if (value.Length == 0)
-        return string.Empty;
-
-      if (Path.IsPathRooted(value))
-        return value;
-
-      string root = GetRoot();
-      if (root.Length == 0)
-        return value;
-
-      try
-      {
-        return Path.Combine(root, value);
-      }
-      catch
-      {
-        return value;
-      }
+      return VelumRelativePathRules.ToFull(storedPath, GetRoot());
     }
 
     /// <summary>
@@ -83,49 +53,19 @@ namespace Velum.ReactiveCore.Export
     /// </summary>
     internal static string NormalizeForCompare(string path)
     {
-      string value = (path ?? string.Empty).Trim();
-      if (value.Length == 0)
-        return string.Empty;
-
-      try
-      {
-        return Path.GetFullPath(ToFull(value));
-      }
-      catch
-      {
-        return ToFull(value);
-      }
+      return VelumRelativePathRules.NormalizeForCompare(path, GetRoot());
     }
 
     /// <summary>true, если значение похоже на относительное хранимое (не пустое и не укоренённое).</summary>
     internal static bool IsRelativeStored(string storedPath)
     {
-      string value = (storedPath ?? string.Empty).Trim();
-      return value.Length > 0 && !Path.IsPathRooted(value);
+      return VelumRelativePathRules.IsRelativeStored(storedPath);
     }
 
     /// <summary>true, если корневой путь документов задан и непуст.</summary>
     internal static bool HasRootPath()
     {
       return GetRoot().Length > 0;
-    }
-
-    private static bool TryStripPrefix(string value, string prefix, out string relative)
-    {
-      relative = string.Empty;
-      if (string.IsNullOrEmpty(prefix))
-        return false;
-
-      if (!value.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
-        return false;
-
-      string rest = value.Substring(prefix.Length);
-      // «Z:\» + «\03_Производство\...» — двойной разделитель после среза.
-      if (rest.StartsWith("\\", StringComparison.Ordinal) || rest.StartsWith("/", StringComparison.Ordinal))
-        rest = rest.Substring(1);
-
-      relative = rest;
-      return true;
     }
 
     /// <summary>Нормализованный корневой каталог документов (string.Empty — не задан).</summary>

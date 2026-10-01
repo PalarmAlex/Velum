@@ -22,6 +22,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <!-- Linкуемые чистые классы из основного проекта (без SolidWorks / WinForms / isida.dll) -->
@@ -32,6 +33,14 @@
     <Compile Include="..\ReactiveCore\VelumBlankSizeProperties.cs" Link="src\VelumBlankSizeProperties.cs" />
     <Compile Include="..\ReactiveCore\RecipeDispatchEpisodeTracker.cs" Link="src\RecipeDispatchEpisodeTracker.cs" />
     <Compile Include="..\ReactiveCore\Export\VelumDxfArtifactNameRules.cs" Link="src\VelumDxfArtifactNameRules.cs" />
+    <Compile Include="..\ReactiveCore\Export\VelumDocumentRootPathRules.cs" Link="src\VelumDocumentRootPathRules.cs" />
+    <Compile Include="..\ReactiveCore\Export\VelumRelativePathRules.cs" Link="src\VelumRelativePathRules.cs" />
+    <Compile Include="..\Common\AssemblyRegistry\VelumBomExchangeLayoutModels.cs" Link="src\VelumBomExchangeLayoutModels.cs" />
+    <Compile Include="..\Common\AssemblyRegistry\VelumBomExchangeLayoutRules.cs" Link="src\VelumBomExchangeLayoutRules.cs" />
+    <Compile Include="..\Common\AssemblyRegistry\VelumBomChangeModels.cs" Link="src\VelumBomChangeModels.cs" />
+    <Compile Include="..\Common\AssemblyRegistry\VelumBomChangeLogRules.cs" Link="src\VelumBomChangeLogRules.cs" />
+    <Compile Include="..\ReactiveCore\Export\VelumReadTextOutcomeModels.cs" Link="src\VelumReadTextOutcomeModels.cs" />
+    <Compile Include="..\ReactiveCore\Export\VelumReadTextOutcomeRules.cs" Link="src\VelumReadTextOutcomeRules.cs" />
   </ItemGroup>
 
   <!-- Заглушки ISIDA.Common (без isida.dll) -->
@@ -49,6 +58,11 @@
     <Compile Include="VelumBlankSizePropertiesTests.cs" />
     <Compile Include="RecipeDispatchEpisodeTrackerTests.cs" />
     <Compile Include="VelumDxfArtifactNameRulesTests.cs" />
+    <Compile Include="VelumDocumentRootPathRulesTests.cs" />
+    <Compile Include="VelumRelativePathRulesTests.cs" />
+    <Compile Include="VelumBomExchangeLayoutRulesTests.cs" />
+    <Compile Include="VelumBomChangeLogRulesTests.cs" />
+    <Compile Include="VelumReadTextOutcomeRulesTests.cs" />
   </ItemGroup>
 
 </Project>
