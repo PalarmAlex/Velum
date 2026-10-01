@@ -29,6 +29,7 @@ namespace Velum.SolidHomeostasis
       States.Clear();
       VelumSolidMetricPressurePauseRegistry.Clear();
       VelumSolidMetricPressureEngageRegistry.Clear();
+      VelumSolidMetricLatchRegistry.Clear();
     }
 
     /// <summary>Cumulative engage и release на такте до гомеостаза.</summary>
@@ -105,7 +106,7 @@ namespace Velum.SolidHomeostasis
         {
 
           bool trustRelease = trustSolidSnapshotForRelease
-              || VelumProductRegistryIntegrityProbes.IsRegistryProbeKey(probeKey);
+              || VelumProductRegistryIntegrityProbes.IsHostGlobalProbeKey(probeKey);
 
           if (state.WasBad && trustRelease &&
 
@@ -146,7 +147,7 @@ namespace Velum.SolidHomeostasis
         VelumSolidMetricCumulativePressureTarget.CollectAllInfluencedParamIds(paramIdsToUpdate);
 
         var hostGlobalOnlyParams = new HashSet<int>();
-        VelumProductRegistryIntegrityProbes.CollectInfluencedParamIds(hostGlobalOnlyParams);
+        VelumProductRegistryIntegrityProbes.CollectHostGlobalInfluencedParamIds(hostGlobalOnlyParams);
 
 
 

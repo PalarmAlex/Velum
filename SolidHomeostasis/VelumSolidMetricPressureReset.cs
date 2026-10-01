@@ -43,7 +43,7 @@ namespace Velum.SolidHomeostasis
         return;
 
       var hostGlobalParams = new HashSet<int>();
-      VelumProductRegistryIntegrityProbes.CollectInfluencedParamIds(hostGlobalParams);
+      VelumProductRegistryIntegrityProbes.CollectHostGlobalInfluencedParamIds(hostGlobalParams);
 
       IReadOnlyList<int> engaged = VelumSolidMetricPressureEngageRegistry.EnumerateEngagedParamIds();
       if (engaged.Count == 0)
@@ -117,7 +117,7 @@ namespace Velum.SolidHomeostasis
 
       var hostGlobalParams = new HashSet<int>();
       if (!includeHostGlobal)
-        VelumProductRegistryIntegrityProbes.CollectInfluencedParamIds(hostGlobalParams);
+        VelumProductRegistryIntegrityProbes.CollectHostGlobalInfluencedParamIds(hostGlobalParams);
 
       var paramIds = new HashSet<int>();
       VelumSolidMetricCumulativePressureTarget.CollectAllInfluencedParamIds(paramIds);
@@ -202,7 +202,7 @@ namespace Velum.SolidHomeostasis
     internal static bool HasPendingEnvironmentPressureResidue()
     {
       var hostGlobalParams = new HashSet<int>();
-      VelumProductRegistryIntegrityProbes.CollectInfluencedParamIds(hostGlobalParams);
+      VelumProductRegistryIntegrityProbes.CollectHostGlobalInfluencedParamIds(hostGlobalParams);
 
       foreach (int paramId in VelumSolidMetricPressureEngageRegistry.EnumerateEngagedParamIds())
       {

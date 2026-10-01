@@ -80,6 +80,14 @@ namespace Velum.UI.ProductRegistry
     private static int _drawingCursor;
     private static int _dxfCursor;
     private static int _pdfCursor;
+    /// <summary>
+    /// 1 — discovery-проход BOM-расхождений активен (находки лежат в pending кэша проблем).
+    /// BOM-скан не курсорный и укладывается в один тик, но флаг нужен, чтобы прерывание
+    /// прохода (открытие документа, смена области) сбрасывало pending наравне с остальными
+    /// сканерами: иначе находки, закоммиченные в тот же тик, «восставали» бы в closed-области
+    /// раньше, чем отработали сетевые сканеры.
+    /// </summary>
+    private static int _bomPassActive;
     /// <summary>Пульсы подряд без активного документа SW (сброс при ActiveDoc).</summary>
     private static int _closedScopePulseCount;
     /// <summary>1 — открыт хотя бы один документ SW; сканеры проблем реестра не работают.</summary>
@@ -230,6 +238,13 @@ namespace Velum.UI.ProductRegistry
       }
     }
 
+    /// <summary>
+    /// true, если discovery-проход BOM-расхождений активен (находки в pending).
+    /// Использует <see cref="Interlocked"/> — флаг пишется из фонового тика и читается
+    /// при прерывании прохода.
+    /// </summary>
+    internal static bool IsBomDiscoveryPassActive => Volatile.Read(ref _bomPassActive) == 1;
+
     /// <summary>true — открыт документ SW; автосканирование проблем реестра отключено.</summary>
     internal static bool IsOpenDocumentsScopeActive =>
         Volatile.Read(ref _openDocumentsScopeActive) == 1;
@@ -347,6 +362,9 @@ namespace Velum.UI.ProductRegistry
         return store.GetAllItems().Length;
       }
     }
+
+    /// <summary>Номер текущего тика фонового сканирования (для кратности BOM-прохода).</summary>
+    private static int _tickSequence;
 
     /// <summary>
     /// true — реестр успешно прочитан и в нём нет ни одной записи (папки/файлы есть,
@@ -868,6 +886,7 @@ namespace Velum.UI.ProductRegistry
       }
 
       Interlocked.Increment(ref _scanIterationCount);
+      int tickSeq = Interlocked.Increment(ref _tickSequence);
 
       // Колбэк остановки кванта: следующий тяжёлый пульс пришёл или документ открылся.
       // Сканеры проверяют его между элементами и уступают, сохраняя курсор.
@@ -962,10 +981,24 @@ namespace Velum.UI.ProductRegistry
         return;
 
       // BOM diff probe — лёгкое сканирование без COM, только чтение JSON.
-      if (Volatile.Read(ref _openDocumentsScopeActive) != 1)
+      // Кратность по настройке: не курсорный проход завершается и коммитится за один тик,
+      // поэтому на первом тике цикла он опережал DXF/PDF и поднимал свою метрику раньше.
+      int bomPeriod = VelumAppConfig.BomDiffScanPeriodPulses;
+      bool bomDue = tickSeq % bomPeriod == 0;
+      if (bomDue && Volatile.Read(ref _openDocumentsScopeActive) != 1)
       {
-        VelumAssemblyBomDiffProbe.RunScan();
+        Interlocked.Exchange(ref _bomPassActive, 1);
+        try
+        {
+          VelumAssemblyBomDiffProbe.RunScan();
+        }
+        finally
+        {
+          Interlocked.Exchange(ref _bomPassActive, 0);
+        }
       }
+      if (AbortRunTickIfOpenDocumentsScope())
+        return;
 
       if (_brokenPassDone && _drawingPassDone && _dxfPassDone && _pdfPassDone
           && passCompleted)
@@ -1067,6 +1100,7 @@ namespace Velum.UI.ProductRegistry
         VelumProductRegistryDxfFleetScanner.DiscardPending();
       if (_pdfPassActive)
         VelumProductRegistryPdfFleetScanner.DiscardPending();
+      DiscardBomPendingPassUnlocked();
 
       _brokenCursor = 0;
       _drawingCursor = 0;
@@ -1077,6 +1111,25 @@ namespace Velum.UI.ProductRegistry
       _dupDesPassActive = false;
       _dxfPassActive = false;
       _pdfPassActive = false;
+    }
+
+    /// <summary>
+    /// Завершить discovery-проход BOM-расхождений (обычно в <c>finally</c> сканера):
+    /// помечает pending «находки этого прохода» неактивным.
+    /// </summary>
+    internal static void EndBomDiscoveryPass()
+    {
+      Interlocked.Exchange(ref _bomPassActive, 0);
+    }
+
+    /// <summary>
+    /// Сброс находок незавершённого BOM-прохода (прерывание: открылся документ, сменилась
+    /// область). Вызывается из <see cref="AbortDiscoveryPassesUnlocked"/>.
+    /// </summary>
+    private static void DiscardBomPendingPassUnlocked()
+    {
+      VelumProductRegistryProblemCache.DiscardPendingPass(VelumProductRegistryProblemKind.BomDiff);
+      Interlocked.Exchange(ref _bomPassActive, 0);
     }
 
     private static void EnsureStoreLoaded(bool force)

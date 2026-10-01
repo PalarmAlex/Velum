@@ -514,6 +514,23 @@ namespace Velum.Configuration
     }
 
     /// <summary>
+    /// Кратность тяжёлого пульса для сканера расхождений BOM с 1С: проход выполняется
+    /// в каждый N-й тик фонового сканирования. BOM-скан не курсорный и укладывается в один
+    /// тик, поэтому без кратности он завершался (и коммитил находки) на первом же тике,
+    /// тогда как DXF/PDF ещё только начинали квант — метрика «BOM: расхождения для 1С»
+    /// загоралась раньше реально найденных проблем документации. Дефолт 3 — сопоставимо
+    /// с длиной цикла курсорных сканеров. Минимум 1 (каждый тик, как раньше).
+    /// </summary>
+    public static int BomDiffScanPeriodPulses
+    {
+      get
+      {
+        int v = GetIntSetting("BomDiffScanPeriodPulses", 3);
+        return v < 1 ? 1 : v;
+      }
+    }
+
+    /// <summary>
     /// При таймауте опроса SW на пульсе повторно опубликовать последний валидный снимок из кэша
     /// (без нового COM), с пометкой <see cref="P:Velum.SolidHomeostasis.VelumSolidEnvironmentGate.LastSnapshotTimedOut"/>.
     /// </summary>
@@ -962,6 +979,7 @@ namespace Velum.Configuration
                   new XElement("ScannerProbeConcurrency", 64),
                   new XElement("ScannerBatchSize", 1000),
                   new XElement("ScannerUnavailableRootPollPulses", 30),
+                  new XElement("BomDiffScanPeriodPulses", 3),
                   new XElement("SolidProbeUseStaleSnapshotOnTimeout", true),
                   new XElement("CadDegradedEnterThreshold", "50"),
                   new XElement("CadDegradedExitThreshold", "60"),
@@ -1318,6 +1336,13 @@ namespace Velum.Configuration
           app.Add(new XElement("ScannerUnavailableRootPollPulses", 30));
           changed = true;
           Logger.Info("Velum: в Settings.xml добавлен ScannerUnavailableRootPollPulses=30");
+        }
+
+        if (app.Element("BomDiffScanPeriodPulses") == null)
+        {
+          app.Add(new XElement("BomDiffScanPeriodPulses", 3));
+          changed = true;
+          Logger.Info("Velum: в Settings.xml добавлен BomDiffScanPeriodPulses=3");
         }
 
         if (changed)

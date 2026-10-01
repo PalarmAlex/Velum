@@ -144,6 +144,7 @@ namespace Velum.UI
       _ttpStageEvolution.SetToolTip(_tbScannerProbeConcurrency, "Параллелизм фонового сканера реестра — число одновременно висящих проверок существования файлов. Больше — быстрее проход на быстрых локальных дисках; меньше — чтобы не задавить рабочую станцию или сеть. Минимум 1, по умолчанию 64. Практичный диапазон: 32–128 (на сетевой шаре больше почти не даёт выигрыша и задавливает файл-сервер).");
       _ttpStageEvolution.SetToolTip(_tbScannerBatchSize, "Квант сканирования — сколько строк реестра проверяется за один тик тяжёлых метрик. Минимум 1, по умолчанию 1000. Не задирайте до десятков тысяч: пакет проверок ограничен 30 с ожидания, не успевшие проверки дают ложные «битые ссылки». Практичный диапазон: 1000–4000.");
       _ttpStageEvolution.SetToolTip(_tbScannerUnavailableRootPoll, "Через сколько пульсов опрашивать недоступный каталог реестра. Пока сетевой корень реестра недоступен (оборванный VPN/том), фоновое сканирование не выполняется и счётчик итераций не растёт; проверка доступности повторяется не чаще, чем раз в указанное число пульсов. Минимум 1, по умолчанию 30. Большие значения — реже «дёргать» мёртвый том, меньше значения — быстрее заметить восстановление доступа.");
+      _ttpStageEvolution.SetToolTip(_tbBomDiffScanPeriod, "Через сколько пульсов фонового сканирования запускать сверку BOM сборки с данными 1С (минимум 1, по умолчанию 3). Между сверками используется последний результат обмена; чаще — быстрее заметить расхождение состава, но больше фоновых обращений к файлам обмена. Значение 1 — сверка каждый тик (только для быстрых локальных обменов).");
       _ttpStageEvolution.SetToolTip(_tbCommandBufferIdleFlushSec, "Время простоя для принудительного сброса буфера команд в секундах");
       _ttpStageEvolution.SetToolTip(_tbCommandBufferMaxTokens, "Максимальное количество токенов в буфере команд — ограничение на размер буфера");
       _ttpStageEvolution.SetToolTip(_tbCommandBufferMaxAgeSec, "Максимальный возраст команды в буфере в секундах — после этого команда удаляется");
@@ -377,6 +378,7 @@ namespace Velum.UI
       _tbScannerProbeConcurrency.Text = VelumAppConfig.ScannerProbeConcurrency.ToString(CultureInfo.InvariantCulture);
       _tbScannerBatchSize.Text = VelumAppConfig.ScannerBatchSize.ToString(CultureInfo.InvariantCulture);
       _tbScannerUnavailableRootPoll.Text = VelumAppConfig.ScannerUnavailableRootPollPulses.ToString(CultureInfo.InvariantCulture);
+      _tbBomDiffScanPeriod.Text = VelumAppConfig.BomDiffScanPeriodPulses.ToString(CultureInfo.InvariantCulture);
 
       _tbDefaultGeneticReflexId.Text = VelumAppConfig.DefaultGeneticReflexId.ToString(CultureInfo.InvariantCulture);
       _chkFirstRun.Checked = VelumAppConfig.FirstRun != 0;
@@ -635,7 +637,8 @@ namespace Velum.UI
       // Вкладка «Адаптер»: параметры фонового сканера реестра
       if (!int.TryParse(_tbScannerProbeConcurrency.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out int scannerConcurrency) ||
           !int.TryParse(_tbScannerBatchSize.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out int scannerBatchSize) ||
-          !int.TryParse(_tbScannerUnavailableRootPoll.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out int scannerUnavailableRootPoll))
+          !int.TryParse(_tbScannerUnavailableRootPoll.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out int scannerUnavailableRootPoll) ||
+          !int.TryParse(_tbBomDiffScanPeriod.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out int bomDiffScanPeriod))
       {
         MessageBox.Show(this, "Некорректные параметры фонового сканера реестра.", "Проверка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         return false;
@@ -656,6 +659,12 @@ namespace Velum.UI
       if (scannerUnavailableRootPoll < 1)
       {
         MessageBox.Show(this, "Периодичность опроса недоступного каталога реестра должна быть не меньше 1 пульса.", "Проверка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        return false;
+      }
+
+      if (bomDiffScanPeriod < 1)
+      {
+        MessageBox.Show(this, "Период сверки BOM с 1С должен быть не меньше 1 пульса.", "Проверка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         return false;
       }
 
@@ -736,6 +745,7 @@ namespace Velum.UI
       VelumAppConfig.SetSetting("ScannerProbeConcurrency", scannerConcurrency.ToString(CultureInfo.InvariantCulture));
       VelumAppConfig.SetSetting("ScannerBatchSize", scannerBatchSize.ToString(CultureInfo.InvariantCulture));
       VelumAppConfig.SetSetting("ScannerUnavailableRootPollPulses", scannerUnavailableRootPoll.ToString(CultureInfo.InvariantCulture));
+      VelumAppConfig.SetSetting("BomDiffScanPeriodPulses", bomDiffScanPeriod.ToString(CultureInfo.InvariantCulture));
 
       // Вкладка «Документы»: дефолты свойств новых документов
       VelumAppConfig.SetNeedDxfDefault(_chkNeedDxfDefault.Checked);

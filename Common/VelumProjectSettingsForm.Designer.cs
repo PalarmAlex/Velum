@@ -130,6 +130,8 @@ namespace Velum.UI
       this._tbScannerBatchSize = new System.Windows.Forms.TextBox();
       this._lblScannerUnavailableRootPoll = new System.Windows.Forms.Label();
       this._tbScannerUnavailableRootPoll = new System.Windows.Forms.TextBox();
+      this._lblBomDiffScanPeriod = new System.Windows.Forms.Label();
+      this._tbBomDiffScanPeriod = new System.Windows.Forms.TextBox();
       this._lblCommandBufferFlushHint = new System.Windows.Forms.Label();
       this._tbCommandBufferMaxAgeSec = new System.Windows.Forms.TextBox();
       this._lblCommandBufferMaxAgeSec = new System.Windows.Forms.Label();
@@ -942,6 +944,8 @@ namespace Velum.UI
       this.tabPageAdapter.Controls.Add(this._tbScannerBatchSize);
       this.tabPageAdapter.Controls.Add(this._lblScannerUnavailableRootPoll);
       this.tabPageAdapter.Controls.Add(this._tbScannerUnavailableRootPoll);
+      this.tabPageAdapter.Controls.Add(this._lblBomDiffScanPeriod);
+      this.tabPageAdapter.Controls.Add(this._tbBomDiffScanPeriod);
       this.tabPageAdapter.Controls.Add(this._lblCommandBufferFlushHint);
       this.tabPageAdapter.Controls.Add(this._tbCommandBufferMaxAgeSec);
       this.tabPageAdapter.Controls.Add(this._lblCommandBufferMaxAgeSec);
@@ -1035,10 +1039,29 @@ namespace Velum.UI
       this._tbScannerUnavailableRootPoll.Size = new System.Drawing.Size(150, 20);
       this._tbScannerUnavailableRootPoll.TabIndex = 16;
       //
+      // _lblBomDiffScanPeriod
+      //
+      this._lblBomDiffScanPeriod.Location = new System.Drawing.Point(3, 113);
+      this._lblBomDiffScanPeriod.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+      this._lblBomDiffScanPeriod.Name = "_lblBomDiffScanPeriod";
+      this._lblBomDiffScanPeriod.Size = new System.Drawing.Size(175, 20);
+      this._lblBomDiffScanPeriod.TabIndex = 17;
+      this._lblBomDiffScanPeriod.Text = "Период сверки BOM с 1С:";
+      this._lblBomDiffScanPeriod.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      //
+      // _tbBomDiffScanPeriod
+      //
+      this._tbBomDiffScanPeriod.BackColor = System.Drawing.SystemColors.Window;
+      this._tbBomDiffScanPeriod.Location = new System.Drawing.Point(181, 114);
+      this._tbBomDiffScanPeriod.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+      this._tbBomDiffScanPeriod.Name = "_tbBomDiffScanPeriod";
+      this._tbBomDiffScanPeriod.Size = new System.Drawing.Size(150, 20);
+      this._tbBomDiffScanPeriod.TabIndex = 18;
+      //
       // _lblCommandBufferFlushHint
       //
       this._lblCommandBufferFlushHint.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this._lblCommandBufferFlushHint.Location = new System.Drawing.Point(3, 116);
+      this._lblCommandBufferFlushHint.Location = new System.Drawing.Point(3, 142);
       this._lblCommandBufferFlushHint.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
       this._lblCommandBufferFlushHint.Name = "_lblCommandBufferFlushHint";
       this._lblCommandBufferFlushHint.Size = new System.Drawing.Size(650, 20);
@@ -1049,7 +1072,7 @@ namespace Velum.UI
       // _tbCommandBufferMaxAgeSec
       //
       this._tbCommandBufferMaxAgeSec.BackColor = System.Drawing.SystemColors.Window;
-      this._tbCommandBufferMaxAgeSec.Location = new System.Drawing.Point(181, 142);
+      this._tbCommandBufferMaxAgeSec.Location = new System.Drawing.Point(181, 168);
       this._tbCommandBufferMaxAgeSec.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
       this._tbCommandBufferMaxAgeSec.Name = "_tbCommandBufferMaxAgeSec";
       this._tbCommandBufferMaxAgeSec.Size = new System.Drawing.Size(150, 20);
@@ -1057,7 +1080,7 @@ namespace Velum.UI
       // 
       // _lblCommandBufferMaxAgeSec
       // 
-      this._lblCommandBufferMaxAgeSec.Location = new System.Drawing.Point(3, 141);
+      this._lblCommandBufferMaxAgeSec.Location = new System.Drawing.Point(3, 167);
       this._lblCommandBufferMaxAgeSec.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
       this._lblCommandBufferMaxAgeSec.Name = "_lblCommandBufferMaxAgeSec";
       this._lblCommandBufferMaxAgeSec.Size = new System.Drawing.Size(175, 20);
@@ -1068,7 +1091,7 @@ namespace Velum.UI
       // _tbCommandBufferMaxTokens
       //
       this._tbCommandBufferMaxTokens.BackColor = System.Drawing.SystemColors.Window;
-      this._tbCommandBufferMaxTokens.Location = new System.Drawing.Point(181, 168);
+      this._tbCommandBufferMaxTokens.Location = new System.Drawing.Point(181, 194);
       this._tbCommandBufferMaxTokens.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
       this._tbCommandBufferMaxTokens.Name = "_tbCommandBufferMaxTokens";
       this._tbCommandBufferMaxTokens.Size = new System.Drawing.Size(150, 20);
@@ -1076,7 +1099,7 @@ namespace Velum.UI
       // 
       // _lblCommandBufferMaxTokens
       // 
-      this._lblCommandBufferMaxTokens.Location = new System.Drawing.Point(3, 167);
+      this._lblCommandBufferMaxTokens.Location = new System.Drawing.Point(3, 193);
       this._lblCommandBufferMaxTokens.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
       this._lblCommandBufferMaxTokens.Name = "_lblCommandBufferMaxTokens";
       this._lblCommandBufferMaxTokens.Size = new System.Drawing.Size(175, 20);
@@ -1087,7 +1110,7 @@ namespace Velum.UI
       // _tbCommandBufferIdleFlushSec
       //
       this._tbCommandBufferIdleFlushSec.BackColor = System.Drawing.SystemColors.Window;
-      this._tbCommandBufferIdleFlushSec.Location = new System.Drawing.Point(181, 194);
+      this._tbCommandBufferIdleFlushSec.Location = new System.Drawing.Point(181, 220);
       this._tbCommandBufferIdleFlushSec.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
       this._tbCommandBufferIdleFlushSec.Name = "_tbCommandBufferIdleFlushSec";
       this._tbCommandBufferIdleFlushSec.Size = new System.Drawing.Size(150, 20);
@@ -1095,7 +1118,7 @@ namespace Velum.UI
       // 
       // _lblCommandBufferIdleFlushSec
       // 
-      this._lblCommandBufferIdleFlushSec.Location = new System.Drawing.Point(3, 193);
+      this._lblCommandBufferIdleFlushSec.Location = new System.Drawing.Point(3, 219);
       this._lblCommandBufferIdleFlushSec.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
       this._lblCommandBufferIdleFlushSec.Name = "_lblCommandBufferIdleFlushSec";
       this._lblCommandBufferIdleFlushSec.Size = new System.Drawing.Size(175, 20);
@@ -1105,7 +1128,7 @@ namespace Velum.UI
       // 
       // _lblCommandBufferRecordingHint
       // 
-      this._lblCommandBufferRecordingHint.Location = new System.Drawing.Point(3, 225);
+      this._lblCommandBufferRecordingHint.Location = new System.Drawing.Point(3, 251);
       this._lblCommandBufferRecordingHint.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
       this._lblCommandBufferRecordingHint.Name = "_lblCommandBufferRecordingHint";
       this._lblCommandBufferRecordingHint.Size = new System.Drawing.Size(175, 20);
@@ -1118,7 +1141,7 @@ namespace Velum.UI
       this._chkCommandBufferRecording.AutoSize = true;
       this._chkCommandBufferRecording.Checked = true;
       this._chkCommandBufferRecording.CheckState = System.Windows.Forms.CheckState.Checked;
-      this._chkCommandBufferRecording.Location = new System.Drawing.Point(180, 228);
+      this._chkCommandBufferRecording.Location = new System.Drawing.Point(180, 254);
       this._chkCommandBufferRecording.Margin = new System.Windows.Forms.Padding(8, 4, 40, 0);
       this._chkCommandBufferRecording.Name = "_chkCommandBufferRecording";
       this._chkCommandBufferRecording.Size = new System.Drawing.Size(15, 14);
@@ -1442,6 +1465,8 @@ namespace Velum.UI
     private System.Windows.Forms.TextBox _tbScannerBatchSize;
     private System.Windows.Forms.Label _lblScannerUnavailableRootPoll;
     private System.Windows.Forms.TextBox _tbScannerUnavailableRootPoll;
+    private System.Windows.Forms.Label _lblBomDiffScanPeriod;
+    private System.Windows.Forms.TextBox _tbBomDiffScanPeriod;
     private System.Windows.Forms.Label _lblCommandBufferFlushHint;
     private System.Windows.Forms.TextBox _tbCommandBufferMaxAgeSec;
     private System.Windows.Forms.Label _lblCommandBufferMaxAgeSec;

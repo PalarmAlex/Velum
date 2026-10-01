@@ -41,6 +41,18 @@ namespace Velum.UI.ProductRegistry
       VelumProductRegistryProblemKind.JunkPdf
     };
 
+    /// <summary>
+    /// Host-global проба: значение считается без COM (кэш проблем реестра или зеркало BOM) и
+    /// достоверно при отсутствии открытого документа SW. Включает пробы реестра
+    /// (<see cref="IsRegistryProbeKey"/>) и <see cref="VelumAssemblyBomDiffProbe.ProbeKey"/>.
+    /// </summary>
+    internal static bool IsHostGlobalProbeKey(string probeKey)
+    {
+      string k = (probeKey ?? string.Empty).Trim();
+      return IsRegistryProbeKey(k)
+          || string.Equals(k, VelumAssemblyBomDiffProbe.ProbeKey, StringComparison.Ordinal);
+    }
+
     internal static bool IsRegistryProbeKey(string probeKey)
     {
       string k = (probeKey ?? string.Empty).Trim();
@@ -141,8 +153,6 @@ namespace Velum.UI.ProductRegistry
           detail = "Проблемы PDF в реестре: " + n;
         }
 
-        VelumSolidDiagLog.WriteError(
-            "registry pdf: HasAnyKind=" + bad + " count=" + CountKindsIncludingPending(PdfProblemKinds) + " score=" + value);
         return true;
       }
 
@@ -227,11 +237,6 @@ namespace Velum.UI.ProductRegistry
       PublishOne(values, influence, ProbeKeyHasDuplicateDesignations);
       PublishOne(values, influence, VelumAssemblyBomDiffProbe.ProbeKey);
 
-      float pdfScore = -1f; values.TryGetValue(ProbeKeyHasPdfProblems, out pdfScore);
-      float dxfScore = -1f; values.TryGetValue(ProbeKeyHasDxfProblems, out dxfScore);
-      bool any = VelumProductRegistryProblemCache.HasAny;
-      VelumSolidDiagLog.WriteError(
-          "registry probe publish: pdf=" + pdfScore + " dxf=" + dxfScore + " any=" + any + " keys=" + values.Count);
       VelumSolidEnvironmentGate.Publish(values, influence);
     }
 
@@ -259,6 +264,33 @@ namespace Velum.UI.ProductRegistry
                VelumSolidEnvironmentInfluenceCatalog.GetActiveEnvironmentActions())
       {
         if (ea == null || !IsRegistryProbeKey(ea.ProbeKey))
+          continue;
+        if (ea.Influences == null)
+          continue;
+        foreach (int paramId in ea.Influences.Keys)
+        {
+          if (paramId > 0)
+            target.Add(paramId);
+        }
+      }
+    }
+
+    /// <summary>
+    /// Параметры гомеостаза, на которые влияют только host-global пробы (реестр + BOM для 1С).
+    /// В отличие от <see cref="CollectInfluencedParamIds"/> включает и
+    /// <see cref="VelumAssemblyBomDiffProbe.ProbeKey"/> — иначе параметр, у которого влияющая
+    /// проба только BOM, не признавался бы host-global и его release блокировался бы
+    /// недостоверным COM-снимком.
+    /// </summary>
+    internal static void CollectHostGlobalInfluencedParamIds(HashSet<int> target)
+    {
+      if (target == null)
+        return;
+
+      foreach (ISIDA.Actions.InfluenceActionSystem.GomeostasisInfluenceAction ea in
+               VelumSolidEnvironmentInfluenceCatalog.GetActiveEnvironmentActions())
+      {
+        if (ea == null || !IsHostGlobalProbeKey(ea.ProbeKey))
           continue;
         if (ea.Influences == null)
           continue;

@@ -73,8 +73,14 @@ namespace Velum.UI.AssemblyRegistry
         }
         finally
         {
-          VelumProductRegistryProblemCache.CommitPendingPass(
-              VelumProductRegistryProblemKind.BomDiff);
+          // Прерывание прохода (открылся документ, смена open/closed области) уже сбросило
+          // pending и флаг прохода — коммитить нечего, а «восстановленные» находки дали бы
+          // ложную боль BOM сразу при входе в closed-область, раньше сетевых сканеров (E31).
+          if (VelumProductRegistryIntegrityScheduler.IsBomDiscoveryPassActive)
+          {
+            VelumProductRegistryProblemCache.CommitPendingPass(
+                VelumProductRegistryProblemKind.BomDiff);
+          }
         }
       }
       catch (Exception ex)

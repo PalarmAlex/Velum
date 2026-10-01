@@ -228,6 +228,12 @@ namespace Velum.SolidHomeostasis
     /// <summary>
     /// Пометить опубликованный снимок свежим (после публикации host-global значений без COM-опроса,
     /// например registry-only снимка при отсутствии активного документа).
+    /// <para>
+    /// Сбрасывает и <see cref="_lastErrorKind"/>: host-global (реестр, BOM) значения считаются из
+    /// кэша проблем реестра и не зависят от COM, поэтому прежний «сбой COM» не должен делать
+    /// достоверный снимок недостоверным — иначе release параметров блокируется до первого
+    /// успешного COM-опроса, которого при закрытых документах не наступает вовсе.
+    /// </para>
     /// </summary>
     internal static void MarkSnapshotFresh()
     {
@@ -235,6 +241,7 @@ namespace Velum.SolidHomeostasis
       {
         _lastSnapshotIsStale = false;
         _lastSnapshotTimedOut = false;
+        _lastErrorKind = VelumSolidProbeErrorKind.None;
       }
     }
 
