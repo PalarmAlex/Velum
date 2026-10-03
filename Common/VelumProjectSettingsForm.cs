@@ -81,6 +81,7 @@ namespace Velum.UI
       VelumFormHelp.Bind(this, VelumHelpTopics.ProjectSettings);
       LoadFromConfig();
       PopulateCombos();
+      LoadConditionedReflexTab();
       WireEvolutionStageCombo();
       BindControlToolTips();
       Shown += (_, __) =>
@@ -546,6 +547,11 @@ namespace Velum.UI
 
     private bool TryValidateAndSave()
     {
+      // Вкладка «У-рефлексы»: собираем и валидируем до записи любых настроек,
+      // чтобы при некорректных параметрах модели ничего не сохранялось.
+      if (!ValidateConditionedReflexTab(out VelumConditionedReflexSettingsModel crxModel))
+        return false;
+
       if (!int.TryParse(_tbCompare.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out int compare))
       {
         MessageBox.Show(this, "Некорректное значение интегрального порога.", "Проверка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -768,6 +774,10 @@ namespace Velum.UI
 
       // Корневой каталог документов (относительные пути в реестре и свойствах)
       VelumAppConfig.DocumentRootPath = _tbDocumentRootPaths.Text.Trim();
+
+      // Вкладка «У-рефлексы»: запись настроек модели в ConditionedReflexSettings.dat.
+      if (!SaveConditionedReflexModel(crxModel))
+        return false;
 
       Logger.Info("Настройки проекта сохранены.");
       return true;

@@ -231,6 +231,11 @@
     <Compile Include="Common\VelumProjectSettingsForm.Designer.cs">
       <DependentUpon>VelumProjectSettingsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Common\VelumProjectSettingsForm.Reflexes.cs">
+      <DependentUpon>VelumProjectSettingsForm.cs</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\VelumConditionedReflexSettingsStore.cs" />
     <Compile Include="Common\VelumAgentTaskPane.cs">
       <SubType>UserControl</SubType>
     </Compile>

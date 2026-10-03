@@ -41,6 +41,7 @@
     <Compile Include="..\Common\AssemblyRegistry\VelumBomChangeLogRules.cs" Link="src\VelumBomChangeLogRules.cs" />
     <Compile Include="..\ReactiveCore\Export\VelumReadTextOutcomeModels.cs" Link="src\VelumReadTextOutcomeModels.cs" />
     <Compile Include="..\ReactiveCore\Export\VelumReadTextOutcomeRules.cs" Link="src\VelumReadTextOutcomeRules.cs" />
+    <Compile Include="..\Common\VelumConditionedReflexSettingsStore.cs" Link="src\VelumConditionedReflexSettingsStore.cs" />
   </ItemGroup>
 
   <!-- Заглушки ISIDA.Common (без isida.dll) -->
@@ -63,6 +64,7 @@
     <Compile Include="VelumBomExchangeLayoutRulesTests.cs" />
     <Compile Include="VelumBomChangeLogRulesTests.cs" />
     <Compile Include="VelumReadTextOutcomeRulesTests.cs" />
+    <Compile Include="VelumConditionedReflexSettingsStoreTests.cs" />
   </ItemGroup>
 
 </Project>

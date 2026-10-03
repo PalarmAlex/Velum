@@ -5,6 +5,7 @@
     "index": "index.html",
     "overview": "overview.html",
     "platform": "platform.html",
+    "conditioned-reflexes": "shared/conditioned-reflexes.html",
     "ribbon": "ribbon.html",
     "list-filters": "shared/list-filters.html",
     "folder-picker": "forms/folder-picker.html",
