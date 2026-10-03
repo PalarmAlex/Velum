@@ -68,6 +68,7 @@ namespace Velum.UI
       this._pnlSendRow = new System.Windows.Forms.Panel();
       this._btnSend = new System.Windows.Forms.Button();
       this._lblOutputCaption = new System.Windows.Forms.Label();
+      this._btnLogs = new System.Windows.Forms.Button();
       this._txtAgentOutput = new System.Windows.Forms.TextBox();
       this._parameterToolTip = new System.Windows.Forms.ToolTip(this.components);
       this._rootLayout.SuspendLayout();
@@ -328,6 +329,7 @@ namespace Velum.UI
       this._scrollHost.Controls.Add(this._txtMessageInput);
       this._scrollHost.Controls.Add(this._pnlSendRow);
       this._scrollHost.Controls.Add(this._lblOutputCaption);
+      this._scrollHost.Controls.Add(this._btnLogs);
       this._scrollHost.Controls.Add(this._txtAgentOutput);
       this._scrollHost.Location = new System.Drawing.Point(0, 0);
       this._scrollHost.Margin = new System.Windows.Forms.Padding(0);
@@ -716,6 +718,18 @@ namespace Velum.UI
       this._lblOutputCaption.TabIndex = 7;
       this._lblOutputCaption.Text = "Ответ агента:";
       // 
+      // _btnLogs
+      // 
+      this._btnLogs.Cursor = System.Windows.Forms.Cursors.Hand;
+      this._btnLogs.Location = new System.Drawing.Point(200, 218);
+      this._btnLogs.Margin = new System.Windows.Forms.Padding(0);
+      this._btnLogs.Name = "_btnLogs";
+      this._btnLogs.Size = new System.Drawing.Size(94, 22);
+      this._btnLogs.TabIndex = 9;
+      this._btnLogs.TabStop = false;
+      this._btnLogs.Text = "Логи";
+      this._btnLogs.UseVisualStyleBackColor = true;
+      // 
       // _txtAgentOutput
       // 
       this._txtAgentOutput.BackColor = System.Drawing.SystemColors.Window;
@@ -823,6 +837,7 @@ namespace Velum.UI
     private System.Windows.Forms.Panel _pnlSendRow;
     private System.Windows.Forms.Button _btnSend;
     private System.Windows.Forms.Label _lblOutputCaption;
+    private System.Windows.Forms.Button _btnLogs;
     private System.Windows.Forms.TextBox _txtAgentOutput;
     private System.Windows.Forms.ToolTip _parameterToolTip;
   }

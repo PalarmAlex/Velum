@@ -26,6 +26,7 @@
     "pdf-batch": "forms/pdf-batch.html",
     "pdf-export": "forms/pdf-export.html",
     "agent-taskpane": "forms/agent-taskpane.html",
+    "logs": "forms/logs.html",
     "environment-metrics": "forms/environment-metrics.html",
     "operator-influences": "forms/operator-influences.html",
     "sensor-buffer": "forms/sensor-buffer.html",

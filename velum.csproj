@@ -177,6 +177,7 @@
     <Compile Include="Isida\VelumPulseController.cs" />
     <Compile Include="Isida\VelumAdapterSleepReset.cs" />
     <Compile Include="Isida\VelumSensorPrimariesBuffer.cs" />
+    <Compile Include="Isida\Logs\VelumLogPaths.cs" />
     <Compile Include="SolidHomeostasis\VelumSolidEnvironmentInfluenceCatalog.cs" />
     <Compile Include="SolidHomeostasis\MetricProbes\VelumSolidMetricProbeThresholds.cs" />
     <Compile Include="SolidHomeostasis\VelumSolidMetricParameterRelease.cs" />
@@ -496,6 +497,18 @@
       <DependentUpon>VelumProductRegistryFolderPickerForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Common\ProductRegistry\VelumProductRegistryReportHtmlBuilder.cs" />
+    <Compile Include="Common\Logs\VelumLogEntries.cs" />
+    <Compile Include="Common\Logs\VelumLogFileSessions.cs" />
+    <Compile Include="Common\Logs\VelumLogSessionRules.cs" />
+    <Compile Include="Common\Logs\VelumLogCellTooltipProvider.cs" />
+    <Compile Include="Common\Logs\VelumLogsReportHtmlBuilder.cs" />
+    <Compile Include="Common\Logs\VelumLogsFormHost.cs" />
+    <Compile Include="Common\Logs\VelumLogsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\Logs\VelumLogsForm.Designer.cs">
+      <DependentUpon>VelumLogsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Common\VelumDocumentPropertyPickerForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -573,6 +586,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Common\VelumSensorPrimariesBufferForm.resx">
       <DependentUpon>VelumSensorPrimariesBufferForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\Logs\VelumLogsForm.resx">
+      <DependentUpon>VelumLogsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Common\VelumAgentTaskPane.resx">
       <DependentUpon>VelumAgentTaskPane.cs</DependentUpon>

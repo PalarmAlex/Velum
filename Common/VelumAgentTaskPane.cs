@@ -123,6 +123,7 @@ namespace Velum.UI
       _btnHeaderHelp.Margin = new Padding(0, 0, 2, 0);
       _btnHeaderHelp.Size = new Size(24, 24);
       _flowHeaderHomeoButtons.Controls.Add(_btnHeaderHelp);
+      ConfigureLogsButton();
       Load += VelumAgentTaskPane_Load;
     }
 
@@ -355,6 +356,8 @@ namespace Velum.UI
         _pnlSendRow.Visible = visible;
       if (_lblOutputCaption != null)
         _lblOutputCaption.Visible = visible;
+      if (_btnLogs != null)
+        _btnLogs.Visible = visible;
       if (_txtAgentOutput != null)
         _txtAgentOutput.Visible = visible;
     }
@@ -447,7 +450,7 @@ namespace Velum.UI
           _txtOperatorInfluencesDisplay == null || _btnOperatorInfluencesPick == null ||
           _lblInputCaption == null || _flowInputCaption == null ||
           _btnViewVerbalPrimariesBuffer == null || _txtMessageInput == null || _pnlSendRow == null ||
-          _btnSend == null || _lblOutputCaption == null || _txtAgentOutput == null)
+          _btnSend == null || _lblOutputCaption == null || _btnLogs == null || _txtAgentOutput == null)
         return;
 
       int pad = ScrollContentPadding;
@@ -621,6 +624,7 @@ namespace Velum.UI
 
       _lblOutputCaption.MaximumSize = new Size(innerW, 0);
       _lblOutputCaption.Location = new Point(x, y);
+      LayoutLogsButton(x, y, innerW);
       y += _lblOutputCaption.Height + gap;
 
       _txtAgentOutput.Location = new Point(x, y);
@@ -1548,6 +1552,48 @@ namespace Velum.UI
       btn.TabStop = false;
       if (_parameterToolTip != null)
         _parameterToolTip.SetToolTip(btn, toolTip);
+    }
+
+    /// <summary>Кнопка «Логи» над областью «Ответ агента» (справа от подписи).</summary>
+    private void ConfigureLogsButton()
+    {
+      if (_btnLogs == null)
+        return;
+      _btnLogs.Text = "Логи";
+      _btnLogs.UseVisualStyleBackColor = true;
+      _btnLogs.Cursor = Cursors.Hand;
+      _btnLogs.TabStop = false;
+      _btnLogs.Click -= OnLogsClick;
+      _btnLogs.Click += OnLogsClick;
+      if (_parameterToolTip != null)
+        _parameterToolTip.SetToolTip(_btnLogs, "Просмотр логов агента (система, стили, параметры)");
+    }
+
+    /// <summary>Позиционирует кнопку «Логи» в правом углу строки «Ответ агента».</summary>
+    private void LayoutLogsButton(int x, int y, int innerW)
+    {
+      if (_btnLogs == null || _lblOutputCaption == null)
+        return;
+      Size text = TextRenderer.MeasureText(
+          _btnLogs.Text,
+          _btnLogs.Font,
+          Size.Empty,
+          TextFormatFlags.SingleLine);
+      int btnW = Math.Min(innerW, text.Width + PrimariesBufferButtonHorizontalPaddingPx);
+      int btnH = Math.Max(20, Math.Min(
+          _lblOutputCaption.Height,
+          text.Height + PrimariesBufferButtonVerticalPaddingPx));
+      _btnLogs.SetBounds(
+          x + Math.Max(0, innerW - btnW),
+          y,
+          btnW,
+          btnH);
+      _btnLogs.BringToFront();
+    }
+
+    private void OnLogsClick(object sender, EventArgs e)
+    {
+      Velum.UI.Logs.VelumLogsFormHost.TryShow(FindForm());
     }
 
     /// <summary>

@@ -304,3 +304,63 @@
 - **Кратко:** падение крепости — не TTL/`ExpiresAt` (он согласован: `ExpiresAt == LastActivation + LifetimePulses`), а **активное угасание** (`C ← C + α_ext·(0−C)`, α_ext=0,05), которое угашает **все** УР с данным `Level3`, включая «авторитарные». Усугубляла рассинхронизация: `ConditionedReflex` читал приватные дефолты вместо `_settings`, а `LoadConditionedReflexes()` вызывался до `LoadConditionedReflexSettings()`.
 - **Исправление:** `ConditionedReflexesSystem.cs` (ISIDA) — методы класса переведены на `_settings`; порядок загрузки «настройки → данные»; добавлено логирование активного угасания.
 - **Эвристики:** см. E1, E2 в `ISIDA\DEBUG_CASEBOOK_1.md` (в Velum-кейсбуке эвристики не дублируются).
+
+## Случай 29. Кнопка «Логи» на панели «Агент» и HTML-отчёты по сессиям логов
+
+- **Дата / сборка:** 2026-10-03, `bin\Debug\velum.dll`.
+- **Симптом:** не баг, а новая функция по запросу. Понадобилось: кнопка **Логи** над областью «Ответ агента» (в правом углу), форма с тремя вкладками («Логи системы», «Логи стилей», «Логи параметров»), на каждой — чек-список файловых сессий, и просмотр выделенных сессий HTML-отчётом в обычном стиле с подсказками на ячейках/заголовках.
+- **Область:** `Common\Logs\*` (новые файлы), `Common\VelumAgentTaskPane.cs` + `.Designer.cs`, `Common\VelumHelp.cs`, `Isida\Logs\VelumLogPaths.cs`, `velum.csproj`.
+- **Гипотезы и проверки:**
+  1. *Сессии логов можно взять из живого ISIDA-каталога, не разбирая CSV* — **опровергнуто**: в Velum нет WPF-моделей AIStudio (`AgentLogEnvironmentPressureSegment`, `AgentLogMainCycleLiveSegment`), а сессии хранятся только в CSV-файлах `%ProgramData%\VELUM\Logs`. Порт ограничен файловым чтением (`VelumCsvLogSessionReader`), а подсказки ячеек берутся из статических синглтонов `isida.dll`.
+  2. *Форма логов — отдельный артефакт с 3 файлами (`cs`/`Designer`/`resx`)* — **подтверждено**: не SDK-style csproj требует ручной регистрации каждого файла, иначе форма не собирается (`CS0246`). Добавлены `<Compile>` (форма + Designer с `DependentUpon`) и `<EmbeddedResource>` (resx с `DependentUpon`).
+  3. *`GetAllAdaptiveActions()` возвращает `List<>`* — **опровергнуто сборкой**: `CS0029` `ReadOnlyCollection<AdaptiveAction>` → `List<AdaptiveAction>`; исправлено `.ToList()`.
+  4. *Поле `_btnLogs` создаётся Designer-ом* — **опровергнуто** предупреждением `CS0649`: кнопка добавлена в `_scrollHost.Controls` через `Controls.Add(this._btnLogs)` **до** её создания; инициализация `new Button()` перенесена в начало блока `_btnLogs`.
+- **Корень:** новая функциональность; проблемные точки — (а) ручная регистрация артефактов формы в csproj, (б) несовпадение типов коллекций ISIDA (`ReadOnlyCollection` vs `List`), (в) порядок `Controls.Add` до создания поля в Designer-коде.
+- **Доказательство:** сборка 1 — `VelumLogCellTooltipProvider.cs(617,14): error CS0029 … ReadOnlyCollection<…AdaptiveAction> → List<…AdaptiveAction>`; сборка 2 — `VelumAgentTaskPane.Designer.cs(841,41): warning CS0649: поле _btnLogs нигде не присваивается`; сборка 3 — `velum -> bin\Debug\velum.dll` без ошибок и предупреждений.
+- **Исправление:**
+  - `VelumLogCellTooltipProvider.GetAllAdaptiveActions()` → `.ToList()`;
+  - `VelumAgentTaskPane.Designer.cs` — `this._btnLogs = new System.Windows.Forms.Button();` первой строкой блока; `_btnLogs` добавлен в `_scrollHost.Controls` между `_lblOutputCaption` и `_txtAgentOutput`;
+  - `VelumAgentTaskPane.cs` — `ConfigureLogsButton()` из конструктора, `LayoutLogsButton(innerW)` в `LayoutScrollContents` (справа от подписи), `OnLogsClick` → `VelumLogsFormHost.TryShow(FindForm())`, видимость в `SetLowerAgentScrollSectionsVisible`, `_btnLogs` в null-проверке раскладки;
+  - новые файлы: `Common\Logs\VelumLogEntries.cs`, `VelumLogFileSessions.cs`, `VelumLogCellTooltipProvider.cs`, `VelumLogsReportHtmlBuilder.cs`, `VelumLogsForm.cs/.Designer.cs/.resx`, `VelumLogsFormHost.cs`; регистрация в `velum.csproj` (+ ранее отсутствовавший `Isida\Logs\VelumLogPaths.cs`);
+  - справка: `docs\help\forms\logs.html` + тема `logs` в `topics.json`, `VelumHelpTopics`, `shared/nav.js`; ссылка из `agent-taskpane.html`; копии в `%ProgramData%\VELUM\help\`.
+- **Проверка:** `Build.cmd Debug` → сборка успешна (3-я итерация без предупреждений). Ручная (в SolidWorks): на панели «Агент» нажать **Логи** → окно с тремя вкладками; отметить сессии → **Просмотр** → отчёт сохраняется в `%ProgramData%\VELUM\Logs\Reports` и открывается в браузере; подсказки на ячейках (стиль, триггер, среда, автоматизм) отображаются по наведению.
+- **Эвристики:** → E55, E56.
+
+## Случай 30. Кнопка «Логи» не появляется на панели «Агент», хотя добавлена в Designer и в конструкторе формы
+
+- **Дата / сборка:** 2026-10-03, `bin\Debug\velum.dll`.
+- **Симптом:** после реализации кнопки **Логи** (случай 29) она не отображается на панели «Агент» ни в одном режиме; в конструкторе формы её тоже не видно.
+- **Область:** `Common\VelumAgentTaskPane.Designer.cs` (`InitializeComponent`), `Common\VelumAgentTaskPane.cs` (`ConfigureLogsButton`, `LayoutLogsButton`).
+- **Гипотезы и проверки:**
+  1. *Кнопку перекрывает `_txtAgentOutput`* — **опровергнуто чтением Designer**: `_btnLogs` добавлена в `_scrollHost.Controls` до `_txtAgentOutput`, а `LayoutLogsButton` вызывал `BringToFront()`.
+  2. *Координаты сбиты (`SetBounds` от родителя, а не от отступа контента)* — **подтверждено, но это была вторая причина**: `SetBounds(0, …)` ставил кнопку в левый верхний угол хоста; исправлено на `x + (innerW - btnW)`.
+  3. *Кнопка вообще не создаётся* — **подтверждено (корень)**: в блоке создания контролов `InitializeComponent` (`this._lblOutputCaption = new …; this._txtAgentOutput = new …;`) строки `this._btnLogs = new System.Windows.Forms.Button();` **не было** — она осталась только внутри блока свойств `// _btnLogs`. Значит `_btnLogs` оставался `null`, а `ConfigureLogsButton`/`LayoutLogsButton` выходили по `if (_btnLogs == null) return;` без каких-либо симптомов.
+- **Корень:** в non-designer-стиле ручного редактирования Designer-файла `new` поля оказался в секции свойств, а не в общем блоке создания контролов. Компилятор это не ловит: поле объявлено, `Controls.Add` его видит, предупреждения нет (`CS0649` не возникает, т.к. есть `new` хоть где-то).
+- **Доказательство:** `VelumAgentTaskPane.Designer.cs` — блок создания контролов заканчивался на `this._lblOutputCaption = …; this._txtAgentOutput = …;` без `_btnLogs`; блок `// _btnLogs` начинался с `this._btnLogs = new …;` в секции свойств.
+- **Исправление:** `this._btnLogs = new System.Windows.Forms.Button();` перенесена в общий блок создания контролов (между `_lblOutputCaption` и `_txtAgentOutput`); из блока свойств дублирующий `new` удалён. `LayoutLogsButton` переведён на координаты отступа (`x + (innerW - btnW)`).
+- **Проверка:** `Build.cmd Debug` → сборка успешна. Ручная (в SolidWorks): перезапустить SW → кнопка **Логи** видна справа над «Ответ агента»; клик открывает форму логов.
+- **Эвристики:** → E56 (уточнена).
+
+## Эвристики (случай 29)
+
+- **E55. В не-SDK-style проекте форма — это три артефакта, и все три регистрируются вручную.** `.cs` (SubType Form), `.Designer.cs` (DependentUpon на `.cs`), `.resx` (EmbeddedResource + DependentUpon). Пропуск любого пункта даёт либо `CS0246` (нет типа), либо «ресурс не найден» при `resources.GetObject("$this.Icon")`. Диагностический признак: новый файл лежит рядом, но компилятор его «не видит». См. случай 29.
+- **E56. В Designer-файле `new` контрола обязан быть в общем блоке создания, а не в секции свойств.** Если `this._field = new …()` попал только в блок `// _field` среди свойств, а в общем блоке `InitializeComponent` его нет, поле остаётся `null`: `Controls.Add(this._field)` добавит `null`, обработчики молча не сработают, предупреждений компилятор не даст (CS0649 не возникает — `new` где-то есть). Диагностический признак: контрол есть в `Controls.Add`, свойства заданы, но на форме не отображается и не реагирует на клики. См. случаи 29, 30.
+
+## Случай 31. Кнопка «Очистить» на форме логов удаляла заголовки оставшихся сессий
+
+- **Дата / сборка:** 2026-10-03, `bin\Debug\velum.dll`.
+- **Симптом:** не проявился в UI (пойман тестом). При удалении выделенных сессий из CSV-лога новая логика отбрасывала **заголовки всех** блоков, а не только удаляемых: после очистки одной сессии оставшиеся сессии теряли строку-заголовок и переставали читаться (`VelumCsvLogSessionReader.ReadBlocks` открывает блок по заголовку — без него строки игнорируются).
+- **Область:** `Common\Logs\VelumLogSessionRules.cs` (`KeepLinesExceptSessions`), используется `VelumCsvLogSessionReader.DeleteSessions`.
+- **Гипотезы и проверки:**
+  1. *Достаточно проверить логику «на глаз» — структура блока очевидна* — **опровергнуто** регрессионным тестом: первый прогон `dotnet test` дал 3 падения, где в «Actual» остались только строки данных без заголовков `Time;Pulse;Value`.
+  2. *`continue` после распознавания заголовка безопасен* — **опровергнуто**: заголовок открывает блок, но сам в него не входит; `continue` без `kept.Add` выбрасывал заголовки и удаляемых, и **оставшихся** блоков.
+- **Корень:** в цикле по строкам ветка `isHeaderRow(line)` делала безусловный `continue`, не добавляя строку-заголовок в результат. Заголовок нужно сохранять, если его блок НЕ удаляется, и отбрасывать только вместе с удаляемой сессией.
+- **Доказательство:** прогон `dotnet test tests\Velum.ReactiveCore.Tests.csproj` — `KeepLinesExceptSessions_DeletesSelectedBlockOnly`: Expected `["Time;Pulse;Value","10:00;1;a",…]`, Actual `["10:00;1;a","10:01;2;b",…]` (все заголовки пропали).
+- **Исправление:** `KeepLinesExceptSessions` — при `isHeaderRow(line)` добавлять заголовок в `kept`, только если `!insideDeleted`. Логика вынесена в чистый класс `VelumLogSessionRules` (без путей/файлов), слинкована в тестовый проект; `VelumCsvLogSessionReader.DeleteSessions` и `VelumLogsReportHtmlBuilder.BuildSessionFileName` делегируют в него. Добавлен `tests\VelumLogSessionRulesTests.cs` (10 тестов).
+- **Проверка:** `dotnet test` → 214/214 успешно; `MSBuild velum.csproj` → без ошибок.
+- **Эвристики:** → E57.
+
+## Эвристика (случай 31)
+
+- **E57. Удаление блоков из файла с повторяющимися заголовками: заголовок принадлежит удаляемому блоку, а не предшествует ему.** При разборе «заголовок → строки данных» легко выбросить все заголовки, если делать безусловный `continue` в ветке заголовка. Заголовок сохраняется вместе с блоком, к которому относится, и отбрасывается только вместе с удаляемой сессией. Проверять регрессионным тестом на «остаток» (заголовки оставшихся блоков на месте), а не только на факт удаления выбранного. См. случай 31.
+

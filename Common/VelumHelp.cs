@@ -38,6 +38,7 @@ namespace Velum.UI
     public const string BomExchangeLayout = "bom-exchange-layout";
     public const string BomTrackedProperties = "bom-tracked-properties";
     public const string AgentTaskPane = "agent-taskpane";
+    public const string Logs = "logs";
     public const string EnvironmentMetrics = "environment-metrics";
     public const string OperatorInfluences = "operator-influences";
     public const string SensorBuffer = "sensor-buffer";
@@ -70,6 +71,7 @@ namespace Velum.UI
           { BomExchangeLayout, Path.Combine("forms", "bom-exchange-layout.html") },
           { BomTrackedProperties, Path.Combine("forms", "bom-tracked-properties.html") },
           { AgentTaskPane, Path.Combine("forms", "agent-taskpane.html") },
+          { Logs, Path.Combine("forms", "logs.html") },
           { EnvironmentMetrics, Path.Combine("forms", "environment-metrics.html") },
           { OperatorInfluences, Path.Combine("forms", "operator-influences.html") },
           { SensorBuffer, Path.Combine("forms", "sensor-buffer.html") },
