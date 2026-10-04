@@ -261,7 +261,7 @@ namespace Velum.UI
       this.tabControl1.Location = new System.Drawing.Point(12, 12);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(808, 318);
+      this.tabControl1.Size = new System.Drawing.Size(706, 318);
       this.tabControl1.TabIndex = 0;
       // 
       // tabPage1
@@ -292,7 +292,7 @@ namespace Velum.UI
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(800, 292);
+      this.tabPage1.Size = new System.Drawing.Size(698, 292);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Пути данных";
       this.tabPage1.UseVisualStyleBackColor = true;
@@ -314,12 +314,12 @@ namespace Velum.UI
       this._tbProductRegistry.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
       this._tbProductRegistry.Name = "_tbProductRegistry";
       this._tbProductRegistry.ReadOnly = true;
-      this._tbProductRegistry.Size = new System.Drawing.Size(522, 20);
+      this._tbProductRegistry.Size = new System.Drawing.Size(400, 20);
       this._tbProductRegistry.TabIndex = 32;
       // 
       // _btnBrowseProductRegistry
       // 
-      this._btnBrowseProductRegistry.Location = new System.Drawing.Point(712, 148);
+      this._btnBrowseProductRegistry.Location = new System.Drawing.Point(799, 148);
       this._btnBrowseProductRegistry.Margin = new System.Windows.Forms.Padding(6, 2, 0, 0);
       this._btnBrowseProductRegistry.Name = "_btnBrowseProductRegistry";
       this._btnBrowseProductRegistry.Size = new System.Drawing.Size(75, 23);
@@ -346,12 +346,12 @@ namespace Velum.UI
       this._tbBomExchange.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
       this._tbBomExchange.Name = "_tbBomExchange";
       this._tbBomExchange.ReadOnly = true;
-      this._tbBomExchange.Size = new System.Drawing.Size(522, 20);
+      this._tbBomExchange.Size = new System.Drawing.Size(609, 20);
       this._tbBomExchange.TabIndex = 35;
       // 
       // _btnBrowseBomExchange
       // 
-      this._btnBrowseBomExchange.Location = new System.Drawing.Point(712, 175);
+      this._btnBrowseBomExchange.Location = new System.Drawing.Point(799, 176);
       this._btnBrowseBomExchange.Margin = new System.Windows.Forms.Padding(6, 2, 0, 0);
       this._btnBrowseBomExchange.Name = "_btnBrowseBomExchange";
       this._btnBrowseBomExchange.Size = new System.Drawing.Size(75, 23);
@@ -376,7 +376,7 @@ namespace Velum.UI
       this._tbDocumentRootPaths.Location = new System.Drawing.Point(181, 205);
       this._tbDocumentRootPaths.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
       this._tbDocumentRootPaths.Name = "_tbDocumentRootPaths";
-      this._tbDocumentRootPaths.Size = new System.Drawing.Size(522, 20);
+      this._tbDocumentRootPaths.Size = new System.Drawing.Size(693, 20);
       this._tbDocumentRootPaths.TabIndex = 38;
       // 
       // _lblPathScenario
@@ -396,12 +396,12 @@ namespace Velum.UI
       this._tbScenarioReports.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
       this._tbScenarioReports.Name = "_tbScenarioReports";
       this._tbScenarioReports.ReadOnly = true;
-      this._tbScenarioReports.Size = new System.Drawing.Size(522, 20);
+      this._tbScenarioReports.Size = new System.Drawing.Size(400, 20);
       this._tbScenarioReports.TabIndex = 29;
       // 
       // _btnBrowseScenario
       // 
-      this._btnBrowseScenario.Location = new System.Drawing.Point(712, 119);
+      this._btnBrowseScenario.Location = new System.Drawing.Point(590, 120);
       this._btnBrowseScenario.Margin = new System.Windows.Forms.Padding(6, 2, 0, 0);
       this._btnBrowseScenario.Name = "_btnBrowseScenario";
       this._btnBrowseScenario.Size = new System.Drawing.Size(75, 23);
@@ -428,12 +428,12 @@ namespace Velum.UI
       this._tbBoot.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
       this._tbBoot.Name = "_tbBoot";
       this._tbBoot.ReadOnly = true;
-      this._tbBoot.Size = new System.Drawing.Size(522, 20);
+      this._tbBoot.Size = new System.Drawing.Size(400, 20);
       this._tbBoot.TabIndex = 26;
       // 
       // _btnBrowseBoot
       // 
-      this._btnBrowseBoot.Location = new System.Drawing.Point(712, 92);
+      this._btnBrowseBoot.Location = new System.Drawing.Point(590, 92);
       this._btnBrowseBoot.Margin = new System.Windows.Forms.Padding(6, 2, 0, 0);
       this._btnBrowseBoot.Name = "_btnBrowseBoot";
       this._btnBrowseBoot.Size = new System.Drawing.Size(75, 23);
@@ -460,12 +460,12 @@ namespace Velum.UI
       this._tbLogs.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
       this._tbLogs.Name = "_tbLogs";
       this._tbLogs.ReadOnly = true;
-      this._tbLogs.Size = new System.Drawing.Size(522, 20);
+      this._tbLogs.Size = new System.Drawing.Size(400, 20);
       this._tbLogs.TabIndex = 23;
       // 
       // _btnBrowseLogs
       // 
-      this._btnBrowseLogs.Location = new System.Drawing.Point(712, 63);
+      this._btnBrowseLogs.Location = new System.Drawing.Point(590, 64);
       this._btnBrowseLogs.Margin = new System.Windows.Forms.Padding(6, 2, 0, 0);
       this._btnBrowseLogs.Name = "_btnBrowseLogs";
       this._btnBrowseLogs.Size = new System.Drawing.Size(75, 23);
@@ -492,12 +492,12 @@ namespace Velum.UI
       this._tbGomeostas.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
       this._tbGomeostas.Name = "_tbGomeostas";
       this._tbGomeostas.ReadOnly = true;
-      this._tbGomeostas.Size = new System.Drawing.Size(522, 20);
+      this._tbGomeostas.Size = new System.Drawing.Size(400, 20);
       this._tbGomeostas.TabIndex = 8;
       // 
       // _btnBrowseGomeostas
       // 
-      this._btnBrowseGomeostas.Location = new System.Drawing.Point(712, 37);
+      this._btnBrowseGomeostas.Location = new System.Drawing.Point(590, 36);
       this._btnBrowseGomeostas.Margin = new System.Windows.Forms.Padding(6, 2, 0, 0);
       this._btnBrowseGomeostas.Name = "_btnBrowseGomeostas";
       this._btnBrowseGomeostas.Size = new System.Drawing.Size(75, 23);
@@ -524,12 +524,12 @@ namespace Velum.UI
       this._tbSettingsPath.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
       this._tbSettingsPath.Name = "_tbSettingsPath";
       this._tbSettingsPath.ReadOnly = true;
-      this._tbSettingsPath.Size = new System.Drawing.Size(522, 20);
+      this._tbSettingsPath.Size = new System.Drawing.Size(400, 20);
       this._tbSettingsPath.TabIndex = 4;
       // 
       // _btnBrowseSettings
       // 
-      this._btnBrowseSettings.Location = new System.Drawing.Point(712, 7);
+      this._btnBrowseSettings.Location = new System.Drawing.Point(590, 9);
       this._btnBrowseSettings.Margin = new System.Windows.Forms.Padding(6, 2, 0, 0);
       this._btnBrowseSettings.Name = "_btnBrowseSettings";
       this._btnBrowseSettings.Size = new System.Drawing.Size(75, 23);
@@ -572,7 +572,7 @@ namespace Velum.UI
       this.tabPage2.Location = new System.Drawing.Point(4, 22);
       this.tabPage2.Name = "tabPage2";
       this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage2.Size = new System.Drawing.Size(800, 292);
+      this.tabPage2.Size = new System.Drawing.Size(698, 292);
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "Регуляция";
       this.tabPage2.UseVisualStyleBackColor = true;
@@ -872,7 +872,7 @@ namespace Velum.UI
       this.tabPage3.Location = new System.Drawing.Point(4, 22);
       this.tabPage3.Name = "tabPage3";
       this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage3.Size = new System.Drawing.Size(800, 292);
+      this.tabPage3.Size = new System.Drawing.Size(698, 292);
       this.tabPage3.TabIndex = 2;
       this.tabPage3.Text = "Аналитика";
       this.tabPage3.UseVisualStyleBackColor = true;
@@ -1039,7 +1039,7 @@ namespace Velum.UI
       this.tabPageAdapter.Location = new System.Drawing.Point(4, 22);
       this.tabPageAdapter.Name = "tabPageAdapter";
       this.tabPageAdapter.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageAdapter.Size = new System.Drawing.Size(800, 292);
+      this.tabPageAdapter.Size = new System.Drawing.Size(698, 292);
       this.tabPageAdapter.TabIndex = 3;
       this.tabPageAdapter.Text = "Адаптер";
       this.tabPageAdapter.UseVisualStyleBackColor = true;
@@ -1244,7 +1244,7 @@ namespace Velum.UI
       this.tabPageDocuments.Location = new System.Drawing.Point(4, 22);
       this.tabPageDocuments.Name = "tabPageDocuments";
       this.tabPageDocuments.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageDocuments.Size = new System.Drawing.Size(800, 292);
+      this.tabPageDocuments.Size = new System.Drawing.Size(698, 292);
       this.tabPageDocuments.TabIndex = 4;
       this.tabPageDocuments.Text = "Документы";
       this.tabPageDocuments.UseVisualStyleBackColor = true;
@@ -1358,7 +1358,7 @@ namespace Velum.UI
       this.tabPageReflexes.Location = new System.Drawing.Point(4, 22);
       this.tabPageReflexes.Name = "tabPageReflexes";
       this.tabPageReflexes.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageReflexes.Size = new System.Drawing.Size(800, 292);
+      this.tabPageReflexes.Size = new System.Drawing.Size(698, 292);
       this.tabPageReflexes.TabIndex = 5;
       this.tabPageReflexes.Text = "У-рефлексы";
       this.tabPageReflexes.UseVisualStyleBackColor = true;
@@ -1395,7 +1395,7 @@ namespace Velum.UI
       this.grpCrxMain.Controls.Add(this._chkCrxTieBreakPreferSmallerReflexId);
       this.grpCrxMain.Location = new System.Drawing.Point(6, 6);
       this.grpCrxMain.Name = "grpCrxMain";
-      this.grpCrxMain.Size = new System.Drawing.Size(380, 264);
+      this.grpCrxMain.Size = new System.Drawing.Size(330, 264);
       this.grpCrxMain.TabIndex = 0;
       this.grpCrxMain.TabStop = false;
       this.grpCrxMain.Text = "Основные параметры";
@@ -1404,7 +1404,7 @@ namespace Velum.UI
       // 
       this.lblCrxLearningRate.Location = new System.Drawing.Point(8, 21);
       this.lblCrxLearningRate.Name = "lblCrxLearningRate";
-      this.lblCrxLearningRate.Size = new System.Drawing.Size(232, 18);
+      this.lblCrxLearningRate.Size = new System.Drawing.Size(176, 18);
       this.lblCrxLearningRate.TabIndex = 0;
       this.lblCrxLearningRate.Text = "Коэффициент обучения (α):";
       this.lblCrxLearningRate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -1412,7 +1412,7 @@ namespace Velum.UI
       // 
       // _tbCrxLearningRate
       // 
-      this._tbCrxLearningRate.Location = new System.Drawing.Point(244, 20);
+      this._tbCrxLearningRate.Location = new System.Drawing.Point(188, 20);
       this._tbCrxLearningRate.Name = "_tbCrxLearningRate";
       this._tbCrxLearningRate.Size = new System.Drawing.Size(64, 20);
       this._tbCrxLearningRate.TabIndex = 1;
@@ -1424,7 +1424,7 @@ namespace Velum.UI
       // 
       this.rngCrxLearningRate.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.rngCrxLearningRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxLearningRate.Location = new System.Drawing.Point(310, 21);
+      this.rngCrxLearningRate.Location = new System.Drawing.Point(258, 21);
       this.rngCrxLearningRate.Name = "rngCrxLearningRate";
       this.rngCrxLearningRate.Size = new System.Drawing.Size(66, 18);
       this.rngCrxLearningRate.TabIndex = 2;
@@ -1436,7 +1436,7 @@ namespace Velum.UI
       // 
       this.lblCrxDecayRate.Location = new System.Drawing.Point(8, 45);
       this.lblCrxDecayRate.Name = "lblCrxDecayRate";
-      this.lblCrxDecayRate.Size = new System.Drawing.Size(232, 18);
+      this.lblCrxDecayRate.Size = new System.Drawing.Size(176, 18);
       this.lblCrxDecayRate.TabIndex = 3;
       this.lblCrxDecayRate.Text = "Коэфф. затухания λ (CS↔CS):";
       this.lblCrxDecayRate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -1445,7 +1445,7 @@ namespace Velum.UI
       // 
       // _tbCrxDecayRate
       // 
-      this._tbCrxDecayRate.Location = new System.Drawing.Point(244, 44);
+      this._tbCrxDecayRate.Location = new System.Drawing.Point(188, 44);
       this._tbCrxDecayRate.Name = "_tbCrxDecayRate";
       this._tbCrxDecayRate.Size = new System.Drawing.Size(64, 20);
       this._tbCrxDecayRate.TabIndex = 4;
@@ -1458,7 +1458,7 @@ namespace Velum.UI
       // 
       this.rngCrxDecayRate.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.rngCrxDecayRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxDecayRate.Location = new System.Drawing.Point(310, 45);
+      this.rngCrxDecayRate.Location = new System.Drawing.Point(258, 45);
       this.rngCrxDecayRate.Name = "rngCrxDecayRate";
       this.rngCrxDecayRate.Size = new System.Drawing.Size(66, 18);
       this.rngCrxDecayRate.TabIndex = 5;
@@ -1471,7 +1471,7 @@ namespace Velum.UI
       // 
       this.lblCrxActivationThreshold.Location = new System.Drawing.Point(8, 69);
       this.lblCrxActivationThreshold.Name = "lblCrxActivationThreshold";
-      this.lblCrxActivationThreshold.Size = new System.Drawing.Size(232, 18);
+      this.lblCrxActivationThreshold.Size = new System.Drawing.Size(176, 18);
       this.lblCrxActivationThreshold.TabIndex = 6;
       this.lblCrxActivationThreshold.Text = "Порог активации (γ):";
       this.lblCrxActivationThreshold.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -1479,7 +1479,7 @@ namespace Velum.UI
       // 
       // _tbCrxActivationThreshold
       // 
-      this._tbCrxActivationThreshold.Location = new System.Drawing.Point(244, 68);
+      this._tbCrxActivationThreshold.Location = new System.Drawing.Point(188, 68);
       this._tbCrxActivationThreshold.Name = "_tbCrxActivationThreshold";
       this._tbCrxActivationThreshold.Size = new System.Drawing.Size(64, 20);
       this._tbCrxActivationThreshold.TabIndex = 7;
@@ -1491,7 +1491,7 @@ namespace Velum.UI
       // 
       this.rngCrxActivationThreshold.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.rngCrxActivationThreshold.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxActivationThreshold.Location = new System.Drawing.Point(310, 69);
+      this.rngCrxActivationThreshold.Location = new System.Drawing.Point(258, 69);
       this.rngCrxActivationThreshold.Name = "rngCrxActivationThreshold";
       this.rngCrxActivationThreshold.Size = new System.Drawing.Size(66, 18);
       this.rngCrxActivationThreshold.TabIndex = 8;
@@ -1503,7 +1503,7 @@ namespace Velum.UI
       // 
       this.lblCrxInitialLifetimePulses.Location = new System.Drawing.Point(8, 93);
       this.lblCrxInitialLifetimePulses.Name = "lblCrxInitialLifetimePulses";
-      this.lblCrxInitialLifetimePulses.Size = new System.Drawing.Size(232, 18);
+      this.lblCrxInitialLifetimePulses.Size = new System.Drawing.Size(176, 18);
       this.lblCrxInitialLifetimePulses.TabIndex = 9;
       this.lblCrxInitialLifetimePulses.Text = "Начальный лимит простоя (пульсы):";
       this.lblCrxInitialLifetimePulses.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -1512,7 +1512,7 @@ namespace Velum.UI
       // 
       // _tbCrxInitialLifetimePulses
       // 
-      this._tbCrxInitialLifetimePulses.Location = new System.Drawing.Point(244, 92);
+      this._tbCrxInitialLifetimePulses.Location = new System.Drawing.Point(188, 92);
       this._tbCrxInitialLifetimePulses.Name = "_tbCrxInitialLifetimePulses";
       this._tbCrxInitialLifetimePulses.Size = new System.Drawing.Size(64, 20);
       this._tbCrxInitialLifetimePulses.TabIndex = 10;
@@ -1525,7 +1525,7 @@ namespace Velum.UI
       // 
       this.rngCrxInitialLifetimePulses.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.rngCrxInitialLifetimePulses.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxInitialLifetimePulses.Location = new System.Drawing.Point(310, 93);
+      this.rngCrxInitialLifetimePulses.Location = new System.Drawing.Point(258, 93);
       this.rngCrxInitialLifetimePulses.Name = "rngCrxInitialLifetimePulses";
       this.rngCrxInitialLifetimePulses.Size = new System.Drawing.Size(66, 18);
       this.rngCrxInitialLifetimePulses.TabIndex = 11;
@@ -1538,7 +1538,7 @@ namespace Velum.UI
       // 
       this.lblCrxActiveExtinctionRate.Location = new System.Drawing.Point(8, 117);
       this.lblCrxActiveExtinctionRate.Name = "lblCrxActiveExtinctionRate";
-      this.lblCrxActiveExtinctionRate.Size = new System.Drawing.Size(232, 18);
+      this.lblCrxActiveExtinctionRate.Size = new System.Drawing.Size(176, 18);
       this.lblCrxActiveExtinctionRate.TabIndex = 12;
       this.lblCrxActiveExtinctionRate.Text = "Активное угасание (α_ext):";
       this.lblCrxActiveExtinctionRate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -1546,7 +1546,7 @@ namespace Velum.UI
       // 
       // _tbCrxActiveExtinctionRate
       // 
-      this._tbCrxActiveExtinctionRate.Location = new System.Drawing.Point(244, 116);
+      this._tbCrxActiveExtinctionRate.Location = new System.Drawing.Point(188, 116);
       this._tbCrxActiveExtinctionRate.Name = "_tbCrxActiveExtinctionRate";
       this._tbCrxActiveExtinctionRate.Size = new System.Drawing.Size(64, 20);
       this._tbCrxActiveExtinctionRate.TabIndex = 13;
@@ -1558,7 +1558,7 @@ namespace Velum.UI
       // 
       this.rngCrxActiveExtinctionRate.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.rngCrxActiveExtinctionRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxActiveExtinctionRate.Location = new System.Drawing.Point(310, 117);
+      this.rngCrxActiveExtinctionRate.Location = new System.Drawing.Point(258, 117);
       this.rngCrxActiveExtinctionRate.Name = "rngCrxActiveExtinctionRate";
       this.rngCrxActiveExtinctionRate.Size = new System.Drawing.Size(66, 18);
       this.rngCrxActiveExtinctionRate.TabIndex = 14;
@@ -1570,7 +1570,7 @@ namespace Velum.UI
       // 
       this.lblCrxTimeWindowPulses.Location = new System.Drawing.Point(8, 141);
       this.lblCrxTimeWindowPulses.Name = "lblCrxTimeWindowPulses";
-      this.lblCrxTimeWindowPulses.Size = new System.Drawing.Size(232, 18);
+      this.lblCrxTimeWindowPulses.Size = new System.Drawing.Size(176, 18);
       this.lblCrxTimeWindowPulses.TabIndex = 15;
       this.lblCrxTimeWindowPulses.Text = "Временное окно корреляции (τ):";
       this.lblCrxTimeWindowPulses.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -1578,7 +1578,7 @@ namespace Velum.UI
       // 
       // _tbCrxTimeWindowPulses
       // 
-      this._tbCrxTimeWindowPulses.Location = new System.Drawing.Point(244, 140);
+      this._tbCrxTimeWindowPulses.Location = new System.Drawing.Point(188, 140);
       this._tbCrxTimeWindowPulses.Name = "_tbCrxTimeWindowPulses";
       this._tbCrxTimeWindowPulses.Size = new System.Drawing.Size(64, 20);
       this._tbCrxTimeWindowPulses.TabIndex = 16;
@@ -1590,7 +1590,7 @@ namespace Velum.UI
       // 
       this.rngCrxTimeWindowPulses.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.rngCrxTimeWindowPulses.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxTimeWindowPulses.Location = new System.Drawing.Point(310, 141);
+      this.rngCrxTimeWindowPulses.Location = new System.Drawing.Point(258, 141);
       this.rngCrxTimeWindowPulses.Name = "rngCrxTimeWindowPulses";
       this.rngCrxTimeWindowPulses.Size = new System.Drawing.Size(66, 18);
       this.rngCrxTimeWindowPulses.TabIndex = 17;
@@ -1602,7 +1602,7 @@ namespace Velum.UI
       // 
       this.lblCrxMinAssociationStrength.Location = new System.Drawing.Point(8, 165);
       this.lblCrxMinAssociationStrength.Name = "lblCrxMinAssociationStrength";
-      this.lblCrxMinAssociationStrength.Size = new System.Drawing.Size(232, 18);
+      this.lblCrxMinAssociationStrength.Size = new System.Drawing.Size(176, 18);
       this.lblCrxMinAssociationStrength.TabIndex = 18;
       this.lblCrxMinAssociationStrength.Text = "Минимальная крепость связи (C_min):";
       this.lblCrxMinAssociationStrength.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -1610,7 +1610,7 @@ namespace Velum.UI
       // 
       // _tbCrxMinAssociationStrength
       // 
-      this._tbCrxMinAssociationStrength.Location = new System.Drawing.Point(244, 164);
+      this._tbCrxMinAssociationStrength.Location = new System.Drawing.Point(188, 164);
       this._tbCrxMinAssociationStrength.Name = "_tbCrxMinAssociationStrength";
       this._tbCrxMinAssociationStrength.Size = new System.Drawing.Size(64, 20);
       this._tbCrxMinAssociationStrength.TabIndex = 19;
@@ -1622,7 +1622,7 @@ namespace Velum.UI
       // 
       this.rngCrxMinAssociationStrength.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.rngCrxMinAssociationStrength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxMinAssociationStrength.Location = new System.Drawing.Point(310, 165);
+      this.rngCrxMinAssociationStrength.Location = new System.Drawing.Point(258, 165);
       this.rngCrxMinAssociationStrength.Name = "rngCrxMinAssociationStrength";
       this.rngCrxMinAssociationStrength.Size = new System.Drawing.Size(66, 18);
       this.rngCrxMinAssociationStrength.TabIndex = 20;
@@ -1634,7 +1634,7 @@ namespace Velum.UI
       // 
       this.lblCrxHigherOrderStrengthReductionCoefficient.Location = new System.Drawing.Point(8, 189);
       this.lblCrxHigherOrderStrengthReductionCoefficient.Name = "lblCrxHigherOrderStrengthReductionCoefficient";
-      this.lblCrxHigherOrderStrengthReductionCoefficient.Size = new System.Drawing.Size(232, 18);
+      this.lblCrxHigherOrderStrengthReductionCoefficient.Size = new System.Drawing.Size(176, 18);
       this.lblCrxHigherOrderStrengthReductionCoefficient.TabIndex = 21;
       this.lblCrxHigherOrderStrengthReductionCoefficient.Text = "Коэфф. понижения крепости вторичных (K):";
       this.lblCrxHigherOrderStrengthReductionCoefficient.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -1643,7 +1643,7 @@ namespace Velum.UI
       // 
       // _tbCrxHigherOrderStrengthReductionCoefficient
       // 
-      this._tbCrxHigherOrderStrengthReductionCoefficient.Location = new System.Drawing.Point(244, 188);
+      this._tbCrxHigherOrderStrengthReductionCoefficient.Location = new System.Drawing.Point(188, 188);
       this._tbCrxHigherOrderStrengthReductionCoefficient.Name = "_tbCrxHigherOrderStrengthReductionCoefficient";
       this._tbCrxHigherOrderStrengthReductionCoefficient.Size = new System.Drawing.Size(64, 20);
       this._tbCrxHigherOrderStrengthReductionCoefficient.TabIndex = 22;
@@ -1656,7 +1656,7 @@ namespace Velum.UI
       // 
       this.rngCrxHigherOrderStrengthReductionCoefficient.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.rngCrxHigherOrderStrengthReductionCoefficient.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxHigherOrderStrengthReductionCoefficient.Location = new System.Drawing.Point(310, 189);
+      this.rngCrxHigherOrderStrengthReductionCoefficient.Location = new System.Drawing.Point(258, 189);
       this.rngCrxHigherOrderStrengthReductionCoefficient.Name = "rngCrxHigherOrderStrengthReductionCoefficient";
       this.rngCrxHigherOrderStrengthReductionCoefficient.Size = new System.Drawing.Size(66, 18);
       this.rngCrxHigherOrderStrengthReductionCoefficient.TabIndex = 23;
@@ -1669,7 +1669,7 @@ namespace Velum.UI
       // 
       this.lblCrxCompetitionStrengthRatioThreshold.Location = new System.Drawing.Point(8, 213);
       this.lblCrxCompetitionStrengthRatioThreshold.Name = "lblCrxCompetitionStrengthRatioThreshold";
-      this.lblCrxCompetitionStrengthRatioThreshold.Size = new System.Drawing.Size(232, 18);
+      this.lblCrxCompetitionStrengthRatioThreshold.Size = new System.Drawing.Size(176, 18);
       this.lblCrxCompetitionStrengthRatioThreshold.TabIndex = 24;
       this.lblCrxCompetitionStrengthRatioThreshold.Text = "Порог отношения крепостей (θ_comp):";
       this.lblCrxCompetitionStrengthRatioThreshold.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -1678,7 +1678,7 @@ namespace Velum.UI
       // 
       // _tbCrxCompetitionStrengthRatioThreshold
       // 
-      this._tbCrxCompetitionStrengthRatioThreshold.Location = new System.Drawing.Point(244, 212);
+      this._tbCrxCompetitionStrengthRatioThreshold.Location = new System.Drawing.Point(188, 212);
       this._tbCrxCompetitionStrengthRatioThreshold.Name = "_tbCrxCompetitionStrengthRatioThreshold";
       this._tbCrxCompetitionStrengthRatioThreshold.Size = new System.Drawing.Size(64, 20);
       this._tbCrxCompetitionStrengthRatioThreshold.TabIndex = 25;
@@ -1691,7 +1691,7 @@ namespace Velum.UI
       // 
       this.rngCrxCompetitionStrengthRatioThreshold.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.rngCrxCompetitionStrengthRatioThreshold.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxCompetitionStrengthRatioThreshold.Location = new System.Drawing.Point(310, 213);
+      this.rngCrxCompetitionStrengthRatioThreshold.Location = new System.Drawing.Point(258, 213);
       this.rngCrxCompetitionStrengthRatioThreshold.Name = "rngCrxCompetitionStrengthRatioThreshold";
       this.rngCrxCompetitionStrengthRatioThreshold.Size = new System.Drawing.Size(66, 18);
       this.rngCrxCompetitionStrengthRatioThreshold.TabIndex = 26;
@@ -1724,7 +1724,7 @@ namespace Velum.UI
       this.grpCrxDecay.Controls.Add(this.rngCrxPassiveDecayFallbackPeriodPulses);
       this.grpCrxDecay.Location = new System.Drawing.Point(6, 274);
       this.grpCrxDecay.Name = "grpCrxDecay";
-      this.grpCrxDecay.Size = new System.Drawing.Size(380, 72);
+      this.grpCrxDecay.Size = new System.Drawing.Size(330, 72);
       this.grpCrxDecay.TabIndex = 0;
       this.grpCrxDecay.TabStop = false;
       this.grpCrxDecay.Text = "Угасание";
@@ -1733,7 +1733,7 @@ namespace Velum.UI
       // 
       this.lblCrxPassiveDecayPeriodPulses.Location = new System.Drawing.Point(8, 21);
       this.lblCrxPassiveDecayPeriodPulses.Name = "lblCrxPassiveDecayPeriodPulses";
-      this.lblCrxPassiveDecayPeriodPulses.Size = new System.Drawing.Size(232, 18);
+      this.lblCrxPassiveDecayPeriodPulses.Size = new System.Drawing.Size(176, 18);
       this.lblCrxPassiveDecayPeriodPulses.TabIndex = 0;
       this.lblCrxPassiveDecayPeriodPulses.Text = "Период пассивного угасания (пульсы):";
       this.lblCrxPassiveDecayPeriodPulses.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -1742,7 +1742,7 @@ namespace Velum.UI
       // 
       // _tbCrxPassiveDecayPeriodPulses
       // 
-      this._tbCrxPassiveDecayPeriodPulses.Location = new System.Drawing.Point(244, 20);
+      this._tbCrxPassiveDecayPeriodPulses.Location = new System.Drawing.Point(188, 20);
       this._tbCrxPassiveDecayPeriodPulses.Name = "_tbCrxPassiveDecayPeriodPulses";
       this._tbCrxPassiveDecayPeriodPulses.Size = new System.Drawing.Size(64, 20);
       this._tbCrxPassiveDecayPeriodPulses.TabIndex = 1;
@@ -1755,7 +1755,7 @@ namespace Velum.UI
       // 
       this.rngCrxPassiveDecayPeriodPulses.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.rngCrxPassiveDecayPeriodPulses.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxPassiveDecayPeriodPulses.Location = new System.Drawing.Point(310, 21);
+      this.rngCrxPassiveDecayPeriodPulses.Location = new System.Drawing.Point(258, 21);
       this.rngCrxPassiveDecayPeriodPulses.Name = "rngCrxPassiveDecayPeriodPulses";
       this.rngCrxPassiveDecayPeriodPulses.Size = new System.Drawing.Size(66, 18);
       this.rngCrxPassiveDecayPeriodPulses.TabIndex = 2;
@@ -1768,7 +1768,7 @@ namespace Velum.UI
       // 
       this.lblCrxPassiveDecayFallbackPeriodPulses.Location = new System.Drawing.Point(8, 45);
       this.lblCrxPassiveDecayFallbackPeriodPulses.Name = "lblCrxPassiveDecayFallbackPeriodPulses";
-      this.lblCrxPassiveDecayFallbackPeriodPulses.Size = new System.Drawing.Size(232, 18);
+      this.lblCrxPassiveDecayFallbackPeriodPulses.Size = new System.Drawing.Size(176, 18);
       this.lblCrxPassiveDecayFallbackPeriodPulses.TabIndex = 3;
       this.lblCrxPassiveDecayFallbackPeriodPulses.Text = "Резервный период угасания (пульсы):";
       this.lblCrxPassiveDecayFallbackPeriodPulses.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -1776,7 +1776,7 @@ namespace Velum.UI
       // 
       // _tbCrxPassiveDecayFallbackPeriodPulses
       // 
-      this._tbCrxPassiveDecayFallbackPeriodPulses.Location = new System.Drawing.Point(244, 44);
+      this._tbCrxPassiveDecayFallbackPeriodPulses.Location = new System.Drawing.Point(188, 44);
       this._tbCrxPassiveDecayFallbackPeriodPulses.Name = "_tbCrxPassiveDecayFallbackPeriodPulses";
       this._tbCrxPassiveDecayFallbackPeriodPulses.Size = new System.Drawing.Size(64, 20);
       this._tbCrxPassiveDecayFallbackPeriodPulses.TabIndex = 4;
@@ -1788,7 +1788,7 @@ namespace Velum.UI
       // 
       this.rngCrxPassiveDecayFallbackPeriodPulses.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.rngCrxPassiveDecayFallbackPeriodPulses.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxPassiveDecayFallbackPeriodPulses.Location = new System.Drawing.Point(310, 45);
+      this.rngCrxPassiveDecayFallbackPeriodPulses.Location = new System.Drawing.Point(258, 45);
       this.rngCrxPassiveDecayFallbackPeriodPulses.Name = "rngCrxPassiveDecayFallbackPeriodPulses";
       this.rngCrxPassiveDecayFallbackPeriodPulses.Size = new System.Drawing.Size(66, 18);
       this.rngCrxPassiveDecayFallbackPeriodPulses.TabIndex = 5;
@@ -1802,9 +1802,9 @@ namespace Velum.UI
       this.grpCrxComp.Controls.Add(this.lblCrxCompetitionSuppressionCoefficient);
       this.grpCrxComp.Controls.Add(this._tbCrxCompetitionSuppressionCoefficient);
       this.grpCrxComp.Controls.Add(this.rngCrxCompetitionSuppressionCoefficient);
-      this.grpCrxComp.Location = new System.Drawing.Point(392, 6);
+      this.grpCrxComp.Location = new System.Drawing.Point(342, 6);
       this.grpCrxComp.Name = "grpCrxComp";
-      this.grpCrxComp.Size = new System.Drawing.Size(380, 72);
+      this.grpCrxComp.Size = new System.Drawing.Size(330, 72);
       this.grpCrxComp.TabIndex = 0;
       this.grpCrxComp.TabStop = false;
       this.grpCrxComp.Text = "Конкурентное обучение";
@@ -1827,7 +1827,7 @@ namespace Velum.UI
       // 
       this.lblCrxCompetitionSuppressionCoefficient.Location = new System.Drawing.Point(8, 45);
       this.lblCrxCompetitionSuppressionCoefficient.Name = "lblCrxCompetitionSuppressionCoefficient";
-      this.lblCrxCompetitionSuppressionCoefficient.Size = new System.Drawing.Size(232, 18);
+      this.lblCrxCompetitionSuppressionCoefficient.Size = new System.Drawing.Size(176, 18);
       this.lblCrxCompetitionSuppressionCoefficient.TabIndex = 3;
       this.lblCrxCompetitionSuppressionCoefficient.Text = "Доля подавления конкурентами:";
       this.lblCrxCompetitionSuppressionCoefficient.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -1836,7 +1836,7 @@ namespace Velum.UI
       // 
       // _tbCrxCompetitionSuppressionCoefficient
       // 
-      this._tbCrxCompetitionSuppressionCoefficient.Location = new System.Drawing.Point(244, 44);
+      this._tbCrxCompetitionSuppressionCoefficient.Location = new System.Drawing.Point(188, 44);
       this._tbCrxCompetitionSuppressionCoefficient.Name = "_tbCrxCompetitionSuppressionCoefficient";
       this._tbCrxCompetitionSuppressionCoefficient.Size = new System.Drawing.Size(64, 20);
       this._tbCrxCompetitionSuppressionCoefficient.TabIndex = 4;
@@ -1849,7 +1849,7 @@ namespace Velum.UI
       // 
       this.rngCrxCompetitionSuppressionCoefficient.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.rngCrxCompetitionSuppressionCoefficient.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxCompetitionSuppressionCoefficient.Location = new System.Drawing.Point(310, 45);
+      this.rngCrxCompetitionSuppressionCoefficient.Location = new System.Drawing.Point(258, 45);
       this.rngCrxCompetitionSuppressionCoefficient.Name = "rngCrxCompetitionSuppressionCoefficient";
       this.rngCrxCompetitionSuppressionCoefficient.Size = new System.Drawing.Size(66, 18);
       this.rngCrxCompetitionSuppressionCoefficient.TabIndex = 5;
@@ -1875,9 +1875,9 @@ namespace Velum.UI
       this.grpCrxStart.Controls.Add(this.lblCrxMaxLifetimePulsesCap);
       this.grpCrxStart.Controls.Add(this._tbCrxMaxLifetimePulsesCap);
       this.grpCrxStart.Controls.Add(this.rngCrxMaxLifetimePulsesCap);
-      this.grpCrxStart.Location = new System.Drawing.Point(392, 82);
+      this.grpCrxStart.Location = new System.Drawing.Point(342, 82);
       this.grpCrxStart.Name = "grpCrxStart";
-      this.grpCrxStart.Size = new System.Drawing.Size(380, 144);
+      this.grpCrxStart.Size = new System.Drawing.Size(330, 144);
       this.grpCrxStart.TabIndex = 0;
       this.grpCrxStart.TabStop = false;
       this.grpCrxStart.Text = "Начальная крепость и установление";
@@ -1886,7 +1886,7 @@ namespace Velum.UI
       // 
       this.lblCrxInitialStrengthBonus.Location = new System.Drawing.Point(8, 21);
       this.lblCrxInitialStrengthBonus.Name = "lblCrxInitialStrengthBonus";
-      this.lblCrxInitialStrengthBonus.Size = new System.Drawing.Size(232, 18);
+      this.lblCrxInitialStrengthBonus.Size = new System.Drawing.Size(176, 18);
       this.lblCrxInitialStrengthBonus.TabIndex = 0;
       this.lblCrxInitialStrengthBonus.Text = "Прибавка к стартовой крепости:";
       this.lblCrxInitialStrengthBonus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -1894,7 +1894,7 @@ namespace Velum.UI
       // 
       // _tbCrxInitialStrengthBonus
       // 
-      this._tbCrxInitialStrengthBonus.Location = new System.Drawing.Point(244, 20);
+      this._tbCrxInitialStrengthBonus.Location = new System.Drawing.Point(188, 20);
       this._tbCrxInitialStrengthBonus.Name = "_tbCrxInitialStrengthBonus";
       this._tbCrxInitialStrengthBonus.Size = new System.Drawing.Size(64, 20);
       this._tbCrxInitialStrengthBonus.TabIndex = 1;
@@ -1906,7 +1906,7 @@ namespace Velum.UI
       // 
       this.rngCrxInitialStrengthBonus.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.rngCrxInitialStrengthBonus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxInitialStrengthBonus.Location = new System.Drawing.Point(310, 21);
+      this.rngCrxInitialStrengthBonus.Location = new System.Drawing.Point(258, 21);
       this.rngCrxInitialStrengthBonus.Name = "rngCrxInitialStrengthBonus";
       this.rngCrxInitialStrengthBonus.Size = new System.Drawing.Size(66, 18);
       this.rngCrxInitialStrengthBonus.TabIndex = 2;
@@ -1918,7 +1918,7 @@ namespace Velum.UI
       // 
       this.lblCrxAuthoritativeStrength.Location = new System.Drawing.Point(8, 45);
       this.lblCrxAuthoritativeStrength.Name = "lblCrxAuthoritativeStrength";
-      this.lblCrxAuthoritativeStrength.Size = new System.Drawing.Size(232, 18);
+      this.lblCrxAuthoritativeStrength.Size = new System.Drawing.Size(176, 18);
       this.lblCrxAuthoritativeStrength.TabIndex = 3;
       this.lblCrxAuthoritativeStrength.Text = "Крепость авторитарной записи:";
       this.lblCrxAuthoritativeStrength.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -1927,7 +1927,7 @@ namespace Velum.UI
       // 
       // _tbCrxAuthoritativeStrength
       // 
-      this._tbCrxAuthoritativeStrength.Location = new System.Drawing.Point(244, 44);
+      this._tbCrxAuthoritativeStrength.Location = new System.Drawing.Point(188, 44);
       this._tbCrxAuthoritativeStrength.Name = "_tbCrxAuthoritativeStrength";
       this._tbCrxAuthoritativeStrength.Size = new System.Drawing.Size(64, 20);
       this._tbCrxAuthoritativeStrength.TabIndex = 4;
@@ -1940,7 +1940,7 @@ namespace Velum.UI
       // 
       this.rngCrxAuthoritativeStrength.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.rngCrxAuthoritativeStrength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxAuthoritativeStrength.Location = new System.Drawing.Point(310, 45);
+      this.rngCrxAuthoritativeStrength.Location = new System.Drawing.Point(258, 45);
       this.rngCrxAuthoritativeStrength.Name = "rngCrxAuthoritativeStrength";
       this.rngCrxAuthoritativeStrength.Size = new System.Drawing.Size(66, 18);
       this.rngCrxAuthoritativeStrength.TabIndex = 5;
@@ -1953,7 +1953,7 @@ namespace Velum.UI
       // 
       this.lblCrxEstablishedStrengthThreshold.Location = new System.Drawing.Point(8, 69);
       this.lblCrxEstablishedStrengthThreshold.Name = "lblCrxEstablishedStrengthThreshold";
-      this.lblCrxEstablishedStrengthThreshold.Size = new System.Drawing.Size(232, 18);
+      this.lblCrxEstablishedStrengthThreshold.Size = new System.Drawing.Size(176, 18);
       this.lblCrxEstablishedStrengthThreshold.TabIndex = 6;
       this.lblCrxEstablishedStrengthThreshold.Text = "Порог «установившегося» рефлекса:";
       this.lblCrxEstablishedStrengthThreshold.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -1962,7 +1962,7 @@ namespace Velum.UI
       // 
       // _tbCrxEstablishedStrengthThreshold
       // 
-      this._tbCrxEstablishedStrengthThreshold.Location = new System.Drawing.Point(244, 68);
+      this._tbCrxEstablishedStrengthThreshold.Location = new System.Drawing.Point(188, 68);
       this._tbCrxEstablishedStrengthThreshold.Name = "_tbCrxEstablishedStrengthThreshold";
       this._tbCrxEstablishedStrengthThreshold.Size = new System.Drawing.Size(64, 20);
       this._tbCrxEstablishedStrengthThreshold.TabIndex = 7;
@@ -1975,7 +1975,7 @@ namespace Velum.UI
       // 
       this.rngCrxEstablishedStrengthThreshold.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.rngCrxEstablishedStrengthThreshold.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxEstablishedStrengthThreshold.Location = new System.Drawing.Point(310, 69);
+      this.rngCrxEstablishedStrengthThreshold.Location = new System.Drawing.Point(258, 69);
       this.rngCrxEstablishedStrengthThreshold.Name = "rngCrxEstablishedStrengthThreshold";
       this.rngCrxEstablishedStrengthThreshold.Size = new System.Drawing.Size(66, 18);
       this.rngCrxEstablishedStrengthThreshold.TabIndex = 8;
@@ -1988,7 +1988,7 @@ namespace Velum.UI
       // 
       this.lblCrxActivationReinforcementFraction.Location = new System.Drawing.Point(8, 93);
       this.lblCrxActivationReinforcementFraction.Name = "lblCrxActivationReinforcementFraction";
-      this.lblCrxActivationReinforcementFraction.Size = new System.Drawing.Size(232, 18);
+      this.lblCrxActivationReinforcementFraction.Size = new System.Drawing.Size(176, 18);
       this.lblCrxActivationReinforcementFraction.TabIndex = 9;
       this.lblCrxActivationReinforcementFraction.Text = "Доля α при подкреплении активацией:";
       this.lblCrxActivationReinforcementFraction.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -1996,7 +1996,7 @@ namespace Velum.UI
       // 
       // _tbCrxActivationReinforcementFraction
       // 
-      this._tbCrxActivationReinforcementFraction.Location = new System.Drawing.Point(244, 92);
+      this._tbCrxActivationReinforcementFraction.Location = new System.Drawing.Point(188, 92);
       this._tbCrxActivationReinforcementFraction.Name = "_tbCrxActivationReinforcementFraction";
       this._tbCrxActivationReinforcementFraction.Size = new System.Drawing.Size(64, 20);
       this._tbCrxActivationReinforcementFraction.TabIndex = 10;
@@ -2008,7 +2008,7 @@ namespace Velum.UI
       // 
       this.rngCrxActivationReinforcementFraction.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.rngCrxActivationReinforcementFraction.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxActivationReinforcementFraction.Location = new System.Drawing.Point(310, 93);
+      this.rngCrxActivationReinforcementFraction.Location = new System.Drawing.Point(258, 93);
       this.rngCrxActivationReinforcementFraction.Name = "rngCrxActivationReinforcementFraction";
       this.rngCrxActivationReinforcementFraction.Size = new System.Drawing.Size(66, 18);
       this.rngCrxActivationReinforcementFraction.TabIndex = 11;
@@ -2020,7 +2020,7 @@ namespace Velum.UI
       // 
       this.lblCrxMaxLifetimePulsesCap.Location = new System.Drawing.Point(8, 117);
       this.lblCrxMaxLifetimePulsesCap.Name = "lblCrxMaxLifetimePulsesCap";
-      this.lblCrxMaxLifetimePulsesCap.Size = new System.Drawing.Size(232, 18);
+      this.lblCrxMaxLifetimePulsesCap.Size = new System.Drawing.Size(176, 18);
       this.lblCrxMaxLifetimePulsesCap.TabIndex = 12;
       this.lblCrxMaxLifetimePulsesCap.Text = "Потолок TTL при удвоении (пульсы):";
       this.lblCrxMaxLifetimePulsesCap.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -2028,7 +2028,7 @@ namespace Velum.UI
       // 
       // _tbCrxMaxLifetimePulsesCap
       // 
-      this._tbCrxMaxLifetimePulsesCap.Location = new System.Drawing.Point(244, 116);
+      this._tbCrxMaxLifetimePulsesCap.Location = new System.Drawing.Point(188, 116);
       this._tbCrxMaxLifetimePulsesCap.Name = "_tbCrxMaxLifetimePulsesCap";
       this._tbCrxMaxLifetimePulsesCap.Size = new System.Drawing.Size(64, 20);
       this._tbCrxMaxLifetimePulsesCap.TabIndex = 13;
@@ -2040,7 +2040,7 @@ namespace Velum.UI
       // 
       this.rngCrxMaxLifetimePulsesCap.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.rngCrxMaxLifetimePulsesCap.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxMaxLifetimePulsesCap.Location = new System.Drawing.Point(310, 117);
+      this.rngCrxMaxLifetimePulsesCap.Location = new System.Drawing.Point(258, 117);
       this.rngCrxMaxLifetimePulsesCap.Name = "rngCrxMaxLifetimePulsesCap";
       this.rngCrxMaxLifetimePulsesCap.Size = new System.Drawing.Size(66, 18);
       this.rngCrxMaxLifetimePulsesCap.TabIndex = 14;
@@ -2065,9 +2065,9 @@ namespace Velum.UI
       this.grpCrxSens.Controls.Add(this.lblCrxSensoryMidStrengthThreshold);
       this.grpCrxSens.Controls.Add(this._tbCrxSensoryMidStrengthThreshold);
       this.grpCrxSens.Controls.Add(this.rngCrxSensoryMidStrengthThreshold);
-      this.grpCrxSens.Location = new System.Drawing.Point(392, 230);
+      this.grpCrxSens.Location = new System.Drawing.Point(342, 230);
       this.grpCrxSens.Name = "grpCrxSens";
-      this.grpCrxSens.Size = new System.Drawing.Size(380, 144);
+      this.grpCrxSens.Size = new System.Drawing.Size(330, 144);
       this.grpCrxSens.TabIndex = 0;
       this.grpCrxSens.TabStop = false;
       this.grpCrxSens.Text = "Сенсорные ассоциации CS↔CS";
@@ -2076,7 +2076,7 @@ namespace Velum.UI
       // 
       this.lblCrxSensoryDecayPeriodPulses.Location = new System.Drawing.Point(8, 21);
       this.lblCrxSensoryDecayPeriodPulses.Name = "lblCrxSensoryDecayPeriodPulses";
-      this.lblCrxSensoryDecayPeriodPulses.Size = new System.Drawing.Size(232, 18);
+      this.lblCrxSensoryDecayPeriodPulses.Size = new System.Drawing.Size(176, 18);
       this.lblCrxSensoryDecayPeriodPulses.TabIndex = 0;
       this.lblCrxSensoryDecayPeriodPulses.Text = "Период затухания CS↔CS (пульсы):";
       this.lblCrxSensoryDecayPeriodPulses.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -2085,7 +2085,7 @@ namespace Velum.UI
       // 
       // _tbCrxSensoryDecayPeriodPulses
       // 
-      this._tbCrxSensoryDecayPeriodPulses.Location = new System.Drawing.Point(244, 20);
+      this._tbCrxSensoryDecayPeriodPulses.Location = new System.Drawing.Point(188, 20);
       this._tbCrxSensoryDecayPeriodPulses.Name = "_tbCrxSensoryDecayPeriodPulses";
       this._tbCrxSensoryDecayPeriodPulses.Size = new System.Drawing.Size(64, 20);
       this._tbCrxSensoryDecayPeriodPulses.TabIndex = 1;
@@ -2098,7 +2098,7 @@ namespace Velum.UI
       // 
       this.rngCrxSensoryDecayPeriodPulses.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.rngCrxSensoryDecayPeriodPulses.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxSensoryDecayPeriodPulses.Location = new System.Drawing.Point(310, 21);
+      this.rngCrxSensoryDecayPeriodPulses.Location = new System.Drawing.Point(258, 21);
       this.rngCrxSensoryDecayPeriodPulses.Name = "rngCrxSensoryDecayPeriodPulses";
       this.rngCrxSensoryDecayPeriodPulses.Size = new System.Drawing.Size(66, 18);
       this.rngCrxSensoryDecayPeriodPulses.TabIndex = 2;
@@ -2111,7 +2111,7 @@ namespace Velum.UI
       // 
       this.lblCrxSensoryStrengthFloor.Location = new System.Drawing.Point(8, 45);
       this.lblCrxSensoryStrengthFloor.Name = "lblCrxSensoryStrengthFloor";
-      this.lblCrxSensoryStrengthFloor.Size = new System.Drawing.Size(232, 18);
+      this.lblCrxSensoryStrengthFloor.Size = new System.Drawing.Size(176, 18);
       this.lblCrxSensoryStrengthFloor.TabIndex = 3;
       this.lblCrxSensoryStrengthFloor.Text = "Нижний предел крепости CS↔CS:";
       this.lblCrxSensoryStrengthFloor.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -2119,7 +2119,7 @@ namespace Velum.UI
       // 
       // _tbCrxSensoryStrengthFloor
       // 
-      this._tbCrxSensoryStrengthFloor.Location = new System.Drawing.Point(244, 44);
+      this._tbCrxSensoryStrengthFloor.Location = new System.Drawing.Point(188, 44);
       this._tbCrxSensoryStrengthFloor.Name = "_tbCrxSensoryStrengthFloor";
       this._tbCrxSensoryStrengthFloor.Size = new System.Drawing.Size(64, 20);
       this._tbCrxSensoryStrengthFloor.TabIndex = 4;
@@ -2131,7 +2131,7 @@ namespace Velum.UI
       // 
       this.rngCrxSensoryStrengthFloor.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.rngCrxSensoryStrengthFloor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxSensoryStrengthFloor.Location = new System.Drawing.Point(310, 45);
+      this.rngCrxSensoryStrengthFloor.Location = new System.Drawing.Point(258, 45);
       this.rngCrxSensoryStrengthFloor.Name = "rngCrxSensoryStrengthFloor";
       this.rngCrxSensoryStrengthFloor.Size = new System.Drawing.Size(66, 18);
       this.rngCrxSensoryStrengthFloor.TabIndex = 5;
@@ -2143,7 +2143,7 @@ namespace Velum.UI
       // 
       this.lblCrxSensoryHighStrengthThreshold.Location = new System.Drawing.Point(8, 69);
       this.lblCrxSensoryHighStrengthThreshold.Name = "lblCrxSensoryHighStrengthThreshold";
-      this.lblCrxSensoryHighStrengthThreshold.Size = new System.Drawing.Size(232, 18);
+      this.lblCrxSensoryHighStrengthThreshold.Size = new System.Drawing.Size(176, 18);
       this.lblCrxSensoryHighStrengthThreshold.TabIndex = 6;
       this.lblCrxSensoryHighStrengthThreshold.Text = "Верхняя зона крепости CS↔CS:";
       this.lblCrxSensoryHighStrengthThreshold.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -2152,7 +2152,7 @@ namespace Velum.UI
       // 
       // _tbCrxSensoryHighStrengthThreshold
       // 
-      this._tbCrxSensoryHighStrengthThreshold.Location = new System.Drawing.Point(244, 68);
+      this._tbCrxSensoryHighStrengthThreshold.Location = new System.Drawing.Point(188, 68);
       this._tbCrxSensoryHighStrengthThreshold.Name = "_tbCrxSensoryHighStrengthThreshold";
       this._tbCrxSensoryHighStrengthThreshold.Size = new System.Drawing.Size(64, 20);
       this._tbCrxSensoryHighStrengthThreshold.TabIndex = 7;
@@ -2165,7 +2165,7 @@ namespace Velum.UI
       // 
       this.rngCrxSensoryHighStrengthThreshold.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.rngCrxSensoryHighStrengthThreshold.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxSensoryHighStrengthThreshold.Location = new System.Drawing.Point(310, 69);
+      this.rngCrxSensoryHighStrengthThreshold.Location = new System.Drawing.Point(258, 69);
       this.rngCrxSensoryHighStrengthThreshold.Name = "rngCrxSensoryHighStrengthThreshold";
       this.rngCrxSensoryHighStrengthThreshold.Size = new System.Drawing.Size(66, 18);
       this.rngCrxSensoryHighStrengthThreshold.TabIndex = 8;
@@ -2178,7 +2178,7 @@ namespace Velum.UI
       // 
       this.lblCrxSensoryHighStrengthDecayRate.Location = new System.Drawing.Point(8, 93);
       this.lblCrxSensoryHighStrengthDecayRate.Name = "lblCrxSensoryHighStrengthDecayRate";
-      this.lblCrxSensoryHighStrengthDecayRate.Size = new System.Drawing.Size(232, 18);
+      this.lblCrxSensoryHighStrengthDecayRate.Size = new System.Drawing.Size(176, 18);
       this.lblCrxSensoryHighStrengthDecayRate.TabIndex = 9;
       this.lblCrxSensoryHighStrengthDecayRate.Text = "Эфф. коэфф. затухания устойчивых CS↔CS:";
       this.lblCrxSensoryHighStrengthDecayRate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -2186,7 +2186,7 @@ namespace Velum.UI
       // 
       // _tbCrxSensoryHighStrengthDecayRate
       // 
-      this._tbCrxSensoryHighStrengthDecayRate.Location = new System.Drawing.Point(244, 92);
+      this._tbCrxSensoryHighStrengthDecayRate.Location = new System.Drawing.Point(188, 92);
       this._tbCrxSensoryHighStrengthDecayRate.Name = "_tbCrxSensoryHighStrengthDecayRate";
       this._tbCrxSensoryHighStrengthDecayRate.Size = new System.Drawing.Size(64, 20);
       this._tbCrxSensoryHighStrengthDecayRate.TabIndex = 10;
@@ -2198,7 +2198,7 @@ namespace Velum.UI
       // 
       this.rngCrxSensoryHighStrengthDecayRate.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.rngCrxSensoryHighStrengthDecayRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxSensoryHighStrengthDecayRate.Location = new System.Drawing.Point(310, 93);
+      this.rngCrxSensoryHighStrengthDecayRate.Location = new System.Drawing.Point(258, 93);
       this.rngCrxSensoryHighStrengthDecayRate.Name = "rngCrxSensoryHighStrengthDecayRate";
       this.rngCrxSensoryHighStrengthDecayRate.Size = new System.Drawing.Size(66, 18);
       this.rngCrxSensoryHighStrengthDecayRate.TabIndex = 11;
@@ -2210,7 +2210,7 @@ namespace Velum.UI
       // 
       this.lblCrxSensoryMidStrengthThreshold.Location = new System.Drawing.Point(8, 117);
       this.lblCrxSensoryMidStrengthThreshold.Name = "lblCrxSensoryMidStrengthThreshold";
-      this.lblCrxSensoryMidStrengthThreshold.Size = new System.Drawing.Size(232, 18);
+      this.lblCrxSensoryMidStrengthThreshold.Size = new System.Drawing.Size(176, 18);
       this.lblCrxSensoryMidStrengthThreshold.TabIndex = 12;
       this.lblCrxSensoryMidStrengthThreshold.Text = "Средняя зона крепости CS↔CS:";
       this.lblCrxSensoryMidStrengthThreshold.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -2219,7 +2219,7 @@ namespace Velum.UI
       // 
       // _tbCrxSensoryMidStrengthThreshold
       // 
-      this._tbCrxSensoryMidStrengthThreshold.Location = new System.Drawing.Point(244, 116);
+      this._tbCrxSensoryMidStrengthThreshold.Location = new System.Drawing.Point(188, 116);
       this._tbCrxSensoryMidStrengthThreshold.Name = "_tbCrxSensoryMidStrengthThreshold";
       this._tbCrxSensoryMidStrengthThreshold.Size = new System.Drawing.Size(64, 20);
       this._tbCrxSensoryMidStrengthThreshold.TabIndex = 13;
@@ -2232,7 +2232,7 @@ namespace Velum.UI
       // 
       this.rngCrxSensoryMidStrengthThreshold.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.rngCrxSensoryMidStrengthThreshold.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxSensoryMidStrengthThreshold.Location = new System.Drawing.Point(310, 117);
+      this.rngCrxSensoryMidStrengthThreshold.Location = new System.Drawing.Point(258, 117);
       this.rngCrxSensoryMidStrengthThreshold.Name = "rngCrxSensoryMidStrengthThreshold";
       this.rngCrxSensoryMidStrengthThreshold.Size = new System.Drawing.Size(66, 18);
       this.rngCrxSensoryMidStrengthThreshold.TabIndex = 14;
@@ -2264,7 +2264,7 @@ namespace Velum.UI
       // 
       this._btnCancel.AutoSize = true;
       this._btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this._btnCancel.Location = new System.Drawing.Point(740, 337);
+      this._btnCancel.Location = new System.Drawing.Point(618, 337);
       this._btnCancel.Name = "_btnCancel";
       this._btnCancel.Size = new System.Drawing.Size(75, 25);
       this._btnCancel.TabIndex = 3;
@@ -2274,7 +2274,7 @@ namespace Velum.UI
       // _btnSave
       // 
       this._btnSave.AutoSize = true;
-      this._btnSave.Location = new System.Drawing.Point(600, 337);
+      this._btnSave.Location = new System.Drawing.Point(473, 337);
       this._btnSave.Name = "_btnSave";
       this._btnSave.Size = new System.Drawing.Size(137, 25);
       this._btnSave.TabIndex = 2;
@@ -2308,7 +2308,7 @@ namespace Velum.UI
       this._pnlStageBusyOverlay.Dock = System.Windows.Forms.DockStyle.Fill;
       this._pnlStageBusyOverlay.Location = new System.Drawing.Point(0, 0);
       this._pnlStageBusyOverlay.Name = "_pnlStageBusyOverlay";
-      this._pnlStageBusyOverlay.Size = new System.Drawing.Size(824, 371);
+      this._pnlStageBusyOverlay.Size = new System.Drawing.Size(723, 368);
       this._pnlStageBusyOverlay.TabIndex = 6;
       this._pnlStageBusyOverlay.Visible = false;
       // 
@@ -2318,7 +2318,7 @@ namespace Velum.UI
       this._lblStageBusy.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this._lblStageBusy.Location = new System.Drawing.Point(0, 0);
       this._lblStageBusy.Name = "_lblStageBusy";
-      this._lblStageBusy.Size = new System.Drawing.Size(824, 371);
+      this._lblStageBusy.Size = new System.Drawing.Size(723, 368);
       this._lblStageBusy.TabIndex = 0;
       this._lblStageBusy.Text = "Сброс данных при смене стадии…";
       this._lblStageBusy.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -2328,7 +2328,7 @@ namespace Velum.UI
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.CancelButton = this._btnCancel;
-      this.ClientSize = new System.Drawing.Size(824, 371);
+      this.ClientSize = new System.Drawing.Size(723, 368);
       this.Controls.Add(this.tabControl1);
       this.Controls.Add(this._lblStageEvolution);
       this.Controls.Add(this.stage_evolution);

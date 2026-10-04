@@ -89,8 +89,8 @@ namespace Velum.UI
         RefreshEvolutionStageUiFromEngine();
         CheckPathAvailabilityAsync();
       };
-      this.ClientSize = new Size(720, 407);
-      this.MinimumSize = new Size(720, 407);
+      this.ClientSize = new Size(830, 400);
+      this.MinimumSize = new Size(830, 400);
     }
 
     private void BindControlToolTips()
