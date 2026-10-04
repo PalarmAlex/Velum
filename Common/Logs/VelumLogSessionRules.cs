@@ -71,6 +71,37 @@ namespace Velum.UI.Logs
     }
 
     /// <summary>
+    /// Индексы выбранных (отмеченных флажком) сессий по списку элементов вкладки.
+    /// Выборка читает <b>модель</b> элемента (флаг <c>Checked</c>), а не состояние
+    /// контрола: именно рассинхрон модели и чекбокса CheckedListBox приводил к тому,
+    /// что «Просмотр»/«Очистить» сообщали «не выбрана ни одна сессия» при отмеченных
+    /// флажках. Элементы без привязанной сессии отбрасываются; результат сортируется.
+    /// </summary>
+    /// <typeparam name="T">Тип строки списка сессий.</typeparam>
+    /// <param name="items">Элементы вкладки (видимые и скрытые фильтром).</param>
+    /// <param name="isChecked">Предикат «строка отмечена флажком» (по модели).</param>
+    /// <param name="sessionIndex">Индекс сессии строки.</param>
+    /// <returns>Отсортированные индексы выбранных сессий.</returns>
+    internal static List<int> CollectSelectedSessionIndices<T>(
+        IEnumerable<T> items,
+        Func<T, bool> isChecked,
+        Func<T, int> sessionIndex)
+    {
+      var result = new List<int>();
+      if (items == null || isChecked == null || sessionIndex == null)
+        return result;
+
+      foreach (T item in items)
+      {
+        if (item != null && isChecked(item))
+          result.Add(sessionIndex(item));
+      }
+
+      result.Sort();
+      return result;
+    }
+
+    /// <summary>
     /// Имя файла HTML-отчёта, связанного с сессией: <c>{префикс}_{yyyyMMdd_HHmmss}.html</c>,
     /// где штамп — время начала сессии. По этому имени «Очистить» находит связанный отчёт.
     /// </summary>

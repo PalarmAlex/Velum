@@ -155,9 +155,9 @@ namespace Velum.UI
       _ttpStageEvolution.SetToolTip(_chkNeedDxfDefault, "Дефолтное значение свойства «Нужен dxf» при создании новых деталей");
       _ttpStageEvolution.SetToolTip(_chkNeedPdfDefault, "Дефолтное значение свойства «Нужен pdf» при создании новых чертежей");
       _ttpStageEvolution.SetToolTip(_chkNeedDrawingDefault, "Дефолтное значение свойства «Нужен чертеж» при создании новых деталей и сборок");
-      _ttpStageEvolution.SetToolTip(_tbDocumentColorPart, "Код зрительного канала образа восприятия при активном документе «деталь» (0…8). Различает контекст у-рефлексов по типу документа; 0 — контекст не ограничен.");
-      _ttpStageEvolution.SetToolTip(_tbDocumentColorAssembly, "Код зрительного канала образа восприятия при активном документе «сборка» (0…8). Различает контекст у-рефлексов по типу документа; 0 — контекст не ограничен.");
-      _ttpStageEvolution.SetToolTip(_tbDocumentColorDrawing, "Код зрительного канала образа восприятия при активном документе «чертёж» (0…8). Различает контекст у-рефлексов по типу документа; 0 — контекст не ограничен.");
+      _ttpStageEvolution.SetToolTip(_cmbDocumentColorPart, "Цвет зрительного канала образа восприятия при активном документе «деталь». Различает контекст у-рефлексов по типу документа; «Белый» — контекст не ограничен.");
+      _ttpStageEvolution.SetToolTip(_cmbDocumentColorAssembly, "Цвет зрительного канала образа восприятия при активном документе «сборка». Различает контекст у-рефлексов по типу документа; «Белый» — контекст не ограничен.");
+      _ttpStageEvolution.SetToolTip(_cmbDocumentColorDrawing, "Цвет зрительного канала образа восприятия при активном документе «чертёж». Различает контекст у-рефлексов по типу документа; «Белый» — контекст не ограничен.");
 
       // Стадия 2: коды стилей Поиск/Игра
       _ttpStageEvolution.SetToolTip(_tbStage2SearchPlayStyleIds, "Через запятую укажите ID стилей поведения, используемых на стадии 2 (Поиск/Игра). Например: 3,5,7");
@@ -393,11 +393,6 @@ namespace Velum.UI
       _chkNeedPdfDefault.Checked = VelumAppConfig.NeedPdfDefault;
       _chkNeedDrawingDefault.Checked = VelumAppConfig.NeedDrawingDefault;
 
-      // Вкладка «Документы»: коды зрительного канала по типу активного документа
-      _tbDocumentColorPart.Text = VelumAppConfig.DocumentColorPart.ToString(CultureInfo.InvariantCulture);
-      _tbDocumentColorAssembly.Text = VelumAppConfig.DocumentColorAssembly.ToString(CultureInfo.InvariantCulture);
-      _tbDocumentColorDrawing.Text = VelumAppConfig.DocumentColorDrawing.ToString(CultureInfo.InvariantCulture);
-
       // Стадия 2: коды стилей Поиск/Игра
       var stage2StyleIds = VelumAppConfig.Stage2SearchPlayStyleIds;
       _tbStage2SearchPlayStyleIds.Text = stage2StyleIds != null && stage2StyleIds.Count > 0
@@ -411,12 +406,42 @@ namespace Velum.UI
       FillStyles();
       FillAdaptiveActions();
       FillThemes();
+      FillDocumentColors();
 
       SelectComboById(_cmbStyle, VelumAppConfig.DefaultStileId);
       SelectComboById(_cmbAdaptive, VelumAppConfig.DefaultAdaptiveActionId);
       SelectComboById(_cmbTheme, VelumAppConfig.DefaultThemeTypeId);
       SelectLogFormat(VelumAppConfig.LogFormat);
+      SelectComboById(_cmbDocumentColorPart, VelumAppConfig.DocumentColorPart);
+      SelectComboById(_cmbDocumentColorAssembly, VelumAppConfig.DocumentColorAssembly);
+      SelectComboById(_cmbDocumentColorDrawing, VelumAppConfig.DocumentColorDrawing);
       FillEvolutionStageItems();
+    }
+
+    /// <summary>
+    /// Наполняет комбокоды зрительного канала (вкладка «Документы») названиями цветов
+    /// движка <see cref="AgentVisualColor"/>: показывается имя, а значение — код цвета
+    /// (<see cref="AgentVisualColor.MinCode"/>…<see cref="AgentVisualColor.MaxCode"/>).
+    /// </summary>
+    private void FillDocumentColors()
+    {
+      FillColorCombo(_cmbDocumentColorPart);
+      FillColorCombo(_cmbDocumentColorAssembly);
+      FillColorCombo(_cmbDocumentColorDrawing);
+    }
+
+    /// <summary>
+    /// Заполняет одно комбо списка цветов из диапазона <see cref="AgentVisualColor"/>:
+    /// элемент — пара «код (Id) / название (Name)», отображается название.
+    /// </summary>
+    /// <param name="cmb">Целевое комбо.</param>
+    private static void FillColorCombo(ComboBox cmb)
+    {
+      cmb.Items.Clear();
+      for (int code = AgentVisualColor.MinCode; code <= AgentVisualColor.MaxCode; code++)
+        cmb.Items.Add(new IdNameItem { Id = code, Name = AgentVisualColor.GetDisplayName(code) });
+      cmb.DisplayMember = nameof(IdNameItem.Name);
+      cmb.ValueMember = nameof(IdNameItem.Id);
     }
 
     private void FillLogFormats()
@@ -674,23 +699,12 @@ namespace Velum.UI
         return false;
       }
 
-      // Вкладка «Документы»: коды зрительного канала по типу активного документа (допустимый диапазон ISIDA).
-      if (!int.TryParse(_tbDocumentColorPart.Text.Trim(), out int docColorPart) ||
-          !int.TryParse(_tbDocumentColorAssembly.Text.Trim(), out int docColorAssembly) ||
-          !int.TryParse(_tbDocumentColorDrawing.Text.Trim(), out int docColorDrawing) ||
-          !IsVisualColorCodeInRange(docColorPart) ||
-          !IsVisualColorCodeInRange(docColorAssembly) ||
-          !IsVisualColorCodeInRange(docColorDrawing))
-      {
-        MessageBox.Show(
-            this,
-            "Некорректный код зрительного канала. Допустимый диапазон: " +
-            AgentVisualColor.MinCode + "…" + AgentVisualColor.MaxCode + " (0 — белый, контекст не ограничен).",
-            "Проверка",
-            MessageBoxButtons.OK,
-            MessageBoxIcon.Warning);
-        return false;
-      }
+      // Вкладка «Документы»: коды зрительного канала по типу активного документа.
+      // Значения берутся из комбо со списком цветов движка — набор заведомо допустим
+      // (диапазон AgentVisualColor), отдельная валидация не нужна.
+      int docColorPart = GetComboId(_cmbDocumentColorPart);
+      int docColorAssembly = GetComboId(_cmbDocumentColorAssembly);
+      int docColorDrawing = GetComboId(_cmbDocumentColorDrawing);
 
 
       // Стадия 2: коды стилей Поиск/Игра
@@ -781,17 +795,6 @@ namespace Velum.UI
 
       Logger.Info("Настройки проекта сохранены.");
       return true;
-    }
-
-    /// <summary>
-    /// Проверяет, что код зрительного канала входит в допустимый диапазон ISIDA
-    /// (<see cref="AgentVisualColor.MinCode"/>…<see cref="AgentVisualColor.MaxCode"/>).
-    /// </summary>
-    /// <param name="code">Код цвета.</param>
-    /// <returns>true, если код допустим.</returns>
-    private static bool IsVisualColorCodeInRange(int code)
-    {
-      return AgentVisualColor.IsValidCode(code);
     }
 
     /// <summary>

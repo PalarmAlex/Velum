@@ -22,11 +22,11 @@ namespace Velum.UI
     private System.Windows.Forms.CheckBox _chkNeedDrawingDefault;
     private System.Windows.Forms.Label _lblDocumentColorsHint;
     private System.Windows.Forms.Label _lblDocumentColorPart;
-    private System.Windows.Forms.TextBox _tbDocumentColorPart;
+    private System.Windows.Forms.ComboBox _cmbDocumentColorPart;
     private System.Windows.Forms.Label _lblDocumentColorAssembly;
-    private System.Windows.Forms.TextBox _tbDocumentColorAssembly;
+    private System.Windows.Forms.ComboBox _cmbDocumentColorAssembly;
     private System.Windows.Forms.Label _lblDocumentColorDrawing;
-    private System.Windows.Forms.TextBox _tbDocumentColorDrawing;
+    private System.Windows.Forms.ComboBox _cmbDocumentColorDrawing;
 
     /// <summary>
     /// Clean up any resources being used.
@@ -147,11 +147,11 @@ namespace Velum.UI
       this._chkNeedDxfDefault = new System.Windows.Forms.CheckBox();
       this._lblDocumentColorsHint = new System.Windows.Forms.Label();
       this._lblDocumentColorPart = new System.Windows.Forms.Label();
-      this._tbDocumentColorPart = new System.Windows.Forms.TextBox();
+      this._cmbDocumentColorPart = new System.Windows.Forms.ComboBox();
       this._lblDocumentColorAssembly = new System.Windows.Forms.Label();
-      this._tbDocumentColorAssembly = new System.Windows.Forms.TextBox();
+      this._cmbDocumentColorAssembly = new System.Windows.Forms.ComboBox();
       this._lblDocumentColorDrawing = new System.Windows.Forms.Label();
-      this._tbDocumentColorDrawing = new System.Windows.Forms.TextBox();
+      this._cmbDocumentColorDrawing = new System.Windows.Forms.ComboBox();
       this.tabPageReflexes = new System.Windows.Forms.TabPage();
       this.grpCrxMain = new System.Windows.Forms.GroupBox();
       this.lblCrxLearningRate = new System.Windows.Forms.Label();
@@ -1236,11 +1236,11 @@ namespace Velum.UI
       this.tabPageDocuments.Controls.Add(this._chkNeedDxfDefault);
       this.tabPageDocuments.Controls.Add(this._lblDocumentColorsHint);
       this.tabPageDocuments.Controls.Add(this._lblDocumentColorPart);
-      this.tabPageDocuments.Controls.Add(this._tbDocumentColorPart);
+      this.tabPageDocuments.Controls.Add(this._cmbDocumentColorPart);
       this.tabPageDocuments.Controls.Add(this._lblDocumentColorAssembly);
-      this.tabPageDocuments.Controls.Add(this._tbDocumentColorAssembly);
+      this.tabPageDocuments.Controls.Add(this._cmbDocumentColorAssembly);
       this.tabPageDocuments.Controls.Add(this._lblDocumentColorDrawing);
-      this.tabPageDocuments.Controls.Add(this._tbDocumentColorDrawing);
+      this.tabPageDocuments.Controls.Add(this._cmbDocumentColorDrawing);
       this.tabPageDocuments.Location = new System.Drawing.Point(4, 22);
       this.tabPageDocuments.Name = "tabPageDocuments";
       this.tabPageDocuments.Padding = new System.Windows.Forms.Padding(3);
@@ -1297,17 +1297,17 @@ namespace Velum.UI
       this._lblDocumentColorPart.Name = "_lblDocumentColorPart";
       this._lblDocumentColorPart.Size = new System.Drawing.Size(175, 20);
       this._lblDocumentColorPart.TabIndex = 4;
-      this._lblDocumentColorPart.Text = "Деталь (код цвета):";
+      this._lblDocumentColorPart.Text = "Деталь (цвет):";
       this._lblDocumentColorPart.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
-      // _tbDocumentColorPart
+      // _cmbDocumentColorPart
       // 
-      this._tbDocumentColorPart.BackColor = System.Drawing.SystemColors.Window;
-      this._tbDocumentColorPart.Location = new System.Drawing.Point(181, 119);
-      this._tbDocumentColorPart.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-      this._tbDocumentColorPart.Name = "_tbDocumentColorPart";
-      this._tbDocumentColorPart.Size = new System.Drawing.Size(150, 20);
-      this._tbDocumentColorPart.TabIndex = 5;
+      this._cmbDocumentColorPart.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this._cmbDocumentColorPart.Location = new System.Drawing.Point(181, 118);
+      this._cmbDocumentColorPart.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+      this._cmbDocumentColorPart.Name = "_cmbDocumentColorPart";
+      this._cmbDocumentColorPart.Size = new System.Drawing.Size(150, 21);
+      this._cmbDocumentColorPart.TabIndex = 5;
       // 
       // _lblDocumentColorAssembly
       // 
@@ -1316,17 +1316,17 @@ namespace Velum.UI
       this._lblDocumentColorAssembly.Name = "_lblDocumentColorAssembly";
       this._lblDocumentColorAssembly.Size = new System.Drawing.Size(175, 20);
       this._lblDocumentColorAssembly.TabIndex = 6;
-      this._lblDocumentColorAssembly.Text = "Сборка (код цвета):";
+      this._lblDocumentColorAssembly.Text = "Сборка (цвет):";
       this._lblDocumentColorAssembly.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
-      // _tbDocumentColorAssembly
+      // _cmbDocumentColorAssembly
       // 
-      this._tbDocumentColorAssembly.BackColor = System.Drawing.SystemColors.Window;
-      this._tbDocumentColorAssembly.Location = new System.Drawing.Point(181, 145);
-      this._tbDocumentColorAssembly.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-      this._tbDocumentColorAssembly.Name = "_tbDocumentColorAssembly";
-      this._tbDocumentColorAssembly.Size = new System.Drawing.Size(150, 20);
-      this._tbDocumentColorAssembly.TabIndex = 7;
+      this._cmbDocumentColorAssembly.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this._cmbDocumentColorAssembly.Location = new System.Drawing.Point(181, 144);
+      this._cmbDocumentColorAssembly.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+      this._cmbDocumentColorAssembly.Name = "_cmbDocumentColorAssembly";
+      this._cmbDocumentColorAssembly.Size = new System.Drawing.Size(150, 21);
+      this._cmbDocumentColorAssembly.TabIndex = 7;
       // 
       // _lblDocumentColorDrawing
       // 
@@ -1335,17 +1335,17 @@ namespace Velum.UI
       this._lblDocumentColorDrawing.Name = "_lblDocumentColorDrawing";
       this._lblDocumentColorDrawing.Size = new System.Drawing.Size(175, 20);
       this._lblDocumentColorDrawing.TabIndex = 8;
-      this._lblDocumentColorDrawing.Text = "Чертёж (код цвета):";
+      this._lblDocumentColorDrawing.Text = "Чертёж (цвет):";
       this._lblDocumentColorDrawing.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
-      // _tbDocumentColorDrawing
+      // _cmbDocumentColorDrawing
       // 
-      this._tbDocumentColorDrawing.BackColor = System.Drawing.SystemColors.Window;
-      this._tbDocumentColorDrawing.Location = new System.Drawing.Point(181, 171);
-      this._tbDocumentColorDrawing.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-      this._tbDocumentColorDrawing.Name = "_tbDocumentColorDrawing";
-      this._tbDocumentColorDrawing.Size = new System.Drawing.Size(150, 20);
-      this._tbDocumentColorDrawing.TabIndex = 9;
+      this._cmbDocumentColorDrawing.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this._cmbDocumentColorDrawing.Location = new System.Drawing.Point(181, 170);
+      this._cmbDocumentColorDrawing.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+      this._cmbDocumentColorDrawing.Name = "_cmbDocumentColorDrawing";
+      this._cmbDocumentColorDrawing.Size = new System.Drawing.Size(150, 21);
+      this._cmbDocumentColorDrawing.TabIndex = 9;
       // 
       // tabPageReflexes
       // 

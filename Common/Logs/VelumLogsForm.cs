@@ -177,8 +177,17 @@ namespace Velum.UI.Logs
     {
       if (_loading)
         return;
-      // Кнопки зависят от числа выделенных — обновляем после применения состояния.
+      // Событие ItemCheck приходит ДО применения нового состояния к контролу,
+      // поэтому модель (SessionListItem.Checked) обновляем явно из e.NewValue —
+      // иначе CollectSelectedIndices, читающий модель, не увидит выбор флажком.
       var list = sender as CheckedListBox;
+      if (list != null && e.Index >= 0 && e.Index < list.Items.Count)
+      {
+        var item = list.Items[e.Index] as SessionListItem;
+        if (item != null)
+          item.Checked = e.NewValue == CheckState.Checked;
+      }
+      // Кнопки зависят от числа выделенных — обновляем после применения состояния.
       if (list != null && list.IsHandleCreated)
         list.BeginInvoke((MethodInvoker)RefreshButtons);
     }
@@ -228,14 +237,10 @@ namespace Velum.UI.Logs
     /// <summary>Индексы выделенных сессий на активной вкладке (по всему списку, не только видимому).</summary>
     private List<int> CollectSelectedIndices()
     {
-      var result = new List<int>();
-      foreach (SessionListItem item in GetActiveItems())
-      {
-        if (item.Checked && item.Info != null)
-          result.Add(item.Info.SessionIndex);
-      }
-      result.Sort();
-      return result;
+      return VelumLogSessionRules.CollectSelectedSessionIndices(
+          GetActiveItems(),
+          item => item.Checked && item.Info != null,
+          item => item.Info.SessionIndex);
     }
 
     private void OnTabChanged(object sender, EventArgs e)

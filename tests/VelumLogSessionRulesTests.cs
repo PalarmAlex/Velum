@@ -143,5 +143,89 @@ namespace Velum.ReactiveCore.Tests
 
       Assert.Equal("Log_20260102_030405.html", name);
     }
+
+    // --- Выборка выбранных сессий (регресс бага «не выбрана ни одна сессия») ---
+
+    // Аналог SessionListItem формы логов: модель строки со своим флагом Checked.
+    private sealed class Row
+    {
+      public int SessionIndex;
+      public bool Checked;
+      public bool HasInfo = true;
+    }
+
+    [Fact]
+    public void CollectSelectedSessionIndices_ReturnsCheckedSorted()
+    {
+      // Выборка читает модель (Checked), а не контрол: отмечены индексы 2 и 0.
+      var items = new List<Row>
+      {
+        new Row { SessionIndex = 2, Checked = true },
+        new Row { SessionIndex = 1, Checked = false },
+        new Row { SessionIndex = 0, Checked = true },
+      };
+
+      List<int> selected = VelumLogSessionRules.CollectSelectedSessionIndices(
+          items, r => r.Checked, r => r.SessionIndex);
+
+      Assert.Equal(new[] { 0, 2 }, selected);
+    }
+
+    [Fact]
+    public void CollectSelectedSessionIndices_NoneChecked_ReturnsEmpty()
+    {
+      // Сценарий «до/после»: флажки в модели не проставлены (рассинхрон модели и
+      // чекбокса) — выборка пуста, и форма корректно сообщает «не выбрано ни одной».
+      var items = new List<Row>
+      {
+        new Row { SessionIndex = 0, Checked = false },
+        new Row { SessionIndex = 1, Checked = false },
+      };
+
+      List<int> selected = VelumLogSessionRules.CollectSelectedSessionIndices(
+          items, r => r.Checked, r => r.SessionIndex);
+
+      Assert.Empty(selected);
+    }
+
+    [Fact]
+    public void CollectSelectedSessionIndices_AfterCheckSync_ReturnsSelection()
+    {
+      // Сценарий «после» правки: OnSessionItemCheck проставил Checked в модель —
+      // «Просмотр» видит выбор.
+      var items = new List<Row>
+      {
+        new Row { SessionIndex = 0, Checked = false },
+        new Row { SessionIndex = 1, Checked = false },
+      };
+      items[1].Checked = true; // имитация ItemCheck → модель
+
+      List<int> selected = VelumLogSessionRules.CollectSelectedSessionIndices(
+          items, r => r.Checked && r.HasInfo, r => r.SessionIndex);
+
+      Assert.Equal(new[] { 1 }, selected);
+    }
+
+    [Fact]
+    public void CollectSelectedSessionIndices_SkipsRowsWithoutInfo()
+    {
+      var items = new List<Row>
+      {
+        new Row { SessionIndex = 0, Checked = true, HasInfo = false },
+        new Row { SessionIndex = 1, Checked = true, HasInfo = true },
+      };
+
+      List<int> selected = VelumLogSessionRules.CollectSelectedSessionIndices(
+          items, r => r.Checked && r.HasInfo, r => r.SessionIndex);
+
+      Assert.Equal(new[] { 1 }, selected);
+    }
+
+    [Fact]
+    public void CollectSelectedSessionIndices_NullInput_ReturnsEmpty()
+    {
+      Assert.Empty(VelumLogSessionRules.CollectSelectedSessionIndices<Row>(
+          null, r => r.Checked, r => r.SessionIndex));
+    }
   }
 }
