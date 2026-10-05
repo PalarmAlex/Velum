@@ -82,14 +82,17 @@ namespace Velum.UI.Logs
         sb.Append("<tr>");
         AppendTd(sb, e.Timestamp.ToString("HH:mm:ss", CultureInfo.CurrentCulture), null);
         AppendTd(sb, e.DisplayPulse, null);
-        AppendTd(sb, e.DisplayBaseId, VelumLogCellTooltipProvider.GetStateCodeTooltip(e.DisplayBaseId));
+        AppendTd(sb, e.DisplayBaseId, VelumLogCellTooltipProvider.GetStateCodeTooltip(e.DisplayBaseId),
+            VelumLogCellFillRules.StateFill(e.BaseId));
         AppendTd(sb, e.DisplayBaseStyleId, provider.GetStyleCellTooltip(e.DisplayBaseStyleId));
         AppendTd(sb, e.DisplayThinkingThemeId, provider.GetThinkingThemeTypeTooltip(e.DisplayThinkingThemeId));
         AppendTd(sb, e.DisplayTriggerStimulusId, provider.GetTriggerTooltip(e.DisplayTriggerStimulusId));
         AppendTd(sb, e.DisplayEnvironmentPressure,
-            provider.GetEnvironmentPressureTooltip(e.EnvironmentPressureCell, e.EnvironmentPressureTooltip));
-        AppendTd(sb, e.DisplayOrUm, provider.GetOrUmTooltip(e.DisplayOrUm, e.ThinkingLevelSuccess));
-        AppendTd(sb, e.DisplayDanger, null);
+            provider.GetEnvironmentPressureTooltip(e.EnvironmentPressureCell, e.EnvironmentPressureTooltip),
+            VelumLogCellFillRules.EnvironmentFill(e.EnvironmentPressureCell));
+        AppendTd(sb, e.DisplayOrUm, provider.GetOrUmTooltip(e.DisplayOrUm, e.ThinkingLevelSuccess),
+            VelumLogCellFillRules.OrUmFill(e.DisplayOrUm, e.ThinkingLevelSuccess));
+        AppendTd(sb, e.DisplayDanger, null, VelumLogCellFillRules.DangerFill(e.InformationEnvironmentDanger));
         AppendTd(sb, e.DisplayVeryActual, null);
         AppendTd(sb, e.DisplayGeneticReflexId, provider.GetActionsForGeneticReflex(e.DisplayGeneticReflexId));
         AppendTd(sb, e.DisplayConditionReflexId, provider.GetActionsForConditionReflex(e.DisplayConditionReflexId));
@@ -218,7 +221,8 @@ namespace Velum.UI.Logs
         AppendTd(sb, e.Weight.ToString(CultureInfo.InvariantCulture), null);
         AppendTd(sb, e.Speed.ToString(CultureInfo.InvariantCulture), null);
         AppendTd(sb, e.UrgencyFunction.ToString("0.###", CultureInfo.CurrentCulture), null);
-        AppendTd(sb, e.ParameterState, GetParameterStateTooltip(e.StateCode));
+        AppendTd(sb, e.ParameterState, GetParameterStateTooltip(e.StateCode),
+            VelumLogCellFillRules.ParameterStateFill(e.StateCode));
         AppendTd(sb, e.ActivationZone, null);
         sb.AppendLine("</tr>");
       }
@@ -300,10 +304,34 @@ namespace Velum.UI.Logs
 
     private static void AppendTd(StringBuilder sb, string text, string tooltip)
     {
+      AppendTd(sb, text, tooltip, VelumLogCellFill.None);
+    }
+
+    private static void AppendTd(StringBuilder sb, string text, string tooltip, VelumLogCellFill fill)
+    {
       sb.Append("<td");
+      string fillClass = FillCssClass(fill);
+      if (!string.IsNullOrEmpty(fillClass))
+        sb.Append(" class=\"").Append(fillClass).Append('"');
       if (!string.IsNullOrEmpty(tooltip))
         sb.Append(" title=\"").Append(Escape(tooltip)).Append('"');
       sb.Append('>').Append(Escape(text ?? string.Empty)).Append("</td>");
+    }
+
+    /// <summary>CSS-класс фона ячейки по коду <see cref="VelumLogCellFill"/> (пусто — без класса).</summary>
+    private static string FillCssClass(VelumLogCellFill fill)
+    {
+      switch (fill)
+      {
+        case VelumLogCellFill.Red:
+          return "fill-red";
+        case VelumLogCellFill.Yellow:
+          return "fill-yellow";
+        case VelumLogCellFill.Green:
+          return "fill-green";
+        default:
+          return string.Empty;
+      }
     }
 
     private static void AppendMetaRow(StringBuilder sb, string label, string value)
@@ -324,6 +352,9 @@ namespace Velum.UI.Logs
       sb.AppendLine("th{background:#ECEFF1;font-weight:600;cursor:help;}");
       sb.AppendLine("td[title]{cursor:help;}");
       sb.AppendLine("table.data-zebra tr:nth-child(even){background:#FAFAFA;}");
+      sb.AppendLine("td.fill-red{background:#F8D0D0;-webkit-print-color-adjust:exact;print-color-adjust:exact;}");
+      sb.AppendLine("td.fill-yellow{background:#FBF3C0;-webkit-print-color-adjust:exact;print-color-adjust:exact;}");
+      sb.AppendLine("td.fill-green{background:#D3F0D3;-webkit-print-color-adjust:exact;print-color-adjust:exact;}");
       sb.AppendLine(".muted{color:#78909C;}");
       sb.AppendLine(".footer{margin-top:10px;font-size:10px;}");
       sb.AppendLine("table.meta-table{width:100%;table-layout:fixed;margin:2px 0 4px;}");

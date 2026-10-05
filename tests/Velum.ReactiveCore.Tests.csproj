@@ -43,6 +43,7 @@
     <Compile Include="..\ReactiveCore\Export\VelumReadTextOutcomeRules.cs" Link="src\VelumReadTextOutcomeRules.cs" />
     <Compile Include="..\Common\VelumConditionedReflexSettingsStore.cs" Link="src\VelumConditionedReflexSettingsStore.cs" />
     <Compile Include="..\Common\Logs\VelumLogSessionRules.cs" Link="src\VelumLogSessionRules.cs" />
+    <Compile Include="..\Common\Logs\VelumLogCellFillRules.cs" Link="src\VelumLogCellFillRules.cs" />
   </ItemGroup>
 
   <!-- Заглушки ISIDA.Common (без isida.dll) -->

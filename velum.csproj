@@ -500,6 +500,7 @@
     <Compile Include="Common\Logs\VelumLogEntries.cs" />
     <Compile Include="Common\Logs\VelumLogFileSessions.cs" />
     <Compile Include="Common\Logs\VelumLogSessionRules.cs" />
+    <Compile Include="Common\Logs\VelumLogCellFillRules.cs" />
     <Compile Include="Common\Logs\VelumLogCellTooltipProvider.cs" />
     <Compile Include="Common\Logs\VelumLogsReportHtmlBuilder.cs" />
     <Compile Include="Common\Logs\VelumLogsFormHost.cs" />
