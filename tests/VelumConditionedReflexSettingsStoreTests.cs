@@ -203,5 +203,77 @@ namespace Velum.ReactiveCore.Tests
       Assert.Equal(0.2f, res.Model.LearningRate);
       Assert.True(res.NeedsRewrite); // неполный файл
     }
+
+    // Регрессия бага «перестали создаваться условные рефлексы» (случай 33): в файле у
+    // дробных параметров пропала десятичная точка (0.2→2, 0.98→98, 0.6→6 …). Такие
+    // значения парсятся как корректные числа, но движок ISIDA трактует их как доли, и
+    // ни один УР не проходит порог активации. Хранилище обязано отловить это валидацией.
+    private static string CorruptedDroppedDecimalPointFile() =>
+        "LearningRate=2\n" +
+        "DecayRate=98\n" +
+        "ActivationThreshold=6\n" +
+        "MinAssociationStrength=1\n" +
+        "TimeWindowPulses=5\n" +
+        "InitialLifetimePulses=86400\n" +
+        "ActiveExtinctionRate=5\n" +
+        "PassiveDecayPeriodPulses=1000\n" +
+        "HigherOrderStrengthReductionCoefficient=15\n" +
+        "CompetitionStrengthRatioThreshold=8\n" +
+        "TieBreakPreferSmallerReflexId=True\n" +
+        "EnableCompetitiveLearning=True\n" +
+        "CompetitionSuppressionCoefficient=1\n" +
+        "InitialStrengthBonus=0.1\n" +
+        "AuthoritativeStrength=0.95\n" +
+        "EstablishedStrengthThreshold=0.8\n" +
+        "ActivationReinforcementFraction=0.25\n" +
+        "MaxLifetimePulsesCap=88473600\n" +
+        "PassiveDecayFallbackPeriodPulses=1000\n" +
+        "SensoryDecayPeriodPulses=100\n" +
+        "SensoryStrengthFloor=0.1\n" +
+        "SensoryHighStrengthThreshold=0.8\n" +
+        "SensoryHighStrengthDecayRate=0.998\n" +
+        "SensoryMidStrengthThreshold=0.4\n";
+
+    [Fact]
+    public void Load_DroppedDecimalPoint_ParsesButFailsValidation()
+    {
+      Write(CorruptedDroppedDecimalPointFile());
+
+      var res = VelumConditionedReflexSettingsStore.Load(_file);
+
+      // Парсятся как числа (стор не «чинит» молча), но значения завышены в разы…
+      Assert.Equal(2f, res.Model.LearningRate);
+      Assert.Equal(6f, res.Model.ActivationThreshold);
+      Assert.Equal(98f, res.Model.DecayRate);
+
+      // …и валидация обязана поднять ошибку по каждому пострадавшему параметру —
+      // именно это не даёт форме сохранить такие настройки и указывает на причину.
+      var errors = VelumConditionedReflexSettingsStore.Validate(res.Model);
+      Assert.NotEmpty(errors);
+      Assert.Contains(errors, e => e.Contains("Порог активации"));
+      Assert.Contains(errors, e => e.Contains("Коэффициент обучения"));
+      Assert.Contains(errors, e => e.Contains("Коэфф. затухания"));
+      Assert.Contains(errors, e => e.Contains("Минимальная крепость"));
+      Assert.Contains(errors, e => e.Contains("Активное угасание"));
+      Assert.Contains(errors, e => e.Contains("крепости вторичных"));
+      Assert.Contains(errors, e => e.Contains("отношения крепостей"));
+    }
+
+    [Fact]
+    public void Validate_DroppedDecimalPointRestoredToDefaults_HasNoErrors()
+    {
+      // Те же 7 параметров, но с возвращённой точкой (как в живом фиксе) — валидация чистая.
+      var m = new VelumConditionedReflexSettingsModel
+      {
+        LearningRate = 0.2f,
+        DecayRate = 0.98f,
+        ActivationThreshold = 0.6f,
+        MinAssociationStrength = 0.1f,
+        ActiveExtinctionRate = 0.05f,
+        HigherOrderStrengthReductionCoefficient = 1.5f,
+        CompetitionStrengthRatioThreshold = 0.8f
+      };
+      Assert.Empty(VelumConditionedReflexSettingsStore.Validate(m));
+    }
   }
 }

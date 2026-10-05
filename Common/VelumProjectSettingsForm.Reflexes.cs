@@ -51,6 +51,24 @@ namespace Velum.UI
               MessageBoxButtons.OK,
               MessageBoxIcon.Information);
         }
+
+        // Валидация и на загрузке (случай 33): битый файл может содержать значения,
+        // которые парсятся как числа, но выведены из физического смысла (например,
+        // потеряна десятичная точка). Молча подставить их в поля нельзя — предупредим,
+        // чтобы пользователь исправил и сохранил, иначе движок не сможет активировать УР.
+        List<string> loadErrors = VelumConditionedReflexSettingsStore.Validate(load.Model);
+        if (loadErrors.Count > 0)
+        {
+          MessageBox.Show(
+              this,
+              "Внимание: значения настроек у-рефлексов вне допустимых диапазонов " +
+              "(возможно, файл повреждён):\n\n  • " + string.Join("\n  • ", loadErrors) +
+              "\n\nИсправьте значения и сохраните — иначе условные рефлексы не будут " +
+              "создаваться и удерживаться.",
+              "У-рефлексы",
+              MessageBoxButtons.OK,
+              MessageBoxIcon.Warning);
+        }
       }
       catch (Exception ex)
       {

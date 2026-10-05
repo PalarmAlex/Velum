@@ -1032,16 +1032,37 @@ _trackedDrawingDocKey = null;
                   if (ann == null)
                     continue;
 
-                  // Тип аннотации (int) — различает размер, выноску, таблицу и т.п.
-                  // В SOLIDWORKS Interop свойство Type (swAnnotationType_e), а не GetType().
-                  int annType = 0;
-                  try
-                  {
-                    dynamic dynAnn = ann;
-                    annType = (int)dynAnn.Type;
-                  }
-                  catch { }
-                  hash = hash * 31L + annType;
+                // Тип аннотации (int) — различает размер, выноску, таблицу и т.п.
+                // В SOLIDWORKS Interop это свойство Type (swAnnotationType_e).
+                // dynamic не резолвит IDispatch-члены у __ComObject -> используем InvokeMember.
+                int annType = 0;
+                try
+                {
+                    object v = ((object)ann).GetType().InvokeMember(
+                        "GetType",
+                        System.Reflection.BindingFlags.GetProperty,
+                        null, ann, null);
+                    annType = Convert.ToInt32(v);
+    }
+                catch
+                {
+                    // Запасной путь: если в вашей версии это метод GetType2(out int).
+                    try
+                    {
+                        object[] args = new object[1];
+                        ((object)ann).GetType().InvokeMember(
+                            "GetType2",
+                            System.Reflection.BindingFlags.InvokeMethod,
+                            null, ann, args);
+                        annType = Convert.ToInt32(args[0]);
+
+                    }
+                    catch
+                    {
+                        annType = 0; // не поддерживаемый тип — без first-chance потока
+                    }
+                }
+                hash = hash * 31L + annType;
 
                   // Позиция с квантованием ~1mm.
                   object posObj = ann.GetPosition();
