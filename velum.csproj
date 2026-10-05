@@ -277,6 +277,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Common\VelumConditionedReflexForbidHelper.cs" />
+    <Compile Include="Common\VelumReflexForbidTargetRules.cs" />
     <Compile Include="Common\Export\VelumDxfExportDialog.Designer.cs">
       <DependentUpon>VelumDxfExportDialog.cs</DependentUpon>
     </Compile>

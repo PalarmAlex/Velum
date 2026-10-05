@@ -19,7 +19,8 @@ namespace Velum.ReactiveCore.Export
     /// <param name="modelDoc">Активная деталь.</param>
     /// <param name="fromConditionedReflex">
     /// Рецепт исполняется по активации условного рефлекса. Только в этом случае
-    /// кнопка «Запрет» активна — она сбрасывает крепость именно у-рефлекса.
+    /// кнопка «Запрет» активна — она штрафует путь активации (связь CS₁→CS₂ при
+    /// срабатывании через сенсорный гейт, иначе крепость у-рефлекса).
     /// </param>
     /// <returns>true, если шаг обработан.</returns>
     internal static bool TryShowModal(ModelDoc2 modelDoc, bool fromConditionedReflex)
@@ -27,17 +28,18 @@ namespace Velum.ReactiveCore.Export
       if (!VelumAdminAccess.TryRequireAdmin(null, VelumAdminAccess.FormDeniedMessage))
         return false;
 
-      // Снимок до любых early-return: иначе ID у-рефлекса зависнет до следующего эпизода.
-      int conditionedReflexId = VelumConditionedReflexForbidHelper.CaptureAndClearCurrentConditionedReflexId();
+      // Снимок до любых early-return: иначе эпизод зависнет до следующего эпизода.
+      VelumConditionedReflexForbidHelper.VelumReflexEpisode episode =
+          VelumConditionedReflexForbidHelper.CaptureAndClearCurrentReflexEpisode();
 
-      // «Запрет» сбрасывает крепость у-рефлекса, поэтому при рецепте от б/у рефлекса
-      // (или автоматизма) ID не отдаём форме — даже если он остался от прошлого эпизода.
-      if (conditionedReflexId > 0 && !fromConditionedReflex)
+      // «Запрет» штрафует путь активации у-рефлекса, поэтому при рецепте от б/у рефлекса
+      // (или автоматизма) эпизод не отдаём форме — даже если он остался от прошлого эпизода.
+      if ((episode.ReflexId > 0 || episode.IsGateActivation) && !fromConditionedReflex)
       {
         Logger.Info(
-            "Velum DXF dialog: ID у-рефлекса " + conditionedReflexId +
+            "Velum DXF dialog: эпизод у-рефлекса " + episode.ReflexId +
             " не применён (рецепт запущен не условным рефлексом)");
-        conditionedReflexId = 0;
+        episode = default(VelumConditionedReflexForbidHelper.VelumReflexEpisode);
       }
 
       if (Interlocked.CompareExchange(ref _dialogOpen, 1, 0) != 0)
@@ -69,7 +71,7 @@ namespace Velum.ReactiveCore.Export
           return true;
         }
 
-        using (var dialog = new VelumDxfExportDialog(modelDoc, conditionedReflexId))
+        using (var dialog = new VelumDxfExportDialog(modelDoc, episode))
         {
           dialog.ShowDialog();
         }

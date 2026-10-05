@@ -20,7 +20,7 @@ namespace Velum.UI
     private bool _isEmptyDocument;
     private bool _suppressViewChange;
     private string _activeConfigName;
-    private readonly int _launchConditionedReflexId;
+    private readonly VelumConditionedReflexForbidHelper.VelumReflexEpisode _launchEpisode;
     private ToolTip _folderToolTip;
 
     public VelumDxfExportDialog()
@@ -30,15 +30,27 @@ namespace Velum.UI
     }
 
     public VelumDxfExportDialog(ModelDoc2 modelDoc)
-        : this(modelDoc, 0)
+        : this(modelDoc, default(VelumConditionedReflexForbidHelper.VelumReflexEpisode))
     {
     }
 
     public VelumDxfExportDialog(ModelDoc2 modelDoc, int launchConditionedReflexId)
+        : this(modelDoc, new VelumConditionedReflexForbidHelper.VelumReflexEpisode
+        {
+          ReflexId = launchConditionedReflexId,
+          GateCs1 = 0,
+          GateCs2 = 0
+        })
+    {
+    }
+
+    public VelumDxfExportDialog(
+        ModelDoc2 modelDoc,
+        VelumConditionedReflexForbidHelper.VelumReflexEpisode launchEpisode)
         : this()
     {
       _modelDoc = modelDoc;
-      _launchConditionedReflexId = launchConditionedReflexId > 0 ? launchConditionedReflexId : 0;
+      _launchEpisode = NormalizeEpisode(launchEpisode);
       _isEmptyDocument = VelumDxfPartGeometryHelper.IsEmptyDocument(modelDoc);
       _isSheetMetal = VelumSolidSheetMetalHelper.IsSheetMetalPart(modelDoc) &&
           VelumSolidSheetMetalHelper.TryFindFlatPatternFeature(modelDoc) != null;
@@ -48,13 +60,25 @@ namespace Velum.UI
       InitializeRuntime(modelDoc);
     }
 
+    /// <summary>Отрицательные ID недопустимы; (0,0) — обычный путь (не сенсорный гейт).</summary>
+    private static VelumConditionedReflexForbidHelper.VelumReflexEpisode NormalizeEpisode(
+        VelumConditionedReflexForbidHelper.VelumReflexEpisode episode)
+    {
+      return new VelumConditionedReflexForbidHelper.VelumReflexEpisode
+      {
+        ReflexId = episode.ReflexId > 0 ? episode.ReflexId : 0,
+        GateCs1 = episode.GateCs1 > 0 ? episode.GateCs1 : 0,
+        GateCs2 = episode.GateCs2 > 0 ? episode.GateCs2 : 0
+      };
+    }
+
     private void InitializeRuntime(ModelDoc2 modelDoc)
     {
       Icon icon = TryLoadVelumWindowIcon();
       if (icon != null)
         Icon = icon;
 
-      VelumConditionedReflexForbidHelper.BindForbidButton(_btnForbid, _launchConditionedReflexId, this);
+      VelumConditionedReflexForbidHelper.BindForbidButton(_btnForbid, _launchEpisode, this);
 
       _activeConfigName = VelumDxfArtifactResolver.TryResolveDefaultExportConfigurationName(modelDoc);
 
