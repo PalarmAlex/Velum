@@ -53,6 +53,14 @@ namespace Velum.ReactiveCore
 
     private static bool _lastActiveSketchPresent;
 
+    /// <summary>
+    /// Имя активного листа чертежа на момент последней фиксации baseline. Токен содержимого
+    /// строится от видов активного листа (<c>GetFirstView</c>/<c>GetNextView</c>), поэтому
+    /// активация другого листа (особенно с другой конфигурацией) меняет токен без правки
+    /// геометрии. Сравнение имени листа даёт дискриминатор «смена листа vs правка листа».
+    /// </summary>
+    private static string _trackedDrawingSheetName;
+
     /// <summary>Глубина FileSave/FileSaveAs чертежа — не писать pending во время сохранения.</summary>
     private static int _drawingSaveDepth;
 
@@ -239,12 +247,25 @@ namespace Velum.ReactiveCore
       {
         _trackedDrawingDocKey = key;
         _trackedDrawingContentToken = token;
+        _trackedDrawingSheetName = TryGetActiveSheetName(modelDoc);
         _lastActiveSketchPresent = activeSketch;
         return;
       }
 
+      bool sheetChanged = TryAbsorbActiveSheetChange(modelDoc);
+
       _trackedDrawingContentToken = token;
       _lastActiveSketchPresent = activeSketch;
+
+      if (sheetChanged)
+      {
+        // Активация другого листа перестраивает его виды и порождает событийные колбэки
+        // (AddItem/ViewNew/DimensionChange) без правки содержимого. Токен строится от видов
+        // активного листа, поэтому он тоже сдвигается. Это не правка — pending не пишем,
+        // baseline токена переснят выше (аналог E38 для чертежа).
+        return;
+      }
+
       _absorbExportPropertyDirtyUntilSave = false;
 
       _geometryPendingStampSyncDepth++;
@@ -397,6 +418,7 @@ namespace Velum.ReactiveCore
       _absorbExportPropertyDirtyUntilSave = true;
       _contentTokenAtPdfExportArm = token;
       _trackedDrawingContentToken = token;
+      _trackedDrawingSheetName = TryGetActiveSheetName(modelDoc);
       _lastActiveSketchPresent = HasActiveSketch(modelDoc);
     }
 
@@ -415,6 +437,7 @@ namespace Velum.ReactiveCore
       _absorbExportPropertyDirtyUntilSave = false;
       _contentTokenAtPdfExportArm = token;
       _trackedDrawingContentToken = token;
+      _trackedDrawingSheetName = TryGetActiveSheetName(modelDoc);
       _lastActiveSketchPresent = HasActiveSketch(modelDoc);
     }
 
@@ -472,6 +495,7 @@ namespace Velum.ReactiveCore
       }
 
       _trackedDrawingContentToken = token;
+      _trackedDrawingSheetName = TryGetActiveSheetName(modelDoc);
       _lastActiveSketchPresent = HasActiveSketch(modelDoc);
 
       // После PDF-экспорта Save часто нужен только чтобы сбросить dirty от свойств.
@@ -544,6 +568,7 @@ namespace Velum.ReactiveCore
           {
             _trackedDrawingDocKey = key;
             _trackedDrawingContentToken = token;
+            _trackedDrawingSheetName = TryGetActiveSheetName(modelDoc);
             _contentTokenAtPdfExportArm = 0;
             _lastActiveSketchPresent = activeSketch;
             _absorbExportPropertyDirtyUntilSave = false;
@@ -561,17 +586,33 @@ namespace Velum.ReactiveCore
 
         _trackedDrawingDocKey = key;
         _trackedDrawingContentToken = token;
+        _trackedDrawingSheetName = TryGetActiveSheetName(modelDoc);
         _contentTokenAtPdfExportArm = 0;
         _lastActiveSketchPresent = activeSketch;
         _absorbExportPropertyDirtyUntilSave = false;
         return false;
       }
 
+      // Смена активного листа перестраивает его виды: токен (виды активного листа) сдвигается
+      // без правки содержимого. Это не правка — переснимаем baseline токена/листа и выходим
+      // без pending (аналог E38 для чертежа). Первый контакт с листом (baseline не зафиксирован)
+      // трактуем так же — не пишем pending.
+      bool hadSheetBaseline = _trackedDrawingSheetName != null;
+      bool sheetChanged = TryAbsorbActiveSheetChange(modelDoc);
+      if (sheetChanged || !hadSheetBaseline)
+      {
+        _trackedDrawingContentToken = token;
+        _lastActiveSketchPresent = activeSketch;
+        return false;
+      }
+
       bool sketchOpened = activeSketch && !_lastActiveSketchPresent;
       bool geometryChanged = token != _trackedDrawingContentToken;
 
-      // На пульсе: если геометрия листа изменилась — пишем pending.
-      if (geometryChanged || sketchOpened)
+      // На пульсе: pending пишем только при genuine-правке текущего листа (дискриминатор
+      // «смена листа vs правка» — в чистых правилах).
+      if (VelumPdfOutdatedRules.ShouldWriteDrawingPendingOnPulse(
+              hadSheetBaseline, sheetChanged, geometryChanged, sketchOpened))
       {
         bool ensured = TryEnsurePdfPendingMarksOutdated(modelDoc, out string ensureMessage);
         if (ensured)
@@ -664,9 +705,9 @@ VelumProductItem drawingItem = store.FindItemByFilePath(normalizedDrawingPath);
     }
 
     /// <summary>
-    /// PDF устарел по геометрии модели: если <c>ModelGeometryStamp</c>
-    /// связанной детали больше <c>PdfModelStampAtExport</c> чертежа — геометрия модели
-    /// изменилась с момента экспорта PDF → PDF устарел.
+    /// PDF устарел по геометрии модели. Резолвинг связанной детали — здесь; чистый вердикт
+    /// (genuine-правка vs regen-всплеск) отдаёт <see cref="VelumPdfOutdatedRules"/> (E9:
+    /// единый предикат вместо расходящихся копий).
     /// </summary>
     private static bool IsPdfOutdatedByModelGeometry(
         VelumProductRegistryStore store,
@@ -712,122 +753,46 @@ VelumProductItem drawingItem = store.FindItemByFilePath(normalizedDrawingPath);
         return false;
 
       VelumProductItem partItem = store.FindItemByFilePath(normalizedPartPath);
-      if (partItem == null || !partItem.ModelGeometryStamp.HasValue)
-        return false;
-
-      string partExt = System.IO.Path.GetExtension(partItem.FilePath ?? string.Empty).ToLowerInvariant();
-      int modelStamp = partItem.ModelGeometryStamp.Value;
-
-      // Fallback: если DxfGeometryUpdateStamp отстаёт от ModelGeometryStamp > 1,
-      // значит export-штамп не обновился из-за race condition.
-      // Используем ModelGeometryStamp как эффективный штамп.
-      if (string.Equals(partExt, ".sldprt", StringComparison.OrdinalIgnoreCase) &&
-          partItem.ExportMetaConfigs != null && partItem.ExportMetaConfigs.Length > 0)
-      {
-        int maxDxfStamp = 0;
-        for (int i = 0; i < partItem.ExportMetaConfigs.Length; i++)
-        {
-          var cfg = partItem.ExportMetaConfigs[i];
-          if (cfg != null && cfg.DxfGeometryUpdateStamp.HasValue &&
-              cfg.DxfGeometryUpdateStamp.Value > maxDxfStamp)
-          {
-            maxDxfStamp = cfg.DxfGeometryUpdateStamp.Value;
-          }
-        }
-
-        if (maxDxfStamp > 0 && modelStamp - maxDxfStamp > 1)
-        {
-          Logger.Info(
-              "Velum PDF pending: DxfGeometryUpdateStamp lags ModelGeometryStamp by " +
-              (modelStamp - maxDxfStamp) + " — using ModelGeometryStamp as effective stamp" +
-              " part=" + partPath + " modelStamp=" + modelStamp + " maxDxfStamp=" + maxDxfStamp);
-        }
-      }
-
-      // Вариант A: есть PdfModelStampAtExport — прямое сравнение.
-      if (drawingItem.PdfModelStampAtExport.HasValue)
-      {
-        bool outdated = modelStamp > drawingItem.PdfModelStampAtExport.Value;
-
-        if (outdated)
-          Logger.Info(
-              "Velum PDF pending: model geometry stamp " + modelStamp +
-              " > pdf model stamp at export " + drawingItem.PdfModelStampAtExport.Value +
-              " for " + partPath);
-        return outdated;
-      }
-
-      // Вариант B: fallback для старых записей — сравниваем с PdfGeometryUpdateStamp чертежа.
-      // ТОЛЬКО для деталей: для сборок stamp модели и stamp чертежа не связаны напрямую,
-      // сравнение даёт ложные срабатывания. Для сборок должен быть записан PdfModelStampAtExport.
-      if (string.Equals(partExt, ".sldprt", StringComparison.OrdinalIgnoreCase) &&
-          drawingItem.PdfGeometryUpdateStamp.HasValue && drawingItem.PdfGeometryUpdateStamp.Value > 0)
-      {
-        bool outdated = modelStamp > drawingItem.PdfGeometryUpdateStamp.Value;
-
-        if (outdated)
-          Logger.Info(
-              "Velum PDF pending: model geometry stamp " + modelStamp +
-              " > pdf geometry update stamp " + drawingItem.PdfGeometryUpdateStamp.Value +
-              " for " + partPath);
-        return outdated;
-      }
-
-      return false;
-    }
-
-    /// <summary>
-    /// Проверяет, что геометрия листовой детали не менялась с момента экспорта DXF.
-    /// Для листовой детали рост <c>ModelGeometryStamp</c> может быть вызван fold/unfold
-    /// развёртки — в этом случае DXF pending-штампы остаются равны export-штампам.
-    /// Если все конфигурации DXF в норме (pending не больше export) — геометрия не менялась.
-    /// </summary>
-    private static bool IsDxfGeometryIntactForPartItem(VelumProductItem partItem)
-    {
       if (partItem == null)
         return false;
 
-      var configs = partItem.ExportMetaConfigs;
-      if (configs == null || configs.Length == 0)
-        return false;
+      string partExt = System.IO.Path.GetExtension(partItem.FilePath ?? string.Empty).ToLowerInvariant();
+      bool partIsSldprt = string.Equals(partExt, ".sldprt", StringComparison.OrdinalIgnoreCase);
 
-      // Все конфигурации должны быть в норме: pending <= export (или pending не записан).
+      bool outdated = VelumPdfOutdatedRules.IsPdfOutdatedByModelGeometry(
+          partItem.ModelGeometryStamp,
+          ToConfigStamps(partItem.ExportMetaConfigs),
+          partIsSldprt,
+          drawingItem.PdfModelStampAtExport,
+          drawingItem.PdfGeometryUpdateStamp);
+
+      if (outdated)
+        Logger.Info("Velum PDF pending: outdated by model geometry for " + partPath);
+
+      return outdated;
+    }
+
+    /// <summary>
+    /// Маппит per-config DXF-зеркало реестра в примитивные пары штампов для чистых
+    /// <see cref="VelumPdfOutdatedRules"/> (правила не должны зависеть от модели реестра).
+    /// </summary>
+    internal static VelumPdfOutdatedRules.DxfConfigStamps[] ToConfigStamps(
+        VelumProductExportMetaConfig[] configs)
+    {
+      if (configs == null || configs.Length == 0)
+        return Array.Empty<VelumPdfOutdatedRules.DxfConfigStamps>();
+
+      var result = new VelumPdfOutdatedRules.DxfConfigStamps[configs.Length];
       for (int i = 0; i < configs.Length; i++)
       {
         var cfg = configs[i];
-        if (cfg == null)
-          continue;
-
-        int? exportStamp = cfg.DxfGeometryUpdateStamp;
-        int? pendingStamp = cfg.DxfGeometryPendingStamp;
-
-        // Если pending записан и больше export — геометрия менялась.
-        if (pendingStamp.HasValue && exportStamp.HasValue && pendingStamp.Value > exportStamp.Value)
-          return false;
+        result[i] = cfg == null
+            ? default(VelumPdfOutdatedRules.DxfConfigStamps)
+            : new VelumPdfOutdatedRules.DxfConfigStamps(
+                cfg.DxfGeometryUpdateStamp, cfg.DxfGeometryPendingStamp);
       }
 
-      // Дополнительная проверка: если ModelGeometryStamp детали больше, чем max(DxfGeometryUpdateStamp),
-      // значит геометрия точно менялась, даже если pending-штамп не обновился
-      // (например, из-за выключенной пульсации или race condition).
-      if (partItem.ModelGeometryStamp.HasValue && partItem.ModelGeometryStamp.Value > 0)
-      {
-        int maxDxfStamp = 0;
-        for (int i = 0; i < configs.Length; i++)
-        {
-          var cfg = configs[i];
-          if (cfg != null && cfg.DxfGeometryUpdateStamp.HasValue &&
-              cfg.DxfGeometryUpdateStamp.Value > maxDxfStamp)
-          {
-            maxDxfStamp = cfg.DxfGeometryUpdateStamp.Value;
-          }
-        }
-
-        // Если ModelGeometryStamp > maxDxfStamp, значит геометрия точно менялась.
-        if (partItem.ModelGeometryStamp.Value > maxDxfStamp)
-          return false;
-      }
-
-      return true;
+      return result;
     }
 
     /// <summary>Сброс in-memory трекинга чертежа (смена документа / новый цикл пульса).</summary>
@@ -839,6 +804,7 @@ VelumProductItem drawingItem = store.FindItemByFilePath(normalizedDrawingPath);
 
 _trackedDrawingDocKey = null;
       _trackedDrawingContentToken = 0;
+      _trackedDrawingSheetName = null;
       _contentTokenAtPdfExportArm = 0;
       _absorbExportPropertyDirtyUntilSave = false;
       _lastActiveSketchPresent = false;
@@ -893,6 +859,54 @@ _trackedDrawingDocKey = null;
       {
         return false;
       }
+    }
+
+    /// <summary>
+    /// Имя активного листа чертежа (<c>DrawingDoc.GetCurrentSheet().GetName()</c>), либо пустая
+    /// строка, если чертёж/лист недоступен. Используется как дискриминатор «смена активного
+    /// листа vs правка содержимого текущего листа».
+    /// </summary>
+    private static string TryGetActiveSheetName(ModelDoc2 modelDoc)
+    {
+      try
+      {
+        DrawingDoc drawing = modelDoc as DrawingDoc;
+        if (drawing == null)
+          return string.Empty;
+
+        ISheet sheet = drawing.GetCurrentSheet() as ISheet;
+        if (sheet == null)
+          return string.Empty;
+
+        return (sheet.GetName() ?? string.Empty).Trim();
+      }
+      catch
+      {
+        return string.Empty;
+      }
+    }
+
+    /// <summary>
+    /// true — активный лист сменился относительно baseline: это НЕ правка содержимого,
+    /// pending писать нельзя (аналог <see cref="TryAbsorbActiveConfigurationChange"/> для
+    /// конфигурации детали, E38). Baseline обновляется на текущий лист. Если baseline ещё
+    /// не зафиксирован — только фиксируем и возвращаем false (первый контакт).
+    /// </summary>
+    private static bool TryAbsorbActiveSheetChange(ModelDoc2 modelDoc)
+    {
+      string current = TryGetActiveSheetName(modelDoc);
+
+      if (_trackedDrawingSheetName == null)
+      {
+        _trackedDrawingSheetName = current;
+        return false;
+      }
+
+      if (string.Equals(_trackedDrawingSheetName, current, StringComparison.Ordinal))
+        return false;
+
+      _trackedDrawingSheetName = current;
+      return true;
     }
 
     /// <summary>

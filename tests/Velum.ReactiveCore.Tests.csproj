@@ -45,6 +45,7 @@
     <Compile Include="..\Common\VelumReflexForbidTargetRules.cs" Link="src\VelumReflexForbidTargetRules.cs" />
     <Compile Include="..\Common\Logs\VelumLogSessionRules.cs" Link="src\VelumLogSessionRules.cs" />
     <Compile Include="..\Common\Logs\VelumLogCellFillRules.cs" Link="src\VelumLogCellFillRules.cs" />
+    <Compile Include="..\ReactiveCore\VelumPdfOutdatedRules.cs" Link="src\VelumPdfOutdatedRules.cs" />
   </ItemGroup>
 
   <!-- Заглушки ISIDA.Common (без isida.dll) -->
@@ -70,6 +71,7 @@
     <Compile Include="VelumConditionedReflexSettingsStoreTests.cs" />
     <Compile Include="VelumReflexForbidTargetRulesTests.cs" />
     <Compile Include="VelumLogSessionRulesTests.cs" />
+    <Compile Include="VelumPdfOutdatedRulesTests.cs" />
   </ItemGroup>
 
 </Project>

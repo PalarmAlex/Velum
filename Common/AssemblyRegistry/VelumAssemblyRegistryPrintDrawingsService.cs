@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
+using Velum.ReactiveCore;
 using Velum.ReactiveCore.Export;
 using Xarial.XCad.SolidWorks;
 
@@ -199,6 +200,13 @@ namespace Velum.UI.AssemblyRegistry
       }
 
       int total = toPrint.Count;
+
+      // Печать через SolidWorks (Activate + PrintOut4) перегенерирует чертёж и связанную
+      // модель-деталь: regen детали шлёт OnPartRegenPostNotify2 и писал бы DXF-pending,
+      // из-за чего PDF всех напечатанных деталей ложно помечались бы устаревшими (случай 35).
+      // Печать содержимого не меняет — подавляем запись pending на время всего прогона.
+      VelumExportDocumentationGeometryStampHelper.RunWithGeometryPendingStampSyncSuppressed(() =>
+      {
       try
       {
         for (int index = 0; index < toPrint.Count; index++)
@@ -288,6 +296,7 @@ namespace Velum.UI.AssemblyRegistry
 
         TryRestoreActiveDocument(swApp, activeTitleBefore);
       }
+      });
 
       result.Skipped = Math.Max(0, rows.Count - toPrint.Count);
       return result;

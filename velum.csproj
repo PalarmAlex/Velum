@@ -151,6 +151,7 @@
     <Compile Include="ReactiveCore\VelumBlankSizeProperties.cs" />
     <Compile Include="ReactiveCore\VelumBlankSizePropertyLinksService.cs" />
     <Compile Include="ReactiveCore\VelumExportDocumentationGeometryStampHelper.cs" />
+    <Compile Include="ReactiveCore\VelumPdfOutdatedRules.cs" />
     <Compile Include="ReactiveCore\RecipeStepDefinition.cs" />
     <Compile Include="ReactiveCore\RecipeDefinition.cs" />
     <Compile Include="ReactiveCore\RecipeCatalogLoadResult.cs" />

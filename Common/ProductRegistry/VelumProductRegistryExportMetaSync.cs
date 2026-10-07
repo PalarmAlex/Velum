@@ -444,65 +444,20 @@ namespace Velum.UI.ProductRegistry
             // ModelGeometryStamp = GetUpdateStamp() сборки, это корректный маркер изменений.
           }
 
-          // Для листовой детали: использовать максимальный DxfGeometryUpdateStamp вместо
-          // ModelGeometryStamp. ModelGeometryStamp увеличивается при fold/unfold развёртки,
-          // хотя геометрия DXF не меняется — это вызывает ложные срабатывания PDF IsOutdated.
-          int stamp;
-          if (string.Equals(partExt, ".sldprt", StringComparison.OrdinalIgnoreCase) &&
-              partItem.ExportMetaConfigs != null && partItem.ExportMetaConfigs.Length > 0)
-          {
-            int maxDxfStamp = 0;
-            for (int i = 0; i < partItem.ExportMetaConfigs.Length; i++)
-            {
-              var cfg = partItem.ExportMetaConfigs[i];
-              if (cfg != null && cfg.DxfGeometryUpdateStamp.HasValue &&
-                  cfg.DxfGeometryUpdateStamp.Value > maxDxfStamp)
-              {
-                maxDxfStamp = cfg.DxfGeometryUpdateStamp.Value;
-              }
-            }
+          // Эффективный штамп модели для записи PdfModelStampAtExport считаем теми же
+          // чистыми правилами, что и чтение устаревания (E9: запись и чтение симметричны).
+          // Для листовой детали с актуальным DXF (нет висящего pending) базой служит
+          // max(DxfGeometryUpdateStamp) — regen/fold/unfold, поднявший ModelGeometryStamp,
+          // не должен записываться как принятая геометрия. При висящем DXF-pending
+          // (genuine-правка) базой служит ModelGeometryStamp.
+          int? effective = Velum.ReactiveCore.VelumPdfOutdatedRules.ComputePdfModelStampAtExport(
+              partItem.ModelGeometryStamp,
+              Velum.ReactiveCore.VelumExportDocumentationGeometryStampHelper.ToConfigStamps(
+                  partItem.ExportMetaConfigs));
+          if (!effective.HasValue)
+            return;
 
-            if (maxDxfStamp > 0)
-            {
-              stamp = maxDxfStamp;
-
-              // Fallback: симметрично VelumProductRegistryPdfFleetScanner — если
-              // DxfGeometryUpdateStamp отстаёт от ModelGeometryStamp больше чем на 1,
-              // DXF export-штамп не обновился (race condition) — считаем
-              // ModelGeometryStamp эффективным штампом. Без этого экспорт PDF всегда
-              // писал отставший штамп, а сканер сравнивал с ModelGeometryStamp —
-              // метрика "PDF устарел" не снималась никогда.
-              if (partItem.ModelGeometryStamp.HasValue &&
-                  partItem.ModelGeometryStamp.Value - maxDxfStamp > 1)
-              {
-                stamp = partItem.ModelGeometryStamp.Value;
-                Logger.Info(
-                    "Velum registry export-meta: DxfGeometryUpdateStamp lags ModelGeometryStamp by " +
-                    (partItem.ModelGeometryStamp.Value - maxDxfStamp) +
-                    " — using ModelGeometryStamp as effective stamp" +
-                    " part=" + partPath + " stamp=" + stamp + " maxDxfStamp=" + maxDxfStamp);
-              }
-              else
-              {
-                Logger.Info(
-                    "Velum registry export-meta: using DxfGeometryUpdateStamp for part " +
-                    partPath + " stamp=" + stamp);
-              }
-            }
-            else
-            {
-              // Fallback: если DXF-штампов нет, используем ModelGeometryStamp.
-              if (!partItem.ModelGeometryStamp.HasValue)
-                return;
-              stamp = partItem.ModelGeometryStamp.Value;
-            }
-          }
-          else
-          {
-            if (!partItem.ModelGeometryStamp.HasValue)
-              return;
-            stamp = partItem.ModelGeometryStamp.Value;
-          }
+          int stamp = effective.Value;
 
           if (drawingItem.PdfModelStampAtExport == stamp)
             return;
