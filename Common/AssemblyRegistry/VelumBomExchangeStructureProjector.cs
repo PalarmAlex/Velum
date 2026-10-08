@@ -42,7 +42,9 @@ namespace Velum.UI.AssemblyRegistry
     /// <summary>
     /// Отобрать записи структуры для выгрузки:
     /// pending-записи журнала по структурам с текущим расхождением,
-    /// у которых актуальный ExternalId ребёнка (из зеркала карточек) непустой.
+    /// у которых актуальный <c>ExternalId</c> ребёнка (из зеркала карточек) пригоден
+    /// к обмену — непустой и не равен «0»
+    /// (<see cref="VelumBomExportFilterRules.IsExportable"/>).
     /// ParentConfiguration и ChildExternalId актуализируются из источников правды
     /// (структура и зеркало карточек); снимки в записях журнала — только для истории.
     /// </summary>
@@ -62,18 +64,18 @@ namespace Velum.UI.AssemblyRegistry
           structureStore.GetEntriesWithDiscrepancy();
       foreach (VelumBomStructureEntry entry in discrepancies)
       {
-        if (entry == null || string.IsNullOrWhiteSpace(entry.ParentExternalId))
+        if (entry == null || !VelumBomExportFilterRules.IsExportable(entry.ParentExternalId))
           continue;
         if (!selection.StructuresByParentExternalId.ContainsKey(entry.ParentExternalId))
           selection.StructuresByParentExternalId[entry.ParentExternalId] = entry;
       }
 
       // Pending-записи журнала — только по структурам с текущим расхождением
-      // и с непустым актуальным ExternalId ребёнка.
+      // и с пригодным к обмену ExternalId ребёнка.
       foreach (VelumBomChangeRecord record in changeStore.GetPending())
       {
         if (record == null ||
-            string.IsNullOrWhiteSpace(record.ParentExternalId) ||
+            !VelumBomExportFilterRules.IsExportable(record.ParentExternalId) ||
             string.IsNullOrWhiteSpace(record.ChildIdentity))
           continue;
 
@@ -84,9 +86,9 @@ namespace Velum.UI.AssemblyRegistry
 
         // Актуальный ExternalId ребёнка — из зеркала карточек (источник правды).
         VelumAssemblyBomMirrorEntry childMirror = mirrorStore.GetEntry(record.ChildIdentity);
-        if (childMirror == null || string.IsNullOrWhiteSpace(childMirror.ExternalId))
+        if (childMirror == null || !VelumBomExportFilterRules.IsExportable(childMirror.ExternalId))
         {
-          // Строка отложена до появления ExternalId у ребёнка — расхождение
+          // Строка отложена до появления пригодного ExternalId у ребёнка — расхождение
           // структуры должно сохраняться, пока она не выгружена.
           selection.DeferredParentExternalIds.Add(record.ParentExternalId);
           continue;

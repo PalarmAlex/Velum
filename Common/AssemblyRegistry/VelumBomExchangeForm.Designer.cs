@@ -734,7 +734,7 @@ namespace Velum.UI.AssemblyRegistry
             this.noteLabel.Name = "noteLabel";
             this.noteLabel.Size = new System.Drawing.Size(381, 13);
             this.noteLabel.TabIndex = 3;
-            this.noteLabel.Text = "Компоненты без заполненного ExternalId будут пропущены при экспорте.";
+            this.noteLabel.Text = "Компоненты с пустым ExternalId или «0» пропускаются при экспорте.";
             // 
             // buttonsPanel
             // 

@@ -72,10 +72,11 @@ namespace Velum.UI.AssemblyRegistry
     }
 
     /// <summary>
-    /// Удаляет невыгружаемые pending-записи: с пустым ParentExternalId они не попадут
-    /// в обмен никогда (отбор в <c>VelumBomExchangeStructureProjector.Select</c> их
+    /// Удаляет невыгружаемые pending-записи: с пустым или «0» ParentExternalId они не
+    /// попадут в обмен никогда (отбор в <c>VelumBomExchangeStructureProjector.Select</c> их
     /// пропускает), а срок хранения !Exported не истекает — без очистки такие записи
-    /// зависают в журнале навсегда (E39).
+    /// зависают в журнале навсегда (E39). Непригодность ExternalId определяется
+    /// единым предиктом <see cref="VelumBomExportFilterRules.IsExportForbidden"/>.
     /// </summary>
     /// <param name="records">Список записей (изменяется на месте).</param>
     /// <returns>Число удалённых записей.</returns>
@@ -85,7 +86,8 @@ namespace Velum.UI.AssemblyRegistry
         return 0;
 
       return records.RemoveAll(r =>
-          r != null && !r.Exported && string.IsNullOrWhiteSpace(r.ParentExternalId));
+          r != null && !r.Exported &&
+          VelumBomExportFilterRules.IsExportForbidden(r.ParentExternalId));
     }
 
     /// <summary>

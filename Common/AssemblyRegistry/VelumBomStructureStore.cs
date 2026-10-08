@@ -214,14 +214,16 @@ namespace Velum.UI.AssemblyRegistry
 
     /// <summary>
     /// Получить все записи с расхождением хэшей.
-    /// Записи с пустым ParentExternalId исключены — они не участвуют в обмене с 1С.
+    /// Записи, у которых <c>ParentExternalId</c> пуст или равен «0», исключены —
+    /// они не участвуют в обмене с 1С
+    /// (см. <see cref="VelumBomExportFilterRules.IsExportable"/>).
     /// </summary>
     public IReadOnlyList<VelumBomStructureEntry> GetEntriesWithDiscrepancy()
     {
       var result = new List<VelumBomStructureEntry>();
       foreach (VelumBomStructureEntry entry in _entries.Values)
       {
-        if (string.IsNullOrEmpty(entry.ParentExternalId))
+        if (!VelumBomExportFilterRules.IsExportable(entry.ParentExternalId))
           continue;
         if (!string.Equals(entry.CurrentHash, entry.PreviousHash, StringComparison.Ordinal))
           result.Add(entry);

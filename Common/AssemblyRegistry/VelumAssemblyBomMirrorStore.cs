@@ -379,7 +379,8 @@ namespace Velum.UI.AssemblyRegistry
 
     /// <summary>
     /// Получить все записи с расхождением хэшей.
-    /// Записи с пустым ExternalId исключены — они не участвуют в обмене с 1С.
+    /// Записи, у которых <c>ExternalId</c> пуст или равен «0», исключены — они не
+    /// участвуют в обмене с 1С (см. <see cref="VelumBomExportFilterRules.IsExportable"/>).
     /// Устаревшие записи (<see cref="IsStale"/>) тоже исключены — их файл исчез,
     /// и выгрузка в 1С отложена до появления файла вновь.
     /// </summary>
@@ -388,7 +389,7 @@ namespace Velum.UI.AssemblyRegistry
       var result = new List<VelumAssemblyBomMirrorEntry>();
       foreach (var entry in _entries.Values)
       {
-        if (string.IsNullOrEmpty(entry.ExternalId))
+        if (!VelumBomExportFilterRules.IsExportable(entry.ExternalId))
           continue;
         if (IsStale(entry))
           continue;
@@ -440,13 +441,14 @@ namespace Velum.UI.AssemblyRegistry
     /// <summary>
     /// Число записей с невыгруженным расхождением (без учёта Stale — они исключены
     /// из выгрузки; счётчик показывает, сколько карточек реально уедет в 1C_update).
+    /// Пустой или «0» ExternalId исключён (см. <see cref="VelumBomExportFilterRules.IsExportable"/>).
     /// </summary>
     public int CountDiscrepancyEntries()
     {
       int count = 0;
       foreach (var entry in _entries.Values)
       {
-        if (string.IsNullOrEmpty(entry.ExternalId))
+        if (!VelumBomExportFilterRules.IsExportable(entry.ExternalId))
           continue;
         if (IsStale(entry))
           continue;

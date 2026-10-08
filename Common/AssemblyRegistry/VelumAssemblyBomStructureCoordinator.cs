@@ -49,11 +49,11 @@ namespace Velum.UI.AssemblyRegistry
         // корневая сохраняемая сборка не является записью в bomMirror.json
         // (там хранятся только её компоненты).
         string parentExternalId = ReadExternalIdFromDocument(modelDoc, parentConfiguration);
-        if (string.IsNullOrWhiteSpace(parentExternalId))
+        if (VelumBomExportFilterRules.IsExportForbidden(parentExternalId))
         {
-          // Без ExternalId родителя структура не связывается с 1С —
-          // не пишем ни в bomStructure.json, ни в change log.
-          Logger.Info("bomStructure: parent ExternalId empty, skip");
+          // Без пригодного ExternalId родителя (пусто или «0») структура не связывается
+          // с 1С — не пишем ни в bomStructure.json, ни в change log.
+          Logger.Info("bomStructure: parent ExternalId empty or zero, skip");
           return false;
         }
 

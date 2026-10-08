@@ -220,7 +220,7 @@ namespace Velum.UI.AssemblyRegistry
         var store = new VelumAssemblyBomMirrorStore();
         store.Load();
         var entries = store.GetDiscrepancyEntries()
-            .Where(e => !string.IsNullOrWhiteSpace(e.ExternalId))
+            .Where(e => VelumBomExportFilterRules.IsExportable(e.ExternalId))
             .ToList();
 
         // Счётчики состояния зеркала — из загруженного JSON, без обращения к диску.
@@ -692,7 +692,7 @@ namespace Velum.UI.AssemblyRegistry
           " Карточек: " + _cardCount +
           ". Строк состава: " + _structureCount + "." +
           registryNote +
-          " Компоненты без заполненного ExternalId будут пропущены при экспорте.";
+          " Компоненты с пустым ExternalId или «0» пропускаются при экспорте.";
     }
 
     /// <summary>Переключение фильтра «только зарегистрированные в реестре изделий».</summary>

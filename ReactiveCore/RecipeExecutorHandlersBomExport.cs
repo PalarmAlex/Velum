@@ -69,8 +69,8 @@ namespace Velum.ReactiveCore
         VelumAssemblyBomMirrorStore store = new VelumAssemblyBomMirrorStore();
         store.Load();
 
-        // Get discrepancy entries (карточки с ExternalId; Stale-записи исключены
-        // внутри GetDiscrepancyEntries — их файл исчез, выгрузка отложена).
+        // Get discrepancy entries (карточки с пригодным ExternalId; Stale-записи
+        // исключены внутри GetDiscrepancyEntries — их файл исчез, выгрузка отложена).
         IReadOnlyList<VelumAssemblyBomMirrorEntry> discrepancies = store.GetDiscrepancyEntries();
         if (store.CountStaleEntries() > 0)
         {
@@ -81,7 +81,7 @@ namespace Velum.ReactiveCore
         var exportEntries = new List<VelumAssemblyBomMirrorEntry>();
         foreach (VelumAssemblyBomMirrorEntry entry in discrepancies)
         {
-          if (string.IsNullOrWhiteSpace(entry.ExternalId))
+          if (!VelumBomExportFilterRules.IsExportable(entry.ExternalId))
             continue;
           exportEntries.Add(entry);
         }
