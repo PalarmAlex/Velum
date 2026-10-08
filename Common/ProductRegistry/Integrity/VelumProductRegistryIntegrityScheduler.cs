@@ -765,7 +765,20 @@ namespace Velum.UI.ProductRegistry
 
       try
       {
-        VelumProductRegistryIntegrityProbes.PublishScoresToGate(registryOnlySnapshot: false);
+        if (openScope)
+        {
+          // Вход в open-область (документ открыт): удалить document-specific ключи из gate,
+          // сбросить маркер недостоверности снимка (COM-опрос при открытых документах
+          // состоится на следующем пульсе, а _lastErrorKind от закрытой области
+          // блокирует release параметров гомеостаза до первого успешного COM).
+          VelumSolidEnvironmentGate.ClearDocumentSpecificProbes();
+          VelumSolidEnvironmentGate.MarkSnapshotFresh();
+        }
+
+        // registryOnlySnapshot: true — публикуем только значения из кэша проблем реестра
+        // (которые уже очищены ClearAllProblemCacheUnlocked). При открытии документа
+        // document-specific пробы (PDF/DXF) не нужны в gate — они обновятся на пульсе.
+        VelumProductRegistryIntegrityProbes.PublishScoresToGate(registryOnlySnapshot: true);
       }
       catch (Exception ex)
       {
