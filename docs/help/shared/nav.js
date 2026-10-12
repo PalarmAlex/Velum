@@ -47,6 +47,7 @@
         { t: "Обзор", h: "overview.html" },
         { t: "ISIDA и МВАП", h: "platform.html" },
         { t: "Условные рефлексы", h: "shared/conditioned-reflexes.html" },
+        { t: "Автоматизмы", h: "shared/automatisms.html" },
         { t: "Лента команд", h: "ribbon.html" },
         { t: "Фильтры списков", h: "shared/list-filters.html" }
       ]},
