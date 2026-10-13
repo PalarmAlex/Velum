@@ -1,118 +1,61 @@
 using System;
-
 using System.Collections.Generic;
-
 using System.Linq;
-
 using ISIDA.Actions;
-
 using ISIDA.SymbiontEnv.Contract;
-
 using Velum.Configuration;
-
 using Velum.Isida;
-
-
 
 namespace Velum.SolidHomeostasis
 
 {
-
   /// <summary>Индекс воздействий среды (EA с ProbeKey) из ISIDA InfluenceActionSystem.</summary>
-
   public static class VelumSolidEnvironmentInfluenceCatalog
-
   {
-
     /// <summary>Уникальные непустые ProbeKey из активных EA среды.</summary>
-
     public static IReadOnlyList<string> EnumerateDistinctEnvironmentProbeKeys()
-
     {
-
       if (!VelumIsidaHost.IsReady)
-
         return Array.Empty<string>();
 
-
-
       return QueryActiveEnvironmentActions()
-
           .Select(a => (a.ProbeKey ?? string.Empty).Trim())
-
           .Where(s => s.Length > 0)
-
           .Distinct(StringComparer.Ordinal)
-
           .OrderBy(s => s, StringComparer.Ordinal)
-
           .ToList();
-
     }
-
-
 
     /// <summary>Все EA среды с ProbeKey (включая отключённые — для UI).</summary>
-
     public static IReadOnlyList<InfluenceActionSystem.GomeostasisInfluenceAction> GetAllEnvironmentActions()
-
     {
-
       if (!VelumIsidaHost.IsReady)
-
         return Array.Empty<InfluenceActionSystem.GomeostasisInfluenceAction>();
-
-
 
       return QueryAllEnvironmentActions();
-
     }
-
-
 
     /// <summary>Только активные EA среды (runtime: опрос и давление).</summary>
-
     public static IReadOnlyList<InfluenceActionSystem.GomeostasisInfluenceAction> GetActiveEnvironmentActions()
-
     {
-
       if (!VelumIsidaHost.IsReady)
-
         return Array.Empty<InfluenceActionSystem.GomeostasisInfluenceAction>();
 
-
-
       return QueryActiveEnvironmentActions();
-
     }
-
-
 
     private static IReadOnlyList<InfluenceActionSystem.GomeostasisInfluenceAction> QueryAllEnvironmentActions()
-
     {
-
-      InfluenceActionSystem sys = VelumIsidaHost.Context.InfluenceActions;
-
+     InfluenceActionSystem sys = VelumIsidaHost.Context.InfluenceActions;
       try
-
       {
-
         return sys.GetEnvironmentInfluenceActions();
-
       }
-
       catch (MissingMethodException)
-
       {
-
         return FilterEnvironmentActions(sys.GetAllInfluenceActions());
-
       }
-
     }
-
-
 
     private static IReadOnlyList<InfluenceActionSystem.GomeostasisInfluenceAction> QueryActiveEnvironmentActions()
     {
@@ -145,25 +88,14 @@ namespace Velum.SolidHomeostasis
        return filtered;
     }
 
-
-
     /// <summary>EA по ProbeKey или null.</summary>
-
     public static InfluenceActionSystem.GomeostasisInfluenceAction TryGetByProbeKey(string probeKey)
-
     {
-
       if (!VelumIsidaHost.IsReady || string.IsNullOrWhiteSpace(probeKey))
-
         return null;
 
-
-
       return VelumIsidaHost.Context.InfluenceActions.GetInfluenceActionByProbeKey(probeKey);
-
     }
-
-
 
     /// <summary>true, если активная метрика среды сейчас «плохая» (давит или готова давить).</summary>
     public static bool IsActiveMetricPressing(InfluenceActionSystem.GomeostasisInfluenceAction ea)
@@ -193,25 +125,41 @@ namespace Velum.SolidHomeostasis
         }
       }
 
-      IReadOnlyDictionary<string, float> snap = VelumSolidEnvironmentGate.GetPublishedSnapshot();
-      if (snap == null || !snap.TryGetValue(probeKey, out float metric))
-      {
+    IReadOnlyDictionary<string, float> snap = VelumSolidEnvironmentGate.GetPublishedSnapshot();
+    if (snap == null || !snap.TryGetValue(probeKey, out float metric))
+    {
         if (VelumAppConfig.SolidHomeostasisDebugLog)
-          System.Diagnostics.Debug.WriteLine("[Velum.EA] IsActiveMetricPressing MISS probe=" + probeKey);
-        return false;
-      }
+            System.Diagnostics.Debug.WriteLine("[Velum.EA] IsActiveMetricPressing MISS probe=" + probeKey);
 
-      bool bad = MetricProbeThresholds.IsProbeBad(metric, VelumAppConfig.SolidEnvironmentMetricDeltaEpsilon);
-      if (bad)
+        // Проба не опубликована в снимке (например document-probe в closed-области
+        // или registry-probe, которая ещё не нашла проблему), но её витал уже под
+        // давлением от других проб — EA должна считаться давящей, иначе статус панели
+        // («Плохо») и плашки расходятся: P10 под давлением от registry-пробы X,
+        // а плашка EA с registry-пробой Y (пока Good) гаснет.
+        if (noActiveDoc
+            && Velum.UI.ProductRegistry.VelumProductRegistryIntegrityProbes.IsRegistryProbeKey(probeKey))
+        {
+            if (ea.Influences != null)
+            {
+                foreach (int paramId in ea.Influences.Keys)
+                {
+                    if (paramId > 0
+                        && VelumSolidMetricPressureEngageRegistry.WasEngaged(paramId))
+                        return true;
+                }
+            }
+        }
+
+        return false;
+    }
+    bool bad = MetricProbeThresholds.IsProbeBad(metric, VelumAppConfig.SolidEnvironmentMetricDeltaEpsilon);
+
+    if (bad)
       {
         if (VelumAppConfig.SolidHomeostasisDebugLog)
           System.Diagnostics.Debug.WriteLine("[Velum.EA] IsActiveMetricPressing BAD probe=" + probeKey + " metric=" + metric);
       }
       return bad;
     }
-
   }
-
 }
-
-
