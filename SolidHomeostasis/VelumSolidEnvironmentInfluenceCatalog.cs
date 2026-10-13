@@ -7,7 +7,6 @@ using Velum.Configuration;
 using Velum.Isida;
 
 namespace Velum.SolidHomeostasis
-
 {
   /// <summary>Индекс воздействий среды (EA с ProbeKey) из ISIDA InfluenceActionSystem.</summary>
   public static class VelumSolidEnvironmentInfluenceCatalog
