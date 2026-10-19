@@ -36,7 +36,10 @@ namespace Velum.ReactiveCore
           "set_custom_property_if_part_or_assembly",
           "log",
           "ensure_blank_size_property_links",
-          "assign_session_material"
+          "assign_session_material",
+          // Команды SW по id (RunCommand) — частые моторные шаги от рефлексов/триггеров;
+          // MessageBox на каждый запуск мешал бы работе, исход виден в логах Recipe OK/FAIL.
+          "run_sw_command"
         };
 
     internal static void TryNotify(RecipeDefinition recipe, RecipeExecutionResult result)
