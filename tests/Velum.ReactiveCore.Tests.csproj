@@ -2,6 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <!-- На машине нет рантайма 8.0 (стоят 3.1 и 10.0): тестируемое приложение
+         имеет право запуститься на 10.0 вместо установки .NET 8. -->
+    <RollForward>Major</RollForward>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
@@ -74,6 +77,7 @@
     <Compile Include="VelumReflexForbidTargetRulesTests.cs" />
     <Compile Include="VelumLogSessionRulesTests.cs" />
     <Compile Include="VelumPdfOutdatedRulesTests.cs" />
+    <Compile Include="VelumProblemCacheSyncTests.cs" />
   </ItemGroup>
 
 </Project>

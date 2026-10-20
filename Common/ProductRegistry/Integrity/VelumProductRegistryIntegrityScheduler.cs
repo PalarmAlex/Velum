@@ -1027,6 +1027,19 @@ namespace Velum.UI.ProductRegistry
           _pdfPassDone = false;
         }
       }
+
+      // Gate обновляется здесь, в конце RunTick, а не ждёт пульса ISIDA.
+      // Иначе статус (чтение ProblemCache.HasAny) реагирует мгновенно на Pending,
+      // а плашки (чтение Gate snapshot) — с задержкой до следующего пульса ISIDA.
+      // При отсутствии активного документа — только host-global ключи (реестр, BOM).
+      try
+      {
+        VelumProductRegistryIntegrityProbes.PublishScoresToGate(registryOnlySnapshot: true);
+      }
+      catch (Exception ex)
+      {
+        Logger.Warning("Velum registry integrity tick publish: " + ex.Message);
+      }
     }
 
     /// <summary>
