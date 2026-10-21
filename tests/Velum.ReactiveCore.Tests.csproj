@@ -52,10 +52,30 @@
     <Compile Include="..\ReactiveCore\VelumPdfOutdatedRules.cs" Link="src\VelumPdfOutdatedRules.cs" />
   </ItemGroup>
 
+  <!-- Конвейер «сканер → кэш проблем → снимок gate → плашка»: оригиналы без COM/WinForms -->
+  <ItemGroup>
+    <Compile Include="..\Common\ProductRegistry\Integrity\VelumProductRegistryProblemKind.cs" Link="src\VelumProductRegistryProblemKind.cs" />
+    <Compile Include="..\Common\ProductRegistry\Integrity\VelumProductRegistryProblemEntry.cs" Link="src\VelumProductRegistryProblemEntry.cs" />
+    <Compile Include="..\Common\ProductRegistry\Integrity\VelumProductRegistryProblemKindPriority.cs" Link="src\VelumProductRegistryProblemKindPriority.cs" />
+    <Compile Include="..\Common\ProductRegistry\Integrity\VelumProductRegistryProblemCache.cs" Link="src\VelumProductRegistryProblemCache.cs" />
+    <Compile Include="..\SolidHomeostasis\VelumSolidEnvironmentGate.cs" Link="src\VelumSolidEnvironmentGate.cs" />
+    <Compile Include="..\Common\ProductRegistry\Integrity\VelumProductRegistryIntegrityProbes.cs" Link="src\VelumProductRegistryIntegrityProbes.cs" />
+  </ItemGroup>
+
   <!-- Заглушки ISIDA.Common (без isida.dll) -->
   <ItemGroup>
     <Compile Include="Fakes\GlobalTimer.cs" Link="fakes\GlobalTimer.cs" />
     <Compile Include="Fakes\Logger.cs" Link="fakes\Logger.cs" />
+  </ItemGroup>
+
+  <!-- Заглушки для конвейера метрик (COM/Xarial/ISIDA-зависимые классы) -->
+  <ItemGroup>
+    <Compile Include="Fakes\VelumAppConfig.cs" Link="fakes\VelumAppConfig.cs" />
+    <Compile Include="Fakes\ISIDAActions.cs" Link="fakes\ISIDAActions.cs" />
+    <Compile Include="Fakes\VelumSolidProbeErrorKind.cs" Link="fakes\VelumSolidProbeErrorKind.cs" />
+    <Compile Include="Fakes\VelumProductRegistryStore.cs" Link="fakes\VelumProductRegistryStore.cs" />
+    <Compile Include="Fakes\VelumAssemblyBomDiffProbe.cs" Link="fakes\VelumAssemblyBomDiffProbe.cs" />
+    <Compile Include="Fakes\VelumSolidEnvironmentInfluenceCatalog.cs" Link="fakes\VelumSolidEnvironmentInfluenceCatalog.cs" />
   </ItemGroup>
 
   <!-- Собственные файлы тестов -->
@@ -78,6 +98,9 @@
     <Compile Include="VelumLogSessionRulesTests.cs" />
     <Compile Include="VelumPdfOutdatedRulesTests.cs" />
     <Compile Include="VelumProblemCacheSyncTests.cs" />
+    <Compile Include="DisableTestParallelization.cs" />
+    <Compile Include="VelumMetricPipelineTests.cs" />
+    <Compile Include="VelumMetricPipelinePropertyTests.cs" />
   </ItemGroup>
 
 </Project>

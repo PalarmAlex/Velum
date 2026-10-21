@@ -28,6 +28,36 @@ namespace Velum.UI.ProductRegistry
     private static readonly Dictionary<string, VelumProductRegistryProblemEntry> Pending =
         new Dictionary<string, VelumProductRegistryProblemEntry>(StringComparer.Ordinal);
 
+    /// <summary>
+    /// Поднимается после ЛЮБОГО изменения кэша (Problems или Pending) — вне блокировки Gate.
+    /// <para>
+    /// Нужен потому, что статус панели читает кэш напрямую (<see cref="HasAny"/>), а плашки
+    /// метрик — опубликованный снимок gate, который пересчитывается из кэша только в момент
+    /// <c>PublishScoresToGate</c>. Без этого события любое точечное изменение (Remove при
+    /// решении проблемы, Upsert при перепроверке) расходится с плашкой до конца тика/пульса:
+    /// «залипшая» плашка предыдущего прохода при уже актуальной другой проблеме.
+    /// </para>
+    /// <para>
+    /// Подписчик обязан сам подавлять частые вызовы (см. гейт по <c>IsTickInFlight</c> в
+    /// <see cref="VelumProductRegistryIntegrityScheduler"/>): во время фонового тика находок
+    /// тысячи, публикация на каждую давала бы O(n²), а тик публикует снимок сам в конце.
+    /// </para>
+    /// </summary>
+    internal static event Action Changed;
+
+    /// <summary>Извещение подписчиков об изменении кэша. Вызывать ВНЕ блокировки Gate.</summary>
+    private static void RaiseChanged()
+    {
+      try
+      {
+        Changed?.Invoke();
+      }
+      catch
+      {
+        // Подписчик — публикация метрик; его сбой не должен ронять сканер или UI.
+      }
+    }
+
     internal static string MakeKey(int itemId, VelumProductRegistryProblemKind kind)
     {
       return MakeKey(itemId, kind, null);
@@ -258,6 +288,7 @@ namespace Velum.UI.ProductRegistry
         entry.ItemId = 0;
         lock (Gate)
           Problems[MakeKey(0, entry.Kind, path)] = Clone(entry);
+        RaiseChanged();
         return;
       }
 
@@ -272,6 +303,7 @@ namespace Velum.UI.ProductRegistry
       }
 
       Debug.WriteLine("[Velum.ProblemCache] Upsert itemId=" + entry.ItemId + " kind=" + entry.Kind + " count=" + Problems.Count);
+      RaiseChanged();
     }
 
     /// <summary>Начать discovery-проход: очистить pending этого kind.</summary>
@@ -282,6 +314,7 @@ namespace Velum.UI.ProductRegistry
 
       lock (Gate)
         RemoveKindUnlocked(Pending, kind);
+      RaiseChanged();
     }
 
     /// <summary>Находка текущего прохода (учитывается метриками и формой до commit).</summary>
@@ -296,6 +329,7 @@ namespace Velum.UI.ProductRegistry
 
       lock (Gate)
         Pending[MakeKey(entry.ItemId, entry.Kind)] = Clone(entry);
+      RaiseChanged();
     }
 
     /// <summary>
@@ -319,6 +353,8 @@ namespace Velum.UI.ProductRegistry
           Pending.Remove(key);
         }
       }
+
+      RaiseChanged();
     }
 
     /// <summary>Сброс незавершённого прохода (reload / смена области).</summary>
@@ -329,6 +365,7 @@ namespace Velum.UI.ProductRegistry
 
       lock (Gate)
         RemoveKindUnlocked(Pending, kind);
+      RaiseChanged();
     }
 
     internal static void Remove(int itemId, VelumProductRegistryProblemKind kind)
@@ -339,9 +376,13 @@ namespace Velum.UI.ProductRegistry
       lock (Gate)
       {
         string key = MakeKey(itemId, kind);
-        Problems.Remove(key);
-        Pending.Remove(key);
+        bool removed = Problems.Remove(key);
+        removed |= Pending.Remove(key);
+        if (!removed)
+          return;
       }
+
+      RaiseChanged();
     }
 
     internal static void RemoveMissingRegistryEntry(string filePath)
@@ -350,8 +391,12 @@ namespace Velum.UI.ProductRegistry
       if (string.IsNullOrEmpty(path))
         return;
 
+      bool removed;
       lock (Gate)
-        Problems.Remove(MakeKey(0, VelumProductRegistryProblemKind.MissingRegistryEntry, path));
+        removed = Problems.Remove(
+            MakeKey(0, VelumProductRegistryProblemKind.MissingRegistryEntry, path));
+      if (removed)
+        RaiseChanged();
     }
 
     internal static void RemoveAllOfKind(VelumProductRegistryProblemKind kind)
@@ -361,6 +406,8 @@ namespace Velum.UI.ProductRegistry
         RemoveKindUnlocked(Problems, kind);
         RemoveKindUnlocked(Pending, kind);
       }
+
+      RaiseChanged();
     }
 
     internal static void RemoveAllForItem(int itemId)
@@ -374,6 +421,8 @@ namespace Velum.UI.ProductRegistry
         RemoveKeysEndingWith(Problems, suffix);
         RemoveKeysEndingWith(Pending, suffix);
       }
+
+      RaiseChanged();
     }
 
     internal static void Clear()
@@ -383,7 +432,11 @@ namespace Velum.UI.ProductRegistry
         int count = Problems.Count + Pending.Count;
         Problems.Clear();
         Pending.Clear();
+        if (count == 0)
+          return;
       }
+
+      RaiseChanged();
     }
 
     /// <summary>
@@ -400,6 +453,8 @@ namespace Velum.UI.ProductRegistry
         PruneNotInUnlocked(Problems, allowedItemIds);
         PruneNotInUnlocked(Pending, allowedItemIds);
       }
+
+      RaiseChanged();
     }
 
     private static void RemoveKindUnlocked(

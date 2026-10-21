@@ -159,6 +159,12 @@ namespace Velum.UI.ProductRegistry
       {
         GlobalTimer.OnPulseCompleted += OnPulseCompleted;
         GlobalTimer.PulsationStateChanged += OnPulsationStateChanged;
+        // Любое изменение кэша проблем (Remove при решении, Upsert при перепроверке,
+        // коммит сканера) обязано мгновенно отражаться на снимке gate: статус панели
+        // читает кэш напрямую, а плашки — снимок. Пауза до конца тика/пульса между
+        // ними и давала «залипшую» плашку предыдущего прохода при актуальной другой
+        // проблеме (случай 40).
+        VelumProductRegistryProblemCache.Changed += OnProblemCacheChanged;
       }
 
       SyncEnabledFromPulse();
@@ -175,8 +181,37 @@ namespace Velum.UI.ProductRegistry
     {
       GlobalTimer.OnPulseCompleted -= OnPulseCompleted;
       GlobalTimer.PulsationStateChanged -= OnPulsationStateChanged;
+      VelumProductRegistryProblemCache.Changed -= OnProblemCacheChanged;
       Interlocked.Exchange(ref _hooked, 0);
       Interlocked.Exchange(ref _enabled, 0);
+    }
+
+    /// <summary>
+    /// Кэш проблем изменился вне фонового тика (точечное решение проблемы,
+    /// перепроверка, коммит лёгкого сканера) — немедленно пересчитать и опубликовать
+    /// registry/BOM-пробы в gate, чтобы плашки метрик не отставали от статуса панели.
+    /// <para>
+    /// Во время фонового тика (<see cref="_tickInFlight"/>) находок тысячи — публикация
+    /// на каждую дала бы O(n²); тик публикует снимок сам в конце <c>RunTick</c>.
+    /// В открытой области метрики обновляет пульс ISIDA
+    /// (<c>OnPulseBeforeGomeostasis</c>), а кэш проблем там очищен.
+    /// </para>
+    /// </summary>
+    private static void OnProblemCacheChanged()
+    {
+      if (Volatile.Read(ref _tickInFlight) == 1)
+        return;
+      if (Volatile.Read(ref _openDocumentsScopeActive) == 1)
+        return;
+
+      try
+      {
+        VelumProductRegistryIntegrityProbes.PublishScoresToGate(registryOnlySnapshot: true);
+      }
+      catch (Exception ex)
+      {
+        Logger.Warning("Velum registry integrity cache publish: " + ex.Message);
+      }
     }
 
     internal static void SyncEnabledFromPulse()
