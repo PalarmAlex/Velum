@@ -101,6 +101,7 @@
     <Compile Include="DisableTestParallelization.cs" />
     <Compile Include="VelumMetricPipelineTests.cs" />
     <Compile Include="VelumMetricPipelinePropertyTests.cs" />
+    <Compile Include="VelumAdapterMetricProbesCatalogTests.cs" />
   </ItemGroup>
 
 </Project>

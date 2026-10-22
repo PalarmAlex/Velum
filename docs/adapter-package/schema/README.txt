@@ -29,16 +29,20 @@ metric-probes.json
 
   Актуальные ключи (sldworks_19 / Velum):
     Velum.Solid.Material
-    Velum.Solid.Sketch.NoBadIntersections
-    Velum.Solid.Sketch.NoDisjointContours
-    Velum.Solid.Sketch.ContourProfile
-    Velum.Solid.Sketch.FullyDefined
-    Velum.Solid.Sketch.NoZeroLength
     Velum.Solid.Document.UnsavedNew
     Velum.Solid.Dxf.FileExists
     Velum.Solid.Dxf.IsOutdated
     Velum.Solid.Pdf.FileExists
     Velum.Solid.Pdf.IsOutdated
+    Velum.Solid.Pdf.DrawingPathAvailable
+    Velum.Solid.BlankSize.LinksOk
+    Velum.Registry.HasBrokenLinks
+    Velum.Registry.HasMissingDrawings
+    Velum.Registry.HasDuplicateDesignations
+    Velum.Registry.HasMissingRegistryEntries
+    Velum.Registry.HasDxfProblems
+    Velum.Registry.HasPdfProblems
+    Velum.Assembly.BomDiff
 
   Handler'ы экспортной документации (sldworks_19 / Velum):
     set_custom_property_if_part

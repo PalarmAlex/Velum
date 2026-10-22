@@ -173,6 +173,19 @@ metric-probes.json
   Актуальные ключи (sldworks_19 / Velum):
     Velum.Solid.Material
     Velum.Solid.Document.UnsavedNew
+    Velum.Solid.Dxf.FileExists
+    Velum.Solid.Dxf.IsOutdated
+    Velum.Solid.Pdf.FileExists
+    Velum.Solid.Pdf.IsOutdated
+    Velum.Solid.Pdf.DrawingPathAvailable
+    Velum.Solid.BlankSize.LinksOk
+    Velum.Registry.HasBrokenLinks
+    Velum.Registry.HasMissingDrawings
+    Velum.Registry.HasDuplicateDesignations
+    Velum.Registry.HasMissingRegistryEntries
+    Velum.Registry.HasDxfProblems
+    Velum.Registry.HasPdfProblems
+    Velum.Assembly.BomDiff
 
   Удалены (runtime Velum их не опрашивает):
     Velum.Solid.Sketch.NoBadIntersections
