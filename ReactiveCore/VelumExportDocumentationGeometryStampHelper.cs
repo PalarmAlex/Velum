@@ -281,6 +281,91 @@ namespace Velum.ReactiveCore
     }
 
     /// <summary>
+    /// Save / «Обновить» сборки: дожимает DXF pending-штамп в компонентах, реально изменённых
+    /// (<c>GetSaveFlag</c> — тот же признак, что значок «светофор» в дереве построения).
+    /// Правка детали в контексте сборки порождает Modify/Regen на САМОЙ сборке, а
+    /// <c>GetEditTarget</c> покрывает только текущую редактируемую деталь, поэтому остальные
+    /// изменённые компоненты оставались без pending и диагностика пакетного экспорта DXF
+    /// показывала «OK» вместо «Устарел».
+    /// Обход дерева компонентов выполняется только по событию Save/Update сборки — на пульсе
+    /// и при активной сборке сканирования нет (E10).
+    /// </summary>
+    /// <param name="assy">Сборка, компоненты которой обновляют или сохраняют.</param>
+    /// <returns>Открытые документы деталей, в которые записан pending-штамп (для синхронизации зеркал реестра).</returns>
+    internal static IReadOnlyList<ModelDoc2> StampDirtyAssemblyComponents(AssemblyDoc assy)
+    {
+      var stamped = new List<ModelDoc2>();
+      if (assy == null)
+        return stamped;
+
+      object[] components;
+      try
+      {
+        components = assy.GetComponents(true) as object[];
+      }
+      catch
+      {
+        return stamped;
+      }
+
+      if (components == null || components.Length == 0)
+        return stamped;
+
+      var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+      for (int i = 0; i < components.Length; i++)
+      {
+        if (!(components[i] is Component2 comp))
+          continue;
+
+        ModelDoc2 part;
+        try
+        {
+          part = comp.GetModelDoc2() as ModelDoc2;
+        }
+        catch
+        {
+          continue;
+        }
+
+        if (part == null)
+          continue;
+
+        try
+        {
+          // Только реально изменённые детали: у компонентов, поднятых regen-всплеском
+          // при открытии/перестройке сборки, флаг чистый (E63 — не плодить ложное устаревание).
+          if (part.GetType() != (int)swDocumentTypes_e.swDocPART || !part.GetSaveFlag())
+            continue;
+
+          string path = part.GetPathName();
+          if (!string.IsNullOrWhiteSpace(path) && !seen.Add(path))
+            continue;
+
+          // DXF-конфигурация резолвится как при правке (E37), иначе pending уйдёт в развёртку.
+          string configName = VelumDxfArtifactResolver.TryResolveDefaultExportConfigurationName(part);
+
+          // Запись свойства поднимает ModifyNotify на сборке — подавляем рекурсивный pending.
+          RunWithGeometryPendingStampSyncSuppressed(() =>
+              TrySyncPendingGeometryStamp(part, configName, out _));
+
+          stamped.Add(part);
+        }
+        catch
+        {
+        }
+      }
+
+      if (stamped.Count > 0)
+      {
+        Logger.Info("Velum DXF stamps: pending written to " +
+                    stamped.Count.ToString(CultureInfo.InvariantCulture) +
+                    " modified assembly components");
+      }
+
+      return stamped;
+    }
+
+    /// <summary>
     /// После успешного DXF-экспорта: «глотаем» dirty от записи свойств до Save.
     /// </summary>
     internal static void ArmAfterDxfExport(ModelDoc2 modelDoc)

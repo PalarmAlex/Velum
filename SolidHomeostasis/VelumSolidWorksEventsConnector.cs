@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using ISIDA.Common;
 using SolidWorks.Interop.sldworks;
@@ -51,6 +52,13 @@ namespace Velum.SolidHomeostasis
     private static DDrawingDocEvents_SketchSolveNotifyEventHandler _drawingSketchSolve;
     private static DDrawingDocEvents_UndoPostNotifyEventHandler _drawingUndoPost;
     private static DDrawingDocEvents_RedoPostNotifyEventHandler _drawingRedoPost;
+
+    /// <summary>
+    /// Детали, в которые перед Save сборки дописан DXF pending-штамп (см.
+    /// <see cref="VelumExportDocumentationGeometryStampHelper.StampDirtyAssemblyComponents"/>);
+    /// после FileSavePostNotify сборки по ним синхронизируются зеркала реестра и список сбрасывается.
+    /// </summary>
+    private static ModelDoc2[] _assyStampedParts;
     private static DDrawingDocEvents_ViewNewNotify2EventHandler _drawingViewNew;
     private static DDrawingDocEvents_RegenPostNotifyEventHandler _drawingRegenPost;
     private static int _activeModelDocChangeDepth;
@@ -560,6 +568,9 @@ namespace Velum.SolidHomeostasis
       _drawingRedoPost = null;
       _drawingViewNew = null;
       _drawingRegenPost = null;
+
+      // Смена/закрытие документа: не держать COM-ссылки на детали незавершённого Save сборки.
+      _assyStampedParts = null;
     }
 
     /// <summary>
@@ -615,6 +626,10 @@ namespace Velum.SolidHomeostasis
         return 0;
 
       NotifyPartGeometryModifiedForCurrentDocument();
+      // «Обновить» (ForceRebuild) сборки: дожать pending изменённых компонентов —
+      // события правки в контексте приходят на сборку, а edit-target получает pending
+      // только для текущей редактируемой детали.
+      StampDirtyAssemblyComponentsForSave();
       VelumSolidProbeRefreshPlanner.MarkStale(RegenStaleCategories | VelumSolidProbeCategory.ExportDocumentation);
       return 0;
     }
@@ -738,6 +753,7 @@ namespace Velum.SolidHomeostasis
         return 0;
 
       VelumNeedDrawingOnSaveCoordinator.TryEnsureBeforeSaveIfEligible(_assy as ModelDoc2);
+      StampDirtyAssemblyComponentsForSave();
       return 0;
     }
 
@@ -749,6 +765,7 @@ namespace Velum.SolidHomeostasis
         return 0;
 
       VelumNeedDrawingOnSaveCoordinator.TryEnsureBeforeSaveIfEligible(_assy as ModelDoc2);
+      StampDirtyAssemblyComponentsForSave();
       return 0;
     }
 
@@ -793,6 +810,24 @@ namespace Velum.SolidHomeostasis
       VelumSolidProbeRefreshPlanner.MarkStale(SaveStaleCategories);
       // синхронизация зеркал в реестре
       VelumProductRegistryExportMetaSync.TrySyncStampsAfterSave(_assy as ModelDoc2);
+      // Save сборки: в изменённых компонентах pending дописан до Save (OnAssyFileSaveNotify),
+      // но FileSavePostNotify приходит только на саму сборку — зеркала детей в items.json
+      // обгоняем вручную (иначе closed-область флот-сканера не увидит устаревшие DXF, E68).
+      ModelDoc2[] stampedParts = _assyStampedParts;
+      _assyStampedParts = null;
+      if (stampedParts != null)
+      {
+        for (int i = 0; i < stampedParts.Length; i++)
+        {
+          try
+          {
+            VelumProductRegistryExportMetaSync.TrySyncStampsAfterSave(stampedParts[i]);
+          }
+          catch
+          {
+          }
+        }
+      }
 
       return OnModelFileSavePostNotify(_assy as ModelDoc2, fileName);
     }
@@ -958,6 +993,29 @@ namespace Velum.SolidHomeostasis
         object target = _assy.GetEditTarget();
         if (target is ModelDoc2 targetMd)
           VelumExportDocumentationGeometryStampHelper.NotifyPartGeometryModified(targetMd);
+      }
+      catch
+      {
+      }
+    }
+
+    /// <summary>
+    /// Save / «Обновить» активной сборки: дожимает DXF pending-штамп в изменённых компонентах
+    /// (значок «светофор») и запоминает их для синхронизации зеркал реестра после Save.
+    /// Только на событии Save/Update — на пульсе обход дерева не выполняется (E10).
+    /// </summary>
+    private static void StampDirtyAssemblyComponentsForSave()
+    {
+      try
+      {
+        AssemblyDoc assy = _assy;
+        if (assy == null)
+          return;
+
+        IReadOnlyList<ModelDoc2> stamped =
+            VelumExportDocumentationGeometryStampHelper.StampDirtyAssemblyComponents(assy);
+        if (stamped.Count > 0)
+          _assyStampedParts = new List<ModelDoc2>(stamped).ToArray();
       }
       catch
       {
