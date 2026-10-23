@@ -249,6 +249,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Common\VelumListFilterHelper.cs" />
+    <Compile Include="Common\VelumListFilterFormatter.cs" />
     <Compile Include="Common\VelumListViewCellFilterMenu.cs" />
     <Compile Include="Common\VelumHelp.cs" />
     <Compile Include="Common\VelumFormHelp.cs" />

@@ -47,6 +47,7 @@
     <Compile Include="..\ReactiveCore\Export\VelumReadTextOutcomeRules.cs" Link="src\VelumReadTextOutcomeRules.cs" />
     <Compile Include="..\Common\VelumConditionedReflexSettingsStore.cs" Link="src\VelumConditionedReflexSettingsStore.cs" />
     <Compile Include="..\Common\VelumReflexForbidTargetRules.cs" Link="src\VelumReflexForbidTargetRules.cs" />
+    <Compile Include="..\Common\VelumListFilterFormatter.cs" Link="src\VelumListFilterFormatter.cs" />
     <Compile Include="..\Common\Logs\VelumLogSessionRules.cs" Link="src\VelumLogSessionRules.cs" />
     <Compile Include="..\Common\Logs\VelumLogCellFillRules.cs" Link="src\VelumLogCellFillRules.cs" />
     <Compile Include="..\ReactiveCore\VelumPdfOutdatedRules.cs" Link="src\VelumPdfOutdatedRules.cs" />
@@ -95,6 +96,7 @@
     <Compile Include="VelumReadTextOutcomeRulesTests.cs" />
     <Compile Include="VelumConditionedReflexSettingsStoreTests.cs" />
     <Compile Include="VelumReflexForbidTargetRulesTests.cs" />
+    <Compile Include="VelumListFilterFormatterTests.cs" />
     <Compile Include="VelumLogSessionRulesTests.cs" />
     <Compile Include="VelumPdfOutdatedRulesTests.cs" />
     <Compile Include="VelumProblemCacheSyncTests.cs" />

@@ -25,7 +25,8 @@ namespace Velum.UI.AssemblyRegistry
         string selectionLabel,
         IList<VelumAssemblyRegistryColumnDef> columns,
         IList<VelumAssemblyRegistryComponent> rows,
-        int productQty)
+        int productQty,
+        IList<string> activeFilters = null)
     {
       var sb = new StringBuilder();
       sb.AppendLine("<!DOCTYPE html>");
@@ -52,6 +53,10 @@ namespace Velum.UI.AssemblyRegistry
           caption = groupColumn.Name ?? " ";
         AppendMetaRow(sb, "Группировка", caption);
       }
+
+      string filtersSummary = BuildFiltersSummary(columns, activeFilters);
+      if (!string.IsNullOrEmpty(filtersSummary))
+        AppendMetaRow(sb, "Фильтры", filtersSummary);
 
       AppendMetaRow(
           sb,
@@ -480,9 +485,12 @@ namespace Velum.UI.AssemblyRegistry
 
       if (groupColumn == null)
       {
-        AppendPlainRows(sb, columns, rows, productQty);
+        // Только видимые столбцы: заголовки уже построены по visibleColumns,
+        // иначе скрытые («Показать в списке» снят) столбцы попадают в отчёт
+        // и сдвигают колонки относительно шапки.
+        AppendPlainRows(sb, visibleColumns, rows, productQty);
         if (hasTotals)
-          AppendTotalsRow(sb, columns, rows, "Итого", "totals-row", productQty);
+          AppendTotalsRow(sb, visibleColumns, rows, "Итого", "totals-row", productQty);
       }
       else
       {
@@ -640,6 +648,46 @@ namespace Velum.UI.AssemblyRegistry
       sb.Append("<tr><th class=\"meta-label\">").Append(Escape(label ?? string.Empty))
           .Append("</th><td class=\"meta-value\">").Append(Escape(value ?? string.Empty))
           .AppendLine("</td></tr>");
+    }
+
+    /// <summary>
+    /// Собирает строку «Фильтры» для шапки отчёта: перечисляет поля с применёнными
+    /// фильтрами в формате <c>поле (=токен1, токен2)</c> через точку с запятой.
+    /// Берёт фактически применённый фильтр (<paramref name="activeFilters"/>, если задан),
+    /// иначе — фильтр из шаблона столбца. Пустые фильтры пропускаются.
+    /// </summary>
+    private static string BuildFiltersSummary(
+        IList<VelumAssemblyRegistryColumnDef> columns,
+        IList<string> activeFilters)
+    {
+      if (columns == null || columns.Count == 0)
+        return string.Empty;
+
+      var parts = new List<string>();
+      for (int i = 0; i < columns.Count; i++)
+      {
+        VelumAssemblyRegistryColumnDef col = columns[i];
+        if (col == null)
+          continue;
+
+        string expression = null;
+        if (activeFilters != null && i < activeFilters.Count)
+          expression = activeFilters[i];
+        if (string.IsNullOrWhiteSpace(expression))
+          expression = col.Filter;
+
+        string formatted = VelumListFilterFormatter.Format(expression);
+        if (formatted.Length == 0)
+          continue;
+
+        string caption = VelumAssemblyRegistryColumnStore.CaptionFromName(col.Name);
+        if (string.IsNullOrEmpty(caption))
+          caption = col.Name ?? " ";
+
+        parts.Add(caption + " (" + formatted + ")");
+      }
+
+      return string.Join("; ", parts.ToArray());
     }
 
     private static void AppendStyles(StringBuilder sb)

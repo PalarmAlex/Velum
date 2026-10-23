@@ -492,7 +492,8 @@ namespace Velum.UI
           BuildReportSelectionLabel(),
           _activeColumns,
           rows,
-          productQty);
+          productQty,
+          _activeFilters);
 
       string folder = VelumAssemblyRegistryReportHtmlBuilder.ReportsFolderPath;
       string path;
