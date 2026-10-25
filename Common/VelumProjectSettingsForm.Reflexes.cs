@@ -108,6 +108,7 @@ namespace Velum.UI
       _tbCrxSensoryHighStrengthThreshold.Text = F(m.SensoryHighStrengthThreshold);
       _tbCrxSensoryHighStrengthDecayRate.Text = F(m.SensoryHighStrengthDecayRate);
       _tbCrxSensoryMidStrengthThreshold.Text = F(m.SensoryMidStrengthThreshold);
+      _tbCrxTransitiveChainStepEvaluationTimeout.Text = I(m.TransitiveChainStepEvaluationTimeout);
     }
 
     /// <summary>
@@ -221,6 +222,8 @@ namespace Velum.UI
       m.SensoryHighStrengthDecayRate = sensHighDecay;
       if (!TryGetFloat(_tbCrxSensoryMidStrengthThreshold, out float sensMid)) return FieldError("Средняя зона крепости CS↔CS", out error);
       m.SensoryMidStrengthThreshold = sensMid;
+      if (!TryGetInt(_tbCrxTransitiveChainStepEvaluationTimeout, out int chainEvalTimeout)) return FieldError("Таймаут оценки шага цепочки", out error);
+      m.TransitiveChainStepEvaluationTimeout = chainEvalTimeout;
 
       return true;
     }

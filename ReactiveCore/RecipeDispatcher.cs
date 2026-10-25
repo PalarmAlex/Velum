@@ -101,6 +101,9 @@ namespace Velum.ReactiveCore
       {
         LogDispatchFailure(recipe, adaptiveActionId, pulse, activationPulse, result);
         RecipeMotorOutcomeNotifier.TryNotify(recipe, result);
+        // Оценка шага транзитивной цепочки: провал мотор-действия → false (цепочка остановится).
+        VelumChainStepOutcomeReporter.Report(
+            result?.Steps, false, recipe.RecipeId);
         return false;
       }
 
@@ -113,6 +116,11 @@ namespace Velum.ReactiveCore
           " pulse=" + pulse.ToString(CultureInfo.InvariantCulture) +
           " doc=" + docKey);
       RecipeMotorOutcomeNotifier.TryNotify(recipe, result);
+
+      // Оценка шага транзитивной цепочки: фактический исход действия (для диалогов —
+      // подтверждение оператора), а не только «рецепт отработал без исключения».
+      VelumChainStepOutcomeReporter.Report(
+          result?.Steps, result != null && result.Success, recipe.RecipeId);
 
       // Сообщить ISIDA: мотор завершён — переснять «до»-снимок и перезапустить таймер ожидания.
       // Оценка автоматизма будет по дельте состояния (ответ среды), а не по кнопкам формы.

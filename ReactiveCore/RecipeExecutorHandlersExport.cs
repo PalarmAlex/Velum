@@ -73,15 +73,16 @@ namespace Velum.ReactiveCore
         return true;
       }
 
-      VelumDxfExportDialogHost.TryShowModal(modelDoc, fromConditionedReflex);
+      VelumDxfExportDialogHost.TryShowModal(modelDoc, fromConditionedReflex, out bool dxfConfirmed);
 
       result = new RecipeStepExecutionResult(
           index,
           "invoke",
           true,
           false,
-          "export_documentation_dialog_closed " + docHint);
-      Logger.Info("Velum export_documentation_dialog closed " + docHint);
+          "export_documentation_dialog_closed " + docHint,
+          dxfConfirmed);
+      Logger.Info("Velum export_documentation_dialog closed confirmed=" + dxfConfirmed + " " + docHint);
       return true;
     }
 
@@ -141,15 +142,16 @@ namespace Velum.ReactiveCore
         return true;
       }
 
-      VelumPdfExportDialogHost.TryShowModal(modelDoc, fromConditionedReflex);
+      VelumPdfExportDialogHost.TryShowModal(modelDoc, fromConditionedReflex, out bool pdfConfirmed);
 
       result = new RecipeStepExecutionResult(
           index,
           "invoke",
           true,
           false,
-          "export_drawing_pdf_dialog_closed " + docHint);
-      Logger.Info("Velum export_drawing_pdf_dialog closed " + docHint);
+          "export_drawing_pdf_dialog_closed " + docHint,
+          pdfConfirmed);
+      Logger.Info("Velum export_drawing_pdf_dialog closed confirmed=" + pdfConfirmed + " " + docHint);
       return true;
     }
 

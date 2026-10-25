@@ -22,9 +22,15 @@ namespace Velum.ReactiveCore.Export
     /// кнопка «Запрет» активна — она штрафует путь активации (связь CS₁→CS₂ при
     /// срабатывании через сенсорный гейт, иначе крепость у-рефлекса).
     /// </param>
+    /// <param name="confirmed">
+    /// Подтвердил ли пользователь экспорт (диалог закрыт с <c>DialogResult.OK</c>).
+    /// <c>false</c> — отмена, закрытие окна либо ранний выход без показа диалога.
+    /// Используется для оценки шага транзитивной цепочки.
+    /// </param>
     /// <returns>true, если шаг обработан.</returns>
-    internal static bool TryShowModal(ModelDoc2 modelDoc, bool fromConditionedReflex)
+    internal static bool TryShowModal(ModelDoc2 modelDoc, bool fromConditionedReflex, out bool confirmed)
     {
+      confirmed = false;
       if (!VelumAdminAccess.TryRequireAdmin(null, VelumAdminAccess.FormDeniedMessage))
         return false;
 
@@ -73,7 +79,8 @@ namespace Velum.ReactiveCore.Export
 
         using (var dialog = new VelumDxfExportDialog(modelDoc, episode))
         {
-          dialog.ShowDialog();
+          DialogResult dr = dialog.ShowDialog();
+          confirmed = dr == DialogResult.OK;
         }
 
         VelumSolidProbeRefreshPlanner.MarkExportDocumentationStale();

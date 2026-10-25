@@ -47,6 +47,9 @@ namespace Velum.UI
     public float SensoryHighStrengthThreshold { get; set; } = 0.8f;
     public float SensoryHighStrengthDecayRate { get; set; } = 0.998f;
     public float SensoryMidStrengthThreshold { get; set; } = 0.4f;
+
+    // ----- Транзитивные цепочки -----
+    public int TransitiveChainStepEvaluationTimeout { get; set; } = 5;
   }
 
   /// <summary>Результат чтения <c>.dat</c>: модель плюс признаки для диалога настроек.</summary>
@@ -194,6 +197,9 @@ namespace Velum.UI
           case "SensoryMidStrengthThreshold":
             m.SensoryMidStrengthThreshold = ParseFloat(value, result);
             break;
+          case "TransitiveChainStepEvaluationTimeout":
+            m.TransitiveChainStepEvaluationTimeout = ParseInt(value, result);
+            break;
           // Устаревшие ключи (half-life / protection ratio) — молча игнорируем.
           case "PassiveDecayProtectionRatio":
           case "PassiveDecayHalfLifePulses":
@@ -257,7 +263,8 @@ namespace Velum.UI
         "# SensoryStrengthFloor: нижний предел крепости для кривой затухания CS→CS",
         "# SensoryHighStrengthThreshold: верхняя зона CS→CS (затухание по SensoryHighStrengthDecayRate)",
         "# SensoryHighStrengthDecayRate: эффективный коэффициент затухания устойчивых связей CS→CS",
-        "# SensoryMidStrengthThreshold: средняя зона CS→CS (выше — λ^C, ниже — λ^√C)"
+        "# SensoryMidStrengthThreshold: средняя зона CS↔CS (выше — λ^C, ниже — λ^√C)",
+        "# TransitiveChainStepEvaluationTimeout: макс. время ожидания оценки мотор-действия в транзитивной цепочке (пульсы, 0 = без таймаута)"
       };
 
       lines.Add("LearningRate=" + F(m.LearningRate));
@@ -284,6 +291,7 @@ namespace Velum.UI
       lines.Add("SensoryHighStrengthThreshold=" + F(m.SensoryHighStrengthThreshold));
       lines.Add("SensoryHighStrengthDecayRate=" + F(m.SensoryHighStrengthDecayRate));
       lines.Add("SensoryMidStrengthThreshold=" + F(m.SensoryMidStrengthThreshold));
+      lines.Add("TransitiveChainStepEvaluationTimeout=" + m.TransitiveChainStepEvaluationTimeout.ToString(Inv));
 
       // Атомарная запись через временный файл, чтобы сбой не оставил усечённый .dat.
       string tmp = filePath + ".tmp";
@@ -338,11 +346,15 @@ namespace Velum.UI
       if (m.SensoryMidStrengthThreshold >= m.SensoryHighStrengthThreshold)
         errors.Add("Средняя зона крепости CS↔CS должна быть меньше верхней зоны.");
 
+      // 0 — «ждать вечно», верхняя граница — сутки пульсов (как у периодов угасания).
+      CheckInt(errors, "Таймаут оценки шага транзитивной цепочки (пульсы)",
+          m.TransitiveChainStepEvaluationTimeout, 0, 86400);
+
       return errors;
     }
 
     // Количество «канонических» ключей, записываемых в файл (для детекта неполного файла).
-    private const int ExpectedKeyCount = 24;
+    private const int ExpectedKeyCount = 25;
 
     private static string NormalizeKey(string key)
     {

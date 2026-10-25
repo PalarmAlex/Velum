@@ -170,6 +170,8 @@
     <Compile Include="ReactiveCore\RecipeDispatchEpisodeTracker.cs" />
     <Compile Include="ReactiveCore\RecipeDispatcher.cs" />
     <Compile Include="ReactiveCore\RecipeMotorOutcomeNotifier.cs" />
+    <Compile Include="ReactiveCore\VelumChainStepOutcomeRules.cs" />
+    <Compile Include="ReactiveCore\VelumChainStepOutcomeReporter.cs" />
     <Compile Include="ReactiveCore\VelumReactiveCoreBootstrap.cs" />
     <Compile Include="Isida\VelumIsidaHost.cs" />
     <Compile Include="Isida\VelumProblemContextHint.cs" />
