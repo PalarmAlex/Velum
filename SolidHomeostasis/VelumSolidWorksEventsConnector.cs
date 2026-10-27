@@ -63,6 +63,12 @@ namespace Velum.SolidHomeostasis
     private static DDrawingDocEvents_RegenPostNotifyEventHandler _drawingRegenPost;
     private static int _activeModelDocChangeDepth;
 
+    /// <summary>
+    /// Гейт рекурсии тихого доспасива (<see cref="TrySilentResaveAfterPropertyWrites"/>):
+    /// Save3 порождает вложенный FileSavePostNotify — без флага он снова захотел бы Save3.
+    /// </summary>
+    private static bool _silentResaveInProgress;
+
     private static readonly VelumSolidProbeCategory RegenStaleCategories =
         VelumSolidProbeCategory.PartMaterial;
 
@@ -969,12 +975,82 @@ namespace Velum.SolidHomeostasis
         // ActiveModelDocChangeNotify при этом не приходит. Пересинхронизировать
         // область скана целостности, чтобы closed-область не осталась устаревшей.
         VelumProductRegistryIntegrityScheduler.NotifyOpenDocumentsScopeChanged();
+
+        // Все пост-save записи свойств (ExternalId, материал, габариты листа, штампы DXF/PDF,
+        // путь чертежа) подняли GetSaveFlag. Тихо дожимаем на диск, чтобы к моменту закрытия
+        // документа он был чистым и SolidWorks не показывал штатный диалог «Сохранить изменения».
+        TrySilentResaveAfterPropertyWrites(modelDoc, fileName);
       }
       catch
       {
       }
 
       return 0;
+    }
+
+    /// <summary>
+    /// Тихий доспасив (<c>Save3</c> silent) после пост-save записей свойств, вернувших документу
+    /// флаг изменения. Вызывается из <see cref="OnModelFileSavePostNotify"/> для всех типов
+    /// документов (деталь / сборка / чертёж), поэтому снимает диалог сохранения при закрытии
+    /// на любом из них.
+    /// <para>
+    /// Гейты: только нативное сохранение (экспорт DXF/PDF/STEP тоже шлёт FileSavePostNotify,
+    /// но трогать PropertyManager экспорта нельзя — E1); только когда документ реально стал
+    /// грязным (<c>GetSaveFlag</c>); гейт <see cref="_silentResaveInProgress"/> гасит рекурсию
+    /// (сам Save3 порождает вложенный FileSavePostNotify). Запись выполняется под
+    /// <see cref="VelumExportDocumentationGeometryStampHelper.RunWithGeometryPendingStampSyncSuppressed"/>,
+    /// иначе рост <c>GetUpdateStamp</c> от доспасива ложно зажжёт устаревание DXF/PDF (E63/E64).
+    /// </para>
+    /// </summary>
+    private static void TrySilentResaveAfterPropertyWrites(ModelDoc2 modelDoc, string fileName)
+    {
+      if (modelDoc == null || _silentResaveInProgress)
+        return;
+
+      try
+      {
+        int docType = modelDoc.GetType();
+        string nativeExtension =
+            docType == (int)swDocumentTypes_e.swDocPART ? ".sldprt" :
+            docType == (int)swDocumentTypes_e.swDocASSEMBLY ? ".sldasm" :
+            docType == (int)swDocumentTypes_e.swDocDRAWING ? ".slddrw" : null;
+
+        // Экспорт (Save As → DXF/PDF/STEP) или несохранённый документ — не трогаем.
+        if (nativeExtension == null ||
+            !VelumSolidWorksSaveFileNameHelper.IsNativeSavePath(fileName, nativeExtension))
+          return;
+
+        if (!modelDoc.GetSaveFlag())
+          return;
+
+        _silentResaveInProgress = true;
+        try
+        {
+          VelumExportDocumentationGeometryStampHelper.RunWithGeometryPendingStampSyncSuppressed(
+              () =>
+              {
+                int saveErrors = 0;
+                int saveWarnings = 0;
+                if (!modelDoc.Save3(
+                        (int)swSaveAsOptions_e.swSaveAsOptions_Silent,
+                        ref saveErrors,
+                        ref saveWarnings))
+                {
+                  Logger.Warning(
+                      "Velum silent resave after save failed: errors=" + saveErrors +
+                      " warnings=" + saveWarnings + " path=\"" + fileName + "\"");
+                }
+              });
+        }
+        finally
+        {
+          _silentResaveInProgress = false;
+        }
+      }
+      catch (Exception ex)
+      {
+        Logger.Warning("Velum silent resave after save: " + ex.Message);
+      }
     }
 
     private static void NotifyPartGeometryModifiedForCurrentDocument()
