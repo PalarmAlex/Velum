@@ -1,5 +1,0 @@
-# Группа сценариев оператора
-# SCENARIO_GROUP_LINES_FORMAT|1
-# SCENARIO_GROUP_META|Базовая прошивка|Базовая прошивка сммбионта|20|1
-# SCENARIO_GROUP_MEMBER|SortOrder|ScenarioId|PreRunStage|Clear|Norm|Obs|Auth
-# SCENARIO_GROUP_MEMBER|1|8|1|1|1|0|1
