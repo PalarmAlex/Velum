@@ -1,0 +1,13 @@
+# Формат: ID|ParentID|BaseID|EmotionID|UnderstandingNodeId|NodePID|TriggerId|ActionId#Effect|Count|StimulsEffect|IsTeacher (после # 4 поля; порядок: обход в глубину, родитель перед детьми)
+# ID: уникальный идентификатор узла
+# ParentID: ID родительского узла (0 для корня)
+# BaseID: Базовое состояние. -1: Плохо 0: Норма 1: Хорошо
+# EmotionID: Образ эмоции
+# UnderstandingNodeId: ID активного узла дерева понимания ситуации
+# NodePID: ID узла дерева проблем
+# TriggerId: ID образа стимула
+# ActionId: ID образа ответа
+# Effect: изменение полезности прямого правила (-10..+10); для учителя 0
+# Count: число подтверждений применения
+# StimulsEffect: для прямого — значимость стимула; для учителя — оценка с пульта (-10..10)
+# IsTeacher: 1 — учительское правило (оценка в StimulsEffect), 0 — прямое

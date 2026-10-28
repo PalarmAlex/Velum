@@ -44,19 +44,9 @@ recipes:
       - type: invoke
         handler: export_drawing_pdf_dialog
 
-  - id: finalize_dxf_metadata_dialog
-    display_name: Обновить штамп DXF
-    description: "Фиксация пути, имени, вида и штампа после ручной выгрузки DXF"
-    adaptive_action_id: 44
-    reactive_eligible: true
-    steps:
-      - type: invoke
-        handler: finalize_dxf_metadata_dialog
-
   - id: ensure_blank_size_links
     display_name: Ссылки Толщина/Длина/Ширина (лист)
     description: >
-      Только листовая деталь: выставляет или чинит живые ссылки свойств заготовки.
     adaptive_action_id: 45
     reactive_eligible: true
     steps:
@@ -77,8 +67,6 @@ recipes:
   - id: write_drawing_path
     display_name: Записать путь чертежа
     description: >
-      Для активного .slddrw — прописывает «путь чертежа» во все referenced детали/сборки
-      (идемпотентно). Для детали/сборки — пишет путь из аргумента drawing_path.
     adaptive_action_id: 47
     reactive_eligible: true
     steps:
@@ -86,12 +74,30 @@ recipes:
         handler: write_drawing_path
 
   - id: bom_exchange_show_dialog
-    display_name: Обмен BOM с 1С
-    description: >
-      Диалог формирования CSV-файла обмена с 1С: расхождения состава
-      и отслеживаемых свойств компонентов с момента последнего обмена.
+    display_name: Обмен данными с 1С
+    description: Формирование файла CSV для обмена данными с 1С о компонентах сборок
     adaptive_action_id: 48
     reactive_eligible: true
     steps:
       - type: invoke
         handler: bom_exchange_show_dialog
+
+  - id: recipe_20261019_101547
+    display_name: Обновить модель
+    description: Обновить модель сборки/детали
+    adaptive_action_id: 49
+    reactive_eligible: true
+    steps:
+      - type: invoke
+        handler: rebuild
+
+  - id: recipe_20261019_110034
+    display_name: Сохранить существующий документ
+    description: Сохранить текущий существующий документ
+    adaptive_action_id: 50
+    reactive_eligible: true
+    steps:
+      - type: invoke
+        handler: run_sw_command
+        command_id: 2
+

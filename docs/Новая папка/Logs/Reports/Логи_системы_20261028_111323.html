@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html><head><meta charset="utf-8"/>
+<title>Логи системы</title>
+<style>
+body{font-family:Segoe UI,Tahoma,sans-serif;margin:10px;color:#222;}
+h1{font-size:14px;color:#1565C0;margin:0 0 4px;font-weight:600;}
+h2{font-size:12px;color:#37474F;margin:10px 0 2px;border-bottom:1px solid #B0BEC5;padding-bottom:2px;}
+table{border-collapse:collapse;width:100%;margin:4px 0;font-size:12px;}
+th,td{border:1px solid #CFD8DC;padding:2px 6px;text-align:left;vertical-align:middle;line-height:1.25;color:#000;white-space:nowrap;}
+th{background:#ECEFF1;font-weight:600;cursor:help;}
+td[title]{cursor:help;}
+table.data-zebra tr:nth-child(even){background:#FAFAFA;}
+td.fill-red{background:#F8D0D0;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+td.fill-yellow{background:#FBF3C0;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+td.fill-green{background:#D3F0D3;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.muted{color:#78909C;}
+.footer{margin-top:10px;font-size:10px;}
+table.meta-table{width:100%;table-layout:fixed;margin:2px 0 4px;}
+table.meta-table th.meta-label{width:12%;min-width:80px;max-width:120px;font-size:10px;font-weight:600;padding:1px 6px;background:#ECEFF1;}
+table.meta-table td.meta-value{width:88%;font-size:11px;padding:1px 6px;line-height:1.25;word-wrap:break-word;}
+@media print{body{margin:6px;} h1{color:#000;} th{background:#eee !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;} td{color:#000 !important;}}
+</style>
+</head><body>
+<h1>Логи системы</h1>
+<table class="meta-table">
+<tr><th class="meta-label">Отчёт</th><td class="meta-value">Системный лог агента</td></tr>
+<tr><th class="meta-label">Сформировано</th><td class="meta-value">28.10.2026 11:13:58</td></tr>
+<tr><th class="meta-label">Записей</th><td class="meta-value">2</td></tr>
+</table>
+<table class="data-zebra">
+<tr><th title="Время записи в сессии.">Время</th><th title="Номер пульса системы (1 пульс = 1 секунда).">Пульс</th><th title="Код состояния гомеостаза: -1 плохо, 0 норма, 1 хорошо.">Состояние</th><th title="Стили поведения на пульсе (наведите — расшифровка).">Стиль</th><th title="Тип темы мышления и её вес.">Тема</th><th title="Пусковой стимул: воздействие, фразы, команды, тон, настроение, цвет.">Триггер</th><th title="Давление метрик среды (id:величина).">Среда</th><th title="Ориентировочный рефлекс или уровень мышления (УМ1/УМ2).">ОР/УМ</th><th title="Признак опасной ситуации в информационной среде.">Опасно</th><th title="Признак актуальной ситуации в информационной среде.">Актуально</th><th title="Безусловный (генетический) рефлекс и его действия.">Б/у рефлекс</th><th title="Условный рефлекс и действия исходного безусловного.">Усл. рефлекс</th><th title="Автоматизм: действия, фразы, тон, настроение, полезность.">Автоматизм</th><th title="Активная цепочка рефлексов (ChainId:ActionId).">Цепочка РФ</th><th title="Активная цепочка автоматизмов (ChainId:ActionId).">Цепочка АВ</th><th title="Номер текущего главного цикла мышления.">Цикл М</th><th title="Фоновые циклы мышления (JSON).">Циклы Ф</th></tr>
+<tr><td>11:13:47</td><td>26</td><td class="fill-green" title="ХОРОШО">1</td><td title="Нет проблем с документацией">9</td><td>-</td><td title="Воздействие: нет
+Фразы: нет
+Команды: 3:sw:2
+Тон: —
+Настроение: —
+Цветовой фон: Белый">29</td><td title="На этом пульсе давление метрик среды не применялось">-</td><td title="Нет активации ОР или уровня мышления">-</td><td>0</td><td>0</td><td title="Нет данных о действиях рефлекса">-</td><td title="Нет данных о действиях рефлекса">-</td><td title="Нет данных о действиях автоматизма">-</td><td title="Нет активных цепочек рефлексов">-</td><td title="Нет активных цепочек автоматизмов">-</td><td>-</td><td>-</td></tr>
+<tr><td>11:13:23</td><td>21</td><td class="fill-red" title="ПЛОХО">-1</td><td title="Проблемы с документацией">3</td><td>-</td><td title="Воздействие: нет
+Фразы: sw:2
+Команды: нет
+Тон: Нормальный (0)
+Настроение: Нормальное (0)
+Цветовой фон: Чёрный">17</td><td title="На этом пульсе давление метрик среды не применялось">-</td><td title="Нет активации ОР или уровня мышления">-</td><td>0</td><td>0</td><td title="Нет данных о действиях рефлекса">-</td><td title="Действия: Перестроить модель">5</td><td title="Нет данных о действиях автоматизма">-</td><td title="Нет активных цепочек рефлексов">-</td><td title="Нет активных цепочек автоматизмов">-</td><td>-</td><td>-</td></tr>
+</table>
+<p class="muted footer">Сформировано Velum. Наведите курсор на ячейку или заголовок для подсказки.</p>
+</body></html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta charset="utf-8" />
+  <title>Суффиксы имени DXF — Справка Velum</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <div id="velum-nav" class="nav" data-base="../"></div>
+    <div class="content">
+      <h1>Суффиксы имени DXF</h1>
+      <p class="lead">Выбор готового суффикса для шаблона имени файла DXF. Список хранится в настройках Velum (<code>Settings.xml</code>) и используется из пакетной диагностики и одиночного экспорта. При открытии с деталью новые имена свойств модели могут добавляться в список (старые не удаляются).</p>
+      <p class="meta">Окно: «Суффиксы имени DXF» · раздел: <code>dxf-suffixes</code></p>
+
+      <h2>Как открыть</h2>
+      <p>Кнопка <strong>Суффиксы…</strong> в окне <a href="dxf-batch.html">пакетной диагностики DXF</a> или в диалоге <a href="dxf-export.html">экспорта DXF</a>.</p>
+
+      <div class="figure">
+        <img src="../images/img_19.png" alt="Суффиксы имени DXF — фильтр и список" />
+        <p class="caption">Сверху — фильтр списка (Применить / Сброс / ?); в середине — столбец «Суффикс»; внизу — <strong>Вставить</strong> и <strong>Отмена</strong>.</p>
+      </div>
+
+      <h2>Элементы окна</h2>
+      <table>
+        <thead><tr><th>Элемент</th><th>Назначение</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Поле фильтра + <strong>Применить</strong> / <strong>Сброс</strong> / <strong>?</strong></td>
+            <td>Отбор строк по имени суффикса (маски — <a href="../shared/list-filters.html">как в других формах</a>). Enter в поле фильтра тоже применяет маску. «Сброс» очищает фильтр и показывает полный список. «?» — справка по маскам.</td>
+          </tr>
+          <tr>
+            <td>Список (столбец <strong>Суффикс</strong>)</td>
+            <td>Имена фрагментов для шаблона файла: свойства детали/конфигурации и служебные поля учёта DXF (материал, толщина, вид проекции, отпечаток файла и т.п.). Выделите одну строку.</td>
+          </tr>
+          <tr>
+            <td><strong>Вставить</strong></td>
+            <td>Передать выбранный суффикс в шаблон имени родительского диалога и закрыть окно. Preview «Итоговое имя файла» в родителе обновится.</td>
+          </tr>
+          <tr>
+            <td><strong>Отмена</strong></td>
+            <td>Закрыть без вставки.</td>
+          </tr>
+          <tr>
+            <td>Кнопка справки (иконка)</td>
+            <td>Этот раздел справки.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Что бывает в списке</h2>
+      <p>Набор зависит от Settings и свойств деталей. Часто встречаются, например:</p>
+      <ul>
+        <li><strong>Материал</strong>, <strong>Толщина</strong>, <strong>Длина</strong>, <strong>Масса</strong>, <strong>Прокат</strong>, <strong>Плотность</strong>, <strong>Площадь</strong> — свойства модели;</li>
+        <li><strong>Вид проекции dxf</strong>, <strong>Имя файла dxf</strong>, <strong>Отпечаток файла dxf</strong>, <strong>Нужен dxf</strong> — поля учёта выгрузки;</li>
+        <li><strong>Наименование</strong> и другие пользовательские свойства.</li>
+      </ul>
+      <div class="note">
+        Токены количества (<code>[Quantity]</code> / <code>[Кол-во]</code>) в этот список не попадают: суффикс « - N шт» на пакетной форме задаётся флажком «Добавить кол-во по сборке» и полем «Кол-во изделия» (N = кол-во в сборке × кол-во изделия).
+      </div>
+
+      <h2>Порядок работы</h2>
+      <ol>
+        <li>При необходимости отфильтруйте список.</li>
+        <li>Выделите нужный суффикс.</li>
+        <li>Нажмите <strong>Вставить</strong>.</li>
+      </ol>
+
+      <div class="seealso">
+        <h2>См. также</h2>
+        <ul>
+          <li><a href="dxf-batch.html">Пакетная диагностика DXF</a></li>
+          <li><a href="dxf-export.html">Экспорт DXF</a></li>
+          <li><a href="../shared/list-filters.html">Фильтры списков</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <script src="../shared/nav.js"></script>
+</body>
+</html>

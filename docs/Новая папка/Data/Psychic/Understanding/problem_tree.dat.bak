@@ -1,0 +1,6 @@
+# Формат записи: ID|ParentID|AutTreeID|SituationTreeID|ThemeID|PurposeID
+# ID: уникальный идентификатор узла дерева проблем
+# AutTreeID: ID узла дерева автоматизмов
+# SituationTreeID: ID образа ситуации
+# ThemeID: ID образа темы мышления
+# PurposeID: ID образа цели

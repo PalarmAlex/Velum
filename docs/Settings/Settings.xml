@@ -10,7 +10,7 @@
     <DynamicTime>2</DynamicTime>
     <DefaultGeneticReflexId>0</DefaultGeneticReflexId>
     <FirstRun>1</FirstRun>
-    <LogEnabled>true</LogEnabled>
+    <LogEnabled>True</LogEnabled>
     <DefaultFormatLog>All</DefaultFormatLog>
     <LogsFolderPath>C:\ProgramData\VELUM\Logs</LogsFolderPath>
     <BootDataFolderPath>C:\ProgramData\VELUM\BootData</BootDataFolderPath>
@@ -28,37 +28,56 @@
     <AdaptersFolderPath>C:\ProgramData\VELUM\Adapters</AdaptersFolderPath>
     <SolidEnvironmentMetricDeltaEpsilon>0.51</SolidEnvironmentMetricDeltaEpsilon>
     <SolidHostImpulseMinParameterDelta>0.25</SolidHostImpulseMinParameterDelta>
-    <SolidHomeostasisPulseTrace>false</SolidHomeostasisPulseTrace>
+    <SolidHomeostasisPulseTrace>False</SolidHomeostasisPulseTrace>
     <SolidProbeTimeoutMs>2500</SolidProbeTimeoutMs>
     <SolidProbeUseStaleSnapshotOnTimeout>true</SolidProbeUseStaleSnapshotOnTimeout>
-    <HeavyMetricsPulsePeriod>5</HeavyMetricsPulsePeriod>
+    <HeavyMetricsPulsePeriod>3</HeavyMetricsPulsePeriod>
     <CadDegradedEnterThreshold>50</CadDegradedEnterThreshold>
     <CadDegradedExitThreshold>60</CadDegradedExitThreshold>
     <RecipeDispatchEnabled>true</RecipeDispatchEnabled>
     <RecipeDispatchCooldownPulses>3</RecipeDispatchCooldownPulses>
-    <DxfFileNameTemplate></DxfFileNameTemplate>
-    <DxfFileNameTemplateLastUsed></DxfFileNameTemplateLastUsed>
-    <DxfFileNameSuffixList></DxfFileNameSuffixList>
+    <DxfFileNameTemplate>Материал; Толщина мм</DxfFileNameTemplate>
+    <DxfFileNameTemplateLastUsed>Материал; Толщина мм</DxfFileNameTemplateLastUsed>
+    <DxfFileNameSuffixList>ExternalId|Длина|Масса.кг.|Материал|Наименование|Нужен dxf|Нужен чертеж|Обозначение|Плотность|Площадь.м.кв.|Прокат|Стандарт|Толщина|Формат|Ширина|Штамп изменения геометрии dxf</DxfFileNameSuffixList>
     <DxfBatchDefaultDxfFolder></DxfBatchDefaultDxfFolder>
     <PdfBatchDefaultPdfFolder></PdfBatchDefaultPdfFolder>
     <AssemblyRegistryDxfExportFolder></AssemblyRegistryDxfExportFolder>
     <AssemblyRegistryPdfExportFolder></AssemblyRegistryPdfExportFolder>
-    <MaterialBatchDefaultPartsFolder></MaterialBatchDefaultPartsFolder>
+    <MaterialBatchDefaultPartsFolder>Z:\03_Производство\001_Стойловое оборудование\1000_Станки\025_Приводная станция скрепера\Приводная станция\Детали</MaterialBatchDefaultPartsFolder>
     <DocumentPropertyBatchDefaultCatalogFolder></DocumentPropertyBatchDefaultCatalogFolder>
     <DocumentPropertyPartTemplatePath>Деталь.prtprp</DocumentPropertyPartTemplatePath>
     <DocumentPropertyAsmTemplatePath>Сборка.asmprp</DocumentPropertyAsmTemplatePath>
     <BatchProjectRootPartsFolderName>Детали</BatchProjectRootPartsFolderName>
-    <DxfDefaultProjectionView>Front</DxfDefaultProjectionView>
-    <DxfDefaultOutputFolder>C:\Users\user_\Desktop\Новая папка\Детали</DxfDefaultOutputFolder>
-    <PdfDefaultOutputFolder></PdfDefaultOutputFolder>
+    <DxfDefaultProjectionView>Bottom</DxfDefaultProjectionView>
+    <DxfDefaultOutputFolder>Z:\03_Производство\001_Стойловое оборудование\1030_Цех\Станки\001.1030.П002_Пробивка паза\Детали</DxfDefaultOutputFolder>
+    <PdfDefaultOutputFolder>Z:\03_Производство\001_Стойловое оборудование\020_Ограждения\050_Секции\Станки\001.020.050.С001.Пробивка секций</PdfDefaultOutputFolder>
+    <NeedDxfDefault>False</NeedDxfDefault>
+    <NeedPdfDefault>True</NeedPdfDefault>
+    <NeedDrawingDefault>True</NeedDrawingDefault>
     <CommandBufferIdleFlushMs>3000</CommandBufferIdleFlushMs>
-    <CommandBufferRecordingEnabled>true</CommandBufferRecordingEnabled>
+    <CommandBufferRecordingEnabled>True</CommandBufferRecordingEnabled>
     <CommandBufferMaxTokens>64</CommandBufferMaxTokens>
     <CommandBufferMaxAgeMs>120000</CommandBufferMaxAgeMs>
     <EnvironmentRecipesFilePath>%ProgramData%\VELUM\BootData\Environment\EnvironmentRecipes.yaml</EnvironmentRecipesFilePath>
-    <ProductRegistryAccessLevel>user</ProductRegistryAccessLevel>
-    <ProductRegistryFolderPath>%ProgramData%\VELUM\ProductRegistry</ProductRegistryFolderPath>
+    <BomExchangeFolder>Z:\03_Производство\Реестр изделий\update_1S</BomExchangeFolder>
+    <ProductRegistryAccessLevel>admin</ProductRegistryAccessLevel>
+    <ProductRegistryFolderPath>Z:\03_Производство\Реестр изделий</ProductRegistryFolderPath>
     <TechRequirementsFolderPath>%ProgramData%\VELUM\TechRequirements</TechRequirementsFolderPath>
     <AssemblyRegistryFolderPath>%ProgramData%\VELUM\AssemblyRegistry</AssemblyRegistryFolderPath>
+    <Stage2SearchPlayStyleIds>3,5,7</Stage2SearchPlayStyleIds>
+    <VerbalAuthoritativeMode>False</VerbalAuthoritativeMode>
+    <ObservationMode>False</ObservationMode>
+    <SolidHomeostasisDebugLog>False</SolidHomeostasisDebugLog>
+    <LogFormat>All</LogFormat>
+    <AssemblyRegistryLastTemplate>Сводка деталей</AssemblyRegistryLastTemplate>
+    <DocumentColorPart>1</DocumentColorPart>
+    <DocumentColorAssembly>2</DocumentColorAssembly>
+    <DocumentColorDrawing>3</DocumentColorDrawing>
+    <DocumentRootPaths>Z:\03_Производство</DocumentRootPaths>
+    <ScannerProbeConcurrency>64</ScannerProbeConcurrency>
+    <ScannerBatchSize>4000</ScannerBatchSize>
+    <BomExchangeOnlyRegisteredInProductRegistry>True</BomExchangeOnlyRegisteredInProductRegistry>
+    <ScannerUnavailableRootPollPulses>30</ScannerUnavailableRootPollPulses>
+    <BomDiffScanPeriodPulses>3</BomDiffScanPeriodPulses>
   </AppSettings>
 </Configuration>

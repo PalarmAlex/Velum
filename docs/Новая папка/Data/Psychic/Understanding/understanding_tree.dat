@@ -1,0 +1,5 @@
+# ID|ParentID|Mood|EmotionID|SituationID
+# Дерево понимания ситуации
+1|0|-1|0|0
+2|0|0|0|0
+3|0|1|0|0

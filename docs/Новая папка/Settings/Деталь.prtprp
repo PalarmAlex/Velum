@@ -1,0 +1,118 @@
+<CPTemplate>
+  <AppVersion>27</AppVersion>
+  <GroupBox Label="Детали" PropName="Окно группы2" DefaultState="Expanded">
+    <Control Label="Шапка" PropName="Шапка" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True">
+      <Data Path="" SourceType="List">
+        <Item>Конструкция</Item>
+      </Data>
+    </Control>
+    <Control Label="Обозначение детали" PropName="Обозначение" DefaultValue="$PRP:&quot;SW- Имя файла(File Name)&quot;" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True">
+      <Data Path="" SourceType="List">
+        <Item>$PRP:"SW- Имя файла(File Name)"</Item>
+        <Item>$PRP:"SW- Имя конфигурации(Configuration Name)"</Item>
+      </Data>
+    </Control>
+    <Control Label="Обозначение детали для чертежа" PropName="Обозначение для чертежа" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True" DefaultValue="$PRP:&quot;SW- Имя файла(File Name)&quot;">
+      <Data Path="" SourceType="List">
+        <Item>$PRP:"SW- Имя файла(File Name)"</Item>
+        <Item>$PRP:"SW- Имя конфигурации(Configuration Name)"</Item>
+      </Data>
+    </Control>
+    <Control Label="Наименование детали" PropName="Наименование" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True">
+      <Data Path="" SourceType="List">
+        <Item>Балка</Item>
+        <Item>Заглушка</Item>
+        <Item>Косынка</Item>
+        <Item>Лист</Item>
+        <Item>Накладка</Item>
+        <Item>Опора</Item>
+        <Item>Пластина</Item>
+        <Item>Прогон</Item>
+        <Item>Пята</Item>
+        <Item>Рама</Item>
+        <Item>Распорка</Item>
+        <Item>Ребро</Item>
+        <Item>Ригель</Item>
+        <Item>Связь</Item>
+        <Item>Стойка</Item>
+        <Item>Сухарь</Item>
+        <Item>Фасонка</Item>
+        <Item>Фахверк</Item>
+        <Item>Фланец</Item>
+        <Item>Шайба</Item>
+      </Data>
+    </Control>
+    <Control Label="Организация" PropName="Организация" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True" DefaultValue="ООО Стройкомплект">
+      <Data Path="" SourceType="List">
+        <Item>ООО Стройкомплект</Item>
+      </Data>
+    </Control>
+    <Control Label="Разработчик" PropName="Разработал" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True" DefaultValue="Парусников А.В.">
+      <Data Path="" SourceType="List">
+        <Item>Парусников А.В.</Item>
+      </Data>
+    </Control>
+    <Control Label="Дата" PropName="Дата" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True" DefaultValue="$PRP:&quot;SW-Sort Date&quot;">
+      <Data Path="" SourceType="List">
+        <Item>$PRP:"SW-Sort Date"</Item>
+      </Data>
+    </Control>
+    <Control Label="Проверил" PropName="Проверил" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True" DefaultValue="Железнов В.Н.">
+      <Data Path="" SourceType="List">
+        <Item>Железнов В.Н.</Item>
+      </Data>
+    </Control>
+    <Control Label="НКонтр" PropName="НКонтр" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True">
+      <Data Path="" SourceType="List">
+        <Item>Пупкин</Item>
+      </Data>
+    </Control>
+    <Control Label="Гл. сварщик" PropName="Гл. сварщик" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True">
+      <Data Path="" SourceType="List">
+        <Item>Пупкин</Item>
+      </Data>
+    </Control>
+    <Control Label="Утвердил" PropName="Утвердил" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True">
+      <Data Path="" SourceType="List">
+        <Item>Пупкин</Item>
+      </Data>
+    </Control>
+    <Control Label="Формат листа" PropName="Формат" ApplyTo="Global" Type="ComboBox" ReadOnly="False" UserDefineable="True">
+      <Data Path="" SourceType="List">
+        <Item>БЧ</Item>
+        <Item>А1</Item>
+        <Item>А2</Item>
+        <Item>А2х3</Item>
+        <Item>А3</Item>
+        <Item>А3х3</Item>
+        <Item>А4</Item>
+      </Data>
+    </Control>
+  </GroupBox>
+  <Control PropName="Масса, кг" DefaultValue="&quot;SW-Mass@$PRP:&quot;SW-File Name&quot;.SLDPRT&quot;">
+    <Data>
+      <Item>"SW-Mass@$PRP:"SW-File Name".SLDPRT"</Item>
+      <Item>"SW-Mass@$PRP:"SW-File Name".SLDASM"</Item>
+    </Data>
+  </Control>
+  <Control PropName="Прокат" DefaultValue="">
+    <Data>
+      <Item>Лист</Item>
+      <Item>Круг</Item>
+      <Item>Уголок</Item>
+      <Item>Швеллер</Item>
+      <Item>Двутавр</Item>
+    </Data>
+  </Control>
+  <Control PropName="Материал" DefaultValue="&quot;SW-Material@$PRP:&quot;SW-File Name&quot;.SLDPRT&quot;">
+    <Data>
+      <Item>"SW-Material@$PRP:"SW-File Name".SLDPRT"</Item>
+    </Data>
+  </Control>
+  <Control PropName="Длина, мм" DefaultValue="">
+    <Data />
+  </Control>
+  <Control PropName="Толщина, мм" DefaultValue="">
+    <Data />
+  </Control>
+</CPTemplate>

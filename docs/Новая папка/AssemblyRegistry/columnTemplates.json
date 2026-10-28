@@ -1,0 +1,846 @@
+{
+  "TemplateNames": [
+    "Общая сводка",
+    "Сводка деталей",
+    "Раскрой на пилу",
+    "Раскрой на лазер/плазму",
+    "Сводка СТП",
+    "Листогиб",
+    "Токарный",
+    "Отправка на цинк"
+  ],
+  "Templates": [
+    {
+      "Name": "Общая сводка",
+      "Columns": [
+        {
+          "Order": 1,
+          "Name": "Обозначение",
+          "Formula": "",
+          "Description": "Обозначение из свойств конфигурации вхождения (или имя файла).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 2,
+          "Name": "Наименование",
+          "Formula": "",
+          "Description": "Наименование из свойств конфигурации вхождения.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 3,
+          "Name": "Масса.кг.",
+          "Formula": "",
+          "Description": "Масса одной позиции (свойство конфигурации).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 4,
+          "Name": "[Кол-во]",
+          "Formula": "[Quantity]",
+          "Description": "Число вхождений в головной сборке (изделии).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 5,
+          "Name": "[Всего масса]",
+          "Formula": "[Масса.кг.]*[Quantity]",
+          "Description": "Суммарная масса: масса × кол-во.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        }
+      ]
+    },
+    {
+      "Name": "Сводка деталей",
+      "Columns": [
+        {
+          "Order": 1,
+          "Name": "Обозначение",
+          "Formula": "",
+          "Description": "Обозначение из свойств конфигурации вхождения (или имя файла).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 2,
+          "Name": "Наименование",
+          "Formula": "",
+          "Description": "Наименование из свойств конфигурации вхождения.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 3,
+          "Name": "Материал",
+          "Formula": "",
+          "Description": "Материал из свойств конфигурации вхождения.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 4,
+          "Name": "Прокат",
+          "Formula": "",
+          "Description": "Прокат из свойств заготовки.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 5,
+          "Name": "Толщина",
+          "Formula": "",
+          "Description": "",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 6,
+          "Name": "Ширина",
+          "Formula": "",
+          "Description": "",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 7,
+          "Name": "Длина",
+          "Formula": "",
+          "Description": "",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 8,
+          "Name": "Масса.кг.",
+          "Formula": "",
+          "Description": "Масса одной позиции (свойство конфигурации).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 9,
+          "Name": "[Кол-во]",
+          "Formula": "[Quantity]",
+          "Description": "Число вхождений в головной сборке (изделии).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 10,
+          "Name": "[Всего масса]",
+          "Formula": "[Масса.кг.]*[Quantity]",
+          "Description": "Суммарная масса: масса × кол-во.",
+          "Filter": "",
+          "TotalsKind": 4,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 11,
+          "Name": "[Всего длина]",
+          "Formula": "[Длина]*[Quantity]",
+          "Description": "",
+          "Filter": "",
+          "TotalsKind": 4,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        }
+      ]
+    },
+    {
+      "Name": "Раскрой на пилу",
+      "Columns": [
+        {
+          "Order": 1,
+          "Name": "Обозначение",
+          "Formula": "",
+          "Description": "Обозначение из свойств конфигурации вхождения (или имя файла).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 2,
+          "Name": "Наименование",
+          "Formula": "",
+          "Description": "Наименование из свойств конфигурации вхождения.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 3,
+          "Name": "Материал",
+          "Formula": "",
+          "Description": "Материал из свойств конфигурации вхождения.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 4,
+          "Name": "Прокат",
+          "Formula": "",
+          "Description": "Прокат из свойств заготовки.",
+          "Filter": "!=Лист|Шланг",
+          "TotalsKind": 0,
+          "GroupBy": true,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 5,
+          "Name": "Толщина",
+          "Formula": "",
+          "Description": "",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 1,
+          "ShowInList": true
+        },
+        {
+          "Order": 6,
+          "Name": "Ширина",
+          "Formula": "",
+          "Description": "",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 7,
+          "Name": "Длина",
+          "Formula": "",
+          "Description": "",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 8,
+          "Name": "Масса.кг.",
+          "Formula": "",
+          "Description": "Масса одной позиции (свойство конфигурации).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 9,
+          "Name": "[Кол-во]",
+          "Formula": "[Quantity]",
+          "Description": "Число вхождений в головной сборке (изделии).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 10,
+          "Name": "[Всего масса]",
+          "Formula": "[Масса.кг.]*[Quantity]",
+          "Description": "Суммарная масса: масса × кол-во.",
+          "Filter": "",
+          "TotalsKind": 4,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 11,
+          "Name": "[Всего длина]",
+          "Formula": "[Длина]*[Quantity]",
+          "Description": "",
+          "Filter": "",
+          "TotalsKind": 4,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        }
+      ]
+    },
+    {
+      "Name": "Раскрой на лазер/плазму",
+      "Columns": [
+        {
+          "Order": 1,
+          "Name": "Обозначение",
+          "Formula": "",
+          "Description": "Обозначение из свойств конфигурации вхождения (или имя файла).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 2,
+          "Name": "Наименование",
+          "Formula": "",
+          "Description": "Наименование из свойств конфигурации вхождения.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 3,
+          "Name": "Материал",
+          "Formula": "",
+          "Description": "Материал из свойств конфигурации вхождения.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 4,
+          "Name": "Прокат",
+          "Formula": "",
+          "Description": "Прокат из свойств заготовки.",
+          "Filter": "=Лист",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 5,
+          "Name": "Длина",
+          "Formula": "",
+          "Description": "Длина заготовки",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 6,
+          "Name": "Ширина",
+          "Formula": "",
+          "Description": "Ширина заготовки",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 7,
+          "Name": "Толщина",
+          "Formula": "",
+          "Description": "Толщина заготовки",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 1,
+          "ShowInList": true
+        },
+        {
+          "Order": 8,
+          "Name": "Масса.кг.",
+          "Formula": "",
+          "Description": "Масса одной позиции (свойство конфигурации).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 9,
+          "Name": "[Кол-во]",
+          "Formula": "[Quantity]",
+          "Description": "Число вхождений в головной сборке (изделии).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 10,
+          "Name": "[Всего масса]",
+          "Formula": "[Масса.кг.]*[Quantity]",
+          "Description": "Суммарная масса: масса × кол-во.",
+          "Filter": "",
+          "TotalsKind": 4,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 11,
+          "Name": "Нужен dxf",
+          "Formula": "",
+          "Description": "Флаг для экспорта в DXF",
+          "Filter": "Yes",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": false
+        }
+      ]
+    },
+    {
+      "Name": "Сводка СТП",
+      "Columns": [
+        {
+          "Order": 1,
+          "Name": "Обозначение",
+          "Formula": "",
+          "Description": "Обозначение из свойств конфигурации вхождения (или имя файла).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 2,
+          "Name": "Наименование",
+          "Formula": "",
+          "Description": "",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 3,
+          "Name": "Материал",
+          "Formula": "",
+          "Description": "Материал из свойств конфигурации вхождения.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 4,
+          "Name": "Масса.кг.",
+          "Formula": "",
+          "Description": "Масса одной позиции (свойство конфигурации).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 5,
+          "Name": "[Кол-во]",
+          "Formula": "[Quantity]",
+          "Description": "Число вхождений в головной сборке (изделии).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 6,
+          "Name": "[Всего масса]",
+          "Formula": "[Масса.кг.]*[Quantity]",
+          "Description": "Суммарная масса: масса × кол-во.",
+          "Filter": "",
+          "TotalsKind": 4,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        }
+      ]
+    },
+    {
+      "Name": "Листогиб",
+      "Columns": [
+        {
+          "Order": 1,
+          "Name": "Обозначение",
+          "Formula": "",
+          "Description": "Обозначение из свойств конфигурации вхождения (или имя файла).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 2,
+          "Name": "Наименование",
+          "Formula": "",
+          "Description": "Наименование из свойств конфигурации вхождения.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 3,
+          "Name": "Материал",
+          "Formula": "",
+          "Description": "Материал из свойств конфигурации вхождения.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 4,
+          "Name": "Прокат",
+          "Formula": "",
+          "Description": "Прокат из свойств заготовки.",
+          "Filter": "=Лист",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": false
+        },
+        {
+          "Order": 5,
+          "Name": "Толщина",
+          "Formula": "",
+          "Description": "Толщина заготовки",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 1,
+          "ShowInList": true
+        },
+        {
+          "Order": 6,
+          "Name": "Ширина",
+          "Formula": "",
+          "Description": "Ширина заготовки",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 7,
+          "Name": "Длина",
+          "Formula": "",
+          "Description": "Длина заготовки",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 8,
+          "Name": "Масса.кг.",
+          "Formula": "",
+          "Description": "Масса одной позиции (свойство конфигурации).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 9,
+          "Name": "[Кол-во]",
+          "Formula": "[Quantity]",
+          "Description": "Число вхождений в головной сборке (изделии).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 10,
+          "Name": "[Всего масса]",
+          "Formula": "[Масса.кг.]*[Quantity]",
+          "Description": "Суммарная масса: масса × кол-во.",
+          "Filter": "",
+          "TotalsKind": 4,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 11,
+          "Name": "Листогиб",
+          "Formula": "",
+          "Description": "",
+          "Filter": "Yes",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": false
+        }
+      ]
+    },
+    {
+      "Name": "Токарный",
+      "Columns": [
+        {
+          "Order": 1,
+          "Name": "Обозначение",
+          "Formula": "",
+          "Description": "Обозначение из свойств конфигурации вхождения (или имя файла).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 2,
+          "Name": "Наименование",
+          "Formula": "",
+          "Description": "Наименование из свойств конфигурации вхождения.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 3,
+          "Name": "Материал",
+          "Formula": "",
+          "Description": "Материал из свойств конфигурации вхождения.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 4,
+          "Name": "Прокат",
+          "Formula": "",
+          "Description": "Прокат из свойств заготовки.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 5,
+          "Name": "Толщина",
+          "Formula": "",
+          "Description": "Толщина заготовки",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 1,
+          "ShowInList": true
+        },
+        {
+          "Order": 6,
+          "Name": "Ширина",
+          "Formula": "",
+          "Description": "Ширина заготовки",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 7,
+          "Name": "Длина",
+          "Formula": "",
+          "Description": "Длина заготовки",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 8,
+          "Name": "Масса.кг.",
+          "Formula": "",
+          "Description": "Масса одной позиции (свойство конфигурации).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 9,
+          "Name": "[Кол-во]",
+          "Formula": "[Quantity]",
+          "Description": "Число вхождений в головной сборке (изделии).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 10,
+          "Name": "[Всего масса]",
+          "Formula": "[Масса.кг.]*[Quantity]",
+          "Description": "Суммарная масса: масса × кол-во.",
+          "Filter": "",
+          "TotalsKind": 4,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 11,
+          "Name": "Токарный",
+          "Formula": "",
+          "Description": "",
+          "Filter": "Yes",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": false
+        }
+      ]
+    },
+    {
+      "Name": "Отправка на цинк",
+      "Columns": [
+        {
+          "Order": 1,
+          "Name": "Обозначение",
+          "Formula": "",
+          "Description": "Обозначение из свойств конфигурации вхождения (или имя файла).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 2,
+          "Name": "Наименование",
+          "Formula": "",
+          "Description": "Наименование из свойств конфигурации вхождения.",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 3,
+          "Name": "Масса.кг.",
+          "Formula": "",
+          "Description": "Масса одной позиции (свойство конфигурации).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 4,
+          "Name": "[Кол-во]",
+          "Formula": "[Quantity]",
+          "Description": "Число вхождений в головной сборке (изделии).",
+          "Filter": "",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 5,
+          "Name": "[Всего масса]",
+          "Formula": "[Масса.кг.]*[Quantity]",
+          "Description": "Суммарная масса: масса × кол-во.",
+          "Filter": "",
+          "TotalsKind": 4,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": true
+        },
+        {
+          "Order": 6,
+          "Name": "Комплектация",
+          "Formula": "",
+          "Description": "",
+          "Filter": "Цинк",
+          "TotalsKind": 0,
+          "GroupBy": false,
+          "SortKind": 0,
+          "ShowInList": false
+        }
+      ]
+    }
+  ]
+}

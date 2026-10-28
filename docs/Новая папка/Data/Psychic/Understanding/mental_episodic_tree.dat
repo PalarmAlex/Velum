@@ -1,0 +1,2 @@
+# Формат: Id|ParentID|NodePID|ThemeID|PurposeID|info1,info2#Effect|Count
+# ParentID=0 — узел под корнем; папка контекста: пустой info, Effect=0, Count=0; лист: список Id инфо-функций; после # — Effect и Count
