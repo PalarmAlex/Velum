@@ -238,11 +238,18 @@ namespace Velum.UI.ProductRegistry
           // надстройки; последний документ закрыт при остановленной пульсации).
           // Разовый вызов по команде пользователя — тяжёлая работа допустима (E10).
           NotifyOpenDocumentsScopeChanged();
+
+          // Встряхнуть виталы при активации глобального сканирования — сбросить
+          // залипшие состояние и приоритетную проблему (баг-фикс).
+          VelumSolidMetricPressureReset.ShakeToNormHomeostasis();
         }
       }
       else
       {
         Interlocked.Exchange(ref _enabled, 0);
+
+        // Встряхнуть виталы при остановке глобального сканирования.
+        VelumSolidMetricPressureReset.ShakeToNormHomeostasis();
       }
 
       RaiseScanStateChanged();
@@ -819,6 +826,12 @@ namespace Velum.UI.ProductRegistry
       {
         Logger.Warning("Velum registry integrity scope publish: " + ex.Message);
       }
+
+      // Смена области = остановка/возобновление глобального сканирования: встряхнуть виталы
+      // в норму (как кнопка «Н»), иначе при переходе closed→open (открыли документ) плашки
+      // гаснут, а состояние «Плохо» и приоритетная проблема реестра залипают — хост-глобальные
+      // параметры гомеостаза, на которые давил реестр, никто в норму не приводит.
+      VelumSolidMetricPressureReset.ShakeToNormHomeostasis();
     }
 
     /// <summary>

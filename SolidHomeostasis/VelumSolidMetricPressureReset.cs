@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ISIDA.Common;
@@ -5,6 +6,7 @@ using ISIDA.Gomeostas;
 using Velum.Configuration;
 using Velum.Isida;
 using Velum.UI.ProductRegistry;
+using Xarial.XCad.SolidWorks;
 
 namespace Velum.SolidHomeostasis
 {
@@ -32,6 +34,31 @@ namespace Velum.SolidHomeostasis
     internal static void OnManualNormHomeostasis()
     {
       ClearPublishedMetricState();
+    }
+
+    /// <summary>
+    /// «Встряхнуть виталы» — то же ядро, что на кнопке «Н»: привести параметры гомеостаза
+    /// к норме и очистить опубликованный снимок метрик. Вызывается на смене глобального
+    /// сканирования (активация/старт/остановка), чтобы состояние и строка приоритетной
+    /// проблемы не залипали «Плохо» после того, как плашки уже погасли.
+    /// </summary>
+    internal static void ShakeToNormHomeostasis()
+    {
+      VelumSolidEnvironmentBridge.RunOnTaskPaneUiThread(() =>
+      {
+        if (!VelumIsidaHost.IsReady || AppGlobalState.IsDead)
+          return;
+        try
+        {
+          VelumIsidaHost.Context.Gomeostas
+              .ApplySpeedOrientedNormalHomeostasisForScenarioPreRun();
+          ClearPublishedMetricState();
+        }
+        catch (Exception ex)
+        {
+          Logger.Warning("Velum metric pressure shake-to-norm: " + ex.Message);
+        }
+      });
     }
 
     /// <summary>
