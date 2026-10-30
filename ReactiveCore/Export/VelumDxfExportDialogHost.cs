@@ -25,7 +25,7 @@ namespace Velum.ReactiveCore.Export
     /// <param name="confirmed">
     /// Подтвердил ли пользователь экспорт (диалог закрыт с <c>DialogResult.OK</c>).
     /// <c>false</c> — отмена, закрытие окна либо ранний выход без показа диалога.
-    /// Используется для оценки шага транзитивной цепочки.
+    /// Используется для оценки шага цепочки рефлексов.
     /// </param>
     /// <returns>true, если шаг обработан.</returns>
     internal static bool TryShowModal(ModelDoc2 modelDoc, bool fromConditionedReflex, out bool confirmed)

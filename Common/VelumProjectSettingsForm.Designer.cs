@@ -211,10 +211,6 @@ namespace Velum.UI
       this._tbCrxMaxLifetimePulsesCap = new System.Windows.Forms.TextBox();
       this.rngCrxMaxLifetimePulsesCap = new System.Windows.Forms.Label();
       this.grpCrxSens = new System.Windows.Forms.GroupBox();
-      this.grpCrxChain = new System.Windows.Forms.GroupBox();
-      this.lblCrxTransitiveChainStepEvaluationTimeout = new System.Windows.Forms.Label();
-      this._tbCrxTransitiveChainStepEvaluationTimeout = new System.Windows.Forms.TextBox();
-      this.rngCrxTransitiveChainStepEvaluationTimeout = new System.Windows.Forms.Label();
       this.lblCrxSensoryDecayPeriodPulses = new System.Windows.Forms.Label();
       this._tbCrxSensoryDecayPeriodPulses = new System.Windows.Forms.TextBox();
       this.rngCrxSensoryDecayPeriodPulses = new System.Windows.Forms.Label();
@@ -250,7 +246,6 @@ namespace Velum.UI
       this.grpCrxDecay.SuspendLayout();
       this.grpCrxComp.SuspendLayout();
       this.grpCrxStart.SuspendLayout();
-      this.grpCrxChain.SuspendLayout();
       this.grpCrxSens.SuspendLayout();
       this._pnlStageBusyOverlay.SuspendLayout();
       this.SuspendLayout();
@@ -1360,7 +1355,6 @@ namespace Velum.UI
       this.tabPageReflexes.Controls.Add(this.grpCrxComp);
       this.tabPageReflexes.Controls.Add(this.grpCrxStart);
       this.tabPageReflexes.Controls.Add(this.grpCrxSens);
-      this.tabPageReflexes.Controls.Add(this.grpCrxChain);
       this.tabPageReflexes.Location = new System.Drawing.Point(4, 22);
       this.tabPageReflexes.Name = "tabPageReflexes";
       this.tabPageReflexes.Padding = new System.Windows.Forms.Padding(3);
@@ -1734,53 +1728,6 @@ namespace Velum.UI
       this.grpCrxDecay.TabIndex = 0;
       this.grpCrxDecay.TabStop = false;
       this.grpCrxDecay.Text = "Угасание";
-      //
-      // grpCrxChain
-      //
-      this.grpCrxChain.Controls.Add(this.lblCrxTransitiveChainStepEvaluationTimeout);
-      this.grpCrxChain.Controls.Add(this._tbCrxTransitiveChainStepEvaluationTimeout);
-      this.grpCrxChain.Controls.Add(this.rngCrxTransitiveChainStepEvaluationTimeout);
-      this.grpCrxChain.Location = new System.Drawing.Point(6, 350);
-      this.grpCrxChain.Name = "grpCrxChain";
-      this.grpCrxChain.Size = new System.Drawing.Size(380, 48);
-      this.grpCrxChain.TabIndex = 0;
-      this.grpCrxChain.TabStop = false;
-      this.grpCrxChain.Text = "Транзитивные цепочки";
-      //
-      // lblCrxTransitiveChainStepEvaluationTimeout
-      //
-      this.lblCrxTransitiveChainStepEvaluationTimeout.Location = new System.Drawing.Point(8, 21);
-      this.lblCrxTransitiveChainStepEvaluationTimeout.Name = "lblCrxTransitiveChainStepEvaluationTimeout";
-      this.lblCrxTransitiveChainStepEvaluationTimeout.Size = new System.Drawing.Size(232, 18);
-      this.lblCrxTransitiveChainStepEvaluationTimeout.TabIndex = 0;
-      this.lblCrxTransitiveChainStepEvaluationTimeout.Text = "Таймаут оценки шага цепочки:";
-      this.lblCrxTransitiveChainStepEvaluationTimeout.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.lblCrxTransitiveChainStepEvaluationTimeout, "Макс. время ожидания оценки мотор-действия в транзитивной цепочке (пульсы). " +
-        "Оценку присылает адаптер Velum после фактического завершения действия; если она не пришла — цепочка завершается с неуспехом. 0 = без таймаута.");
-      //
-      // _tbCrxTransitiveChainStepEvaluationTimeout
-      //
-      this._tbCrxTransitiveChainStepEvaluationTimeout.Location = new System.Drawing.Point(244, 20);
-      this._tbCrxTransitiveChainStepEvaluationTimeout.Name = "_tbCrxTransitiveChainStepEvaluationTimeout";
-      this._tbCrxTransitiveChainStepEvaluationTimeout.Size = new System.Drawing.Size(64, 20);
-      this._tbCrxTransitiveChainStepEvaluationTimeout.TabIndex = 1;
-      this._tbCrxTransitiveChainStepEvaluationTimeout.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      this._ttpStageEvolution.SetToolTip(this._tbCrxTransitiveChainStepEvaluationTimeout, "Макс. время ожидания оценки мотор-действия в транзитивной цепочке (пульсы). " +
-        "Оценку присылает адаптер Velum после фактического завершения действия; если она не пришла — цепочка завершается с неуспехом. 0 = без таймаута.");
-      this._tbCrxTransitiveChainStepEvaluationTimeout.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
-      //
-      // rngCrxTransitiveChainStepEvaluationTimeout
-      //
-      this.rngCrxTransitiveChainStepEvaluationTimeout.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.rngCrxTransitiveChainStepEvaluationTimeout.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxTransitiveChainStepEvaluationTimeout.Location = new System.Drawing.Point(310, 21);
-      this.rngCrxTransitiveChainStepEvaluationTimeout.Name = "rngCrxTransitiveChainStepEvaluationTimeout";
-      this.rngCrxTransitiveChainStepEvaluationTimeout.Size = new System.Drawing.Size(66, 18);
-      this.rngCrxTransitiveChainStepEvaluationTimeout.TabIndex = 2;
-      this.rngCrxTransitiveChainStepEvaluationTimeout.Text = "(0 – 86400)";
-      this.rngCrxTransitiveChainStepEvaluationTimeout.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.rngCrxTransitiveChainStepEvaluationTimeout, "Макс. время ожидания оценки мотор-действия в транзитивной цепочке (пульсы). " +
-        "Оценку присылает адаптер Velum после фактического завершения действия; если она не пришла — цепочка завершается с неуспехом. 0 = без таймаута.");
       // 
       // lblCrxPassiveDecayPeriodPulses
       // 
@@ -2411,8 +2358,6 @@ namespace Velum.UI
       this.grpCrxComp.PerformLayout();
       this.grpCrxStart.ResumeLayout(false);
       this.grpCrxStart.PerformLayout();
-      this.grpCrxChain.ResumeLayout(false);
-      this.grpCrxChain.PerformLayout();
       this.grpCrxSens.ResumeLayout(false);
       this.grpCrxSens.PerformLayout();
       this._pnlStageBusyOverlay.ResumeLayout(false);
@@ -2576,10 +2521,6 @@ namespace Velum.UI
     private System.Windows.Forms.TextBox _tbCrxMaxLifetimePulsesCap;
     private System.Windows.Forms.Label rngCrxMaxLifetimePulsesCap;
     private System.Windows.Forms.GroupBox grpCrxSens;
-    private System.Windows.Forms.GroupBox grpCrxChain;
-    private System.Windows.Forms.Label lblCrxTransitiveChainStepEvaluationTimeout;
-    private System.Windows.Forms.TextBox _tbCrxTransitiveChainStepEvaluationTimeout;
-    private System.Windows.Forms.Label rngCrxTransitiveChainStepEvaluationTimeout;
     private System.Windows.Forms.Label lblCrxSensoryDecayPeriodPulses;
     private System.Windows.Forms.TextBox _tbCrxSensoryDecayPeriodPulses;
     private System.Windows.Forms.Label rngCrxSensoryDecayPeriodPulses;

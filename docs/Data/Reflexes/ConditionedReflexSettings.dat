@@ -26,20 +26,10 @@
 # SensoryHighStrengthThreshold: верхняя зона CS→CS (затухание по SensoryHighStrengthDecayRate)
 # SensoryHighStrengthDecayRate: эффективный коэффициент затухания устойчивых связей CS→CS
 # SensoryMidStrengthThreshold: средняя зона CS→CS (выше — η^C, ниже — η^√C)
-# MotorAssociationLearningRate: α мотор→стимул связей (0.1-0.3)
-# MotorAssociationMaxStrength: β мотор→стимул связи
-# MotorAssociationActivationThreshold: γ активации звена мотор→стимул (C ≥ γ)
-# MotorAssociationDecayRate: η затухания мотор→стимул связей (0.95-0.99)
-# MotorAssociationDecayPeriodPulses: период затухания мотор→стимул связей (пульсы)
-# MotorAssociationMinStrength: C_min мотор→стимул связи (ниже — удаление)
-# MotorChainMaxDepth: максимальная глубина мотор→стимул цепочки (число звеньев)
-# ConditionedReflexMaxChainLength: макс. длина цепочки у-рефлексов (число шагов реплея)
-# ConditionedReflexChainStepTimeout: таймаут одного шага цепочки (пульсы, 0 = без таймаута)
 # EnableTransitiveLearning: транзитивное обучение цепочкам CS→CS… (true/false)
 # TransitiveMaxDepth: максимальная глубина обхода цепочки CS-звеньев (число рёбер)
 # TransitiveDecayPerHop: деградация силы цепи на звено сверх первого δ∈(0..1]
 # TransitiveGammaCoefficient: коэффициент повышения порога цепи k (γ_tr = γ·k)
-# TransitiveChainStepEvaluationTimeout: макс. время ожидания оценки мотор-действия в транзитивной цепи (пульсы, 0 = без таймаута)
 LearningRate=0.2
 DecayRate=0.98
 ActivationThreshold=0.6
@@ -67,17 +57,7 @@ SensoryStrengthFloor=0.1
 SensoryHighStrengthThreshold=0.8
 SensoryHighStrengthDecayRate=0.998
 SensoryMidStrengthThreshold=0.4
-MotorAssociationLearningRate=0.2
-MotorAssociationMaxStrength=1
-MotorAssociationActivationThreshold=0.6
-MotorAssociationDecayRate=0.98
-MotorAssociationDecayPeriodPulses=1000
-MotorAssociationMinStrength=0.1
-MotorChainMaxDepth=3
-ConditionedReflexMaxChainLength=5
-ConditionedReflexChainStepTimeout=5000
 EnableTransitiveLearning=True
 TransitiveMaxDepth=3
 TransitiveDecayPerHop=0.9
 TransitiveGammaCoefficient=1
-TransitiveChainStepEvaluationTimeout=5

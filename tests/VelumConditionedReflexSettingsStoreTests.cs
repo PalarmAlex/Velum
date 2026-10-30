@@ -198,6 +198,7 @@ namespace Velum.ReactiveCore.Tests
       Write(
           "LearningRate=0.2\n" +
           "PassiveDecayHalfLifePulses=999\n" +   // устаревший — игнор
+          "TransitiveChainStepEvaluationTimeout=7\n" + // был в модели, удалён движком — игнор
           "SomeFutureKey=42\n");                  // неизвестный — не ломает чтение
       var res = VelumConditionedReflexSettingsStore.Load(_file);
       Assert.Equal(0.2f, res.Model.LearningRate);
@@ -274,78 +275,6 @@ namespace Velum.ReactiveCore.Tests
         CompetitionStrengthRatioThreshold = 0.8f
       };
       Assert.Empty(VelumConditionedReflexSettingsStore.Validate(m));
-    }
-
-    // Регрессия нового параметра TransitiveChainStepEvaluationTimeout (таймаут оценки
-    // шага транзитивной цепочки): дефолт 5, roundtrip, 0 = «без таймаута», отрицательное — ошибка.
-    [Fact]
-    public void TransitiveChainStepEvaluationTimeout_DefaultIsFive()
-    {
-      Assert.Equal(5, new VelumConditionedReflexSettingsModel().TransitiveChainStepEvaluationTimeout);
-    }
-
-    [Fact]
-    public void TransitiveChainStepEvaluationTimeout_Roundtrip_KeepsValue()
-    {
-      var m = new VelumConditionedReflexSettingsModel { TransitiveChainStepEvaluationTimeout = 12 };
-      VelumConditionedReflexSettingsStore.Save(_file, m);
-      var res = VelumConditionedReflexSettingsStore.Load(_file);
-      Assert.Equal(12, res.Model.TransitiveChainStepEvaluationTimeout);
-      Assert.False(res.NeedsRewrite);
-      Assert.Empty(VelumConditionedReflexSettingsStore.Validate(res.Model));
-    }
-
-    [Fact]
-    public void TransitiveChainStepEvaluationTimeout_ZeroMeansNoTimeout_IsValid()
-    {
-      var m = new VelumConditionedReflexSettingsModel { TransitiveChainStepEvaluationTimeout = 0 };
-      Assert.Empty(VelumConditionedReflexSettingsStore.Validate(m));
-    }
-
-    [Theory]
-    [InlineData(-1)]
-    [InlineData(86401)]
-    public void TransitiveChainStepEvaluationTimeout_OutOfRange_ReportsError(int value)
-    {
-      var m = new VelumConditionedReflexSettingsModel { TransitiveChainStepEvaluationTimeout = value };
-      var errors = VelumConditionedReflexSettingsStore.Validate(m);
-      Assert.Contains(errors, e => e.Contains("Таймаут оценки шага транзитивной цепочки"));
-    }
-
-    [Fact]
-    public void Load_FileWithoutNewTimeoutKey_DefaultsFiveAndMarksRewrite()
-    {
-      // Файл всех прежних 24 ключей без нового — параметр по умолчанию, файл неполный.
-      Write(
-          "LearningRate=0.2\n" +
-          "DecayRate=0.98\n" +
-          "ActivationThreshold=0.6\n" +
-          "MinAssociationStrength=0.1\n" +
-          "TimeWindowPulses=5\n" +
-          "InitialLifetimePulses=86400\n" +
-          "ActiveExtinctionRate=0.05\n" +
-          "PassiveDecayPeriodPulses=1000\n" +
-          "HigherOrderStrengthReductionCoefficient=1.5\n" +
-          "CompetitionStrengthRatioThreshold=0.8\n" +
-          "TieBreakPreferSmallerReflexId=True\n" +
-          "EnableCompetitiveLearning=True\n" +
-          "CompetitionSuppressionCoefficient=1\n" +
-          "InitialStrengthBonus=0.1\n" +
-          "AuthoritativeStrength=0.95\n" +
-          "EstablishedStrengthThreshold=0.8\n" +
-          "ActivationReinforcementFraction=0.25\n" +
-          "MaxLifetimePulsesCap=88473600\n" +
-          "PassiveDecayFallbackPeriodPulses=1000\n" +
-          "SensoryDecayPeriodPulses=100\n" +
-          "SensoryStrengthFloor=0.1\n" +
-          "SensoryHighStrengthThreshold=0.8\n" +
-          "SensoryHighStrengthDecayRate=0.998\n" +
-          "SensoryMidStrengthThreshold=0.4\n");
-
-      var res = VelumConditionedReflexSettingsStore.Load(_file);
-      Assert.True(res.NeedsRewrite);
-      Assert.Equal(5, res.Model.TransitiveChainStepEvaluationTimeout);
-      Assert.Empty(VelumConditionedReflexSettingsStore.Validate(res.Model));
     }
   }
 }

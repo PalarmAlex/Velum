@@ -5,10 +5,11 @@ using ISIDA.Reflexes;
 namespace Velum.ReactiveCore
 {
   /// <summary>
-  /// Сообщает движку ISIDA оценку выполненного мотор-действия, чтобы транзитивная цепочка
-  /// (<c>IsTransitive = true</c>) могла немедленно перейти к следующему звену либо остановиться.
-  /// Оценка считается чистыми правилами <see cref="VelumChainStepOutcomeRules"/> и передаётся
-  /// через <c>ReflexesActivator.SetChainStepResult</c>.
+  /// Сообщает движку ISIDA оценку выполненного мотор-действия, чтобы активная цепочка
+  /// рефлексов (<see cref="ISIDA.Reflexes.ReflexChainsSystem"/>) могла немедленно перейти
+  /// к следующему звену либо остановиться. Оценка считается чистыми правилами
+  /// <see cref="VelumChainStepOutcomeRules"/> и передаётся через
+  /// <c>ReflexesActivator.SetChainStepResult</c>.
   /// </summary>
   /// <remarks>
   /// Вызов безопасен, только если активна цепочка в состоянии ожидания оценки
@@ -25,7 +26,7 @@ namespace Velum.ReactiveCore
     /// <param name="recipeId">Идентификатор рецепта — для лога.</param>
     /// <returns>
     /// <c>true</c>, если оценка была передана в ISIDA; <c>false</c> — цепочка не ожидала оценки
-    /// либо ISIDA недоступна (рецепт исполнялся не по транзитивной цепочке).
+    /// либо ISIDA недоступна (рецепт исполнялся не по цепочке рефлексов).
     /// </returns>
     public static bool Report(
         IReadOnlyList<RecipeStepExecutionResult> steps,

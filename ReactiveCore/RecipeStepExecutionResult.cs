@@ -68,7 +68,7 @@ namespace Velum.ReactiveCore
     /// <summary>
     /// Исход пользовательского подтверждения в диалоговом шаге: <c>true</c> — подтверждено,
     /// <c>false</c> — отменено/закрыто/ошибка, <see langword="null"/> — шаг не диалоговый.
-    /// Используется для оценки шага транзитивной цепочки (<c>SetChainStepResult</c>).
+    /// Используется для оценки шага цепочки рефлексов (<c>SetChainStepResult</c>).
     /// </summary>
     public bool? Confirmed { get; }
   }

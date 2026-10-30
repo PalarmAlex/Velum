@@ -101,7 +101,7 @@ namespace Velum.ReactiveCore
       {
         LogDispatchFailure(recipe, adaptiveActionId, pulse, activationPulse, result);
         RecipeMotorOutcomeNotifier.TryNotify(recipe, result);
-        // Оценка шага транзитивной цепочки: провал мотор-действия → false (цепочка остановится).
+        // Оценка шага цепочки рефлексов: провал мотор-действия → false (цепочка остановится).
         VelumChainStepOutcomeReporter.Report(
             result?.Steps, false, recipe.RecipeId);
         return false;
@@ -117,7 +117,7 @@ namespace Velum.ReactiveCore
           " doc=" + docKey);
       RecipeMotorOutcomeNotifier.TryNotify(recipe, result);
 
-      // Оценка шага транзитивной цепочки: фактический исход действия (для диалогов —
+      // Оценка шага цепочки рефлексов: фактический исход действия (для диалогов —
       // подтверждение оператора), а не только «рецепт отработал без исключения».
       VelumChainStepOutcomeReporter.Report(
           result?.Steps, result != null && result.Success, recipe.RecipeId);
