@@ -51,6 +51,21 @@ dotnet test tests\Velum.ReactiveCore.Tests.csproj --no-restore
 - Новый «чистый» класс для тестов и новый файл теста обязательно прописать в `tests\Velum.ReactiveCore.Tests.csproj` (проект не SDK-default: `EnableDefaultCompileItems=false`).
 - См. правило о регрессионном тесте после исправления бага в разделе «Протокол отладки».
 
+## Git
+
+Git установлен в **`C:\Program Files\Git`** (исполняемый файл — `C:\Program Files\Git\cmd\git.exe`). **В PATH только что открытой CLI-сессии его может не быть** (PATH подхватывается при старте процесса и не обновляется «на лету») — не тратьте шаги на поиск: `where git` и рекурсивный обход диска не нужны.
+
+- **Самый надёжный вызов из cmd/bash** — короткий путь 8.3 без пробелов:
+  ```bash
+  C:\PROGRA~1\Git\cmd\git.exe status
+  ```
+- Либо добавьте в PATH текущей сессии и работайте как обычно:
+  ```bash
+  set "PATH=%PATH%;C:\Program Files\Git\cmd" && git status
+  ```
+- Прямой вызов `"C:\Program Files\Git\cmd\git.exe"` из bash-обёртки может не сработать (кавычки/пробелы); используйте один из двух способов выше.
+- Удалённый репозиторий: `origin` → `https://github.com/PalarmAlex/Velum.git`.
+
 ## Внешние сборки (пути к ссылкам)
 
 `Velum` лежит **рядом** с `ISIDA` (`D:\Программы\ISIDA`), поэтому все ссылки — на **один** уровень вверх:

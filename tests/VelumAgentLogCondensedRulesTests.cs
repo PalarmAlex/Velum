@@ -282,5 +282,111 @@ namespace Velum.ReactiveCore.Tests
       Assert.Contains(VelumAgentLogCondensedRules.StimulusHeader, lines);
       Assert.Contains("  Б/У рефлекс: ID 1, y", lines);
     }
+
+    [Fact]
+    public void PrependBlocks_EmptyExisting_PlacesBlocksOnTop()
+    {
+      var blocks = new List<string>
+      {
+        "СТИМУЛ:\n  Воздействие: ID 1\nОТВЕТ:\n  Б/У рефлекс: ID 1",
+        "СТИМУЛ:\n  Фраза: \"hi\"\nОТВЕТ:\n  У-рефлекс: ID 2"
+      };
+      string result = VelumAgentLogCondensedRules.PrependBlocks(string.Empty, blocks, "\n");
+      Assert.StartsWith(blocks[1], result);
+      Assert.Contains(blocks[0], result);
+    }
+
+    [Fact]
+    public void PrependBlocks_ReversesOrder_FreshestFirst()
+    {
+      var blocks = new List<string>
+      {
+        "OLD",
+        "NEW"
+      };
+      string result = VelumAgentLogCondensedRules.PrependBlocks("EXISTING", blocks, "\n");
+      // Самый свежий (NEW) должен быть первым, потом OLD, потом EXISTING.
+      int posNew = result.IndexOf("NEW");
+      int posOld = result.IndexOf("OLD");
+      int posExisting = result.IndexOf("EXISTING");
+      Assert.True(posNew >= 0 && posOld > posNew, "NEW должен быть выше OLD");
+      Assert.True(posExisting > posOld, "OLD должен быть выше EXISTING");
+    }
+
+    [Fact]
+    public void PrependBlocks_NullBlocks_ReturnsExisting()
+    {
+      const string existing = "DATA";
+      Assert.Equal(existing, VelumAgentLogCondensedRules.PrependBlocks(existing, null, "\n"));
+    }
+
+    [Fact]
+    public void PrependBlocks_EmptyBlocks_ReturnsExisting()
+    {
+      const string existing = "DATA";
+      Assert.Equal(existing, VelumAgentLogCondensedRules.PrependBlocks(existing, new List<string>(), "\n"));
+    }
+
+    [Fact]
+    public void PrependBlocks_NullExisting_PlacesBlocksOnly()
+    {
+      var blocks = new List<string> { "A", "B" };
+      string result = VelumAgentLogCondensedRules.PrependBlocks(null, blocks, "\n");
+      // B свежее (последний в списке) — сверху, A ниже.
+      Assert.StartsWith("B", result);
+      Assert.EndsWith("A", result);
+    }
+
+    [Fact]
+    public void TrimToHead_WithinLimit_ReturnsUnchanged()
+    {
+      const string text = "SHORT";
+      Assert.Equal(text, VelumAgentLogCondensedRules.TrimToHead(text, 100, "\n"));
+    }
+
+    [Fact]
+    public void TrimToHead_EmptyText_ReturnsEmpty()
+    {
+      Assert.Equal(string.Empty, VelumAgentLogCondensedRules.TrimToHead(string.Empty, 100, "\n"));
+    }
+
+    [Fact]
+    public void TrimToHead_NullText_ReturnsEmpty()
+    {
+      Assert.Equal(string.Empty, VelumAgentLogCondensedRules.TrimToHead(null, 100, "\n"));
+    }
+
+    [Fact]
+    public void TrimToHead_ExceedsLimit_CutsOldTail()
+    {
+      // Модель ленты: свежее в начале. "NEW" + разделитель + "OLD" — OLD в хвосте.
+      string text = "NEW BLOCK" + "\n\n" + "OLD BLOCK";
+      string result = VelumAgentLogCondensedRules.TrimToHead(text, 11, "\n");
+      Assert.Contains("NEW", result);
+      Assert.DoesNotContain("OLD", result);
+    }
+
+    [Fact]
+    public void TrimToHead_CutsByBlockBoundary_NotInMiddleOfBlock()
+    {
+      string sep = "\n\n";
+      // b1 — самый свежий (в начале), b3 — самый старый (в хвосте).
+      string text = "b1" + sep + "b2" + sep + "b3";
+
+      // Лимит заведомо больше текста — ничего не режется.
+      Assert.Equal(text, VelumAgentLogCondensedRules.TrimToHead(text, 1000, "\n"));
+
+      // Маленький лимит — остаётся только верхний (самый свежий) блок целиком, не разорванный.
+      string result = VelumAgentLogCondensedRules.TrimToHead(text, 8, "\n");
+      Assert.Equal("b1", result);
+    }
+
+    [Fact]
+    public void TrimToHead_SingleBlockWithoutSeparator_NotCut()
+    {
+      // Один блок без разделителей резать нельзя — иначе потеряем единственный (свежий) блок.
+      string text = new string('x', 500);
+      Assert.Equal(text, VelumAgentLogCondensedRules.TrimToHead(text, 100, "\n"));
+    }
   }
 }

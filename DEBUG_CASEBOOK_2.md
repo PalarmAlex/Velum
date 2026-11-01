@@ -724,3 +724,24 @@
 ## Эвристика (случай 46)
 
 - **E76. У ISIDA два отдельных вербальных канала: `VerbalChannel` для фраз (`PhraseIdList`), `CommandChannel` для команд (`CommandPatternIdList`). Один и тот же числовой ID в них означает разное.** Фраза оператора «п» и команда SolidWorks «sw:963» могут иметь одинаковый ID в логах, но резолвиться по-разному. Резолвер обязан брать `PhraseIdList` из `VerbalChannel`, а `CommandPatternIdList` — из `CommandChannel`. Диагностический признак: в логе/тултипе вместо фразы оператора показывается команда вида `sw:…`. Проверять резолвер по паре «фраза → команда» с одинаковым ID. См. случай 46.
+
+## Случай 47. Сокращённый лог: новые блоки лога появлялись внизу окна, а не сверху
+
+- **Дата / сборка:** 2026-11-01, `bin\Debug\velum.dll` (доработка панели «Агент»: порядок блоков в окне вывода — «свежее сверху»).
+- **Симптом:** при запущенной пульсации новые блоки сокращённого лога «стимул → ответ» и сообщения об ошибках дописывались в конец окна `_txtAgentOutput` — самый свежий блок оказывался внизу. Пользователю нужно было прокручивать окно вперёд, чтобы видеть последнее событие.
+- **Область:** `Common\VelumAgentTaskPane.CondensedLog.cs` (`OnCondensedLogLinesRead`, `TrimCondensedOutputIfNeeded`), `Common\VelumAgentTaskPane.cs` (`AppendAgentOutputLine`), `Common\Logs\VelumAgentLogCondensedRules.cs` (новые методы `PrependBlocks`, `TrimToHead`).
+- **Гипотезы и проверки:**
+  1. *Достаточно менять прокрутку на `SelectionStart = 0`* — **опровергнуто**: это лишь прокрутит окно, но блоки всё равно будут внизу ленты.
+  2. *Вставлять блоки через `Insert`* — **опровергнуто**: `TextBox` WinForms не поддерживает вставку в произвольную позицию, `AppendText` — единственный способ дописи.
+- **Корень:** метод `OnCondensedLogLinesRead` использовал `AppendText` (дописывание в конец), а `AppendAgentOutputLine` — аналогично. Обрезка `TrimCondensedOutputIfNeeded` удаляла начало ленты, хотя при обороте порядка нужно было удалять конец.
+- **Исправление:**
+  - `OnCondensedLogLinesRead`: вместо `AppendText` — склейка через `VelumAgentLogCondensedRules.PrependBlocks` (блоки ставятся перед старым текстом, самые свежие — первые); прокрутка `SelectionStart = 0`, `ScrollToCaret`.
+  - `AppendAgentOutputLine`: аналогично — новое сообщение ставится в начало текста окна вывода.
+  - `TrimCondensedOutputIfNeeded`: делегирован `VelumAgentLogCondensedRules.TrimToHead`, который режет хвост (старые блоки), сохраняя свежие в начале.
+  - `VelumAgentLogCondensedRules`: добавлены чистые методы `PrependBlocks` (склейка в обратном порядке) и `TrimToHead` (обрезка хвоста по границе блока).
+- **Проверка:** `dotnet test tests\Velum.ReactiveCore.Tests.csproj --no-restore --filter Condensed` — 34/34 (включено 14 новых тестов на `PrependBlocks` и `TrimToHead`); `.\Build.cmd Debug` — EXIT=0, ошибок нет. Справка `agent-taskpane.html` обновлена.
+- **Эвристики:** → E77
+
+## Эвристики (случай 47)
+
+- **E77. «Свежее сверху» в `TextBox` реализуется через склейку строки, а не через `Insert` или прокрутку.** `AppendText` всегда дописывает в конец; чтобы свежий блок был верхним — нужно собрать итоговую строку: `новый_блок + разделитель + старый_текст` и присвоить `TextBox.Text`. При этом обрезка (`TrimToHead`) должна удалять хвост (старые блоки), а не начало. Для `TextBox` WinForms свойство `Text` работает быстрее и безопаснее `AppendText` в сценариях, где нужно менять порядок. См. случай 47.

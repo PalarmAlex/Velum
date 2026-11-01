@@ -1985,10 +1985,13 @@ namespace Velum.UI
     {
       if (_txtAgentOutput == null)
         return;
-      if (_txtAgentOutput.TextLength > 0)
-        _txtAgentOutput.AppendText(Environment.NewLine);
-      _txtAgentOutput.AppendText(line);
-      _txtAgentOutput.SelectionStart = _txtAgentOutput.Text.Length;
+      // Лента окна вывода — «свежее сверху»: сообщения вставляются в начало, как блоки сокращённого лога.
+      string existing = _txtAgentOutput.Text;
+      if (existing.Length > 0)
+        _txtAgentOutput.Text = line + Environment.NewLine + existing;
+      else
+        _txtAgentOutput.Text = line;
+      _txtAgentOutput.SelectionStart = 0;
       _txtAgentOutput.ScrollToCaret();
     }
   }

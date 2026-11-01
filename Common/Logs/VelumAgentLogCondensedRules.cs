@@ -273,5 +273,88 @@ namespace Velum.UI.Logs
       return !string.IsNullOrEmpty(signature)
              && string.Equals(signature, lastEmittedSignature, StringComparison.Ordinal);
     }
+
+    /// <summary>
+    /// Склеивает новые блоки и существующий текст окна в ленту «свежее сверху»: блоки
+    /// (приходят в хронологическом порядке) разворачиваются и ставятся перед старым текстом,
+    /// разделитель между блоками и старым текстом — двойной <paramref name="newLine"/>.
+    /// </summary>
+    /// <param name="existingText">Текущий текст окна вывода (старые блоки).</param>
+    /// <param name="blocks">Новые блоки в хронологическом порядке (последний — самый свежий).</param>
+    /// <param name="newLine">Разделитель строк (обычно <see cref="Environment.NewLine"/>).</param>
+    /// <returns>Новый текст окна: самый свежий блок сверху, ниже — предыдущие и старые блоки.</returns>
+    public static string PrependBlocks(string existingText, IList<string> blocks, string newLine)
+    {
+      if (blocks == null || blocks.Count == 0)
+        return existingText ?? string.Empty;
+
+      if (string.IsNullOrEmpty(newLine))
+        newLine = "\n";
+
+      string separator = newLine + newLine;
+      var sb = new StringBuilder();
+
+      // Разворот: блоки идут от старых к новым, а сверху должен оказаться самый свежий.
+      for (int i = blocks.Count - 1; i >= 0; i--)
+      {
+        if (string.IsNullOrEmpty(blocks[i]))
+          continue;
+        if (sb.Length > 0)
+          sb.Append(separator);
+        sb.Append(blocks[i]);
+      }
+
+      if (sb.Length == 0)
+        return existingText ?? string.Empty;
+
+      if (!string.IsNullOrEmpty(existingText))
+      {
+        sb.Append(separator);
+        sb.Append(existingText);
+      }
+
+      return sb.ToString();
+    }
+
+    /// <summary>
+    /// Ограничивает длину ленты, отрезая старые блоки с конца (свежие блоки в начале
+    /// сохраняются). Режет по границе блока — двойному <paramref name="newLine"/> — чтобы
+    /// не рвать блок пополам.
+    /// </summary>
+    /// <param name="text">Текущий текст окна вывода.</param>
+    /// <param name="maxChars">Порог, при превышении которого выполняется обрезка.</param>
+    /// <param name="newLine">Разделитель строк (обычно <see cref="Environment.NewLine"/>).</param>
+    /// <returns>Обрезанный текст (не длиннее исходного); при пустом входе — пустая строка.</returns>
+    public static string TrimToHead(string text, int maxChars, string newLine)
+    {
+      if (string.IsNullOrEmpty(text))
+        return string.Empty;
+      if (text.Length <= maxChars)
+        return text;
+
+      if (string.IsNullOrEmpty(newLine))
+        newLine = "\n";
+
+      // Оставляем примерно половину объёма, старое (хвост) отсекаем.
+      int keep = maxChars / 2;
+      if (keep <= 0)
+        return string.Empty;
+
+      string separator = newLine + newLine;
+
+      // Граница блока не позже целевой длины: отрезаем старые блоки с конца.
+      int boundary = text.LastIndexOf(separator, keep, StringComparison.Ordinal);
+      if (boundary > 0)
+        return text.Substring(0, boundary);
+
+      // Целевая длина попала внутрь самого свежего (первого) блока — не рвём его:
+      // оставляем всё до первого разделителя (то есть первый блок целиком).
+      int firstSeparator = text.IndexOf(separator, StringComparison.Ordinal);
+      if (firstSeparator > 0)
+        return text.Substring(0, firstSeparator);
+
+      // Разделителей нет (один блок) — оставляем как есть, не обрезаем.
+      return text;
+    }
   }
 }

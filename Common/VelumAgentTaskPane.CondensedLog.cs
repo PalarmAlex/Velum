@@ -88,7 +88,7 @@ namespace Velum.UI
 
     /// <summary>
     /// UI-поток: разбирает прочитанные сырые строки в пары «стимул → ответ», подавляет дубли
-    /// и дописывает новые блоки в окно вывода.
+    /// и вставляет новые блоки в начало окна вывода (самый свежий блок — верхний).
     /// </summary>
     /// <param name="state">Список сырых строк хвоста (или <c>null</c> при сбое чтения).</param>
     private void OnCondensedLogLinesRead(object state)
@@ -124,14 +124,12 @@ namespace Velum.UI
         if (blocks.Count == 0)
           return;
 
+        _txtAgentOutput.Text = VelumAgentLogCondensedRules.PrependBlocks(
+            _txtAgentOutput.Text, blocks, Environment.NewLine);
         TrimCondensedOutputIfNeeded();
-        for (int i = 0; i < blocks.Count; i++)
-        {
-          if (_txtAgentOutput.TextLength > 0)
-            _txtAgentOutput.AppendText(Environment.NewLine + Environment.NewLine);
-          _txtAgentOutput.AppendText(blocks[i]);
-        }
-        _txtAgentOutput.SelectionStart = _txtAgentOutput.TextLength;
+
+        // Самый свежий блок — сверху ленты: прокручиваем окно к началу.
+        _txtAgentOutput.SelectionStart = 0;
         _txtAgentOutput.ScrollToCaret();
       }
       catch
@@ -158,7 +156,8 @@ namespace Velum.UI
 
     /// <summary>
     /// Мягко ограничивает длину окна вывода, чтобы длительная работа не раздувала TextBox
-    /// (текстовый буфер WinForms не бесконечен). Обрезает старые блоки, оставляя хвост.
+    /// (текстовый буфер WinForms не бесконечен). Обрезает старые блоки с конца, оставляя
+    /// свежие в начале.
     /// </summary>
     private void TrimCondensedOutputIfNeeded()
     {
@@ -168,20 +167,8 @@ namespace Velum.UI
 
       try
       {
-        string text = _txtAgentOutput.Text;
-        int cut = text.Length - (maxChars / 2);
-        if (cut <= 0)
-          return;
-
-        // Режем по границе блока (по двойному переводу строки), чтобы не рвать блок пополам.
-        int boundary = text.IndexOf(
-            Environment.NewLine + Environment.NewLine,
-            cut,
-            StringComparison.Ordinal);
-        if (boundary >= 0 && boundary + 2 * Environment.NewLine.Length < text.Length)
-          cut = boundary + 2 * Environment.NewLine.Length;
-
-        _txtAgentOutput.Text = text.Substring(cut);
+        _txtAgentOutput.Text = VelumAgentLogCondensedRules.TrimToHead(
+            _txtAgentOutput.Text, maxChars, Environment.NewLine);
       }
       catch
       {
