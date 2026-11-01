@@ -702,3 +702,25 @@
 ## Эвристики (случай 45)
 
 - **E75. «Хвосты» откачанной фичи живут в трёх местах и лечатся раздельно: модель данных, UI, термины в комментариях.** Когда движок удаляет слой обучения, в адаптере остаются: (1) жёсткий счётчик ожидаемых ключей стора — именно он рождает ложное «файл неполный» на каждом открытии формы, (2) поле-наследник в форме, (3) устаревший термин в комментариях/XML-doc, который сбивает с толку при следующем разборе. Начинать надо с проверки, что именно мертво: тот же «шаг цепочки» живым цепочкам б/у-рефлексов и автоматизмам нужен, и репортёр оценки шага удалять нельзя. Удалённый ключ не выбрасывайте в `default:` парсера — добавляйте в список тихо игнорируемых legacy-ключей, иначе старые файлы начнут ругаться. Отдельно: `cref` на типы ISIDA в XML-doc сверяйте с метаданными сборки — неверное пространство имён даёт CS1574. См. случай 45, случай 44.
+
+## Случай 46. Сокращённый лог: вербальные фразы выводились как команды SolidWorks («sw:…»), окно вывода засорено эхо-сообщениями, заголовки блоков избыточны
+
+- **Дата / сборка:** 2026-11-01, `bin\Debug\velum.dll` (доработка панели «Агент»: вывод сокращённого лога «стимул → ответ» и исправление резолва фраз)
+- **Симптом:** (1) при отправке вербального стимула «п» (триггер у-рефлекса) в сокращённом логе на панели агента и в отчёте по кнопке «Логи» отображалось `Фраза: "sw:963"` (команда SolidWorks), а не фраза «п»; (2) окно вывода `_txtAgentOutput` засорялось информационными строками `Вы: п` и `Стимул применён (речь + команды → ISIDA).`; (3) заголовки блоков лога `Стимул =====` / `Ответ =====` избыточны по формату.
+- **Область:** `Common\Logs\VelumAgentLogCondensedResolver.cs`, `Common\Logs\VelumLogCellTooltipProvider.cs`, `Common\VelumAgentTaskPane.cs`, `Common\Logs\VelumAgentLogCondensedRules.cs`.
+- **Гипотезы и проверки:**
+  1. *Баг ISIDA (в том же логе AIStudio то же самое)* — **опровергнуто**: в AIStudio тултип на той же фразе корректно показывает «п», резолвер использует `VerbalChannel`.
+  2. *Velum берёт фразы из `CommandChannel`* — **подтверждено (корень)**.
+- **Корень:** у ISIDA два отдельных вербальных канала: `VerbalChannel` (фразы / `PhraseIdList`) и `CommandChannel` (команды SolidWorks / `CommandPatternIdList`). Один и тот же числовой ID в них означает разное (фраза «п» vs команда «sw:963»). `VelumLogCellTooltipProvider` и новый `VelumAgentLogCondensedResolver` брали текст для `PhraseIdList` из `CommandChannel` (через статическое свойство `VerbalSensor`), из-за чего фразы резолвились как команды SolidWorks.
+- **Доказательство:** `SensorySystem.Instance.VerbalChannel` vs `CommandChannel` в `SensorySystem.cs`; `VelumLogCellTooltipProvider.cs:30` до правки — `VerbalSensor => CommandChannel`; `AIStudio` везде использует `VerbalChannel` для `PhraseIdList` и `CommandChannel` для `CommandPatternIdList`.
+- **Исправление:**
+  - `VelumLogCellTooltipProvider`: добавлено свойство `VerbalChannel => SensorySystem.Instance.VerbalChannel`; резолв `PhraseIdList` переведён на `VerbalChannel`, `CommandPatternIdList` оставлен на `VerbalSensor` (CommandChannel);
+  - `VelumAgentLogCondensedResolver`: разделён канал — `verbalChannel` (VerbalChannel) для фраз, `commandChannel` (CommandChannel) для команд;
+  - `VelumAgentTaskPane.OnSendMessageClick`: убраны `AppendAgentOutputLine("Вы: ...")` и `AppendAgentOutputLine("Стимул применён...")` (эхо-сообщения); оставлены только сообщения об ошибках/отказе (`Ошибка:`, `Пульсация выключена`, `Агент мёртв`);
+  - `VelumAgentLogCondensedRules`: `StimulusHeader` изменён на `СТИМУЛ:`, `ResponseHeader` на `ОТВЕТ:`.
+- **Проверка:** `Build-Velum.ps1 Debug` → EXIT=0. `dotnet test` → 23/23 (тесты используют константы заголовков, обновились автоматически). Ручная (в SolidWorks): вербальный стимул «п» выводится в сокращённом логе как `Фраза: "п"`; эхо-сообщения в окне не появляются; заголовки `СТИМУЛ:` / `ОТВЕТ:`; отчёт по кнопке «Логи» тоже показывает корректные фразы. Справка `agent-taskpane.html` обновлена и скопирована в `%ProgramData%\VELUM\help\forms\`.
+- **Эвристики:** → E76
+
+## Эвристика (случай 46)
+
+- **E76. У ISIDA два отдельных вербальных канала: `VerbalChannel` для фраз (`PhraseIdList`), `CommandChannel` для команд (`CommandPatternIdList`). Один и тот же числовой ID в них означает разное.** Фраза оператора «п» и команда SolidWorks «sw:963» могут иметь одинаковый ID в логах, но резолвиться по-разному. Резолвер обязан брать `PhraseIdList` из `VerbalChannel`, а `CommandPatternIdList` — из `CommandChannel`. Диагностический признак: в логе/тултипе вместо фразы оператора показывается команда вида `sw:…`. Проверять резолвер по паре «фраза → команда» с одинаковым ID. См. случай 46.

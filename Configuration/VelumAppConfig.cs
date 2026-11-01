@@ -94,6 +94,7 @@ namespace Velum.Configuration
           EnsureSolidHomeostasisPulseTrace();
           EnsureSolidProbeTimeoutSettings();
           EnsureHeavyMetricsPulsePeriodSetting();
+          EnsureCondensedLogPollPeriodSetting();
           EnsureScannerProbeConcurrencySetting();
           EnsureCadDegradedThresholdSettings();
           EnsureRecipeDispatchSettings();
@@ -605,6 +606,20 @@ namespace Velum.Configuration
     public static int NoOperatorStimulusSilencePulses => GetIntSetting("NoOperatorStimulusSilencePulses", 30);
 
     /// <summary>
+    /// Периодичность опроса сокращённого лога «стимул → ответ» на панели агента (в пульсах):
+    /// 1 — опрашивать хвост <c>AgentLogs.csv</c> каждый пульс, N — раз в N пульсов. Больше —
+    /// реже обращение к диску и спокойнее вывод, но крупнее задержка появления пар. Минимум 1.
+    /// </summary>
+    public static int CondensedLogPollPeriodPulses
+    {
+      get
+      {
+        int v = GetIntSetting("CondensedLogPollPeriodPulses", 1);
+        return v < 1 ? 1 : v;
+      }
+    }
+
+    /// <summary>
     /// Код зрительного канала (<see cref="ISIDA.Reflexes.AgentVisualColor"/>) для стимулов при активном документе «деталь».
     /// Дефолт 1 (совпадает с числовым значением <see cref="Velum.ReactiveCore.VelumSolidDocumentKind.Part"/>).
     /// </summary>
@@ -984,6 +999,7 @@ namespace Velum.Configuration
                   new XElement("ThinkingCycleDecayBase", 1),
                    new XElement("ThinkingCycleMainMaxAgePulses", 1000),
                    new XElement("NoOperatorStimulusSilencePulses", 30),
+                   new XElement("CondensedLogPollPeriodPulses", 1),
                    new XElement("DocumentColorPart", 1),
                    new XElement("DocumentColorAssembly", 2),
                    new XElement("DocumentColorDrawing", 3),
@@ -1275,6 +1291,32 @@ namespace Velum.Configuration
         app.Add(new XElement("HeavyMetricsPulsePeriod", 5));
         doc.Save(ConfigFullPath);
         Logger.Info("Velum: в Settings.xml добавлен HeavyMetricsPulsePeriod=5");
+      }
+      catch (Exception ex)
+      {
+        Logger.Error(ex.Message);
+      }
+    }
+
+    /// <summary>Добавляет периодичность опроса сокращённого лога, если ключа ещё нет.</summary>
+    private static void EnsureCondensedLogPollPeriodSetting()
+    {
+      try
+      {
+        if (!File.Exists(ConfigFullPath))
+          return;
+
+        XDocument doc = XDocument.Load(ConfigFullPath);
+        XElement app = doc.Root?.Element("AppSettings");
+        if (app == null)
+          return;
+
+        if (app.Element("CondensedLogPollPeriodPulses") != null)
+          return;
+
+        app.Add(new XElement("CondensedLogPollPeriodPulses", 1));
+        doc.Save(ConfigFullPath);
+        Logger.Info("Velum: в Settings.xml добавлен CondensedLogPollPeriodPulses=1");
       }
       catch (Exception ex)
       {

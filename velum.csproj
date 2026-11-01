@@ -250,6 +250,10 @@
       <DependentUpon>VelumAgentTaskPane.cs</DependentUpon>
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Common\VelumAgentTaskPane.CondensedLog.cs">
+      <DependentUpon>VelumAgentTaskPane.cs</DependentUpon>
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Common\VelumListFilterHelper.cs" />
     <Compile Include="Common\VelumListFilterFormatter.cs" />
     <Compile Include="Common\VelumListViewCellFilterMenu.cs" />
@@ -507,6 +511,9 @@
     <Compile Include="Common\Logs\VelumLogFileSessions.cs" />
     <Compile Include="Common\Logs\VelumLogSessionRules.cs" />
     <Compile Include="Common\Logs\VelumLogCellFillRules.cs" />
+    <Compile Include="Common\Logs\VelumAgentLogCondensedRules.cs" />
+    <Compile Include="Common\Logs\VelumAgentLogTailReader.cs" />
+    <Compile Include="Common\Logs\VelumAgentLogCondensedResolver.cs" />
     <Compile Include="Common\Logs\VelumLogCellTooltipProvider.cs" />
     <Compile Include="Common\Logs\VelumLogsReportHtmlBuilder.cs" />
     <Compile Include="Common\Logs\VelumLogsFormHost.cs" />

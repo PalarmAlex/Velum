@@ -111,6 +111,8 @@ namespace Velum.UI
       this._lblDefaultGeneticReflexId = new System.Windows.Forms.Label();
       this._lblSilence = new System.Windows.Forms.Label();
       this._tbSilence = new System.Windows.Forms.TextBox();
+      this._lblCondensedLogPoll = new System.Windows.Forms.Label();
+      this._tbCondensedLogPoll = new System.Windows.Forms.TextBox();
       this._lblMainMaxAge = new System.Windows.Forms.Label();
       this._tbMainMaxAge = new System.Windows.Forms.TextBox();
       this._lblCycleBase = new System.Windows.Forms.Label();
@@ -859,6 +861,8 @@ namespace Velum.UI
       this.tabPage3.Controls.Add(this._lblDefaultGeneticReflexId);
       this.tabPage3.Controls.Add(this._lblSilence);
       this.tabPage3.Controls.Add(this._tbSilence);
+      this.tabPage3.Controls.Add(this._lblCondensedLogPoll);
+      this.tabPage3.Controls.Add(this._tbCondensedLogPoll);
       this.tabPage3.Controls.Add(this._lblMainMaxAge);
       this.tabPage3.Controls.Add(this._tbMainMaxAge);
       this.tabPage3.Controls.Add(this._lblCycleBase);
@@ -923,6 +927,24 @@ namespace Velum.UI
       this._tbSilence.Name = "_tbSilence";
       this._tbSilence.Size = new System.Drawing.Size(100, 20);
       this._tbSilence.TabIndex = 13;
+      // 
+      // _lblCondensedLogPoll
+      // 
+      this._lblCondensedLogPoll.Location = new System.Drawing.Point(5, 218);
+      this._lblCondensedLogPoll.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+      this._lblCondensedLogPoll.Name = "_lblCondensedLogPoll";
+      this._lblCondensedLogPoll.Size = new System.Drawing.Size(174, 20);
+      this._lblCondensedLogPoll.TabIndex = 17;
+      this._lblCondensedLogPoll.Text = "Период кратких логов (пульс.):";
+      this._lblCondensedLogPoll.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // _tbCondensedLogPoll
+      // 
+      this._tbCondensedLogPoll.Location = new System.Drawing.Point(187, 219);
+      this._tbCondensedLogPoll.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
+      this._tbCondensedLogPoll.Name = "_tbCondensedLogPoll";
+      this._tbCondensedLogPoll.Size = new System.Drawing.Size(100, 20);
+      this._tbCondensedLogPoll.TabIndex = 18;
       // 
       // _lblMainMaxAge
       // 
@@ -2432,6 +2454,8 @@ namespace Velum.UI
     private System.Windows.Forms.TextBox _tbMainMaxAge;
     private System.Windows.Forms.Label _lblSilence;
     private System.Windows.Forms.TextBox _tbSilence;
+    private System.Windows.Forms.Label _lblCondensedLogPoll;
+    private System.Windows.Forms.TextBox _tbCondensedLogPoll;
     private System.Windows.Forms.Label _lblDefaultGeneticReflexId;
     private System.Windows.Forms.TextBox _tbDefaultGeneticReflexId;
     private System.Windows.Forms.CheckBox _chkFirstRun;

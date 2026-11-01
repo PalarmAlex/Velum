@@ -1,4 +1,8 @@
 Запускать по очереди:
 
-dotnet restore D:\Программы\Velum\Velum\tests\Velum.ReactiveCore.Tests.csproj -p:TargetFramework=net10.0
-dotnet test D:\Программы\Velum\Velum\tests\Velum.ReactiveCore.Tests.csproj -p:TargetFramework=net10.0 --no-restore
+dotnet restore D:\Программы\Velum\Velum\tests\Velum.ReactiveCore.Tests.csproj
+dotnet test D:\Программы\Velum\Velum\tests\Velum.ReactiveCore.Tests.csproj --no-restore
+
+Примечание: НЕ передавать -p:TargetFramework=net10.0 — установленный SDK (9.0.x)
+не поддерживает нацеливание на net10.0 (ошибка NETSDK1045). В csproj стоит net8.0
+с RollForward=Major, поэтому запуск идёт на установленном рантайме без переопределения TFM.

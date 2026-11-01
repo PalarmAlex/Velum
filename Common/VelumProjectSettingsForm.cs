@@ -137,6 +137,7 @@ namespace Velum.UI
       _ttpStageEvolution.SetToolTip(_tbCycleBase, "Базовое снятие веса (B) — начальное значение затухания веса цикла за пульс");
       _ttpStageEvolution.SetToolTip(_tbMainMaxAge, "Максимальный возраст главного цикла в пульсах — после этого цикл сбрасывается");
       _ttpStageEvolution.SetToolTip(_tbSilence, "Порог простоя оператора в пульсах — время без стимулов от оператора перед переходом в режим ожидания");
+      _ttpStageEvolution.SetToolTip(_tbCondensedLogPoll, "Периодичность опроса сокращённого лога «стимул → ответ» на панели агента (в пульсах): 1 — каждый пульс, N — раз в N пульсов. Меньше — быстрее вывод, больше — реже обращение к AgentLogs.csv. Минимум 1, по умолчанию 1.");
       _ttpStageEvolution.SetToolTip(_tbDefaultGeneticReflexId, "ID безусловного (генетического) рефлекса — рефлекс, выполняемый по умолчанию при отсутствии других");
       _ttpStageEvolution.SetToolTip(_chkFirstRun, "Режим первого запуска (инициализация)");
 
@@ -372,6 +373,7 @@ namespace Velum.UI
       _tbCycleBase.Text = VelumAppConfig.ThinkingCycleDecayBase.ToString(CultureInfo.InvariantCulture);
       _tbMainMaxAge.Text = VelumAppConfig.ThinkingCycleMainMaxAgePulses.ToString(CultureInfo.InvariantCulture);
       _tbSilence.Text = VelumAppConfig.NoOperatorStimulusSilencePulses.ToString(CultureInfo.InvariantCulture);
+      _tbCondensedLogPoll.Text = VelumAppConfig.CondensedLogPollPeriodPulses.ToString(CultureInfo.InvariantCulture);
 
       _tbSolidMetricEpsilon.Text = VelumAppConfig.SolidEnvironmentMetricDeltaEpsilon.ToString(CultureInfo.InvariantCulture);
       _tbSolidHostMinDelta.Text = VelumAppConfig.SolidHostImpulseMinParameterDelta.ToString(CultureInfo.InvariantCulture);
@@ -602,7 +604,8 @@ namespace Velum.UI
           !int.TryParse(_tbCycleDiv.Text.Trim(), out int cycleDiv) ||
           !int.TryParse(_tbCycleBase.Text.Trim(), out int cycleBase) ||
           !int.TryParse(_tbMainMaxAge.Text.Trim(), out int mainAge) ||
-          !int.TryParse(_tbSilence.Text.Trim(), out int silence))
+          !int.TryParse(_tbSilence.Text.Trim(), out int silence) ||
+          !int.TryParse(_tbCondensedLogPoll.Text.Trim(), out int condensedPoll))
       {
         MessageBox.Show(this, "Некорректные целочисленные параметры аналитики.", "Проверка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         return false;
@@ -635,6 +638,12 @@ namespace Velum.UI
       if (cycleDiv < 1)
       {
         MessageBox.Show(this, "Делитель возраста цикла (A) должен быть не меньше 1.", "Проверка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        return false;
+      }
+
+      if (condensedPoll < 1)
+      {
+        MessageBox.Show(this, "Период кратких логов должен быть не меньше 1.", "Проверка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         return false;
       }
 
@@ -743,6 +752,7 @@ namespace Velum.UI
       VelumAppConfig.SetSetting("ThinkingCycleDecayBase", cycleBase.ToString(CultureInfo.InvariantCulture));
       VelumAppConfig.SetSetting("ThinkingCycleMainMaxAgePulses", mainAge.ToString(CultureInfo.InvariantCulture));
       VelumAppConfig.SetSetting("NoOperatorStimulusSilencePulses", silence.ToString(CultureInfo.InvariantCulture));
+      VelumAppConfig.SetSetting("CondensedLogPollPeriodPulses", condensedPoll.ToString(CultureInfo.InvariantCulture));
       VelumAppConfig.SetSetting("SolidEnvironmentMetricDeltaEpsilon", solidEps.ToString(CultureInfo.InvariantCulture));
       VelumAppConfig.SetSetting("SolidHostImpulseMinParameterDelta", solidMinDelta.ToString(CultureInfo.InvariantCulture));
       VelumAppConfig.SetSetting("SolidHomeostasisPulseTrace", _chkHomeostasisPulseDrift.Checked.ToString());

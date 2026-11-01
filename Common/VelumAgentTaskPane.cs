@@ -942,6 +942,7 @@ namespace Velum.UI
     private void OnAfterGomeostasis(int pulseNumber)
     {
       RequestRefresh();
+      PumpCondensedLog(pulseNumber);
     }
 
     private void RequestRefresh()
@@ -1325,6 +1326,7 @@ namespace Velum.UI
       VelumSolidCommandBuffer.Clear();
       if (_txtAgentOutput != null)
         _txtAgentOutput.Clear();
+      ResetCondensedLogState();
       if (_scrollPanel != null)
         _scrollPanel.Visible = true;
       if (_scrollHost != null)
@@ -1361,6 +1363,7 @@ namespace Velum.UI
       VelumSolidCommandBuffer.Clear();
       if (_txtAgentOutput != null)
         _txtAgentOutput.Clear();
+      ResetCondensedLogState();
       if (_scrollPanel != null)
         _scrollPanel.Visible = false;
       if (_headerPanel != null)
@@ -1909,19 +1912,6 @@ namespace Velum.UI
       if (IsAutoAddSensorsEnabled())
         QueueCommandPrimariesToBufferIfAutoAddFromLine(commandLine);
 
-      if (!string.IsNullOrWhiteSpace(verbalLine) || !string.IsNullOrWhiteSpace(commandLine))
-      {
-        string display = string.Join(" ", new[] { verbalLine, commandLine }.Where(s => !string.IsNullOrWhiteSpace(s)));
-        AppendAgentOutputLine("Вы: " + display);
-      }
-      else
-      {
-        string directLine = _txtOperatorInfluencesDisplay != null ? _txtOperatorInfluencesDisplay.Text : string.Empty;
-        AppendAgentOutputLine(
-            "Вы: " +
-            (string.IsNullOrWhiteSpace(directLine) ? "воздействия на параметры агента" : directLine));
-      }
-
       _txtMessageInput.Clear();
 
       try
@@ -1958,7 +1948,6 @@ namespace Velum.UI
 
         _operatorInfluenceIds.Clear();
         RefreshOperatorInfluencesDisplay();
-        AppendAgentOutputLine("Стимул применён (речь + команды → ISIDA).");
       }
       finally
       {

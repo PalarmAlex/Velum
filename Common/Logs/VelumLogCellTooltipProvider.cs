@@ -30,6 +30,10 @@ namespace Velum.UI.Logs
     private static VerbalSensorChannel VerbalSensor =>
         SensorySystem.IsInitialized ? SensorySystem.Instance.CommandChannel : null;
 
+    /// <summary>Вербальный канал для фраз (PhraseIdList). Команды резолвятся через <see cref="VerbalSensor"/>.</summary>
+    private static VerbalSensorChannel VerbalChannel =>
+        SensorySystem.IsInitialized ? SensorySystem.Instance.VerbalChannel : null;
+
     /// <summary>Подсказка колонки «Стиль» для отчёта: коды комбинации «1,2,3» или одно число.</summary>
     public string GetStyleCellTooltip(string cellRaw)
     {
@@ -161,7 +165,7 @@ namespace Velum.UI.Logs
         string phrasesLine;
         if (perceptionImage.PhraseIdList != null && perceptionImage.PhraseIdList.Any())
         {
-          var channel = VerbalSensor;
+          var channel = VerbalChannel;
           var phraseNames = perceptionImage.PhraseIdList
               .Select(phraseId => channel?.GetPhraseFromPhraseId(phraseId) ??
                                   "Фраза " + phraseId.ToString(CultureInfo.InvariantCulture))
@@ -429,7 +433,7 @@ namespace Velum.UI.Logs
 
         if (actionsImage != null && actionsImage.PhraseIdList != null && actionsImage.PhraseIdList.Any())
         {
-          var channel = VerbalSensor;
+          var channel = VerbalChannel;
           var phraseTexts = new List<string>();
           foreach (int phraseId in actionsImage.PhraseIdList)
           {
