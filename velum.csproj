@@ -508,6 +508,7 @@
     </Compile>
     <Compile Include="Common\ProductRegistry\VelumProductRegistryReportHtmlBuilder.cs" />
     <Compile Include="Common\Logs\VelumLogEntries.cs" />
+    <Compile Include="Common\Logs\VelumLogFileSessionDeletion.cs" />
     <Compile Include="Common\Logs\VelumLogFileSessions.cs" />
     <Compile Include="Common\Logs\VelumLogSessionRules.cs" />
     <Compile Include="Common\Logs\VelumLogCellFillRules.cs" />

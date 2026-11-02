@@ -227,5 +227,80 @@ namespace Velum.ReactiveCore.Tests
       Assert.Empty(VelumLogSessionRules.CollectSelectedSessionIndices<Row>(
           null, r => r.Checked, r => r.SessionIndex));
     }
+
+    // ── JSONL: удаление сессий (случай 48) ──────────────────────────────
+    // Экстрактор пульса для тестов: строка вида {"Пульс":N,...} → N; иначе null.
+    private static int? Pulse(string line)
+    {
+      if (line == null) return null;
+      int i = line.IndexOf("\"Пульс\":", StringComparison.Ordinal);
+      if (i < 0) return null;
+      i += "\"Пульс\":".Length;
+      int j = i;
+      while (j < line.Length && (char.IsDigit(line[j]) || line[j] == '-')) j++;
+      return int.TryParse(line.Substring(i, j - i), out int v) ? (int?)v : null;
+    }
+
+    private static List<string> SampleJsonl()
+    {
+      return new List<string>
+      {
+        "{\"Пульс\":1,\"a\":1}", // сессия 0
+        "{\"Пульс\":2,\"a\":2}",
+        "{\"Пульс\":1,\"b\":1}", // сессия 1 (pulse 1 после pulse 2)
+        "{\"Пульс\":2,\"b\":2}",
+        "{\"Пульс\":1,\"c\":1}", // сессия 2
+        "{\"Пульс\":3,\"c\":3}",
+      };
+    }
+
+    [Fact]
+    public void KeepJsonlLinesExceptSessions_DeletesSelectedSessionOnly()
+    {
+      List<string> kept = VelumLogSessionRules.KeepJsonlLinesExceptSessions(
+          SampleJsonl(), Pulse, new[] { 1 });
+
+      Assert.DoesNotContain(kept, l => l.Contains("\"b\""));
+      Assert.Contains(kept, l => l.Contains("\"a\""));
+      Assert.Contains(kept, l => l.Contains("\"c\""));
+    }
+
+    [Fact]
+    public void KeepJsonlLinesExceptSessions_DeleteAll_LeavesEmpty()
+    {
+      List<string> kept = VelumLogSessionRules.KeepJsonlLinesExceptSessions(
+          SampleJsonl(), Pulse, new[] { 0, 1, 2 });
+
+      Assert.Empty(kept);
+    }
+
+    [Fact]
+    public void KeepJsonlLinesExceptSessions_DropsNonEntryLines()
+    {
+      var lines = new List<string>
+      {
+        "{\"Пульс\":1,\"a\":1}",
+        "не json строка",
+        "{\"Пульс\":2,\"a\":2}",
+        "{\"Пульс\":1,\"b\":1}", // сессия 1
+      };
+
+      List<string> kept = VelumLogSessionRules.KeepJsonlLinesExceptSessions(
+          lines, Pulse, new[] { 0 });
+
+      // Блок 0 (обе a-строки) удалён; мусорная строка отброшена; сессия 1 цела.
+      Assert.DoesNotContain(kept, l => l.Contains("не json"));
+      Assert.DoesNotContain(kept, l => l.Contains("\"a\""));
+      Assert.Contains(kept, l => l.Contains("\"b\""));
+    }
+
+    [Fact]
+    public void KeepJsonlLinesExceptSessions_EmptyDelete_KeepsValidEntries()
+    {
+      List<string> kept = VelumLogSessionRules.KeepJsonlLinesExceptSessions(
+          SampleJsonl(), Pulse, new int[0]);
+
+      Assert.Equal(6, kept.Count);
+    }
   }
 }

@@ -113,5 +113,66 @@ namespace Velum.UI.Logs
              + sessionStart.ToString("yyyyMMdd_HHmmss", System.Globalization.CultureInfo.InvariantCulture)
              + ".html";
     }
+
+    /// <summary>
+    /// Оставляет из строк JSONL-лога только те, что НЕ принадлежат удаляемым сессиям.
+    /// Граница сессии в JSONL — запись с пульсом 1, идущая после записи с пульсом &gt; 1
+    /// (первый пульс новой сессии после её развития); это тот же критерий, что при чтении
+    /// сессий (<c>ReadJsonlSessionBlocks</c>). Непарсящиеся строки (не запись) отбрасываются,
+    /// как и при чтении — файл после перезаписи остаётся валидным JSONL.
+    /// </summary>
+    /// <param name="lines">Строки JSONL в исходном порядке.</param>
+    /// <param name="tryGetPulse">
+    /// Извлекает пульс записи; возвращает <c>null</c>, если строка не является записью
+    /// (не JSON или нет разбора времени) — такая строка выбрасывается.
+    /// </param>
+    /// <param name="sessionIndicesToDelete">Индексы удаляемых сессий (по порядку блоков).</param>
+    internal static List<string> KeepJsonlLinesExceptSessions(
+        IEnumerable<string> lines,
+        Func<string, int?> tryGetPulse,
+        IEnumerable<int> sessionIndicesToDelete)
+    {
+      var kept = new List<string>();
+      if (lines == null || tryGetPulse == null)
+        return kept;
+
+      var toDelete = new HashSet<int>(sessionIndicesToDelete ?? Enumerable.Empty<int>());
+      if (toDelete.Count == 0)
+      {
+        // Нечего удалять — сохраняем только валидные записи (мусор отбрасываем, как при чтении).
+        foreach (string line in lines)
+          if (tryGetPulse(line).HasValue)
+            kept.Add(line);
+        return kept;
+      }
+
+      int blockIndex = -1;
+      bool insideDeleted = false;
+      bool anySession = false;
+      int? lastPulse = null;
+
+      foreach (string line in lines)
+      {
+        int? pulse = tryGetPulse(line);
+        if (!pulse.HasValue)
+          continue; // не запись — пропускаем (как ReadJsonlSessionBlocks)
+
+        bool newSession = !anySession
+                          || (pulse.Value == 1 && lastPulse.HasValue && lastPulse.Value > 1);
+        if (newSession)
+        {
+          blockIndex++;
+          anySession = true;
+          insideDeleted = toDelete.Contains(blockIndex);
+          lastPulse = null;
+        }
+
+        if (!insideDeleted)
+          kept.Add(line);
+        lastPulse = pulse;
+      }
+
+      return kept;
+    }
   }
 }

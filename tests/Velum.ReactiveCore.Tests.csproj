@@ -102,6 +102,7 @@
     <Compile Include="VelumReflexForbidTargetRulesTests.cs" />
     <Compile Include="VelumListFilterFormatterTests.cs" />
     <Compile Include="VelumLogSessionRulesTests.cs" />
+    <Compile Include="VelumLogSessionDeletionTests.cs" />
     <Compile Include="VelumAgentLogCondensedRulesTests.cs" />
     <Compile Include="VelumPdfOutdatedRulesTests.cs" />
     <Compile Include="VelumProblemCacheSyncTests.cs" />

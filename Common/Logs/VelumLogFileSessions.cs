@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using ISIDA.Common;
 using Newtonsoft.Json.Linq;
 using Velum.Isida.Logs;
 
@@ -121,33 +122,76 @@ namespace Velum.UI.Logs
     public static int DeleteSessions(
         string csvFileName,
         IEnumerable<int> sessionIndices,
-        Func<string, bool> isHeaderRow)
+        Func<string, bool> isHeaderRow,
+        ResearchLogger.LogFileMaintenanceScope scope,
+        string jsonlFileName = null,
+        Func<string, int?> tryGetJsonlPulse = null)
     {
       string path = VelumLogPaths.ResolveLogFile(csvFileName);
-      if (!File.Exists(path))
+      bool csvExists = File.Exists(path);
+      string jsonlPath = jsonlFileName != null && tryGetJsonlPulse != null
+          ? VelumLogPaths.ResolveLogFile(jsonlFileName)
+          : null;
+      bool jsonlExists = jsonlPath != null && File.Exists(jsonlPath);
+
+      // Если ни CSV, ни парный JSONL нет — удалять нечего.
+      if (!csvExists && !jsonlExists)
         return 0;
 
       var toDelete = new HashSet<int>(sessionIndices ?? Enumerable.Empty<int>());
       if (toDelete.Count == 0)
         return 0;
 
-      List<string> lines;
-      using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
-      using (var reader = new StreamReader(fs, Encoding.UTF8, detectEncodingFromByteOrderMarks: true))
+      // Чтение и перезапись выполняются при освобождённых writers логгера, чтобы файл
+      // был физически свободен (см. VelumLogFileSessionDeletion). Иначе перезапись падает
+      // как «файл занят процессом». В том же контуре чистится и парный JSONL (см. ниже).
+      VelumLogFileSessionDeletion.Run(scope, () =>
       {
-        lines = new List<string>();
-        string line;
-        while ((line = reader.ReadLine()) != null)
-          lines.Add(line);
-      }
+        if (csvExists)
+        {
+          List<string> lines;
+          using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
+          using (var reader = new StreamReader(fs, Encoding.UTF8, detectEncodingFromByteOrderMarks: true))
+          {
+            lines = new List<string>();
+            string line;
+            while ((line = reader.ReadLine()) != null)
+              lines.Add(line);
+          }
 
-      var kept = VelumLogSessionRules.KeepLinesExceptSessions(lines, isHeaderRow, toDelete);
+          var kept = VelumLogSessionRules.KeepLinesExceptSessions(lines, isHeaderRow, toDelete);
 
-      using (var writer = new StreamWriter(path, append: false, encoding: new UTF8Encoding(encoderShouldEmitUTF8Identifier: true)))
-      {
-        foreach (string line in kept)
-          writer.WriteLine(line);
-      }
+          using (var writer = new StreamWriter(path, append: false, encoding: new UTF8Encoding(encoderShouldEmitUTF8Identifier: true)))
+          {
+            foreach (string line in kept)
+              writer.WriteLine(line);
+          }
+        }
+
+        // Парный JSONL чистится теми же индексами сессий: иначе после удаления всех
+        // CSV-сессий форма проваливается в fallback-чтение JSONL и показывает те же
+        // сессии (галки сброшены, «удалено N», но список не пустеет). Индексация блоков
+        // в CSV и JSONL совпадает (оба режутся по сессиям, см. ReadJsonlSessionBlocks).
+        if (jsonlExists)
+        {
+          List<string> jlines;
+          using (var jfs = new FileStream(jsonlPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
+          using (var jreader = new StreamReader(jfs, Encoding.UTF8, detectEncodingFromByteOrderMarks: true))
+          {
+            jlines = new List<string>();
+            string jline;
+            while ((jline = jreader.ReadLine()) != null)
+              jlines.Add(jline);
+          }
+
+          List<string> jkept = VelumLogSessionRules.KeepJsonlLinesExceptSessions(jlines, tryGetJsonlPulse, toDelete);
+          using (var jwriter = new StreamWriter(jsonlPath, append: false, encoding: new UTF8Encoding(encoderShouldEmitUTF8Identifier: true)))
+          {
+            foreach (string jline in jkept)
+              jwriter.WriteLine(jline);
+          }
+        }
+      });
 
       return toDelete.Count;
     }
@@ -344,10 +388,30 @@ namespace Velum.UI.Logs
       var all = ListFileSessions();
       var removed = all.Where(s => indices.Contains(s.SessionIndex)).ToList();
 
-      if (File.Exists(VelumLogPaths.ResolveLogFile(VelumLogPaths.AgentLogCsvFileName)))
-        VelumCsvLogSessionReader.DeleteSessions(VelumLogPaths.AgentLogCsvFileName, indices, IsHeaderRow);
+      // Чистятся оба носителя системного лога (CSV и парный JSONL) одними индексами —
+      // иначе после опустошения CSV форма проваливается в fallback-чтение JSONL.
+      VelumCsvLogSessionReader.DeleteSessions(
+          VelumLogPaths.AgentLogCsvFileName,
+          indices,
+          IsHeaderRow,
+          ResearchLogger.LogFileMaintenanceScope.Agent,
+          AgentLogJsonlFileName,
+          TryGetJsonlPulse);
 
       return removed;
+    }
+
+    /// <summary>Имя парного JSONL системного лога (fallback-носитель при пустом CSV).</summary>
+    private const string AgentLogJsonlFileName = "AgentLogs.jsonl";
+
+    /// <summary>
+    /// Пульс JSONL-записи для разбиения на сессии; <c>null</c>, если строка не является
+    /// записью (не JSON / не разобрано время) — таковая отбрасывается при перезаписи.
+    /// </summary>
+    private static int? TryGetJsonlPulse(string line)
+    {
+      VelumAgentLogEntry entry = TryParseJsonlRow(line);
+      return entry == null ? (int?)null : (entry.Pulse ?? 0);
     }
 
     private static bool IsHeaderRow(string line)
@@ -627,7 +691,11 @@ namespace Velum.UI.Logs
         return new List<VelumLogFileSessionInfo>();
 
       var removed = ListFileSessions().Where(s => indices.Contains(s.SessionIndex)).ToList();
-      VelumCsvLogSessionReader.DeleteSessions(VelumLogPaths.StylesLogCsvFileName, indices, IsHeaderRow);
+      VelumCsvLogSessionReader.DeleteSessions(
+          VelumLogPaths.StylesLogCsvFileName,
+          indices,
+          IsHeaderRow,
+          ResearchLogger.LogFileMaintenanceScope.Styles);
       return removed;
     }
 
@@ -726,7 +794,11 @@ namespace Velum.UI.Logs
         return new List<VelumLogFileSessionInfo>();
 
       var removed = ListFileSessions().Where(s => indices.Contains(s.SessionIndex)).ToList();
-      VelumCsvLogSessionReader.DeleteSessions(VelumLogPaths.ParametersLogCsvFileName, indices, IsHeaderRow);
+      VelumCsvLogSessionReader.DeleteSessions(
+          VelumLogPaths.ParametersLogCsvFileName,
+          indices,
+          IsHeaderRow,
+          ResearchLogger.LogFileMaintenanceScope.Parameters);
       return removed;
     }
 
