@@ -1673,9 +1673,9 @@ namespace Velum.UI
         _btnHeaderVelumPulseStop.Enabled = ready && running;
       if (_btnHeaderVelumProjectSettings != null)
         _btnHeaderVelumProjectSettings.Enabled = isAdmin;
-      // «Логи» доступны, когда цикл агента остановлен; при работающей пульсации блокируется.
+      // «Логи» доступны всегда, независимо от состояния пульсации.
       if (_btnHeaderLogs != null)
-        _btnHeaderLogs.Enabled = !running;
+        _btnHeaderLogs.Enabled = true;
     }
 
     private void OnHeaderVelumPulseStartClick(object sender, EventArgs e)
