@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -356,8 +357,6 @@ namespace Velum.UI
         _pnlSendRow.Visible = visible;
       if (_lblOutputCaption != null)
         _lblOutputCaption.Visible = visible;
-      if (_btnLogs != null)
-        _btnLogs.Visible = visible;
       if (_txtAgentOutput != null)
         _txtAgentOutput.Visible = visible;
     }
@@ -450,7 +449,7 @@ namespace Velum.UI
           _txtOperatorInfluencesDisplay == null || _btnOperatorInfluencesPick == null ||
           _lblInputCaption == null || _flowInputCaption == null ||
           _btnViewVerbalPrimariesBuffer == null || _txtMessageInput == null || _pnlSendRow == null ||
-          _btnSend == null || _lblOutputCaption == null || _btnLogs == null || _txtAgentOutput == null)
+          _btnSend == null || _lblOutputCaption == null || _txtAgentOutput == null)
         return;
 
       int pad = ScrollContentPadding;
@@ -624,7 +623,6 @@ namespace Velum.UI
 
       _lblOutputCaption.MaximumSize = new Size(innerW, 0);
       _lblOutputCaption.Location = new Point(x, y);
-      LayoutLogsButton(x, y, innerW);
       y += _lblOutputCaption.Height + gap;
 
       _txtAgentOutput.Location = new Point(x, y);
@@ -1380,6 +1378,8 @@ namespace Velum.UI
         _btnHeaderVelumPulseStop.Visible = false;
       if (_btnHeaderVelumProjectSettings != null)
         _btnHeaderVelumProjectSettings.Visible = false;
+      if (_btnHeaderLogs != null)
+        _btnHeaderLogs.Visible = false;
       if (_rootLayout != null && _rootLayout.RowCount >= 2)
       {
         _rootLayout.RowStyles[0] = new RowStyle(SizeType.Absolute, 0f);
@@ -1557,41 +1557,52 @@ namespace Velum.UI
         _parameterToolTip.SetToolTip(btn, toolTip);
     }
 
-    /// <summary>Кнопка «Логи» над областью «Ответ агента» (справа от подписи).</summary>
+    /// <summary>
+    /// Кнопка «Логи» в шапке (в блоке Старт / Стоп / Настройки): иконка и подсказка.
+    /// Иконка берётся из папки <c>icons</c> рядом со сборкой (как в других формах), файл не входит в ресурсы.
+    /// </summary>
     private void ConfigureLogsButton()
     {
-      if (_btnLogs == null)
+      if (_btnHeaderLogs == null)
         return;
-      _btnLogs.Text = "Логи";
-      _btnLogs.UseVisualStyleBackColor = true;
-      _btnLogs.Cursor = Cursors.Hand;
-      _btnLogs.TabStop = false;
-      _btnLogs.Click -= OnLogsClick;
-      _btnLogs.Click += OnLogsClick;
+      _btnHeaderLogs.Text = string.Empty;
+      _btnHeaderLogs.UseVisualStyleBackColor = true;
+      _btnHeaderLogs.Cursor = Cursors.Hand;
+      _btnHeaderLogs.TabStop = false;
+      Image icon = TryLoadHeaderIcon("editselectall.png");
+      if (icon != null)
+      {
+        _btnHeaderLogs.Image = icon;
+        _btnHeaderLogs.ImageAlign = ContentAlignment.MiddleCenter;
+      }
+      else
+      {
+        _btnHeaderLogs.Text = "Л";
+      }
+      _btnHeaderLogs.Click -= OnLogsClick;
+      _btnHeaderLogs.Click += OnLogsClick;
       if (_parameterToolTip != null)
-        _parameterToolTip.SetToolTip(_btnLogs, "Просмотр логов агента (система, стили, параметры)");
+        _parameterToolTip.SetToolTip(_btnHeaderLogs, "Просмотр логов агента (система, стили, параметры)");
     }
 
-    /// <summary>Позиционирует кнопку «Логи» в правом углу строки «Ответ агента».</summary>
-    private void LayoutLogsButton(int x, int y, int innerW)
+    /// <summary>Загружает PNG-иконку из подпапки <c>icons</c> каталога сборки (копируется при сборке).</summary>
+    private static Image TryLoadHeaderIcon(string fileName)
     {
-      if (_btnLogs == null || _lblOutputCaption == null)
-        return;
-      Size text = TextRenderer.MeasureText(
-          _btnLogs.Text,
-          _btnLogs.Font,
-          Size.Empty,
-          TextFormatFlags.SingleLine);
-      int btnW = Math.Min(innerW, text.Width + PrimariesBufferButtonHorizontalPaddingPx);
-      int btnH = Math.Max(20, Math.Min(
-          _lblOutputCaption.Height,
-          text.Height + PrimariesBufferButtonVerticalPaddingPx));
-      _btnLogs.SetBounds(
-          x + Math.Max(0, innerW - btnW),
-          y,
-          btnW,
-          btnH);
-      _btnLogs.BringToFront();
+      try
+      {
+        string dir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+        if (string.IsNullOrEmpty(dir))
+          return null;
+        string path = Path.Combine(dir, "icons", fileName);
+        if (!File.Exists(path))
+          return null;
+        using (var loaded = new Bitmap(path))
+          return new Bitmap(loaded);
+      }
+      catch
+      {
+        return null;
+      }
     }
 
     private void OnLogsClick(object sender, EventArgs e)
@@ -1614,6 +1625,8 @@ namespace Velum.UI
         _btnHeaderVelumPulseStop.Visible = showVelumCommands;
       if (_btnHeaderVelumProjectSettings != null)
         _btnHeaderVelumProjectSettings.Visible = showVelumCommands;
+      if (_btnHeaderLogs != null)
+        _btnHeaderLogs.Visible = showVelumCommands;
       if (_flowStateLabels != null)
         _flowStateLabels.Visible = showStateHomeo;
       if (_btnHeaderNormHomeostasis != null)
@@ -1660,6 +1673,9 @@ namespace Velum.UI
         _btnHeaderVelumPulseStop.Enabled = ready && running;
       if (_btnHeaderVelumProjectSettings != null)
         _btnHeaderVelumProjectSettings.Enabled = isAdmin;
+      // «Логи» доступны, когда цикл агента остановлен; при работающей пульсации блокируется.
+      if (_btnHeaderLogs != null)
+        _btnHeaderLogs.Enabled = !running;
     }
 
     private void OnHeaderVelumPulseStartClick(object sender, EventArgs e)

@@ -32,6 +32,7 @@ namespace Velum.UI
       this._btnHeaderVelumPulseStart = new System.Windows.Forms.Button();
       this._btnHeaderVelumPulseStop = new System.Windows.Forms.Button();
       this._btnHeaderVelumProjectSettings = new System.Windows.Forms.Button();
+      this._btnHeaderLogs = new System.Windows.Forms.Button();
       this._btnHeaderNormHomeostasis = new System.Windows.Forms.Button();
       this._btnHeaderReviveAgent = new System.Windows.Forms.Button();
       this._scrollPanel = new System.Windows.Forms.Panel();
@@ -68,7 +69,6 @@ namespace Velum.UI
       this._pnlSendRow = new System.Windows.Forms.Panel();
       this._btnSend = new System.Windows.Forms.Button();
       this._lblOutputCaption = new System.Windows.Forms.Label();
-      this._btnLogs = new System.Windows.Forms.Button();
       this._txtAgentOutput = new System.Windows.Forms.TextBox();
       this._parameterToolTip = new System.Windows.Forms.ToolTip(this.components);
       this._rootLayout.SuspendLayout();
@@ -229,6 +229,7 @@ namespace Velum.UI
       this._flowHeaderHomeoButtons.Controls.Add(this._btnHeaderVelumPulseStart);
       this._flowHeaderHomeoButtons.Controls.Add(this._btnHeaderVelumPulseStop);
       this._flowHeaderHomeoButtons.Controls.Add(this._btnHeaderVelumProjectSettings);
+      this._flowHeaderHomeoButtons.Controls.Add(this._btnHeaderLogs);
       this._flowHeaderHomeoButtons.Controls.Add(this._btnHeaderNormHomeostasis);
       this._flowHeaderHomeoButtons.Controls.Add(this._btnHeaderReviveAgent);
       this._flowHeaderHomeoButtons.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -269,6 +270,16 @@ namespace Velum.UI
       this._btnHeaderVelumProjectSettings.Size = new System.Drawing.Size(24, 24);
       this._btnHeaderVelumProjectSettings.TabIndex = 2;
       this._btnHeaderVelumProjectSettings.UseVisualStyleBackColor = true;
+      // 
+      // _btnHeaderLogs
+      // 
+      this._btnHeaderLogs.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this._btnHeaderLogs.Location = new System.Drawing.Point(78, 2);
+      this._btnHeaderLogs.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
+      this._btnHeaderLogs.Name = "_btnHeaderLogs";
+      this._btnHeaderLogs.Size = new System.Drawing.Size(24, 24);
+      this._btnHeaderLogs.TabIndex = 3;
+      this._btnHeaderLogs.UseVisualStyleBackColor = true;
       // 
       // _btnHeaderNormHomeostasis
       // 
@@ -329,7 +340,6 @@ namespace Velum.UI
       this._scrollHost.Controls.Add(this._txtMessageInput);
       this._scrollHost.Controls.Add(this._pnlSendRow);
       this._scrollHost.Controls.Add(this._lblOutputCaption);
-      this._scrollHost.Controls.Add(this._btnLogs);
       this._scrollHost.Controls.Add(this._txtAgentOutput);
       this._scrollHost.Location = new System.Drawing.Point(0, 0);
       this._scrollHost.Margin = new System.Windows.Forms.Padding(0);
@@ -718,18 +728,6 @@ namespace Velum.UI
       this._lblOutputCaption.TabIndex = 7;
       this._lblOutputCaption.Text = "Ответ агента:";
       // 
-      // _btnLogs
-      // 
-      this._btnLogs.Cursor = System.Windows.Forms.Cursors.Hand;
-      this._btnLogs.Location = new System.Drawing.Point(200, 218);
-      this._btnLogs.Margin = new System.Windows.Forms.Padding(0);
-      this._btnLogs.Name = "_btnLogs";
-      this._btnLogs.Size = new System.Drawing.Size(94, 22);
-      this._btnLogs.TabIndex = 9;
-      this._btnLogs.TabStop = false;
-      this._btnLogs.Text = "Логи";
-      this._btnLogs.UseVisualStyleBackColor = true;
-      // 
       // _txtAgentOutput
       // 
       this._txtAgentOutput.BackColor = System.Drawing.SystemColors.Window;
@@ -801,6 +799,7 @@ namespace Velum.UI
     private System.Windows.Forms.Button _btnHeaderVelumPulseStart;
     private System.Windows.Forms.Button _btnHeaderVelumPulseStop;
     private System.Windows.Forms.Button _btnHeaderVelumProjectSettings;
+    private System.Windows.Forms.Button _btnHeaderLogs;
     private System.Windows.Forms.Button _btnHeaderNormHomeostasis;
     private System.Windows.Forms.Button _btnHeaderReviveAgent;
     private System.Windows.Forms.Panel _scrollPanel;
@@ -837,7 +836,6 @@ namespace Velum.UI
     private System.Windows.Forms.Panel _pnlSendRow;
     private System.Windows.Forms.Button _btnSend;
     private System.Windows.Forms.Label _lblOutputCaption;
-    private System.Windows.Forms.Button _btnLogs;
     private System.Windows.Forms.TextBox _txtAgentOutput;
     private System.Windows.Forms.ToolTip _parameterToolTip;
   }
