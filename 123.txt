@@ -1,0 +1,380 @@
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot EMPTY
+[Velum.EA] IsActiveMetricPressing MISS probe=Velum.Registry.HasBrokenLinks
+[Velum.Gate] GetPublishedSnapshot EMPTY
+[Velum.EA] IsActiveMetricPressing MISS probe=Velum.Registry.HasMissingDrawings
+[Velum.Gate] GetPublishedSnapshot EMPTY
+[Velum.EA] IsActiveMetricPressing MISS probe=Velum.Registry.HasPdfProblems
+[Velum.Gate] GetPublishedSnapshot EMPTY
+[Velum.EA] IsActiveMetricPressing MISS probe=Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot EMPTY
+[Velum.EA] IsActiveMetricPressing MISS probe=Velum.Registry.HasDuplicateDesignations
+[Velum.Gate] GetPublishedSnapshot EMPTY
+[Velum.EA] IsActiveMetricPressing MISS probe=Velum.Registry.HasMissingRegistryEntries
+[Velum.Gate] GetPublishedSnapshot EMPTY
+[Velum.EA] IsActiveMetricPressing MISS probe=Velum.Registry.HasDxfProblems
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot EMPTY
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+"SLDWORKS.exe" (CLR v4.0.30319: DefaultDomain). Загружено "C:\WINDOWS\Microsoft.Net\assembly\GAC_64\System.Data\v4.0_4.0.0.0__b77a5c561934e089\System.Data.dll". Загрузка символов отключена параметром включения и исключения.
+14:38:12.792 [Info] [ConditionedReflexesSystem.ApplyPassiveDecay:1095] Крепость у-рефлекса ID=1 угашена пассивно: 0,819 → 0,812
+14:38:12.793 [Info] [ConditionedReflexesSystem.ApplyPassiveDecay:1095] Крепость у-рефлекса ID=2 угашена пассивно: 0,719 → 0,709
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.SolidDiag] 14:38:12.844 OverallState pulse=1 Normal
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+Поток 17660 завершился с кодом 0 (0x0).
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+Поток 12988 завершился с кодом 0 (0x0).
+Поток 19052 завершился с кодом 0 (0x0).
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.SolidDiag] 14:38:19.119 MetricPressure cumulativeEngage param=11 pulse=6 deltaSum=-2,000 target=53,000 cur=100,000
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.SolidDiag] 14:38:19.141 MetricPressure cumulativeEngage param=11 pulse=6 hold target=53,000 cur=53,000 (skip rewrite)
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.EA] IsActiveMetricPressing BAD probe=Velum.Registry.HasPdfProblems metric=50
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.EA] IsActiveMetricPressing BAD probe=Velum.Registry.HasDxfProblems metric=50
+[Velum.SolidDiag] 14:38:19.263 OverallState pulse=6 Normal→Bad
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.SolidDiag] 14:38:20.325 MetricPressure cumulativeEngage param=11 pulse=7 hold target=53,000 cur=53,000 (skip rewrite)
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.SolidDiag] 14:38:20.346 MetricPressure cumulativeEngage param=11 pulse=7 hold target=53,000 cur=53,000 (skip rewrite)
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.EA] IsActiveMetricPressing BAD probe=Velum.Registry.HasPdfProblems metric=50
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.EA] IsActiveMetricPressing BAD probe=Velum.Registry.HasDxfProblems metric=50
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.SolidDiag] 14:38:21.498 MetricPressure cumulativeEngage param=11 pulse=8 hold target=53,000 cur=53,000 (skip rewrite)
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+"SLDWORKS.exe" (CLR v4.0.30319: DefaultDomain). Загружено "C:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\doccplu.dll". Загрузка символов отключена параметром включения и исключения.
+"SLDWORKS.exe" (CLR v4.0.30319: DefaultDomain). Загружено "C:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\partcplu.dll". Загрузка символов отключена параметром включения и исключения.
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.SolidDiag] 14:38:22.677 MetricPressure cumulativeEngage param=11 pulse=8 hold target=53,000 cur=53,000 (skip rewrite)
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+Поток 20412 завершился с кодом 0 (0x0).
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.EA] IsActiveMetricPressing BAD probe=Velum.Registry.HasPdfProblems metric=50
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.EA] IsActiveMetricPressing BAD probe=Velum.Registry.HasDxfProblems metric=50
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+14:38:25.715 [Info] [VelumSolidMetricPressureReset.OnNoActiveSolidDocument:26] Velum metric pressure reset (no active document, keep host-global)
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+14:38:25.720 [Info] [VelumSolidDocumentEpisodeReset.OnActiveSolidDocumentChanged:54] OperatorMotorObservationSession: reset on document change
+14:38:25.721 [Info] [VelumSolidDocumentEpisodeReset.OnActiveSolidDocumentChanged:60] Velum document episode reset (no active document)
+[Velum.Gate] GetPublishedSnapshot EMPTY
+[Velum.Gate] GetPublishedSnapshot EMPTY
+[Velum.Gate] GetPublishedSnapshot EMPTY
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.EA] GetActiveEnvironmentActions count=15 ids=50,59,60,61,62,63,67,68,69,75,76,77,78,79,80
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+[Velum.Gate] GetPublishedSnapshot keys=Velum.Registry.HasBrokenLinks,Velum.Registry.HasMissingDrawings,Velum.Registry.HasMissingRegistryEntries,Velum.Registry.HasDxfProblems,Velum.Registry.HasPdfProblems,Velum.Registry.HasDuplicateDesignations,Velum.Assembly.BomDiff,Velum.Solid.Document.UnsavedNew,Velum.Solid.Material,Velum.Solid.BlankSize.LinksOk,Velum.Solid.Dxf.FileExists,Velum.Solid.Dxf.IsOutdated,Velum.Solid.Pdf.DrawingPathAvailable
+Программа "[3604] SLDWORKS.exe" завершилась с кодом 0 (0x0).
