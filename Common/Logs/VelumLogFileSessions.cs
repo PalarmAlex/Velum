@@ -196,6 +196,31 @@ namespace Velum.UI.Logs
       return toDelete.Count;
     }
 
+    /// <summary>
+    /// Пульс JSONL-записи по указанному ключу для разбиения на сессии при удалении;
+    /// <c>null</c>, если строка не является записью (не JSON) или поле-пульс отсутствует/не число.
+    /// Используется для логов стилей/параметров, где пульс пишется под ключом <c>Pulse</c>.
+    /// </summary>
+    public static int? TryGetJsonlPulseKey(string line, string pulseKey)
+    {
+      if (string.IsNullOrWhiteSpace(line) || line[0] != '{')
+        return null;
+      try
+      {
+        var jo = JObject.Parse(line);
+        string raw = (string)jo[pulseKey];
+        if (string.IsNullOrWhiteSpace(raw))
+          return null;
+        return int.TryParse(raw.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out int v)
+            ? (int?)v
+            : null;
+      }
+      catch
+      {
+        return null;
+      }
+    }
+
     /// <summary>Разбор временной метки (ISO или <c>dd.MM.yyyy</c>).</summary>
     public static bool TryParseTimestamp(string raw, out DateTime timestamp)
     {
@@ -695,9 +720,14 @@ namespace Velum.UI.Logs
           VelumLogPaths.StylesLogCsvFileName,
           indices,
           IsHeaderRow,
-          ResearchLogger.LogFileMaintenanceScope.Styles);
+          ResearchLogger.LogFileMaintenanceScope.Styles,
+          StylesLogJsonlFileName,
+          line => VelumCsvLogSessionReader.TryGetJsonlPulseKey(line, "Pulse"));
       return removed;
     }
+
+    /// <summary>Имя парного JSONL лога стилей (пишется логгером, чистится вместе с CSV).</summary>
+    private const string StylesLogJsonlFileName = "AgentLogs_Styles.jsonl";
 
     private static bool IsHeaderRow(string line)
     {
@@ -798,9 +828,14 @@ namespace Velum.UI.Logs
           VelumLogPaths.ParametersLogCsvFileName,
           indices,
           IsHeaderRow,
-          ResearchLogger.LogFileMaintenanceScope.Parameters);
+          ResearchLogger.LogFileMaintenanceScope.Parameters,
+          ParametersLogJsonlFileName,
+          line => VelumCsvLogSessionReader.TryGetJsonlPulseKey(line, "Pulse"));
       return removed;
     }
+
+    /// <summary>Имя парного JSONL лога параметров (пишется логгером, чистится вместе с CSV).</summary>
+    private const string ParametersLogJsonlFileName = "AgentLogs_Parameters.jsonl";
 
     private static bool IsHeaderRow(string line)
     {
