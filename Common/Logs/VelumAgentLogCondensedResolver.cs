@@ -51,6 +51,7 @@ namespace Velum.UI.Logs
         return null;
 
       string triggerId = Get(parts, "Триггер");
+      string triggerAtmzNode = Get(parts, "ТриггерАВ");
       string geneticReflex = Get(parts, "Б/у рефлекс");
       string conditionedReflex = Get(parts, "Усл. рефлекс");
       string automatizm = Get(parts, "Автоматизм");
@@ -58,7 +59,7 @@ namespace Velum.UI.Logs
 
       var record = new VelumCondensedLogRecord();
       ParseResponse(record, geneticReflex, conditionedReflex, automatizm);
-      ParseStimulus(record, triggerId, environment);
+      ParseStimulus(record, triggerId, triggerAtmzNode, environment);
       return record;
     }
 
@@ -131,8 +132,37 @@ namespace Velum.UI.Logs
       return string.Empty;
     }
 
-    private static void ParseStimulus(VelumCondensedLogRecord record, string triggerId, string environment)
+    private static void ParseStimulus(VelumCondensedLogRecord record, string triggerId, string triggerAtmzNode, string environment)
     {
+      // Правило «чей мотор в строке, тот триггер»: в строке автоматизма пусковой стимул —
+      // ID узла дерева автоматизмов (колонка «ТриггерАВ»), а не образ-спуск с цветом.
+      if (record.ResponseKind == VelumCondensedResponseKind.Автоматизм)
+      {
+        int nodeId = ParseId(triggerAtmzNode);
+        if (nodeId > 0)
+        {
+          record.Stimuli.Add(new VelumCondensedStimulusLine
+          {
+            Kind = VelumCondensedStimulusKind.УзелДереваАВ,
+            Id = nodeId
+          });
+          return;
+        }
+
+        // Узел не определён: для автоматизма цветовой образ нерелевантен, остаётся только
+        // давление среды (если оно было) — иначе блок не строится.
+        if (!string.IsNullOrWhiteSpace(environment))
+        {
+          record.Stimuli.Add(new VelumCondensedStimulusLine
+          {
+            Kind = VelumCondensedStimulusKind.Среда,
+            Id = 0,
+            Text = environment.Trim()
+          });
+        }
+        return;
+      }
+
       int imageId = ParseId(triggerId);
       if (imageId > 0)
       {

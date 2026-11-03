@@ -20,7 +20,8 @@ namespace Velum.UI.Logs
 
   /// <summary>
   /// Одна запись сокращённого лога о создании объекта движком: тип, ID, опциональные
-  /// резолвленные имя мотора и линия стимула (заполняются резолвером в UI-потоке).
+  /// резолвленные имя мотора, линия стимула и ID узла дерева автоматизмов
+  /// (заполняются резолвером в UI-потоке).
   /// </summary>
   public sealed class VelumCreatedEntityRecord
   {
@@ -38,6 +39,12 @@ namespace Velum.UI.Logs
     /// стимул не резолвится или не применим (для автоматизмов).
     /// </summary>
     public string StimulusLine { get; set; } = string.Empty;
+
+    /// <summary>
+    /// ID узла дерева автоматизмов (<c>AutomatizmTree.BranchID</c>); заполняется для
+    /// автоматизмов в <c>EmitCreationBlockUi</c> после резолва по <see cref="Id"/>.
+    /// </summary>
+    public int TreeNodeId { get; set; }
   }
 
   /// <summary>
@@ -52,6 +59,9 @@ namespace Velum.UI.Logs
 
     /// <summary>Подпись линии стимула в блоке создания.</summary>
     public const string StimulusLabel = "Стимул";
+
+    /// <summary>Подпись линии узла дерева автоматизмов в блоке создания.</summary>
+    public const string TreeNodeLabel = "Узел АВ";
 
     /// <summary>Русская подпись типа созданного объекта («У-рефлекс», «Автоматизм»).</summary>
     /// <param name="kind">Тип объекта.</param>
@@ -88,6 +98,12 @@ namespace Velum.UI.Logs
       {
         sb.Append(newLine).Append(indent).Append(StimulusLabel).Append(": ")
           .Append(record.StimulusLine.Trim());
+      }
+
+      if (record.TreeNodeId > 0)
+      {
+        sb.Append(newLine).Append(indent).Append(TreeNodeLabel).Append(": ")
+          .Append(record.TreeNodeId.ToString(CultureInfo.InvariantCulture));
       }
 
       if (!string.IsNullOrWhiteSpace(record.MotorName))

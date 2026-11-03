@@ -398,6 +398,12 @@ namespace Velum.UI
 
         record.MotorName = VelumAgentLogCondensedResolver.ResolveCreatedMotorName(record.Kind, record.Id);
 
+        // Для автоматизмов резолвим ID узла дерева автоматизмов (BranchID) по ID автоматизма.
+        if (record.Kind == VelumCreatedEntityKind.Автоматизм)
+        {
+          record.TreeNodeId = ResolveAutomatizmTreeNodeId(record.Id);
+        }
+
         if (stimulusImageId > 0)
         {
           List<VelumCondensedStimulusLine> lines =
@@ -420,6 +426,28 @@ namespace Velum.UI
       catch
       {
         // Лента — некритичная диагностика: сбои резолва не должны влиять на панель.
+      }
+    }
+
+    /// <summary>
+    /// Резолвит ID узла дерева автоматизмов (<c>BranchID</c>) по ID автоматизма. 0 — если
+    /// система не инициализирована, автоматизм не найден или узел не назначен.
+    /// </summary>
+    /// <param name="automatizmId">ID автоматизма.</param>
+    /// <returns>ID узла дерева либо 0.</returns>
+    private static int ResolveAutomatizmTreeNodeId(int automatizmId)
+    {
+      try
+      {
+        if (automatizmId <= 0 || !AutomatizmSystem.IsInitialized)
+          return 0;
+
+        var atmz = AutomatizmSystem.Instance.GetAutomatizmById(automatizmId);
+        return atmz?.BranchID ?? 0;
+      }
+      catch
+      {
+        return 0;
       }
     }
 

@@ -243,8 +243,260 @@ namespace Velum.UI.Logs
     {
       if (!nodeId.HasValue || nodeId.Value <= 0)
         return "Узел дерева автоматизмов не определён";
-      return "Узел дерева автоматизмов (AutomatizmTree), по которому сматчился автоматизм: ID "
-             + nodeId.Value.ToString(CultureInfo.InvariantCulture);
+      return ResolveAutomatizmNodeTooltip(nodeId.Value);
+    }
+
+    /// <summary>
+    /// Резолвит узел дерева автоматизмов по ID и формирует расшифровку всех составляющих
+    /// образа восприятия: базовое состояние, эмоции, воздействия, команды, тон/настроение,
+    /// вербальные фразы, символ, цветовой фон.
+    /// </summary>
+    /// <param name="nodeId">ID узла дерева автоматизмов (BranchID).</param>
+    /// <returns>Расшифровка узла либо сообщение об ошибке.</returns>
+    private static string ResolveAutomatizmNodeTooltip(int nodeId)
+    {
+      try
+      {
+        if (!AutomatizmTreeSystem.IsInitialized)
+          return "Узел дерева автоматизмов: ID " + nodeId.ToString(CultureInfo.InvariantCulture) + " (каталог не инициализирован)";
+
+        var treeNode = AutomatizmTreeSystem.Instance.GetNodeById(nodeId);
+        if (treeNode == null)
+          return "Узел дерева автоматизмов: ID " + nodeId.ToString(CultureInfo.InvariantCulture) + " (не найден)";
+
+        var sb = new StringBuilder();
+
+        // 1. Базовое состояние.
+        sb.AppendLine("Базовое состояние: " + GetBaseConditionText(treeNode.BaseID));
+
+        // 2. Эмоции (стили поведения) через EmotionsImage.
+        sb.AppendLine("Эмоции (стиль): " + GetEmotionTextFromNode(treeNode));
+
+        // 3. Воздействия через InfluenceActionsImages.
+        sb.AppendLine("Воздействия с пульса: " + GetInfluenceActionsTextFromNode(treeNode));
+
+        // 4. Команды через CommandBrocaImages.
+        if (treeNode.CommandID > 0)
+        {
+          sb.AppendLine("Команды: " + GetCommandTextFromNode(treeNode.CommandID));
+        }
+        else
+        {
+          sb.AppendLine("Команды: нет");
+        }
+
+        // 5. Тон и настроение.
+        AppendToneAndMoodLines(sb, treeNode.ToneMoodID);
+
+        // 6. Вербальные фразы через VerbalBrocaImages.
+        if (treeNode.VerbID > 0)
+        {
+          sb.AppendLine("Вербальный образ: " + GetVerbalTextFromNode(treeNode.VerbID));
+        }
+        else
+        {
+          sb.AppendLine("Вербальный образ: нет данных");
+        }
+
+        // 7. Язык символов.
+        if (treeNode.SimbolID > 0)
+        {
+          char symbol = GetPrimarySensorSymbol(treeNode.SimbolID);
+          string symbolStr = symbol != '\0'
+              ? "\"" + symbol + "\" (ID: " + treeNode.SimbolID.ToString(CultureInfo.InvariantCulture) + ")"
+              : "ID: " + treeNode.SimbolID.ToString(CultureInfo.InvariantCulture);
+          sb.AppendLine("Язык символов: " + symbolStr);
+        }
+        else
+        {
+          sb.AppendLine("Язык символов: нет");
+        }
+
+        // 8. Цветовой фон.
+        int visualCode = AgentVisualColor.IsValidCode(treeNode.VisualID)
+            ? treeNode.VisualID
+            : AgentVisualColor.White;
+        sb.AppendLine("Цветовой фон: " + AgentVisualColor.GetDisplayName(visualCode));
+
+        return sb.ToString().TrimEnd();
+      }
+      catch (Exception ex)
+      {
+        return "Ошибка загрузки узла дерева автоматизмов: " + ex.Message;
+      }
+    }
+
+    /// <summary>Возвращает текстовое описание базового состояния по ID.</summary>
+    private static string GetBaseConditionText(int baseId)
+    {
+      switch (baseId)
+      {
+        case -1: return "Ядро";
+        case 0: return "Норма";
+        case 1: return "Первичный";
+        default: return "Неизвестно (" + baseId.ToString(CultureInfo.InvariantCulture) + ")";
+      }
+    }
+
+    /// <summary>Возвращает список имён стилей поведения по EmotionID узла.</summary>
+    private static string GetEmotionTextFromNode(AutomatizmNode treeNode)
+    {
+      if (treeNode.EmotionID <= 0)
+        return "нет эмоций";
+      try
+      {
+        if (!EmotionsImageSystem.IsInitialized)
+          return "EmotionID: " + treeNode.EmotionID.ToString(CultureInfo.InvariantCulture);
+        var emotionImage = EmotionsImageSystem.Instance.GetEmotionsImage(treeNode.EmotionID);
+        if (emotionImage?.BaseStylesList == null || !emotionImage.BaseStylesList.Any())
+          return "EmotionID: " + treeNode.EmotionID.ToString(CultureInfo.InvariantCulture);
+        var styles = GomeostasSystem.IsInitialized
+            ? GomeostasSystem.Instance.GetAllBehaviorStyles()
+            : null;
+        var names = emotionImage.BaseStylesList
+            .Where(id => styles != null && styles.ContainsKey(id))
+            .Select(id => styles[id].Name)
+            .Where(n => !string.IsNullOrEmpty(n))
+            .ToList();
+        return names.Count > 0 ? string.Join(", ", names) : emotionImage.BaseStylesList
+            .Select(id => "Стиль " + id.ToString(CultureInfo.InvariantCulture))
+            .Aggregate((a, b) => a + ", " + b);
+      }
+      catch
+      {
+        return "EmotionID: " + treeNode.EmotionID.ToString(CultureInfo.InvariantCulture);
+      }
+    }
+
+    /// <summary>Возвращает список имён воздействий по ActivityID узла.</summary>
+    private static string GetInfluenceActionsTextFromNode(AutomatizmNode treeNode)
+    {
+      if (treeNode.ActivityID <= 0)
+        return "нет воздействий";
+      try
+      {
+        if (!InfluenceActionsImagesSystem.IsInitialized)
+          return "ActivityID: " + treeNode.ActivityID.ToString(CultureInfo.InvariantCulture);
+        var actionIds = InfluenceActionsImagesSystem.Instance.GetInfluenceActionIds(treeNode.ActivityID);
+        if (actionIds == null || !actionIds.Any())
+          return "нет воздействий";
+        var allActions = InfluenceActionSystem.IsInitialized
+            ? InfluenceActionSystem.Instance.GetAllInfluenceActions()
+            : null;
+        var names = actionIds
+            .Where(id => allActions != null && allActions.Any(a => a.Id == id))
+            .Select(id => allActions.First(a => a.Id == id).Name)
+            .Where(n => !string.IsNullOrEmpty(n))
+            .ToList();
+        return names.Count > 0 ? string.Join(", ", names) : actionIds
+            .Select(id => id.ToString(CultureInfo.InvariantCulture))
+            .Aggregate((a, b) => a + ", " + b);
+      }
+      catch
+      {
+        return "ActivityID: " + treeNode.ActivityID.ToString(CultureInfo.InvariantCulture);
+      }
+    }
+
+    /// <summary>Возвращает текст команд по CommandBrocaID узла.</summary>
+    private static string GetCommandTextFromNode(int commandBrocaImageId)
+    {
+      if (commandBrocaImageId <= 0)
+        return string.Empty;
+      try
+      {
+        if (!CommandBrocaImagesSystem.IsInitialized)
+          return "CommandBroca ID: " + commandBrocaImageId.ToString(CultureInfo.InvariantCulture);
+        var commandImage = CommandBrocaImagesSystem.Instance.GetCommandBrocaImage(commandBrocaImageId);
+        if (commandImage?.PatternIdList == null || !commandImage.PatternIdList.Any())
+          return string.Empty;
+        var channel = SensorySystem.IsInitialized ? SensorySystem.Instance.CommandChannel : null;
+        if (channel == null)
+          return commandImage.PatternIdList
+              .Select(id => id.ToString(CultureInfo.InvariantCulture))
+              .Aggregate((a, b) => a + " → " + b);
+        var parts = commandImage.PatternIdList
+            .Where(patternId => patternId > 0)
+            .Select(patternId =>
+            {
+              string text = channel.GetPhraseFromPhraseId(patternId);
+              return string.IsNullOrWhiteSpace(text)
+                  ? "[" + patternId.ToString(CultureInfo.InvariantCulture) + "]"
+                  : patternId.ToString(CultureInfo.InvariantCulture) + ":" + text;
+            })
+            .ToList();
+        return parts.Count > 0 ? string.Join(" → ", parts) : string.Empty;
+      }
+      catch
+      {
+        return "CommandBroca ID: " + commandBrocaImageId.ToString(CultureInfo.InvariantCulture);
+      }
+    }
+
+    /// <summary>Добавляет строки тона и настроения по ToneMoodID.</summary>
+    private static void AppendToneAndMoodLines(StringBuilder sb, int toneMoodId)
+    {
+      if (toneMoodId >= 100 && toneMoodId <= 307)
+      {
+        try
+        {
+          var (tone, mood) = PsychicSystem.GetToneMoodFromID(toneMoodId);
+          string tStr = PsychicSystem.GetToneString(tone);
+          string mStr = PsychicSystem.GetMoodString(mood);
+          sb.AppendLine("Тон: " + (string.IsNullOrEmpty(tStr) ? "—" : tStr));
+          sb.AppendLine("Настроение: " + (string.IsNullOrEmpty(mStr) ? "—" : mStr));
+          return;
+        }
+        catch
+        {
+        }
+      }
+      sb.AppendLine("Тон: —");
+      sb.AppendLine("Настроение: —");
+    }
+
+    /// <summary>Возвращает текст вербальных фраз по VerbID узла.</summary>
+    private static string GetVerbalTextFromNode(int verbId)
+    {
+      if (verbId <= 0)
+        return string.Empty;
+      try
+      {
+        if (!VerbalBrocaImagesSystem.IsInitialized)
+          return "VerbalBroca ID: " + verbId.ToString(CultureInfo.InvariantCulture);
+        var verbalImage = VerbalBrocaImagesSystem.Instance.GetVerbalBrocaImage(verbId);
+        if (verbalImage?.PhraseIdList == null || !verbalImage.PhraseIdList.Any())
+          return string.Empty;
+        var channel = SensorySystem.IsInitialized ? SensorySystem.Instance.VerbalChannel : null;
+        if (channel == null)
+          return verbalImage.PhraseIdList
+              .Select(id => id.ToString(CultureInfo.InvariantCulture))
+              .Aggregate((a, b) => a + " " + b);
+        var phraseTexts = verbalImage.PhraseIdList
+            .Select(pid => channel.GetPhraseFromPhraseId(pid))
+            .Where(s => !string.IsNullOrEmpty(s))
+            .Select(s => "\"" + s + "\"")
+            .ToList();
+        return phraseTexts.Count > 0 ? string.Join(" ", phraseTexts) : string.Empty;
+      }
+      catch
+      {
+        return "VerbalBroca ID: " + verbId.ToString(CultureInfo.InvariantCulture);
+      }
+    }
+
+    /// <summary>Возвращает символ по SimbolID из вербального канала.</summary>
+    private static char GetPrimarySensorSymbol(int symbolId)
+    {
+      try
+      {
+        var channel = SensorySystem.IsInitialized ? SensorySystem.Instance.VerbalChannel : null;
+        return channel?.GetPrimarySensorSymbol(symbolId) ?? '\0';
+      }
+      catch
+      {
+        return '\0';
+      }
     }
 
     /// <summary>Подсказка колонки «Среда»: описания метрик из справочника.</summary>
