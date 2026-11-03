@@ -73,6 +73,26 @@ namespace Velum.ReactiveCore.Tests
     }
 
     [Fact]
+    public void BuildBlock_AutomatizmWithColorOnlyStimulus_ReturnsColorLine()
+    {
+      // Регресс бага: образ-спуск автоматизма пуст по вербальным каналам, несёт только цвет.
+      // Раньше такой блок не строился (Stimuli пуст) и запуск автоматизма терялся в ленте.
+      var record = new VelumCondensedLogRecord
+      {
+        ResponseKind = VelumCondensedResponseKind.Автоматизм,
+        ResponseId = 1,
+        ResponseActionName = "Экспорт PDF"
+      };
+      record.Stimuli.Add(Line(VelumCondensedStimulusKind.ЦветовойФон, 0, "Оранжевый"));
+
+      string block = VelumAgentLogCondensedRules.BuildBlock(record, "\n");
+      Assert.NotNull(block);
+      Assert.Contains(VelumAgentLogCondensedRules.StimulusHeader, block);
+      Assert.Contains("Цветовой фон: Оранжевый", block);
+      Assert.Contains("Автоматизм: ID 1, Экспорт PDF", block);
+    }
+
+    [Fact]
     public void BuildBlock_NullRecord_ReturnsNull()
     {
       Assert.Null(VelumAgentLogCondensedRules.BuildBlock(null, "\n"));
@@ -173,6 +193,7 @@ namespace Velum.ReactiveCore.Tests
       Assert.Equal("Команда", VelumCondensedStimulusLine.Label(VelumCondensedStimulusKind.Команда));
       Assert.Equal("Фраза", VelumCondensedStimulusLine.Label(VelumCondensedStimulusKind.Фраза));
       Assert.Equal("Среда", VelumCondensedStimulusLine.Label(VelumCondensedStimulusKind.Среда));
+      Assert.Equal("Цветовой фон", VelumCondensedStimulusLine.Label(VelumCondensedStimulusKind.ЦветовойФон));
     }
 
     [Fact]
@@ -231,6 +252,21 @@ namespace Velum.ReactiveCore.Tests
       VelumCondensedStimulusLine line = Line(VelumCondensedStimulusKind.Фраза, 7, "привет");
       // Вербальный тип: ID не печатается, текст в кавычках.
       Assert.Equal("Фраза: \"привет\"", line.FormatLine());
+    }
+
+    [Fact]
+    public void StimulusLine_FormatLine_ColorPrintsNameNoIdNoQuotes()
+    {
+      // Цвет: код 0 (белый) валиден, но по hasId не прошёл бы — печатаем именем без кавычек.
+      VelumCondensedStimulusLine line = Line(VelumCondensedStimulusKind.ЦветовойФон, 0, "Оранжевый");
+      Assert.Equal("Цветовой фон: Оранжевый", line.FormatLine());
+    }
+
+    [Fact]
+    public void StimulusLine_FormatLine_ColorEmptyText_ReturnsLabelAndDash()
+    {
+      VelumCondensedStimulusLine line = Line(VelumCondensedStimulusKind.ЦветовойФон, 0, string.Empty);
+      Assert.Equal("Цветовой фон: —", line.FormatLine());
     }
 
     [Fact]

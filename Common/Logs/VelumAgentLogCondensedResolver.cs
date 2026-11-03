@@ -225,6 +225,22 @@ namespace Velum.UI.Logs
             });
           }
         }
+
+        // 4. Цветовой фон — единственный канал образа-спуска. У автоматизмов ISIDA создаёт
+        // отдельный PerceptionImage, несущий только цвет (контекст «деталь/сборка/чертёж»):
+        // без этой линии блок запуска автоматизма не строился бы и терялся в ленте. Цвет
+        // добавляем только когда вербальные каналы пусты (иначе это шум рядом с фразой/командой).
+        if (record.Stimuli.Count == 0
+            && AgentVisualColor.IsValidCode(image.VisualColorId)
+            && image.VisualColorId != AgentVisualColor.White)
+        {
+          record.Stimuli.Add(new VelumCondensedStimulusLine
+          {
+            Kind = VelumCondensedStimulusKind.ЦветовойФон,
+            Id = 0,
+            Text = AgentVisualColor.GetDisplayName(image.VisualColorId)
+          });
+        }
       }
       catch
       {

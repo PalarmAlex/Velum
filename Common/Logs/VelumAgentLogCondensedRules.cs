@@ -23,7 +23,15 @@ namespace Velum.UI.Logs
     Фраза,
 
     /// <summary>Стимул от среды (состояние/стили) без пускового триггера оператора.</summary>
-    Среда
+    Среда,
+
+    /// <summary>
+    /// Цветовой фон образа-спуска (<c>VisualColorId</c>) — единственный канал образа, пустого
+    /// по воздействиям/фразам/командам. Для автоматизмов ISIDA создаёт отдельный образ-спуск,
+    /// несущий только цвет (контекст «деталь/сборка/чертёж»); без этой линии блок запуска
+    /// автоматизма не строился бы и терялся в ленте.
+    /// </summary>
+    ЦветовойФон
   }
 
   /// <summary>
@@ -62,8 +70,8 @@ namespace Velum.UI.Logs
 
     /// <summary>
     /// Формирует печатную строку линии стимула. Вербальные типы («Команда», «Фраза»)
-    /// печатаются без ID, текст оборачивается кавычками; «Воздействие» и «Среда» —
-    /// с идентификатором.
+    /// печатаются без ID, текст оборачивается кавычками; «Цветовой фон» — именем цвета
+    /// без ID и кавычек; «Воздействие» и «Среда» — с идентификатором.
     /// </summary>
     /// <returns>Строка вида «Воздействие: ID 65, Запуск экспорта PDF» или «Фраза: "привет"».</returns>
     public string FormatLine()
@@ -71,6 +79,10 @@ namespace Velum.UI.Logs
       string label = Label(Kind);
       if (Kind == VelumCondensedStimulusKind.Команда || Kind == VelumCondensedStimulusKind.Фраза)
         return label + ": " + Quote(Text);
+
+      // Цвет печатается именем (код 0 = «белый» валиден, но по hasId не прошёл бы).
+      if (Kind == VelumCondensedStimulusKind.ЦветовойФон)
+        return string.IsNullOrWhiteSpace(Text) ? label + ": —" : label + ": " + Text;
 
       bool hasId = Id > 0;
       bool hasText = !string.IsNullOrWhiteSpace(Text);
@@ -93,7 +105,7 @@ namespace Velum.UI.Logs
 
     /// <summary>Русская подпись типа стимула.</summary>
     /// <param name="kind">Тип стимула.</param>
-    /// <returns>Подпись: «Воздействие», «Команда», «Фраза» или «Среда».</returns>
+    /// <returns>Подпись: «Воздействие», «Команда», «Фраза», «Среда» или «Цветовой фон».</returns>
     public static string Label(VelumCondensedStimulusKind kind)
     {
       switch (kind)
@@ -104,6 +116,8 @@ namespace Velum.UI.Logs
           return "Фраза";
         case VelumCondensedStimulusKind.Среда:
           return "Среда";
+        case VelumCondensedStimulusKind.ЦветовойФон:
+          return "Цветовой фон";
         default:
           return "Воздействие";
       }
