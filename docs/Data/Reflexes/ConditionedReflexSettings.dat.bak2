@@ -1,0 +1,51 @@
+# Настройки системы условных рефлексов
+# LearningRate: коэффициент обучения α (0.1-0.3)
+# DecayRate: λ для сенсорных ассоциаций CS→CS (0.95-0.99)
+# ActivationThreshold: порог активации γ (0.5-0.7)
+# MinAssociationStrength: минимальная крепость C_min (0.01-0.3)
+# TimeWindowPulses: временное окно корреляции в пульсах (1-10)
+# InitialLifetimePulses: начальный лимит простоя УР; при активации удваивается (3600-604800)
+# ActiveExtinctionRate: α_ext активного угасания при CS без US (0.01-0.2)
+# PassiveDecayPeriodPulses: период пассивного угасания в пульсах (>=1, по умолчанию 1000)
+# HigherOrderStrengthReductionCoefficient: коэфф. понижения крепости вторичных (1.2-3.0)
+# CompetitionStrengthRatioThreshold: порог отношения крепостей θ_comp для конкурентного подавления (0.5-0.9)
+# TieBreakPreferSmallerReflexId: при равной крепости — меньший ID у-рефлекса (true/false)
+# EnableCompetitiveLearning: конкурентный слой обучения (ΔV / Kamin blocking) — true/false
+# CompetitionSuppressionCoefficient: доля подавления подавляющими CS (0..1)
+# InitialStrengthBonus: прибавка к C_min в стартовой крепости C0=(C_min+bonus)/K
+# AuthoritativeStrength: крепость авторитарной записи (до понижения по порядку)
+# EstablishedStrengthThreshold: порог MaxAchievedStrength для IsEstablished
+# ActivationReinforcementFraction: доля α при слабом подкреплении успешной активации
+# MaxLifetimePulsesCap: потолок удвоения TTL при активации/успехе
+# PassiveDecayFallbackPeriodPulses: резервный период пассива при PassiveDecayPeriodPulses<=0
+# SensoryDecayPeriodPulses: период затухания сенсорных связей CS→CS (пульсы)
+# SensoryStrengthFloor: нижний предел крепости для кривой затухания CS→CS
+# SensoryHighStrengthThreshold: верхняя зона CS→CS (затухание по SensoryHighStrengthDecayRate)
+# SensoryHighStrengthDecayRate: эффективный коэффициент затухания устойчивых связей CS→CS
+# SensoryMidStrengthThreshold: средняя зона CS↔CS (выше — λ^C, ниже — λ^√C)
+# TransitiveChainStepEvaluationTimeout: макс. время ожидания оценки мотор-действия в транзитивной цепочке (пульсы, 0 = без таймаута)
+LearningRate=0.2
+DecayRate=0.98
+ActivationThreshold=0.6
+MinAssociationStrength=0.1
+TimeWindowPulses=3
+InitialLifetimePulses=86400
+ActiveExtinctionRate=0.05
+PassiveDecayPeriodPulses=1000
+HigherOrderStrengthReductionCoefficient=1.5
+CompetitionStrengthRatioThreshold=0.8
+TieBreakPreferSmallerReflexId=True
+EnableCompetitiveLearning=True
+CompetitionSuppressionCoefficient=1
+InitialStrengthBonus=0.1
+AuthoritativeStrength=0.95
+EstablishedStrengthThreshold=0.8
+ActivationReinforcementFraction=0.25
+MaxLifetimePulsesCap=88473600
+PassiveDecayFallbackPeriodPulses=1000
+SensoryDecayPeriodPulses=100
+SensoryStrengthFloor=0.1
+SensoryHighStrengthThreshold=0.8
+SensoryHighStrengthDecayRate=0.998
+SensoryMidStrengthThreshold=0.4
+TransitiveChainStepEvaluationTimeout=5
