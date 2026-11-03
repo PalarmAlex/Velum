@@ -513,6 +513,7 @@
     <Compile Include="Common\Logs\VelumLogSessionRules.cs" />
     <Compile Include="Common\Logs\VelumLogCellFillRules.cs" />
     <Compile Include="Common\Logs\VelumAgentLogCondensedRules.cs" />
+    <Compile Include="Common\Logs\VelumAgentCreationLogRules.cs" />
     <Compile Include="Common\Logs\VelumAgentLogTailReader.cs" />
     <Compile Include="Common\Logs\VelumAgentLogCondensedResolver.cs" />
     <Compile Include="Common\Logs\VelumLogCellTooltipProvider.cs" />

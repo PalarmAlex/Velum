@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ISIDA.Common;
+using ISIDA.Psychic.Automatism;
+using ISIDA.Reflexes;
 using Velum.Configuration;
 using Velum.Isida.Logs;
 using Velum.UI.Logs;
@@ -174,5 +177,252 @@ namespace Velum.UI
       {
       }
     }
+
+    #region События создания объектов движком (у-рефлексы, автоматизмы)
+
+    /// <summary>Подписка на <c>ConditionedReflexCreated</c> активного инстанса системы.</summary>
+    private bool _crxCreatedHooked;
+
+    /// <summary>Подписка на <c>AutomatizmCreated</c> активного инстанса системы.</summary>
+    private bool _atmzCreatedHooked;
+
+    /// <summary>
+    /// Подавление вывода до первого пульса после подписки: загрузочная волна
+    /// (<c>NotifyTreeOfLoadedReflexes</c>) поднимает события вне пульсации.
+    /// </summary>
+    private volatile bool _creationSuppressUntilFirstPulse;
+
+    /// <summary>ID у-рефлексов, существовавших на момент подписки — не печатаем (загрузочная волна).</summary>
+    private readonly HashSet<int> _creationBaselineCrxIds = new HashSet<int>();
+
+    /// <summary>ID автоматизмов, существовавших на момент подписки — не печатаем.</summary>
+    private readonly HashSet<int> _creationBaselineAtmzIds = new HashSet<int>();
+
+    /// <summary>Уже выведенные сигнатуры «создание» — защита от повторных событий на тот же объект.</summary>
+    private readonly HashSet<string> _creationEmittedSignatures = new HashSet<string>(StringComparer.Ordinal);
+
+    /// <summary>
+    /// Лок состояния хуков: <see cref="HookCreationEvents"/> вызывается и из UI-потока
+    /// (<c>HookPulseEvents</c>), и из пульс-потока ISIDA (ленивая дописка), baseline-множества
+    /// читаются обработчиками событий.
+    /// </summary>
+    private readonly object _creationHookLock = new object();
+
+    /// <summary>
+    /// Идемпотентная подписка на события создания объектов движка. Вызывается из
+    /// <see cref="HookPulseEvents"/> и лениво из каждого пульса (<see cref="PumpCreationEvents"/>),
+    /// пока ISIDA не инициализирована. При подписке снимается снимок существующих ID и
+    /// включается подавление до следующего пульса — загрузочная волна в ленту не попадает.
+    /// </summary>
+    /// <returns><c>true</c>, если новая подписка выполнена в этом вызове (в этом пульсе
+    /// подавление снимать нельзя).</returns>
+    private bool HookCreationEvents()
+    {
+      bool justHooked = false;
+      lock (_creationHookLock)
+      {
+        try
+        {
+          if (!_crxCreatedHooked && ConditionedReflexesSystem.IsInitialized)
+          {
+            ConditionedReflexesSystem.Instance.ConditionedReflexCreated += OnEngineConditionedReflexCreated;
+            _crxCreatedHooked = true;
+            SnapshotConditionedReflexBaseline();
+            _creationSuppressUntilFirstPulse = true;
+            justHooked = true;
+          }
+
+          if (!_atmzCreatedHooked && AutomatizmSystem.IsInitialized)
+          {
+            AutomatizmSystem.Instance.AutomatizmCreated += OnEngineAutomatizmCreated;
+            _atmzCreatedHooked = true;
+            SnapshotAutomatizmBaseline();
+            _creationSuppressUntilFirstPulse = true;
+            justHooked = true;
+          }
+        }
+        catch
+        {
+          // Сбой подписки не критичен: попробуем в следующем пульсе.
+        }
+      }
+
+      return justHooked;
+    }
+
+    /// <summary>
+    /// Отписывается от событий создания (при <c>UnhookPulseEvents</c>). Состояние сбрасывается;
+    /// после перезагрузки ISIDA (<see cref="RehookGlobalTimerAfterIsidaReload"/>) подписка
+    /// повторится на новых инстансах систем.
+    /// </summary>
+    private void UnhookCreationEvents()
+    {
+      lock (_creationHookLock)
+      {
+        try
+        {
+          if (_crxCreatedHooked && ConditionedReflexesSystem.IsInitialized)
+            ConditionedReflexesSystem.Instance.ConditionedReflexCreated -= OnEngineConditionedReflexCreated;
+          if (_atmzCreatedHooked && AutomatizmSystem.IsInitialized)
+            AutomatizmSystem.Instance.AutomatizmCreated -= OnEngineAutomatizmCreated;
+        }
+        catch
+        {
+        }
+
+        _crxCreatedHooked = false;
+        _atmzCreatedHooked = false;
+        _creationSuppressUntilFirstPulse = false;
+        _creationBaselineCrxIds.Clear();
+        _creationBaselineAtmzIds.Clear();
+        _creationEmittedSignatures.Clear();
+      }
+    }
+
+    /// <summary>
+    /// Вызывается из обработчика пульса: лениво доделывает подписку и со следующего пульса
+    /// после неё снимает подавление. Фаза «после гомеостаза» наступает раньше формирования
+    /// рефлексов в психике, поэтому легитимные создания текущего пульса не теряются.
+    /// </summary>
+    private void PumpCreationEvents()
+    {
+      if (!HookCreationEvents())
+        _creationSuppressUntilFirstPulse = false;
+    }
+
+    private void SnapshotConditionedReflexBaseline()
+    {
+      _creationBaselineCrxIds.Clear();
+      try
+      {
+        foreach (var reflex in ConditionedReflexesSystem.Instance.GetAllConditionedReflexes())
+        {
+          if (reflex != null)
+            _creationBaselineCrxIds.Add(reflex.Id);
+        }
+      }
+      catch
+      {
+      }
+    }
+
+    private void SnapshotAutomatizmBaseline()
+    {
+      _creationBaselineAtmzIds.Clear();
+      try
+      {
+        foreach (var automatizm in AutomatizmSystem.Instance.GetAllAutomatizms())
+        {
+          if (automatizm != null)
+            _creationBaselineAtmzIds.Add(automatizm.ID);
+        }
+      }
+      catch
+      {
+      }
+    }
+
+    /// <summary>
+    /// Поток пульса ISIDA: фильтрует загрузочную волну/подавление и маршалирует данные
+    /// события в UI-поток SolidWorks (правила проекта про COM/UI).
+    /// </summary>
+    private void OnEngineConditionedReflexCreated(ConditionedReflexesSystem.ConditionedReflexCreatedEventArgs e)
+    {
+      if (e == null || _creationSuppressUntilFirstPulse)
+        return;
+
+      lock (_creationHookLock)
+      {
+        if (_creationBaselineCrxIds.Contains(e.ReflexId))
+          return;
+      }
+
+      QueueCreationEventUi(VelumCreatedEntityKind.УсловныйРефлекс, e.ReflexId, e.Level3);
+    }
+
+    /// <summary>Поток пульса ISIDA: то же для автоматизмов (стимул не резолвится — Level3 нет).</summary>
+    private void OnEngineAutomatizmCreated(int automatizmId)
+    {
+      if (automatizmId <= 0 || _creationSuppressUntilFirstPulse)
+        return;
+
+      lock (_creationHookLock)
+      {
+        if (_creationBaselineAtmzIds.Contains(automatizmId))
+          return;
+      }
+
+      QueueCreationEventUi(VelumCreatedEntityKind.Автоматизм, automatizmId, 0);
+    }
+
+    private void QueueCreationEventUi(VelumCreatedEntityKind kind, int id, int stimulusImageId)
+    {
+      try
+      {
+        if (!IsDisposed && IsHandleCreated)
+          BeginInvoke(new Action(() => EmitCreationBlockUi(kind, id, stimulusImageId)));
+      }
+      catch
+      {
+      }
+    }
+
+    /// <summary>
+    /// UI-поток: резолвит мотор и стимул по справочникам ISIDA, собирает блок «СОЗДАНИЕ»
+    /// и вставляет его в начало ленты вывода (дедуп по типу+ID). Маршалируется через
+    /// <c>BeginInvoke</c> из <see cref="QueueCreationEventUi"/> (без params-массива —
+    /// иначе WinForms разворачивает его в аргументы делегата).
+    /// </summary>
+    private void EmitCreationBlockUi(VelumCreatedEntityKind kind, int id, int stimulusImageId)
+    {
+      try
+      {
+        if (IsDisposed)
+          return;
+
+        var record = new VelumCreatedEntityRecord
+        {
+          Kind = kind,
+          Id = id
+        };
+
+        string signature = VelumAgentCreationLogRules.BuildSignature(record);
+        if (string.IsNullOrEmpty(signature))
+          return;
+
+        lock (_creationHookLock)
+        {
+          if (!_creationEmittedSignatures.Add(signature))
+            return;
+        }
+
+        record.MotorName = VelumAgentLogCondensedResolver.ResolveCreatedMotorName(record.Kind, record.Id);
+
+        if (stimulusImageId > 0)
+        {
+          List<VelumCondensedStimulusLine> lines =
+              VelumAgentLogCondensedResolver.ResolveStimulusLines(stimulusImageId);
+          if (lines.Count > 0)
+            record.StimulusLine = lines[0].FormatLine();
+        }
+
+        string block = VelumAgentCreationLogRules.BuildBlock(record, Environment.NewLine);
+        if (string.IsNullOrEmpty(block))
+          return;
+
+        _txtAgentOutput.Text = VelumAgentLogCondensedRules.PrependBlocks(
+            _txtAgentOutput.Text, new List<string> { block }, Environment.NewLine);
+        TrimCondensedOutputIfNeeded();
+
+        _txtAgentOutput.SelectionStart = 0;
+        _txtAgentOutput.ScrollToCaret();
+      }
+      catch
+      {
+        // Лента — некритичная диагностика: сбои резолва не должны влиять на панель.
+      }
+    }
+
+    #endregion
   }
 }

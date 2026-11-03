@@ -914,6 +914,7 @@ namespace Velum.UI
       GlobalTimer.OnPulseAfterGomeostasisBeforePsychic += OnAfterGomeostasis;
       GlobalTimer.PulsationStateChanged += OnPulsationStateChanged;
       _pulseHooked = true;
+      HookCreationEvents();
     }
 
     private void UnhookPulseEvents()
@@ -923,6 +924,7 @@ namespace Velum.UI
       GlobalTimer.OnPulseAfterGomeostasisBeforePsychic -= OnAfterGomeostasis;
       GlobalTimer.PulsationStateChanged -= OnPulsationStateChanged;
       _pulseHooked = false;
+      UnhookCreationEvents();
     }
 
     private void OnPulsationStateChanged()
@@ -941,6 +943,7 @@ namespace Velum.UI
     {
       RequestRefresh();
       PumpCondensedLog(pulseNumber);
+      PumpCreationEvents();
     }
 
     private void RequestRefresh()

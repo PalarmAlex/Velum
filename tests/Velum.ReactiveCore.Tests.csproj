@@ -53,6 +53,7 @@
     <Compile Include="..\Common\Logs\VelumLogSessionRules.cs" Link="src\VelumLogSessionRules.cs" />
     <Compile Include="..\Common\Logs\VelumLogCellFillRules.cs" Link="src\VelumLogCellFillRules.cs" />
     <Compile Include="..\Common\Logs\VelumAgentLogCondensedRules.cs" Link="src\VelumAgentLogCondensedRules.cs" />
+    <Compile Include="..\Common\Logs\VelumAgentCreationLogRules.cs" Link="src\VelumAgentCreationLogRules.cs" />
     <Compile Include="..\ReactiveCore\VelumPdfOutdatedRules.cs" Link="src\VelumPdfOutdatedRules.cs" />
   </ItemGroup>
 
@@ -104,6 +105,7 @@
     <Compile Include="VelumLogSessionRulesTests.cs" />
     <Compile Include="VelumLogSessionDeletionTests.cs" />
     <Compile Include="VelumAgentLogCondensedRulesTests.cs" />
+    <Compile Include="VelumAgentCreationLogRulesTests.cs" />
     <Compile Include="VelumPdfOutdatedRulesTests.cs" />
     <Compile Include="VelumProblemCacheSyncTests.cs" />
     <Compile Include="DisableTestParallelization.cs" />

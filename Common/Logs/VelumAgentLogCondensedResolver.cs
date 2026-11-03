@@ -63,6 +63,37 @@ namespace Velum.UI.Logs
     }
 
     /// <summary>
+    /// Резолвит имя мотора (первое адаптивное действие) для объекта, созданного движком
+    /// (события <c>ConditionedReflexCreated</c> / <c>AutomatizmCreated</c>). Пусто — если
+    /// система не инициализирована или действие не найдено.
+    /// </summary>
+    /// <param name="kind">Тип созданного объекта.</param>
+    /// <param name="id">ID объекта.</param>
+    /// <returns>Имя действия либо пустая строка.</returns>
+    internal static string ResolveCreatedMotorName(VelumCreatedEntityKind kind, int id)
+    {
+      if (id <= 0)
+        return string.Empty;
+      return kind == VelumCreatedEntityKind.Автоматизм
+          ? ResolveAutomatizmActionName(id)
+          : ResolveConditionedReflexActionName(id);
+    }
+
+    /// <summary>
+    /// Резолвит линии стимула по ID образа восприятия (поле <c>Level3</c> у-рефлекса —
+    /// образ пускового стимула). Пустой список — если образ не найден или не разложен.
+    /// </summary>
+    /// <param name="imageId">ID образа восприятия.</param>
+    /// <returns>Список линий стимула (может быть пустым).</returns>
+    internal static List<VelumCondensedStimulusLine> ResolveStimulusLines(int imageId)
+    {
+      var record = new VelumCondensedLogRecord();
+      if (imageId > 0)
+        ResolvePerceptionImage(record, imageId);
+      return record.Stimuli;
+    }
+
+    /// <summary>
     /// Признак строки-заголовка сессии (совпадает с детектором <c>VelumAgentLogFileSessions</c>).
     /// </summary>
     /// <param name="line">Строка лога.</param>
