@@ -234,6 +234,19 @@ namespace Velum.UI.Logs
       }
     }
 
+    /// <summary>
+    /// Подсказка колонки «Триггер» в строке автоматизма: ID узла дерева автоматизмов
+    /// (<c>AutomatizmTree</c>), по которому сматчился автоматизм. Принадлежит отдельному
+    /// пространству имён и не резолвится как образ восприятия.
+    /// </summary>
+    public string GetTriggerAutomatizmNodeTooltip(int? nodeId)
+    {
+      if (!nodeId.HasValue || nodeId.Value <= 0)
+        return "Узел дерева автоматизмов не определён";
+      return "Узел дерева автоматизмов (AutomatizmTree), по которому сматчился автоматизм: ID "
+             + nodeId.Value.ToString(CultureInfo.InvariantCulture);
+    }
+
     /// <summary>Подсказка колонки «Среда»: описания метрик из справочника.</summary>
     public string GetEnvironmentPressureTooltip(string cellRaw, string storedTooltip)
     {

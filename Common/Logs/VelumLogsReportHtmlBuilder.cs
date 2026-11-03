@@ -61,7 +61,7 @@ namespace Velum.UI.Logs
       AppendTh(sb, "Состояние", "Код состояния гомеостаза: -1 плохо, 0 норма, 1 хорошо.");
       AppendTh(sb, "Стиль", "Стили поведения на пульсе (наведите — расшифровка).");
       AppendTh(sb, "Тема", "Тип темы мышления и её вес.");
-      AppendTh(sb, "Триггер", "Пусковой стимул: воздействие, фразы, команды, тон, настроение, цвет.");
+      AppendTh(sb, "Триггер", "Пусковой стимул: для рефлекса — воздействие, фразы, команды, тон, настроение, цвет; для автоматизма — ID узла дерева автоматизмов.");
       AppendTh(sb, "Среда", "Давление метрик среды (id:величина).");
       AppendTh(sb, "ОР/УМ", "Ориентировочный рефлекс или уровень мышления (УМ1/УМ2).");
       AppendTh(sb, "Опасно", "Признак опасной ситуации в информационной среде.");
@@ -86,7 +86,12 @@ namespace Velum.UI.Logs
             VelumLogCellFillRules.StateFill(e.BaseId));
         AppendTd(sb, e.DisplayBaseStyleId, provider.GetStyleCellTooltip(e.DisplayBaseStyleId));
         AppendTd(sb, e.DisplayThinkingThemeId, provider.GetThinkingThemeTypeTooltip(e.DisplayThinkingThemeId));
-        AppendTd(sb, e.DisplayTriggerStimulusId, provider.GetTriggerTooltip(e.DisplayTriggerStimulusId));
+        // Чей мотор в строке, тот триггер: автоматизм — ID узла дерева автоматизмов,
+        // рефлекс — ID образа восприятия. Подсказка резолвится по своему пространству имён.
+        string triggerTooltip = e.HasAutomatizm
+            ? provider.GetTriggerAutomatizmNodeTooltip(e.TriggerAutomatizmNodeId)
+            : provider.GetTriggerTooltip(e.DisplayTriggerStimulusId);
+        AppendTd(sb, e.DisplayTrigger, triggerTooltip);
         AppendTd(sb, e.DisplayEnvironmentPressure,
             provider.GetEnvironmentPressureTooltip(e.EnvironmentPressureCell, e.EnvironmentPressureTooltip),
             VelumLogCellFillRules.EnvironmentFill(e.EnvironmentPressureCell));

@@ -52,6 +52,7 @@
     <Compile Include="..\Common\VelumListFilterFormatter.cs" Link="src\VelumListFilterFormatter.cs" />
     <Compile Include="..\Common\Logs\VelumLogSessionRules.cs" Link="src\VelumLogSessionRules.cs" />
     <Compile Include="..\Common\Logs\VelumLogCellFillRules.cs" Link="src\VelumLogCellFillRules.cs" />
+    <Compile Include="..\Common\Logs\VelumLogEntries.cs" Link="src\VelumLogEntries.cs" />
     <Compile Include="..\Common\Logs\VelumAgentLogCondensedRules.cs" Link="src\VelumAgentLogCondensedRules.cs" />
     <Compile Include="..\Common\Logs\VelumAgentCreationLogRules.cs" Link="src\VelumAgentCreationLogRules.cs" />
     <Compile Include="..\ReactiveCore\VelumPdfOutdatedRules.cs" Link="src\VelumPdfOutdatedRules.cs" />
@@ -104,6 +105,7 @@
     <Compile Include="VelumListFilterFormatterTests.cs" />
     <Compile Include="VelumLogSessionRulesTests.cs" />
     <Compile Include="VelumLogSessionDeletionTests.cs" />
+    <Compile Include="VelumAgentLogEntryTriggerTests.cs" />
     <Compile Include="VelumAgentLogCondensedRulesTests.cs" />
     <Compile Include="VelumAgentCreationLogRulesTests.cs" />
     <Compile Include="VelumPdfOutdatedRulesTests.cs" />

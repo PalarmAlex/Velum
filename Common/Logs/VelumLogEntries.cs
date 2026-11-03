@@ -27,6 +27,13 @@ namespace Velum.UI.Logs
     /// <summary>Идентификатор пускового стимула (без метрик среды).</summary>
     public int? TriggerStimulusId { get; set; }
 
+    /// <summary>
+    /// ID узла дерева автоматизмов (<c>AutomatizmTree</c>), по которому сматчился автоматизм.
+    /// Заполняется только в строке запуска автоматизма; принадлежит отдельному пространству
+    /// имён и никогда не сопоставляется с <see cref="TriggerStimulusId"/>.
+    /// </summary>
+    public int? TriggerAutomatizmNodeId { get; set; }
+
     /// <summary>Признак опасной ситуации в информационной среде.</summary>
     public bool InformationEnvironmentDanger { get; set; }
 
@@ -92,6 +99,19 @@ namespace Velum.UI.Logs
 
     /// <summary>Отформатированный идентификатор триггера.</summary>
     public string DisplayTriggerStimulusId => TriggerStimulusId?.ToString(CultureInfo.InvariantCulture) ?? "-";
+
+    /// <summary>Признак строки запуска автоматизма (заполнена колонка «Автоматизм»).</summary>
+    public bool HasAutomatizm => AutomatizmId.HasValue && AutomatizmId.Value > 0;
+
+    /// <summary>
+    /// Отформатированный триггер по иерархии «чей мотор в строке, тот триггер»: в строке
+    /// автоматизма — ID узла дерева автоматизмов (<see cref="TriggerAutomatizmNodeId"/>),
+    /// иначе — ID образа восприятия (<see cref="TriggerStimulusId"/>). Пустой узел дерева
+    /// (автоматизм без определённого узла) даёт прочерк, а не падение.
+    /// </summary>
+    public string DisplayTrigger => HasAutomatizm
+        ? TriggerAutomatizmNodeId?.ToString(CultureInfo.InvariantCulture) ?? "-"
+        : DisplayTriggerStimulusId;
 
     /// <summary>Единая колонка ОР/УМ: при активном УМ — «УМ1»/«УМ2», иначе ОР1/ОР2 или «-».</summary>
     public string DisplayOrUm
