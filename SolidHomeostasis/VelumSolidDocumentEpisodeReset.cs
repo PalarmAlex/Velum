@@ -47,12 +47,6 @@ namespace Velum.SolidHomeostasis
       // G_AD и триггеры ISIDA — только при активной пульсации
       VelumAdapterSleepReset.ResetEngineEpisodeState(requirePulseRunning: true);
 
-      // Сброс сессии наблюдения при смене документа (план §2.3: сброс при смене документа).
-      if (OperatorMotorObservationSession.IsInitialized)
-      {
-        OperatorMotorObservationSession.Instance.Reset();
-        Logger.Info("OperatorMotorObservationSession: reset on document change");
-      }
 
       // Скрыть форму-индикатор ожидания при смене документа.
       RecipeDispatcher.HideWaitingIndicator();

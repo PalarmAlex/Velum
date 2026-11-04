@@ -1198,26 +1198,13 @@ namespace Velum.UI
 
     /// <summary>
     /// Обновить состояние индикатора ожидания на основе текущего состояния гомеостаза.
-    /// Приоритет: режим наблюдения (таймер B) > ожидание ответа (таймер A) > покой.
+    /// Приоритет: ожидание ответа (таймер A) > покой.
     /// </summary>
     private void UpdateCountdownIndicatorState()
     {
       if (_lblCountdown == null || _lblCountdown.IsDisposed)
         return;
 
-      // Приоритет 1: режим наблюдения (таймер B post-motor wait)
-      if (ISIDA.Psychic.OperatorMotorObservationSession.IsInitialized &&
-          ISIDA.Psychic.OperatorMotorObservationSession.Instance.IsActive)
-      {
-        int remaining = ISIDA.Psychic.OperatorMotorObservationSession.Instance.GetRemainingPostMotorWaitPulses(
-            AppGlobalState.WaitingPeriodForActionsVal);
-        _lblCountdown.Text = "Режим наблюдения: ожидание действия оператора. " + remaining;
-        _lblCountdown.Visible = true;
-        _lblCountdown.ForeColor = Color.FromArgb(0, 112, 192); // Синий
-        _countdownColorPulseState = 0;
-        _countdownPulseTimer?.Start();
-        return;
-      }
 
       // Приоритет 2: ожидание оценки (таймер A WaitingForOperatorEvaluation)
       bool waiting = AppGlobalState.WaitingForOperatorEvaluation && AppGlobalState.WaitingPeriodCountdown > 0;
@@ -1280,23 +1267,15 @@ namespace Velum.UI
     /// <summary>
     /// Тик таймера пульсации индикатора — уменьшить обратный отсчёт и обновить цвет.
     /// Вызывается каждые 1000 мс (1 пульс/с, как в AIStudio).
-    /// При активном режиме наблюдения (таймер B) уменьшение WaitingPeriodCountdown не выполняется —
-    /// таймер сессии зависит от GlobalTimer.GlobalPulsCount.
+    /// Уменьшает обратный отсчет ожидания и обновляет пульсацию цвета.
+    /// Отсчет ведет AppGlobalState.UpdateWaitingPeriodCountdown.
     /// </summary>
     private void OnCountdownPulseTick(object sender, EventArgs e)
     {
       try
       {
-        // При режиме наблюдения (таймер B) — не уменьшаем WaitingPeriodCountdown,
-        // таймер сессии считается через GlobalTimer.GlobalPulsCount.
-        bool observationActive = ISIDA.Psychic.OperatorMotorObservationSession.IsInitialized &&
-            ISIDA.Psychic.OperatorMotorObservationSession.Instance.IsActive;
-
-        if (!observationActive)
-        {
-          // Уменьшаем обратный отсчёт периода ожидания (таймер A).
-          AppGlobalState.UpdateWaitingPeriodCountdown();
-        }
+        // Уменьшаем обратный отсчет периода ожидания.
+        AppGlobalState.UpdateWaitingPeriodCountdown();
 
         // Обновляем пульсацию цвета.
         UpdateCountdownDisplay();
