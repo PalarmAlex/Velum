@@ -70,6 +70,10 @@ namespace Velum.UI
       this._btnSend = new System.Windows.Forms.Button();
       this._lblOutputCaption = new System.Windows.Forms.Label();
       this._txtAgentOutput = new System.Windows.Forms.TextBox();
+      this._lblToneCaption = new System.Windows.Forms.Label();
+      this._cmbTone = new System.Windows.Forms.ComboBox();
+      this._lblMoodCaption = new System.Windows.Forms.Label();
+      this._cmbMood = new System.Windows.Forms.ComboBox();
       this._parameterToolTip = new System.Windows.Forms.ToolTip(this.components);
       this._rootLayout.SuspendLayout();
       this._headerPanel.SuspendLayout();
@@ -341,6 +345,10 @@ namespace Velum.UI
       this._scrollHost.Controls.Add(this._pnlSendRow);
       this._scrollHost.Controls.Add(this._lblOutputCaption);
       this._scrollHost.Controls.Add(this._txtAgentOutput);
+      this._scrollHost.Controls.Add(this._lblToneCaption);
+      this._scrollHost.Controls.Add(this._cmbTone);
+      this._scrollHost.Controls.Add(this._lblMoodCaption);
+      this._scrollHost.Controls.Add(this._cmbMood);
       this._scrollHost.Location = new System.Drawing.Point(0, 0);
       this._scrollHost.Margin = new System.Windows.Forms.Padding(0);
       this._scrollHost.Name = "_scrollHost";
@@ -741,6 +749,52 @@ namespace Velum.UI
       this._txtAgentOutput.Size = new System.Drawing.Size(288, 120);
       this._txtAgentOutput.TabIndex = 8;
       // 
+      // _lblToneCaption
+      // 
+      this._lblToneCaption.AutoSize = true;
+      this._lblToneCaption.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this._lblToneCaption.Location = new System.Drawing.Point(6, 336);
+      this._lblToneCaption.Margin = new System.Windows.Forms.Padding(0);
+      this._lblToneCaption.Name = "_lblToneCaption";
+      this._lblToneCaption.Size = new System.Drawing.Size(35, 13);
+      this._lblToneCaption.TabIndex = 26;
+      this._lblToneCaption.Text = "Тон:";
+      // 
+      // _cmbTone
+      // 
+      this._cmbTone.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this._cmbTone.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this._cmbTone.FormattingEnabled = true;
+      this._cmbTone.Location = new System.Drawing.Point(40, 333);
+      this._cmbTone.Margin = new System.Windows.Forms.Padding(0);
+      this._cmbTone.Name = "_cmbTone";
+      this._cmbTone.Size = new System.Drawing.Size(105, 21);
+      this._cmbTone.TabIndex = 27;
+      this._parameterToolTip.SetToolTip(this._cmbTone, "Тон стимула: передаётся в движок вместе с вербальным сообщением, командами и воздействиями.");
+      // 
+      // _lblMoodCaption
+      // 
+      this._lblMoodCaption.AutoSize = true;
+      this._lblMoodCaption.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this._lblMoodCaption.Location = new System.Drawing.Point(146, 336);
+      this._lblMoodCaption.Margin = new System.Windows.Forms.Padding(0);
+      this._lblMoodCaption.Name = "_lblMoodCaption";
+      this._lblMoodCaption.Size = new System.Drawing.Size(65, 13);
+      this._lblMoodCaption.TabIndex = 28;
+      this._lblMoodCaption.Text = "Настроение:";
+      // 
+      // _cmbMood
+      // 
+      this._cmbMood.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this._cmbMood.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this._cmbMood.FormattingEnabled = true;
+      this._cmbMood.Location = new System.Drawing.Point(214, 333);
+      this._cmbMood.Margin = new System.Windows.Forms.Padding(0);
+      this._cmbMood.Name = "_cmbMood";
+      this._cmbMood.Size = new System.Drawing.Size(85, 21);
+      this._cmbMood.TabIndex = 29;
+      this._parameterToolTip.SetToolTip(this._cmbMood, "Настроение стимула: передаётся в движок вместе с вербальным сообщением, командами и воздействиями.");
+      // 
       // _parameterToolTip
       // 
       this._parameterToolTip.ShowAlways = true;
@@ -837,6 +891,10 @@ namespace Velum.UI
     private System.Windows.Forms.Button _btnSend;
     private System.Windows.Forms.Label _lblOutputCaption;
     private System.Windows.Forms.TextBox _txtAgentOutput;
+    private System.Windows.Forms.Label _lblToneCaption;
+    private System.Windows.Forms.ComboBox _cmbTone;
+    private System.Windows.Forms.Label _lblMoodCaption;
+    private System.Windows.Forms.ComboBox _cmbMood;
     private System.Windows.Forms.ToolTip _parameterToolTip;
   }
 }

@@ -156,6 +156,21 @@ namespace Velum.UI.Logs
     /// <summary>Имя мотора (первое адаптивное действие контура); пусто — если не резолвится.</summary>
     public string ResponseActionName { get; set; } = string.Empty;
 
+    /// <summary>
+    /// Метка времени из колонки лога (формат <c>yyyy-MM-dd HH:mm:ss</c>); пусто — если не распарсилось.
+    /// </summary>
+    public string TimeText { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Крепость (AssociationStrength) у-рефлекса на момент срабатывания; null — если не резолвится.
+    /// </summary>
+    public float? AssociationStrength { get; set; }
+
+    /// <summary>
+    /// Вес (Usefulness) автоматизма на момент срабатывания; null — если не резолвится.
+    /// </summary>
+    public int? AutomatizmUsefulness { get; set; }
+
     /// <summary>Есть ли ответ (сокращённый лог печатает только пары «стимул → ответ»).</summary>
     public bool HasResponse
     {
@@ -179,6 +194,36 @@ namespace Velum.UI.Logs
       if (hasName)
         return label + ": " + ResponseActionName;
       return label + ": —";
+    }
+
+    /// <summary>
+    /// Печатная строка ответа с дополнительными деталями:
+    /// для у-рефлексов — крепость в скобках «(К=0.85)»,
+    /// для автоматизмов — вес в скобках «(вес N)».
+    /// </summary>
+    /// <returns>Строка ответа с деталями.</returns>
+    internal string FormatResponseLineWithDetails()
+    {
+      if (!ResponseKind.HasValue)
+        return string.Empty;
+
+      string baseLine = FormatResponseLine();
+      if (string.IsNullOrEmpty(baseLine))
+        return string.Empty;
+
+      // Условный рефлекс — крепость (AssociationStrength, float [0,1]).
+      if (ResponseKind == VelumCondensedResponseKind.УсловныйРефлекс && AssociationStrength.HasValue)
+      {
+        return baseLine + " (К=" + AssociationStrength.Value.ToString("F2", CultureInfo.InvariantCulture) + ")";
+      }
+
+      // Автоматизм — вес (Usefulness, int).
+      if (ResponseKind == VelumCondensedResponseKind.Автоматизм && AutomatizmUsefulness.HasValue)
+      {
+        return baseLine + " (вес " + AutomatizmUsefulness.Value.ToString(CultureInfo.InvariantCulture) + ")";
+      }
+
+      return baseLine;
     }
   }
 
@@ -223,8 +268,9 @@ namespace Velum.UI.Logs
     }
 
     /// <summary>
-    /// Собирает печатный блок одной записи. Возвращает <c>null</c>, если запись не должна
-    /// печататься (нет ответа или нет линий стимула).
+    /// Собирает печатный блок одной записи. Время печатается первой строкой (hh:mm:ss).
+    /// Для у-рефлексов в ответе добавляется крепость в скобках, для автоматизмов — вес.
+    /// Возвращает <c>null</c>, если запись не должна печататься (нет ответа или нет линий стимула).
     /// </summary>
     /// <param name="record">Запись лога.</param>
     /// <param name="newLine">Разделитель строк (обычно <see cref="Environment.NewLine"/>).</param>
@@ -239,6 +285,22 @@ namespace Velum.UI.Logs
 
       const string indent = "  ";
       var sb = new StringBuilder();
+
+      // Время — первая строка блока (hh:mm:ss из TimeText формата yyyy-MM-dd HH:mm:ss).
+      if (!string.IsNullOrEmpty(record.TimeText))
+      {
+        string timePart = string.Empty;
+        // Ищем пробел, отделяющий дату от времени, и берём последние 8 символов (hh:mm:ss).
+        int spaceIndex = record.TimeText.LastIndexOf(' ');
+        if (spaceIndex >= 0 && spaceIndex + 9 <= record.TimeText.Length)
+          timePart = record.TimeText.Substring(spaceIndex + 1, 8);
+        if (!string.IsNullOrEmpty(timePart))
+        {
+          sb.Append(timePart);
+          sb.Append(newLine);
+        }
+      }
+
       sb.Append(StimulusHeader);
       for (int i = 0; i < record.Stimuli.Count; i++)
       {
@@ -249,7 +311,7 @@ namespace Velum.UI.Logs
       sb.Append(newLine);
       sb.Append(ResponseHeader);
       sb.Append(newLine);
-      sb.Append(indent).Append(record.FormatResponseLine());
+      sb.Append(indent).Append(record.FormatResponseLineWithDetails());
       return sb.ToString();
     }
 

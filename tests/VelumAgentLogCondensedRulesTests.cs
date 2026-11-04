@@ -424,5 +424,77 @@ namespace Velum.ReactiveCore.Tests
       string text = new string('x', 500);
       Assert.Equal(text, VelumAgentLogCondensedRules.TrimToHead(text, 100, "\n"));
     }
+
+    [Fact]
+    public void BuildBlock_WithTimeText_PrependsTimeAsFirstLine()
+    {
+      var record = new VelumCondensedLogRecord
+      {
+        ResponseKind = VelumCondensedResponseKind.БезусловныйРефлекс,
+        ResponseId = 5,
+        ResponseActionName = "Экспорт PDF",
+        TimeText = "2026-05-13 14:23:45"
+      };
+      record.Stimuli.Add(Line(VelumCondensedStimulusKind.Воздействие, 65, "Запуск экспорта PDF"));
+
+      string block = VelumAgentLogCondensedRules.BuildBlock(record, "\n");
+      Assert.NotNull(block);
+      string[] lines = block.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+      // Время (hh:mm:ss) — самая первая строка блока.
+      Assert.Equal("14:23:45", lines[0]);
+      Assert.Equal(VelumAgentLogCondensedRules.StimulusHeader, lines[1]);
+    }
+
+    [Fact]
+    public void BuildBlock_WithConditionedReflexStrength_AppendsStrengthToResponse()
+    {
+      var record = new VelumCondensedLogRecord
+      {
+        ResponseKind = VelumCondensedResponseKind.УсловныйРефлекс,
+        ResponseId = 12,
+        ResponseActionName = "Подготовка чертежа",
+        AssociationStrength = 0.85f
+      };
+      record.Stimuli.Add(Line(VelumCondensedStimulusKind.Фраза, 0, "привет"));
+
+      string block = VelumAgentLogCondensedRules.BuildBlock(record, "\n");
+      Assert.NotNull(block);
+      Assert.Contains("У-рефлекс: ID 12, Подготовка чертежа (К=0.85)", block);
+    }
+
+    [Fact]
+    public void BuildBlock_WithAutomatizmUsefulness_AppendsWeightToResponse()
+    {
+      var record = new VelumCondensedLogRecord
+      {
+        ResponseKind = VelumCondensedResponseKind.Автоматизм,
+        ResponseId = 3,
+        ResponseActionName = "Экспорт PDF",
+        AutomatizmUsefulness = 3
+      };
+      record.Stimuli.Add(Line(VelumCondensedStimulusKind.Среда, 0, "65:200"));
+
+      string block = VelumAgentLogCondensedRules.BuildBlock(record, "\n");
+      Assert.NotNull(block);
+      Assert.Contains("Автоматизм: ID 3, Экспорт PDF (вес 3)", block);
+    }
+
+    [Fact]
+    public void BuildBlock_ConditionedReflexWithoutStrength_NoDetailsSuffix()
+    {
+      var record = new VelumCondensedLogRecord
+      {
+        ResponseKind = VelumCondensedResponseKind.УсловныйРефлекс,
+        ResponseId = 12,
+        ResponseActionName = "Подготовка чертежа",
+        AssociationStrength = null
+      };
+      record.Stimuli.Add(Line(VelumCondensedStimulusKind.Фраза, 0, "привет"));
+
+      string block = VelumAgentLogCondensedRules.BuildBlock(record, "\n");
+      Assert.NotNull(block);
+      Assert.Contains("У-рефлекс: ID 12, Подготовка чертежа", block);
+      Assert.DoesNotContain("(К=", block);
+    }
   }
 }

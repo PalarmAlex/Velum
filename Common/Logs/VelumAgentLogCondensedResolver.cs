@@ -56,10 +56,26 @@ namespace Velum.UI.Logs
       string conditionedReflex = Get(parts, "Усл. рефлекс");
       string automatizm = Get(parts, "Автоматизм");
       string environment = Get(parts, "Среда");
+      string timeText = Get(parts, "Время");
 
-      var record = new VelumCondensedLogRecord();
+      var record = new VelumCondensedLogRecord
+      {
+        TimeText = timeText
+      };
       ParseResponse(record, geneticReflex, conditionedReflex, automatizm);
       ParseStimulus(record, triggerId, triggerAtmzNode, environment);
+
+      // Резолвим крепость у-рефлекса и вес автоматизма.
+      // Резолв выполняется из фонового потока (как и остальной резолв в ProcessLine).
+      if (record.ResponseKind == VelumCondensedResponseKind.УсловныйРефлекс && record.ResponseId > 0)
+      {
+        record.AssociationStrength = ResolveConditionedReflexStrength(record.ResponseId);
+      }
+      else if (record.ResponseKind == VelumCondensedResponseKind.Автоматизм && record.ResponseId > 0)
+      {
+        record.AutomatizmUsefulness = ResolveAutomatizmUsefulness(record.ResponseId);
+      }
+
       return record;
     }
 
@@ -375,6 +391,47 @@ namespace Velum.UI.Logs
       catch
       {
         return string.Empty;
+      }
+    }
+
+    /// <summary>
+    /// Резолвит крепость (AssociationStrength) у-рефлекса по его ID.
+    /// null — если система не инициализирована или рефлекс не найден.
+    /// </summary>
+    private static float? ResolveConditionedReflexStrength(int crxId)
+    {
+      try
+      {
+        if (!ConditionedReflexesSystem.IsInitialized)
+          return null;
+
+        var crx = ConditionedReflexesSystem.Instance.GetAllConditionedReflexes()
+            .FirstOrDefault(r => r != null && r.Id == crxId);
+        return crx?.AssociationStrength;
+      }
+      catch
+      {
+        return null;
+      }
+    }
+
+    /// <summary>
+    /// Резолвит вес (Usefulness) автоматизма по его ID.
+    /// null — если система не инициализирована или автоматизм не найден.
+    /// </summary>
+    private static int? ResolveAutomatizmUsefulness(int atmzId)
+    {
+      try
+      {
+        if (!AutomatizmSystem.IsInitialized)
+          return null;
+
+        var atmz = AutomatizmSystem.Instance.GetAutomatizmById(atmzId);
+        return atmz?.Usefulness;
+      }
+      catch
+      {
+        return null;
       }
     }
 

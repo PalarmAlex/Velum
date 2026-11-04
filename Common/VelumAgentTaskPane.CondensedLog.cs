@@ -25,9 +25,6 @@ namespace Velum.UI
     /// <summary>Резолвер строк лога в записи; stateful (карта колонок), трогается только из UI-потока.</summary>
     private readonly VelumAgentLogCondensedResolver _condensedResolver = new VelumAgentLogCondensedResolver();
 
-    /// <summary>Сигнатура последней выведенной пары — для подавления повторов (рефлекс держится несколько пульсов).</summary>
-    private string _condensedLastEmittedSignature = string.Empty;
-
     /// <summary>Счётчик пульсов с прошлого опроса (для настройки периодичности).</summary>
     private int _condensedPollCounter;
 
@@ -112,15 +109,12 @@ namespace Velum.UI
           if (record == null || !VelumAgentLogCondensedRules.ShouldEmit(record))
             continue;
 
-          string signature = VelumAgentLogCondensedRules.BuildSignature(record);
-          if (VelumAgentLogCondensedRules.IsDuplicate(signature, _condensedLastEmittedSignature))
-            continue;
-
+          // Дедупликация отключена: каждый блок теперь несёт время (hh:mm:ss) и потому
+          // уникален — выводим все записи так, как они приходят из лога.
           string block = VelumAgentLogCondensedRules.BuildBlock(record, Environment.NewLine);
           if (string.IsNullOrEmpty(block))
             continue;
 
-          _condensedLastEmittedSignature = signature;
           blocks.Add(block);
         }
 
@@ -152,7 +146,6 @@ namespace Velum.UI
     /// </summary>
     private void ResetCondensedLogState()
     {
-      _condensedLastEmittedSignature = string.Empty;
       _condensedPollCounter = 0;
       _condensedNeedSeekToEnd = true;
     }

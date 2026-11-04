@@ -541,3 +541,23 @@
 
 - **E37. Служебные конфигурации (развёртка `SM-FLAT-PATTERN`) не читают флот-сканеры — цель штампа резолвить к экспортируемой конфигурации, а не к активной.** `TryGetActiveConfigurationName` возвращает сырое имя активной; если она активна развёртка листовой детали, pending/штамп уйдёт в конфигурацию, которую `DxfFleetScanner` не перечитывает, — и вердикт «устарел» рассинхронизируется. Для записи DXF-штампа нужен `TryResolveDefaultExportConfigurationName` (развёртка→родитель, пусто→первая пользовательская). Диагностический признак: ложный «DXF устарел» у деталей, где менялась только развёртка/плоскость. См. случай 18.
 - **E38. Смена активной конфигурации поднимает `GetUpdateStamp` и даёт Regen/Modify — это НЕ изменение геометрии, pending писать нельзя.** Переключение активной конфигурации мульти-конфиг детали SolidWorks трактует внутренне как обновление (растёт update-штамп, приходят Regen/Modify-колбэки). Если `NotifyPartGeometryModified` на них пишет pending — любая правка/открытие сборки с переключением конфигов порождает волну ложных «DXF устарел» по всем деталям. Нужен baseline активной конфигурации на документ и подавление pending на фактической смене активной (первый контакт — только зафиксировать baseline). См. случай 18.
+
+## Случай 24. Панель агента: добавлены списки выбора «Тон» и «Настроение», в блоках сокращённого лога — время, крепость у-рефлекса и вес автоматизма; дедупликация отключена
+
+- **Дата / сборка:** 2026-11-04, `bin\Debug\velum.dll`
+- **Симптом:** задача доработки — добавить на панель агента списки «Тон» и «Настроение» по аналогии с AIStudio (передавать выбранные значения в движок ISIDA вместо дефолтных `0, 0`) и улучшить блоки сокращённого лога в окне «Ответ агента»: время в начале блока, крепость у-рефлексов, вес автоматизмов, отключить дедупликацию.
+- **Область:** `Common\VelumAgentTaskPane.cs`, `Common\VelumAgentTaskPane.Designer.cs`, `Common\VelumAgentTaskPane.CondensedLog.cs`, `Common\Logs\VelumAgentLogCondensedRules.cs`, `Common\Logs\VelumAgentLogCondensedResolver.cs`.
+- **Исправление:**
+  - `VelumAgentLogCondensedRules.BuildBlock`: первая строка блока — время `hh:mm:ss` из колонки лога; `FormatResponseLineWithDetails` (внутренний метод `VelumCondensedLogRecord`): для у-рефлекса добавляется ` (К=0.85)`, для автоматизма — ` (вес 3)`;
+  - `VelumAgentLogCondensedResolver.ProcessLine`: чтение колонки «Время», резолв `AssociationStrength` (у-рефлекс) и `Usefulness` (автоматизм) через `ConditionedReflexesSystem` / `AutomatizmSystem`;
+  - `VelumAgentTaskPane.CondensedLog.OnCondensedLogLinesRead`: дедупликация отключена — время делает блоки уникальными, выводим всё как приходит; поле `_condensedLastEmittedSignature` удалено;
+  - `VelumAgentTaskPane.Designer.cs`: добавлены `_lblToneCaption`, `_cmbTone`, `_lblMoodCaption`, `_cmbMood` (ComboBox, DropDownList) в `ScrollHost` — размещены в строке над полем ввода, слева от кнопки «Буфер»;
+  - `VelumAgentTaskPane.cs`: `EnsureToneMoodListsInitialized()` заполняет списки из `ActionsImagesSystem.GetToneList()` / `GetMoodList()` (namespace `ISIDA.Psychic.Automatism`) при готовности ISIDA; `OnSendMessageClick` передаёт `SelectedToneId` / `SelectedMoodId` в `TrySendOperatorStimulus` вместо `0, 0`; `using ISIDA.Psychic.Automatism` добавлен в файл;
+  - Обновлена справка `docs\help\forms\agent-taskpane.html` и скопирована в `C:\ProgramData\VELUM\help\forms\`;
+  - Добавлены регрессионные тесты на время, крепость, вес в `tests\VelumAgentLogCondensedRulesTests.cs`.
+- **Проверка:** MSBuild Debug — EXIT=0; тесты — 395/395 прошли; справка скопирована.
+- **Эвристики:** → E39
+
+## Эвристики
+
+- **E39. Удаление дедупликации требует вычистки связанного состояния.** При отключении дедупа в сокращённом логе поле `_condensedLastEmittedSignature` стало мёртвым — его нужно удалить из `VelumAgentTaskPane.CondensedLog.cs` (и из `ResetCondensedLogState`). Оставленный мёртвый код не ломает сборку, но вводит в заблуждение при чтении. Диагностический признак: поле объявлено, но больше не присваивается и не читается. См. случай 24.

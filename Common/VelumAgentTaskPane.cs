@@ -9,6 +9,8 @@ using System.Windows.Forms;
 using ISIDA.Actions;
 using ISIDA.Common;
 using ISIDA.Gomeostas;
+using ISIDA.Psychic;
+using ISIDA.Psychic.Automatism;
 using ISIDA.Sensors;
 using Velum.Configuration;
 using Velum.Isida;
@@ -226,7 +228,8 @@ namespace Velum.UI
       {
         _parameterToolTip.SetToolTip(_btnOperatorInfluencesPick, "Выбор воздействий на параметры агента");
         _parameterToolTip.SetToolTip(_txtOperatorInfluencesDisplay, "Прямое воздействие оператора");
-      }
+      }  
+      EnsureToneMoodListsInitialized();  
       RefreshOperatorInfluencesDisplay();
       RefreshSwBufferText();
       RequestRefresh();
@@ -351,6 +354,14 @@ namespace Velum.UI
         _flowInputCaption.Visible = visible;
       if (_btnViewVerbalPrimariesBuffer != null)
         _btnViewVerbalPrimariesBuffer.Visible = visible;
+      if (_lblToneCaption != null)
+        _lblToneCaption.Visible = visible;
+      if (_cmbTone != null)
+        _cmbTone.Visible = visible;
+      if (_lblMoodCaption != null)
+        _lblMoodCaption.Visible = visible;
+      if (_cmbMood != null)
+        _cmbMood.Visible = visible;
       if (_txtMessageInput != null)
         _txtMessageInput.Visible = visible;
       if (_pnlSendRow != null)
@@ -448,7 +459,9 @@ namespace Velum.UI
           _lblOperatorInfluencesCaption == null || _pnlOperatorInfluences == null ||
           _txtOperatorInfluencesDisplay == null || _btnOperatorInfluencesPick == null ||
           _lblInputCaption == null || _flowInputCaption == null ||
-          _btnViewVerbalPrimariesBuffer == null || _txtMessageInput == null || _pnlSendRow == null ||
+          _btnViewVerbalPrimariesBuffer == null || _lblToneCaption == null || _cmbTone == null ||
+          _lblMoodCaption == null || _cmbMood == null ||
+          _txtMessageInput == null || _pnlSendRow == null ||
           _btnSend == null || _lblOutputCaption == null || _txtAgentOutput == null)
         return;
 
@@ -607,9 +620,40 @@ namespace Velum.UI
       _flowInputCaption.Width = innerW;
       y += _flowInputCaption.Height + gap;
 
+      // Строка «Тон / Настроение / Буфер»: слева подписи и комбобоксы, справа кнопка «Буфер».
       Size verbalBufBtnSize = MeasurePrimariesBufferButtonSize(_btnViewVerbalPrimariesBuffer);
-      _btnViewVerbalPrimariesBuffer.SetBounds(x, y, Math.Min(innerW, verbalBufBtnSize.Width), verbalBufBtnSize.Height);
-      y += verbalBufBtnSize.Height + gap;
+      int toneMoodRowH = Math.Max(verbalBufBtnSize.Height, Math.Max(_cmbTone.PreferredHeight, _lblToneCaption.Height));
+      int toneCapW = Math.Max(20, _lblToneCaption.PreferredSize.Width);
+      int moodCapW = Math.Max(20, _lblMoodCaption.PreferredSize.Width);
+      int toneCmbW = 95;
+      int moodCmbW = 95;
+      int btnW = Math.Min(innerW, verbalBufBtnSize.Width);
+      int capGap = 4;
+      int blkGap = 6;
+
+      // Комбобоксы и подписи занимают место слева от кнопки; при нехватке ширины сжимаем комбобоксы.
+      int usedByCaptions = toneCapW + capGap + moodCapW + capGap + 3 * blkGap;
+      int availForCombos = innerW - btnW - usedByCaptions;
+      if (availForCombos < 30)
+      {
+        toneCmbW = Math.Max(30, availForCombos / 2);
+        moodCmbW = Math.Max(30, availForCombos - toneCmbW);
+      }
+
+      int cx = x;
+      _lblToneCaption.SetBounds(cx, y + (toneMoodRowH - _lblToneCaption.Height) / 2, toneCapW, _lblToneCaption.Height);
+      cx += toneCapW + capGap;
+      _cmbTone.SetBounds(cx, y, toneCmbW, _cmbTone.PreferredHeight);
+      cx += toneCmbW + blkGap;
+      _lblMoodCaption.SetBounds(cx, y + (toneMoodRowH - _lblMoodCaption.Height) / 2, moodCapW, _lblMoodCaption.Height);
+      cx += moodCapW + capGap;
+      _cmbMood.SetBounds(cx, y, moodCmbW, _cmbMood.PreferredHeight);
+      _btnViewVerbalPrimariesBuffer.SetBounds(
+          x + innerW - btnW,
+          y + (toneMoodRowH - verbalBufBtnSize.Height) / 2,
+          btnW,
+          verbalBufBtnSize.Height);
+      y += toneMoodRowH + gap;
 
       _txtMessageInput.Location = new Point(x, y);
       _txtMessageInput.Width = innerW;
@@ -1071,6 +1115,7 @@ namespace Velum.UI
         LayoutScrollContents();
         return;
       }
+      EnsureToneMoodListsInitialized();
 
       bool pulse = GlobalTimer.IsPulsationRunning;
       bool dead = AppGlobalState.IsDead;
@@ -1873,6 +1918,76 @@ namespace Velum.UI
       RequestRefresh();
     }
 
+    /// <summary>Признак, что списки «Тон»/«Настроение» уже заполнены из ISIDA (идемпотентность).</summary>
+    private bool _toneMoodListsInitialized;
+
+    /// <summary>
+    /// Идемпотентно заполняет выпадающие списки «Тон» и «Настроение» из справочника ISIDA
+    /// (<see cref="ActionsImagesSystem.GetToneList"/> / <see cref="ActionsImagesSystem.GetMoodList"/>).
+    /// Списки становятся доступны после инициализации ISIDA, поэтому вызывается при готовности
+    /// и перед отправкой стимула. Выбор по умолчанию — элемент с ID 0 («нейтральный»).
+    /// </summary>
+    private void EnsureToneMoodListsInitialized()
+    {
+      if (_toneMoodListsInitialized || _cmbTone == null || _cmbMood == null)
+        return;
+
+      try
+      {
+        if (!ActionsImagesSystem.IsInitialized)
+          return;
+
+        var tones = ActionsImagesSystem.GetToneList();
+        var moods = ActionsImagesSystem.GetMoodList();
+        if (tones == null || tones.Count == 0 || moods == null || moods.Count == 0)
+          return;
+
+        BindToneMoodCombo(_cmbTone, tones, 0);
+        BindToneMoodCombo(_cmbMood, moods, 0);
+        _toneMoodListsInitialized = true;
+      }
+      catch
+      {
+        // Сбой справочника — списки останутся незаполненными, отправка пойдёт с нейтральными 0, 0.
+      }
+    }
+
+    /// <summary>
+    /// Привязывает словарь «ID → подпись» к комбобоксу (DisplayMember — подпись, ValueMember — ID)
+    /// и выбирает элемент с указанным ID (если он есть), иначе нулевой индекс.
+    /// </summary>
+    private static void BindToneMoodCombo(ComboBox combo, Dictionary<int, string> items, int selectId)
+    {
+      var rows = new List<KeyValuePair<int, string>>(items);
+      combo.DataSource = null;
+      combo.DataSource = rows;
+      combo.DisplayMember = nameof(KeyValuePair<int, string>.Value);
+      combo.ValueMember = nameof(KeyValuePair<int, string>.Key);
+
+      int idx = rows.FindIndex(r => r.Key == selectId);
+      combo.SelectedIndex = idx >= 0 ? idx : 0;
+    }
+
+    /// <summary>Выбранный ID тона (0 — если список не заполнен или выбор некорректен).</summary>
+    private int SelectedToneId
+    {
+      get { return SelectedComboId(_cmbTone); }
+    }
+
+    /// <summary>Выбранный ID настроения (0 — если список не заполнен или выбор некорректен).</summary>
+    private int SelectedMoodId
+    {
+      get { return SelectedComboId(_cmbMood); }
+    }
+
+    /// <summary>Достаёт int-идентификатор из SelectedValue комбобокса; 0 — если он недоступен.</summary>
+    private static int SelectedComboId(ComboBox combo)
+    {
+      if (combo != null && combo.SelectedItem is KeyValuePair<int, string> kvp)
+        return kvp.Key;
+      return 0;
+    }
+
     /// <summary>
     /// Enter в поле ввода — дубль кнопки «Отправить» (перехват на уровне WndProc контрола ввода).
     /// </summary>
@@ -1936,8 +2051,8 @@ namespace Velum.UI
                 verbalLine ?? string.Empty,
                 commandLine ?? string.Empty,
                 influenceSnapshot,
-                0,
-                0,
+                SelectedToneId,
+                SelectedMoodId,
                 out string sendErr))
         {
           AppendAgentOutputLine("Ошибка: " + (sendErr ?? "неизвестная ошибка"));
