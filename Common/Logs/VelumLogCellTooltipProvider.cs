@@ -331,9 +331,9 @@ namespace Velum.UI.Logs
     {
       switch (baseId)
       {
-        case -1: return "Ядро";
+        case -1: return "Плохо";
         case 0: return "Норма";
-        case 1: return "Первичный";
+        case 1: return "Хорошо";
         default: return "Неизвестно (" + baseId.ToString(CultureInfo.InvariantCulture) + ")";
       }
     }
