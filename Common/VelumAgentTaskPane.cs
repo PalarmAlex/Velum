@@ -958,7 +958,7 @@ namespace Velum.UI
       GlobalTimer.OnPulseAfterGomeostasisBeforePsychic += OnAfterGomeostasis;
       GlobalTimer.PulsationStateChanged += OnPulsationStateChanged;
       _pulseHooked = true;
-      HookCreationEvents();
+      HookShortLogChannel();
     }
 
     private void UnhookPulseEvents()
@@ -968,7 +968,7 @@ namespace Velum.UI
       GlobalTimer.OnPulseAfterGomeostasisBeforePsychic -= OnAfterGomeostasis;
       GlobalTimer.PulsationStateChanged -= OnPulsationStateChanged;
       _pulseHooked = false;
-      UnhookCreationEvents();
+      UnhookShortLogChannel();
     }
 
     private void OnPulsationStateChanged()
@@ -986,8 +986,6 @@ namespace Velum.UI
     private void OnAfterGomeostasis(int pulseNumber)
     {
       RequestRefresh();
-      PumpCondensedLog(pulseNumber);
-      PumpCreationEvents();
     }
 
     private void RequestRefresh()
@@ -1351,7 +1349,6 @@ namespace Velum.UI
       VelumSolidCommandBuffer.Clear();
       if (_txtAgentOutput != null)
         _txtAgentOutput.Clear();
-      ResetCondensedLogState();
       if (_scrollPanel != null)
         _scrollPanel.Visible = true;
       if (_scrollHost != null)
@@ -1388,7 +1385,6 @@ namespace Velum.UI
       VelumSolidCommandBuffer.Clear();
       if (_txtAgentOutput != null)
         _txtAgentOutput.Clear();
-      ResetCondensedLogState();
       if (_scrollPanel != null)
         _scrollPanel.Visible = false;
       if (_headerPanel != null)
