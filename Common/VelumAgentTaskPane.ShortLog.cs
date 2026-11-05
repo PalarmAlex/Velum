@@ -94,6 +94,10 @@ namespace Velum.UI
           if (string.IsNullOrEmpty(text))
             return;
 
+          // Движок присылает текст с экранированными «\n» (две буквы), а Multiline TextBox
+          //recognизирует только реальные переносы — нормализуем через чистое правило.
+          text = VelumAgentLogCondensedRules.NormalizeNewLines(text);
+
           // Лента — «свежее сверху»: вставляем перед старым текстом.
           string existing = _txtAgentOutput.Text;
           if (existing.Length > 0)

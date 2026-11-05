@@ -360,6 +360,57 @@ namespace Velum.UI.Logs
     }
 
     /// <summary>
+    /// Приводит переносы строк в тексте от движка к виду, который понимает
+    /// WinForms <see cref="System.Windows.Forms.TextBox"/> с <c>Multiline</c>.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// ISIDA отдаёт текст блока с <b>литеральными</b> «<c>\n</c>» (две буквы: слэш и n), а
+    /// <c>ShortLogToken.ToString()</c> разделяет время и текст одиночным LF. Многострочный
+    /// TextBox на одиночный LF перенос не делает, поэтому блок слипался в одну строку.
+    /// </para>
+    /// <para>
+    /// Любая граница переноса (CRLF, одиночные CR или LF) заменяется на
+    /// <see cref="Environment.NewLine"/> целиком, по одной за границу: парный перенос
+    /// сохраняет пустую строку, а уже нормализованный CRLF не превращается в «<c>\r\r\n</c>»,
+    /// что делает операцию идемпотентной.
+    /// </para>
+    /// </remarks>
+    /// <param name="text">Исходный текст токена.</param>
+    /// <returns>Текст с реальными переносами строк; пустой/нулевой вход возвращается как есть.</returns>
+    public static string NormalizeNewLines(string text)
+    {
+      if (string.IsNullOrEmpty(text))
+        return text;
+
+      // Литеральные «\n» от движка становятся настоящими LF — дальше разберёт сканер границ.
+      string expanded = text.Replace("\\n", "\n");
+
+      var sb = new StringBuilder(expanded.Length);
+      for (int i = 0; i < expanded.Length; i++)
+      {
+        char c = expanded[i];
+        if (c == '\r')
+        {
+          // CRLF consumes as one boundary, lone CR stays a boundary of its own.
+          if (i + 1 < expanded.Length && expanded[i + 1] == '\n')
+            i++;
+          sb.Append(Environment.NewLine);
+        }
+        else if (c == '\n')
+        {
+          sb.Append(Environment.NewLine);
+        }
+        else
+        {
+          sb.Append(c);
+        }
+      }
+
+      return sb.ToString();
+    }
+
+    /// <summary>
     /// Склеивает новые блоки и существующий текст окна в ленту «свежее сверху»: блоки
     /// (приходят в хронологическом порядке) разворачиваются и ставятся перед старым текстом,
     /// разделитель между блоками и старым текстом — двойной <paramref name="newLine"/>.

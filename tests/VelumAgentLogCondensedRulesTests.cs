@@ -496,5 +496,41 @@ namespace Velum.ReactiveCore.Tests
       Assert.Contains("У-рефлекс: ID 12, Подготовка чертежа", block);
       Assert.DoesNotContain("(К=", block);
     }
+
+    [Fact]
+    public void NormalizeNewLines_LiteralEscapes_BecomeRealLineBreaks()
+    {
+      // Регресс: движок отдаёт текст с литеральными «\n» (два символа: слэш + n),
+      // многострочный TextBox их не отображает как перенос — блок слипался в одну строку.
+      string text = "СОЗДАНИЕ:\\n  Селективный клон - Автоматизм: ID 1, (вес 0)";
+      string result = VelumAgentLogCondensedRules.NormalizeNewLines(text);
+      Assert.Equal("СОЗДАНИЕ:" + Environment.NewLine + "  Селективный клон - Автоматизм: ID 1, (вес 0)", result);
+    }
+
+    [Fact]
+    public void NormalizeNewLines_BareLineFeed_DoesNotProduceDoubleCarriageReturn()
+    {
+      // Регресс: при обратном порядке замен «\n» → Environment.NewLine давало «\r\r\n»
+      // (лишние пустые строки в окне вывода).
+      string result = VelumAgentLogCondensedRules.NormalizeNewLines("19:42:22\nСОЗДАНИЕ:");
+      Assert.Equal("19:42:22" + Environment.NewLine + "СОЗДАНИЕ:", result);
+      Assert.DoesNotContain("\r\r", result);
+    }
+
+    [Fact]
+    public void NormalizeNewLines_MixedCrlfAndLiteral_IsIdempotent()
+    {
+      string once = VelumAgentLogCondensedRules.NormalizeNewLines("а\r\nб\\nв");
+      Assert.Equal("а" + Environment.NewLine + "б" + Environment.NewLine + "в", once);
+      // Повторный прогон уже нормализованного текста ничего не добавляет.
+      Assert.Equal(once, VelumAgentLogCondensedRules.NormalizeNewLines(once));
+    }
+
+    [Fact]
+    public void NormalizeNewLines_EmptyAndNull_PassThrough()
+    {
+      Assert.Null(VelumAgentLogCondensedRules.NormalizeNewLines(null));
+      Assert.Equal(string.Empty, VelumAgentLogCondensedRules.NormalizeNewLines(string.Empty));
+    }
   }
 }
