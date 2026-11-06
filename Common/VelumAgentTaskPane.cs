@@ -2094,12 +2094,10 @@ namespace Velum.UI
     {
       if (_txtAgentOutput == null)
         return;
-      // Лента окна вывода — «свежее сверху»: сообщения вставляются в начало, как блоки сокращённого лога.
-      string existing = _txtAgentOutput.Text;
-      if (existing.Length > 0)
-        _txtAgentOutput.Text = line + Environment.NewLine + existing;
-      else
-        _txtAgentOutput.Text = line;
+      // Лента окна вывода — «свежее сверху»: сообщения вставляются в начало через пустую
+      // строку (двойной перенос), как и блоки сокращённого лога, чтобы не прилипать к ним.
+      _txtAgentOutput.Text = Velum.UI.Logs.VelumAgentLogCondensedRules.PrependBlocks(
+          _txtAgentOutput.Text, new[] { line }, Environment.NewLine);
       _txtAgentOutput.SelectionStart = 0;
       _txtAgentOutput.ScrollToCaret();
     }

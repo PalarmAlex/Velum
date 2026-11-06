@@ -350,6 +350,31 @@ namespace Velum.ReactiveCore.Tests
     }
 
     [Fact]
+    public void PrependBlocks_SeparatesBlocksByBlankLine()
+    {
+        // Регресс: после группировки ISIDA (FlushPulse) один токен = весь пульс (несколько
+        // строки). Блоки в ленте должны разделяться пустой строкой (двойной перенос), иначе
+        // визуально слипаются. Граница-разделитель та же, по которой режет TrimToHead.
+        string sep = "\n\n";
+        string result = VelumAgentLogCondensedRules.PrependBlocks("СТАРЫЙ", new[] { "НОВЫЙ" }, "\n");
+        Assert.Equal("НОВЫЙ" + sep + "СТАРЫЙ", result);
+
+        // Два новых блока + старый: между всеми три блоками ровно по одной пустой строке.
+        string two = VelumAgentLogCondensedRules.PrependBlocks("C", new[] { "A", "B" }, "\n");
+        Assert.Equal("B" + sep + "A" + sep + "C", two);
+    }
+
+    [Fact]
+    public void TrimToHead_KeepsBlankLineSeparationIntact()
+    {
+        // Разделитель блоков (пустая строка) должен оставаться границей при обрезке ленты.
+        string sep = "\n\n";
+        string text = "свежий блок" + sep + "старый блок который длиннее порога";
+        string result = VelumAgentLogCondensedRules.TrimToHead(text, 16, "\n");
+        Assert.Equal("свежий блок", result);
+    }
+
+    [Fact]
     public void PrependBlocks_NullBlocks_ReturnsExisting()
     {
       const string existing = "DATA";

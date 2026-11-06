@@ -98,12 +98,12 @@ namespace Velum.UI
           //recognизирует только реальные переносы — нормализуем через чистое правило.
           text = VelumAgentLogCondensedRules.NormalizeNewLines(text);
 
-          // Лента — «свежее сверху»: вставляем перед старым текстом.
-          string existing = _txtAgentOutput.Text;
-          if (existing.Length > 0)
-            _txtAgentOutput.Text = text + Environment.NewLine + existing;
-          else
-            _txtAgentOutput.Text = text;
+          // Лента — «свежее сверху»: новый блок (токен = весь пульс, см. группировку ISIDA
+          // FlushPulse) ставится перед старым текстом через пустую строку (двойной перенос),
+          // чтобы блоки пульсов визуально разделялись. Граница-разделитель совпадает с той,
+          // по которой TrimToHead режет ленту, поэтому обрезка идёт по границе блока.
+          _txtAgentOutput.Text = VelumAgentLogCondensedRules.PrependBlocks(
+              _txtAgentOutput.Text, new[] { text }, Environment.NewLine);
 
           _txtAgentOutput.SelectionStart = 0;
           _txtAgentOutput.ScrollToCaret();
@@ -137,13 +137,11 @@ namespace Velum.UI
           if (_txtAgentOutput == null || IsDisposed)
             return;
 
-          // Отметка конца сессии — просто вставляем разделитель.
+          // Отметка конца сессии — вставляем разделитель через пустую строку (двойной перенос),
+          // как и блоки токенов, чтобы он не прилипал к последнему пульсу.
           string separator = "── Сессия " + sessionId + " завершена ──";
-          string existing = _txtAgentOutput.Text;
-          if (existing.Length > 0)
-            _txtAgentOutput.Text = separator + Environment.NewLine + existing;
-          else
-            _txtAgentOutput.Text = separator;
+          _txtAgentOutput.Text = VelumAgentLogCondensedRules.PrependBlocks(
+              _txtAgentOutput.Text, new[] { separator }, Environment.NewLine);
 
           _txtAgentOutput.SelectionStart = 0;
           _txtAgentOutput.ScrollToCaret();
