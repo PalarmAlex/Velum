@@ -453,6 +453,38 @@ namespace Velum.UI.Logs
     }
 
     /// <summary>
+    /// Заменяет самый верхний (самый свежий) блок ленты новым текстом, оставляя нижние
+    /// блоки без изменений. Нужно для повторов: движок не создаёт новый токен, а обновляет
+    /// последний (растёт <c>RepeatCount</c>), и в ленте «свежее сверху» этот блок — верхний.
+    /// </summary>
+    /// <param name="existingText">Текущий текст окна вывода (верхний блок — самый свежий).</param>
+    /// <param name="newTopBlock">Новый текст верхнего блока (обычно тот же блок с «×N»).</param>
+    /// <param name="newLine">Разделитель строк (обычно <see cref="Environment.NewLine"/>).</param>
+    /// <returns>Текст ленты с заменённым верхним блоком; при пустом новом блоке — исходный текст.</returns>
+    public static string ReplaceTopBlock(string existingText, string newTopBlock, string newLine)
+    {
+      if (string.IsNullOrEmpty(newTopBlock))
+        return existingText ?? string.Empty;
+
+      // Пустая/нулевая лента — верхнего блока нет, просто кладём новый.
+      if (string.IsNullOrEmpty(existingText))
+        return newTopBlock;
+
+      if (string.IsNullOrEmpty(newLine))
+        newLine = "\n";
+
+      string separator = newLine + newLine;
+
+      // Разделяем ленту на верхний блок и «хвост» (старые блоки). Граница — первый разделитель.
+      int boundary = existingText.IndexOf(separator, StringComparison.Ordinal);
+      if (boundary < 0)
+        return newTopBlock;
+
+      string tail = existingText.Substring(boundary + separator.Length);
+      return newTopBlock + separator + tail;
+    }
+
+    /// <summary>
     /// Ограничивает длину ленты, отрезая старые блоки с конца (свежие блоки в начале
     /// сохраняются). Режет по границе блока — двойному <paramref name="newLine"/> — чтобы
     /// не рвать блок пополам.

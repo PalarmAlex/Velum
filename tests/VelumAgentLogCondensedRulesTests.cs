@@ -375,6 +375,39 @@ namespace Velum.ReactiveCore.Tests
     }
 
     [Fact]
+    public void ReplaceTopBlock_ReplacesOnlyTopBlock_KeepsTail()
+    {
+        // Регресс: при OnTokenUpdated движок схлопнул повтор последнего пульса; в ленте
+        // «свежее сверху» он — верхний блок. Меняем только его, нижние блоки не трогаем.
+        string sep = "\n\n";
+        string existing = "ВЕРХ OLD" + sep + "СРЕДНИЙ" + sep + "СТАРЫЙ";
+        string result = VelumAgentLogCondensedRules.ReplaceTopBlock(existing, "ВЕРХ ×3", "\n");
+        Assert.Equal("ВЕРХ ×3" + sep + "СРЕДНИЙ" + sep + "СТАРЫЙ", result);
+    }
+
+    [Fact]
+    public void ReplaceTopBlock_EmptyExisting_ReturnsNewBlock()
+    {
+        // Верхнего блока нет (пустая лента) — просто кладём новый.
+        Assert.Equal("НОВЫЙ", VelumAgentLogCondensedRules.ReplaceTopBlock(string.Empty, "НОВЫЙ", "\n"));
+        Assert.Equal("НОВЫЙ", VelumAgentLogCondensedRules.ReplaceTopBlock(null, "НОВЫЙ", "\n"));
+    }
+
+    [Fact]
+    public void ReplaceTopBlock_SingleBlockNoSeparator_ReplacedEntirely()
+    {
+        // Один блок без разделителя — он и есть верхний, заменяем целиком.
+        Assert.Equal("НОВЫЙ", VelumAgentLogCondensedRules.ReplaceTopBlock("СТАРЫЙ", "НОВЫЙ", "\n"));
+    }
+
+    [Fact]
+    public void ReplaceTopBlock_EmptyNewBlock_KeepsExisting()
+    {
+        // Пустой новый блок — ничего не делаем, иначе сотрём ленту.
+        Assert.Equal("ВЕРХ\n\nХВОСТ", VelumAgentLogCondensedRules.ReplaceTopBlock("ВЕРХ\n\nХВОСТ", string.Empty, "\n"));
+    }
+
+    [Fact]
     public void PrependBlocks_NullBlocks_ReturnsExisting()
     {
       const string existing = "DATA";

@@ -8,7 +8,9 @@ namespace Velum.UI
   /// <summary>
   /// Подписка на канал сокращённого (семантического) лога ISIDA
   /// <see cref="ShortLogChannel"/>. Заменяет файловый опрос AgentLogs.csv:
-  /// токены приходят напрямую от движка в событиях OnToken / OnSessionStarted / OnSessionCompleted.
+  /// токены приходят напрямую от движка в событиях OnToken / OnTokenUpdated /
+  /// OnSessionStarted / OnSessionCompleted. OnTokenUpdated — повтор последнего блока
+  /// (схлопнут идентичный пульс, вырос RepeatCount): перерисовываем верхний блок, а не добавляем новый.
   /// </summary>
   public sealed partial class VelumAgentTaskPane
   {
@@ -26,6 +28,7 @@ namespace Velum.UI
 
       ShortLogChannel.OnSessionStarted += OnShortLogSessionStarted;
       ShortLogChannel.OnToken += OnShortLogToken;
+      ShortLogChannel.OnTokenUpdated += OnShortLogTokenUpdated;
       ShortLogChannel.OnSessionCompleted += OnShortLogSessionCompleted;
       _shortLogHooked = true;
     }
@@ -41,6 +44,7 @@ namespace Velum.UI
 
       ShortLogChannel.OnSessionStarted -= OnShortLogSessionStarted;
       ShortLogChannel.OnToken -= OnShortLogToken;
+      ShortLogChannel.OnTokenUpdated -= OnShortLogTokenUpdated;
       ShortLogChannel.OnSessionCompleted -= OnShortLogSessionCompleted;
       _shortLogHooked = false;
     }
@@ -110,6 +114,48 @@ namespace Velum.UI
 
           // Мягко ограничиваем длину окна вывода.
           TrimCondensedOutputIfNeeded();
+        }));
+      }
+      catch
+      {
+        // Лента — некритичная диагностика.
+      }
+    }
+
+    /// <summary>
+    /// Пришёл повтор последнего блока (движок схлопнул идентичный пульс и поднял
+    /// <c>RepeatCount</c>). Новый токен не создаётся — перерисовываем верхний (самый свежий)
+    /// блок ленты, чтобы в нём появился счётчик «×N», вместо добавления нового блока.
+    /// </summary>
+    private void OnShortLogTokenUpdated(ShortLogToken token)
+    {
+      if (IsDisposed)
+        return;
+
+      try
+      {
+        if (!IsHandleCreated)
+          return;
+
+        BeginInvoke(new Action(() =>
+        {
+          if (_txtAgentOutput == null || IsDisposed)
+            return;
+
+          string text = token?.ToString() ?? string.Empty;
+          if (string.IsNullOrEmpty(text))
+            return;
+
+          // Та же нормализация переносов, что и для новых токенов.
+          text = VelumAgentLogCondensedRules.NormalizeNewLines(text);
+
+          // Верхний блок ленты — это тот же пульс, ставший повтором: заменяем его целиком,
+          // нижние блоки не трогаем.
+          _txtAgentOutput.Text = VelumAgentLogCondensedRules.ReplaceTopBlock(
+              _txtAgentOutput.Text, text, Environment.NewLine);
+
+          _txtAgentOutput.SelectionStart = 0;
+          _txtAgentOutput.ScrollToCaret();
         }));
       }
       catch
