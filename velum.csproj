@@ -518,6 +518,7 @@
     <Compile Include="Common\Logs\VelumLogCellFillRules.cs" />
     <Compile Include="Common\Logs\VelumAgentLogCondensedRules.cs" />
     <Compile Include="Common\Logs\VelumLogCellTooltipProvider.cs" />
+    <Compile Include="Common\Logs\VelumLogsReportHtmlRules.cs" />
     <Compile Include="Common\Logs\VelumLogsReportHtmlBuilder.cs" />
     <Compile Include="Common\Logs\VelumLogsFormHost.cs" />
     <Compile Include="Common\Logs\VelumLogsForm.cs">

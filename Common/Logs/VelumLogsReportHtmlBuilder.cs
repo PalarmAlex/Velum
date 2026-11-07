@@ -55,7 +55,7 @@ namespace Velum.UI.Logs
       var provider = new VelumLogCellTooltipProvider();
 
       sb.AppendLine("<table class=\"data-zebra\">");
-      sb.Append("<tr>");
+      VelumLogsReportHtmlRules.BeginTableHead(sb);
       AppendTh(sb, "Время", "Время записи в сессии.");
       AppendTh(sb, "Пульс", "Номер пульса системы (1 пульс = 1 секунда).");
       AppendTh(sb, "Состояние", "Код состояния гомеостаза: -1 плохо, 0 норма, 1 хорошо.");
@@ -73,7 +73,7 @@ namespace Velum.UI.Logs
       AppendTh(sb, "Цепочка АВ", "Активная цепочка автоматизмов (ChainId:ActionId).");
       AppendTh(sb, "Цикл М", "Номер текущего главного цикла мышления.");
       AppendTh(sb, "Циклы Ф", "Фоновые циклы мышления (JSON).");
-      sb.AppendLine("</tr>");
+      VelumLogsReportHtmlRules.EndTableHead(sb);
 
       foreach (VelumAgentLogEntry e in list)
       {
@@ -134,11 +134,11 @@ namespace Velum.UI.Logs
       else
       {
         sb.AppendLine("<table class=\"data-zebra\">");
-        sb.Append("<tr>");
+        VelumLogsReportHtmlRules.BeginTableHead(sb);
         AppendTh(sb, "Время", "Время записи этапа Final.");
         AppendTh(sb, "Пульс", "Номер пульса системы.");
         AppendTh(sb, "Стиль", "Итоговый доминирующий стиль поведения.");
-        sb.AppendLine("</tr>");
+        VelumLogsReportHtmlRules.EndTableHead(sb);
         foreach (VelumStyleLogEntry e in finalEntries.OrderBy(x => x.Pulse).ThenBy(x => x.Timestamp))
         {
           sb.Append("<tr>");
@@ -158,13 +158,13 @@ namespace Velum.UI.Logs
       else
       {
         sb.AppendLine("<table class=\"data-zebra\">");
-        sb.Append("<tr>");
+        VelumLogsReportHtmlRules.BeginTableHead(sb);
         AppendTh(sb, "Время", "Время записи этапа ParameterActivation.");
         AppendTh(sb, "Пульс", "Номер пульса системы.");
         AppendTh(sb, "Параметр", "Параметр гомеостаза, активировавший стиль.");
         AppendTh(sb, "Зона", "Зона активации параметра.");
         AppendTh(sb, "Стиль", "Активированный стиль поведения.");
-        sb.AppendLine("</tr>");
+        VelumLogsReportHtmlRules.EndTableHead(sb);
         foreach (VelumStyleParameterActivationEntry e in
                  activations.OrderBy(x => x.Pulse).ThenBy(x => x.Timestamp))
         {
@@ -200,7 +200,7 @@ namespace Velum.UI.Logs
       }
 
       sb.AppendLine("<table class=\"data-zebra\">");
-      sb.Append("<tr>");
+      VelumLogsReportHtmlRules.BeginTableHead(sb);
       AppendTh(sb, "Время", "Время записи.");
       AppendTh(sb, "Пульс", "Номер пульса системы.");
       AppendTh(sb, "Параметр", "Параметр гомеостаза.");
@@ -211,7 +211,7 @@ namespace Velum.UI.Logs
       AppendTh(sb, "Срочность", "Значение функции срочности.");
       AppendTh(sb, "Состояние", "Текущее состояние параметра.");
       AppendTh(sb, "Зона", "Зона активации параметра.");
-      sb.AppendLine("</tr>");
+      VelumLogsReportHtmlRules.EndTableHead(sb);
 
       foreach (VelumParameterLogEntry e in list)
       {
@@ -349,23 +349,7 @@ namespace Velum.UI.Logs
     private static void AppendStyles(StringBuilder sb)
     {
       sb.AppendLine("<style>");
-      sb.AppendLine("body{font-family:Segoe UI,Tahoma,sans-serif;margin:10px;color:#222;}");
-      sb.AppendLine("h1{font-size:14px;color:#1565C0;margin:0 0 4px;font-weight:600;}");
-      sb.AppendLine("h2{font-size:12px;color:#37474F;margin:10px 0 2px;border-bottom:1px solid #B0BEC5;padding-bottom:2px;}");
-      sb.AppendLine("table{border-collapse:collapse;width:100%;margin:4px 0;font-size:12px;}");
-      sb.AppendLine("th,td{border:1px solid #CFD8DC;padding:2px 6px;text-align:left;vertical-align:middle;line-height:1.25;color:#000;white-space:nowrap;}");
-      sb.AppendLine("th{background:#ECEFF1;font-weight:600;cursor:help;}");
-      sb.AppendLine("td[title]{cursor:help;}");
-      sb.AppendLine("table.data-zebra tr:nth-child(even){background:#FAFAFA;}");
-      sb.AppendLine("td.fill-red{background:#F8D0D0;-webkit-print-color-adjust:exact;print-color-adjust:exact;}");
-      sb.AppendLine("td.fill-yellow{background:#FBF3C0;-webkit-print-color-adjust:exact;print-color-adjust:exact;}");
-      sb.AppendLine("td.fill-green{background:#D3F0D3;-webkit-print-color-adjust:exact;print-color-adjust:exact;}");
-      sb.AppendLine(".muted{color:#78909C;}");
-      sb.AppendLine(".footer{margin-top:10px;font-size:10px;}");
-      sb.AppendLine("table.meta-table{width:100%;table-layout:fixed;margin:2px 0 4px;}");
-      sb.AppendLine("table.meta-table th.meta-label{width:12%;min-width:80px;max-width:120px;font-size:10px;font-weight:600;padding:1px 6px;background:#ECEFF1;}");
-      sb.AppendLine("table.meta-table td.meta-value{width:88%;font-size:11px;padding:1px 6px;line-height:1.25;word-wrap:break-word;}");
-      sb.AppendLine("@media print{body{margin:6px;} h1{color:#000;} th{background:#eee !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;} td{color:#000 !important;}}");
+      sb.Append(VelumLogsReportHtmlRules.BuildStyles());
       sb.AppendLine("</style>");
     }
 
