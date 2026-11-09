@@ -104,6 +104,14 @@ namespace Velum.ReactiveCore
         // Оценка шага цепочки рефлексов: провал мотор-действия → false (цепочка остановится).
         VelumChainStepOutcomeReporter.Report(
             result?.Steps, false, recipe.RecipeId);
+
+        // Мотор провалился: без уведомления ISIDA окно ожидания висело бы до таймаута,
+        // не отличаясь от «оператор ещё думает». Закрываем результат как невыполненный —
+        // либо, если часть шагов успела отработать, даём среде шанс отреагировать до дедлайна.
+        TryNotifyIsidaMotorCompleted(
+            adaptiveActionId,
+            recipe.DisplayName ?? action.Name,
+            motorSkipped: !HasPerformedStep(result));
         return false;
       }
 
@@ -122,9 +130,14 @@ namespace Velum.ReactiveCore
       VelumChainStepOutcomeReporter.Report(
           result?.Steps, result != null && result.Success, recipe.RecipeId);
 
-      // Сообщить ISIDA: мотор завершён — переснять «до»-снимок и перезапустить таймер ожидания.
-      // Оценка автоматизма будет по дельте состояния (ответ среды), а не по кнопкам формы.
-      TryNotifyIsidaMotorCompleted(adaptiveActionId, recipe.DisplayName ?? action.Name);
+      // Сообщить ISIDA: мотор завершён. Окно ожидания отсчитывается от запуска автоматизма и
+      // обслуживает и ответ оператора, и отклик среды; здесь фиксируется лишь факт завершения мотора.
+      // Ни один шаг фактически не выполнен (диалог закрыт «Отменой», все шаги пропущены) →
+      // действия не было, оценивать по среде нечего.
+      TryNotifyIsidaMotorCompleted(
+          adaptiveActionId,
+          recipe.DisplayName ?? action.Name,
+          motorSkipped: !HasPerformedStep(result));
 
       return true;
     }
@@ -256,20 +269,20 @@ namespace Velum.ReactiveCore
     }
 
     /// <summary>
-    /// Сообщить ISIDA о завершении мотора: переснимок «до»-состояния и перезапуск таймера ожидания.
-    /// Оценка автоматизма — по дельте состояния после истечения таймера (ответ среды).
-    /// Также показывает форму-индикатор ожидания.
+    /// Сообщить ISIDA о завершении мотора: зафиксировать факт завершения и показать индикатор ожидания.
+    /// Отсчёт окна ведёт движок от запуска автоматизма; оценка — по дельте состояния (ответ среды).
     /// </summary>
-    private static void TryNotifyIsidaMotorCompleted(int adaptiveActionId, string actionLabel)
+    private static void TryNotifyIsidaMotorCompleted(int adaptiveActionId, string actionLabel, bool motorSkipped)
     {
       try
       {
         if (AdaptiveActionsSystem.IsInitialized)
         {
-          AdaptiveActionsSystem.Instance.NotifyMotorCompleted(adaptiveActionId);
+          AdaptiveActionsSystem.Instance.NotifyMotorCompleted(adaptiveActionId, motorSkipped);
           Logger.Info(
               "Velum motor notified ISIDA: action=" +
               adaptiveActionId.ToString(CultureInfo.InvariantCulture) +
+              " skipped=" + motorSkipped +
               " — waiting for environment response");
         }
 
@@ -279,6 +292,36 @@ namespace Velum.ReactiveCore
       {
         Logger.Error("TryNotifyIsidaMotorCompleted: " + ex.Message);
       }
+    }
+
+    /// <summary>
+    /// Был ли в рецепте хотя бы один фактически выполненный шаг (действие в среде состоялось).
+    /// Диалоговый шаг считается выполненным только при подтверждении оператором
+    /// (<see cref="RecipeStepExecutionResult.Confirmed"/> = <c>true</c>); «Отмена»/закрытие окна —
+    /// действия не было. Пропущенные по политике шаги действием не считаются.
+    /// </summary>
+    /// <returns><c>true</c>, если действия в среде были; <c>false</c> — рецепт ничего не выполнил.</returns>
+    private static bool HasPerformedStep(RecipeExecutionResult result)
+    {
+      IReadOnlyList<RecipeStepExecutionResult> steps = result?.Steps;
+      if (steps == null)
+        return false;
+
+      for (int i = 0; i < steps.Count; i++)
+      {
+        RecipeStepExecutionResult step = steps[i];
+        if (step == null || step.Skipped)
+          continue;
+
+        // Диалог без подтверждения оператора — шаг обработан формально, но действия не было.
+        if (step.Confirmed == false)
+          continue;
+
+        if (step.Success)
+          return true;
+      }
+
+      return false;
     }
 
     /// <summary>
