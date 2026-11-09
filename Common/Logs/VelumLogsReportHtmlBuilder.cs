@@ -237,6 +237,56 @@ namespace Velum.UI.Logs
       return sb.ToString();
     }
 
+    /// <summary>HTML-отчёт по событийному логу (токены сокращённого лога движка).</summary>
+    public static string BuildEventLogHtml(IReadOnlyList<VelumEventLogEntry> entries)
+    {
+      var sb = new StringBuilder();
+      AppendHead(sb, "Событийные логи");
+
+      var list = entries ?? Array.Empty<VelumEventLogEntry>();
+      AppendMetaTable(sb, "Событийный лог агента", list.Count);
+
+      sb.AppendLine("<h2>Событийные логи</h2>");
+      if (list.Count == 0)
+      {
+        sb.AppendLine("<p class=\"muted\">Нет записей для отчёта.</p>");
+        AppendFoot(sb);
+        return sb.ToString();
+      }
+
+      sb.AppendLine("<p class=\"muted\">Токены событийного лога. Всего токенов: ")
+          .Append(Escape(list.Count.ToString(CultureInfo.InvariantCulture)))
+          .Append(".</p>");
+      sb.AppendLine("<div class=\"event-log\">");
+      // Порядок хронологический (в порядке записи), как в отчёте сценариев; окно панели
+      // показывает обратный порядок («свежее сверху»).
+      foreach (VelumEventLogEntry e in list)
+      {
+        if (e == null)
+          continue;
+        AppendEventLogToken(sb, e);
+      }
+      sb.AppendLine("</div>");
+
+      AppendFoot(sb);
+      return sb.ToString();
+    }
+
+    /// <summary>
+    /// Выводит один токен событийного лога: первую строку (<c>№ пульса: NNN [×K]</c>)
+    /// подсвечивает как заголовок блока (<c>ev-pulse</c>), остальной текст — предформатированно
+    /// (переносы сохраняет <c>white-space:pre-wrap</c> в CSS).
+    /// </summary>
+    private static void AppendEventLogToken(StringBuilder sb, VelumEventLogEntry entry)
+    {
+      sb.Append("<div class=\"ev-token\"><span class=\"ev-pulse\">")
+          .Append(Escape(entry.DisplayPulseLine)).Append("</span>");
+      string text = entry.Text ?? string.Empty;
+      if (text.Length > 0)
+        sb.Append('\n').Append(Escape(text));
+      sb.AppendLine("</div>");
+    }
+
     private static string FormatStyle(int styleId, string styleName)
     {
       if (!string.IsNullOrWhiteSpace(styleName))

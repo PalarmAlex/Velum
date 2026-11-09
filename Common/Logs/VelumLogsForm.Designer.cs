@@ -27,6 +27,8 @@ namespace Velum.UI.Logs
             this._clbStyles = new System.Windows.Forms.CheckedListBox();
             this._tabParameters = new System.Windows.Forms.TabPage();
             this._clbParameters = new System.Windows.Forms.CheckedListBox();
+            this._tabEvents = new System.Windows.Forms.TabPage();
+            this._clbEvents = new System.Windows.Forms.CheckedListBox();
             this._bottomRow = new System.Windows.Forms.TableLayoutPanel();
             this._bulkPanel = new System.Windows.Forms.FlowLayoutPanel();
             this._btnSelectAll = new System.Windows.Forms.Button();
@@ -43,6 +45,7 @@ namespace Velum.UI.Logs
             this._tabSystem.SuspendLayout();
             this._tabStyles.SuspendLayout();
             this._tabParameters.SuspendLayout();
+            this._tabEvents.SuspendLayout();
             this._bottomRow.SuspendLayout();
             this._bulkPanel.SuspendLayout();
             this._btnPanel.SuspendLayout();
@@ -106,6 +109,7 @@ namespace Velum.UI.Logs
             this._tabs.Controls.Add(this._tabSystem);
             this._tabs.Controls.Add(this._tabStyles);
             this._tabs.Controls.Add(this._tabParameters);
+            this._tabs.Controls.Add(this._tabEvents);
             this._tabs.Dock = System.Windows.Forms.DockStyle.Fill;
             this._tabs.Location = new System.Drawing.Point(13, 47);
             this._tabs.Name = "_tabs";
@@ -188,6 +192,31 @@ namespace Velum.UI.Logs
             this._clbParameters.TabIndex = 0;
             this._clbParameters.SelectedIndexChanged += new System.EventHandler(this.OnListSelectedIndexChanged);
             this._clbParameters.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.OnListMouseDoubleClick);
+            // 
+            // _tabEvents
+            // 
+            this._tabEvents.Controls.Add(this._clbEvents);
+            this._tabEvents.Location = new System.Drawing.Point(4, 22);
+            this._tabEvents.Name = "_tabEvents";
+            this._tabEvents.Padding = new System.Windows.Forms.Padding(6);
+            this._tabEvents.Size = new System.Drawing.Size(750, 335);
+            this._tabEvents.TabIndex = 3;
+            this._tabEvents.Text = "Событийные логи";
+            this._tabEvents.UseVisualStyleBackColor = true;
+            // 
+            // _clbEvents
+            // 
+            this._clbEvents.CheckOnClick = true;
+            this._clbEvents.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._clbEvents.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this._clbEvents.FormattingEnabled = true;
+            this._clbEvents.IntegralHeight = false;
+            this._clbEvents.Location = new System.Drawing.Point(6, 6);
+            this._clbEvents.Name = "_clbEvents";
+            this._clbEvents.Size = new System.Drawing.Size(738, 323);
+            this._clbEvents.TabIndex = 0;
+            this._clbEvents.SelectedIndexChanged += new System.EventHandler(this.OnListSelectedIndexChanged);
+            this._clbEvents.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.OnListMouseDoubleClick);
             // 
             // _bottomRow
             // 
@@ -333,6 +362,7 @@ namespace Velum.UI.Logs
             this._tabSystem.ResumeLayout(false);
             this._tabStyles.ResumeLayout(false);
             this._tabParameters.ResumeLayout(false);
+            this._tabEvents.ResumeLayout(false);
             this._bottomRow.ResumeLayout(false);
             this._bulkPanel.ResumeLayout(false);
             this._bulkPanel.PerformLayout();
@@ -353,8 +383,10 @@ namespace Velum.UI.Logs
     private System.Windows.Forms.CheckedListBox _clbSystem;
     private System.Windows.Forms.TabPage _tabStyles;
     private System.Windows.Forms.CheckedListBox _clbStyles;
-    private System.Windows.Forms.TabPage _tabParameters;
+    private System.Windows.Forms.TabPage _tabParameters;       
     private System.Windows.Forms.CheckedListBox _clbParameters;
+    private System.Windows.Forms.TabPage _tabEvents;
+    private System.Windows.Forms.CheckedListBox _clbEvents;
     private System.Windows.Forms.TableLayoutPanel _bottomRow;
     private System.Windows.Forms.FlowLayoutPanel _bulkPanel;
     private System.Windows.Forms.Button _btnSelectAll;

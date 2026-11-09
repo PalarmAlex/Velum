@@ -166,10 +166,15 @@ namespace Velum.UI
 
     /// <summary>
     /// Сессия сокращённого лога завершена (пульсация остановлена).
-    /// Фиксируем конец сессии в выводе (опционально: можно сохранить в файл).
+    /// Фиксируем конец сессии в выводе и сохраняем сессию в событийный лог
+    /// (<c>AgentLogs_Events.csv</c>, каталог из настроек проекта).
     /// </summary>
     private void OnShortLogSessionCompleted(int sessionId, ShortLogToken[] tokens)
     {
+      // Запись событийного лога — на потоке автора (пульса), до работы с UI: она не зависит
+      // от состояния панели, а AppendSession сам гасит исключения (сбой диска не роняет пульс).
+      VelumEventLogFileSessions.AppendSession(tokens);
+
       if (IsDisposed)
         return;
 

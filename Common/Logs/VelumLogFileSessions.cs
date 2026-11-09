@@ -36,6 +36,15 @@ namespace Velum.UI.Logs
     /// <summary>Подпись сессии вида <c>dd.MM.yyyy HH:mm–HH:mm (count)</c>.</summary>
     public string BuildDisplayLabel()
     {
+      // Событийный лог хранит только время дня (без даты) — у таких сессий дата
+      // условная (год 1), в подписи она meaningless, печатаем только время.
+      if (StartedLocal.Year <= 1)
+      {
+        return StartedLocal.ToString("HH:mm", CultureInfo.CurrentCulture)
+               + "–" + EndedLocal.ToString("HH:mm", CultureInfo.CurrentCulture)
+               + " (" + EntryCount.ToString(CultureInfo.InvariantCulture) + ")";
+      }
+
       if (StartedLocal.Date == EndedLocal.Date)
       {
         return StartedLocal.ToString("dd.MM.yyyy HH:mm", CultureInfo.CurrentCulture)
@@ -57,7 +66,11 @@ namespace Velum.UI.Logs
     private static readonly string[] TimeFormats =
     {
       "yyyy-MM-dd HH:mm:ss",
-      "dd.MM.yyyy HH:mm:ss"
+      "dd.MM.yyyy HH:mm:ss",
+      // Событийный лог хранит только время дня (ShortLogToken.Time — TimeSpan, без даты).
+      // Разбирается как дата по умолчанию (01.01.0001) + время; реальную дату сессий
+      // подставляет VelumEventLogFileSessions.
+      "HH:mm:ss"
     };
 
     /// <summary>Список сессий файла, от новых к старым.</summary>
@@ -66,7 +79,32 @@ namespace Velum.UI.Logs
         Func<string, bool> isHeaderRow,
         string timeColumnName)
     {
-      string path = VelumLogPaths.ResolveLogFile(csvFileName);
+      return ListSessionsByPath(
+          VelumLogPaths.ResolveLogFile(csvFileName), isHeaderRow, timeColumnName, csvFileName);
+    }
+
+    /// <summary>
+    /// Список сессий файла по <b>полному пути</b> (для логов, чей каталог задаётся
+    /// настройкой проекта — например событийный лог из <see cref="Velum.Configuration.VelumAppConfig.LogsFolderPath"/>).
+    /// </summary>
+    /// <param name="csvPath">Полный путь к CSV-файлу.</param>
+    /// <param name="isHeaderRow">Предикат строки-заголовка блока-сессии.</param>
+    /// <param name="timeColumnName">Имя колонки времени.</param>
+    /// <returns>Список сессий, от новых к старым.</returns>
+    public static IReadOnlyList<VelumLogFileSessionInfo> ListSessionsByPath(
+        string csvPath,
+        Func<string, bool> isHeaderRow,
+        string timeColumnName)
+    {
+      return ListSessionsByPath(csvPath, isHeaderRow, timeColumnName, Path.GetFileName(csvPath));
+    }
+
+    private static IReadOnlyList<VelumLogFileSessionInfo> ListSessionsByPath(
+        string path,
+        Func<string, bool> isHeaderRow,
+        string timeColumnName,
+        string logName)
+    {
       if (!File.Exists(path))
         return Array.Empty<VelumLogFileSessionInfo>();
 
@@ -92,7 +130,7 @@ namespace Velum.UI.Logs
       }
       catch (Exception ex)
       {
-        ISIDA.Common.Logger.Error(csvFileName + " сессии: " + ex.Message);
+        ISIDA.Common.Logger.Error(logName + " сессии: " + ex.Message);
         return Array.Empty<VelumLogFileSessionInfo>();
       }
     }
@@ -104,11 +142,51 @@ namespace Velum.UI.Logs
         Func<string, bool> isHeaderRow,
         string timeColumnName)
     {
-      string path = VelumLogPaths.ResolveLogFile(csvFileName);
-      if (!File.Exists(path))
+      return ReadSessionRowsByPath(
+          VelumLogPaths.ResolveLogFile(csvFileName), sessionIndex, isHeaderRow, timeColumnName);
+    }
+
+    /// <summary>
+    /// Строки данных указанной сессии файла по <b>полному пути</b>
+    /// (см. <see cref="M:Velum.UI.Logs.VelumCsvLogSessionReader.ListSessionsByPath(System.String,System.Func{System.String,System.Boolean},System.String)"/>).
+    /// </summary>
+    /// <param name="csvPath">Полный путь к CSV-файлу.</param>
+    /// <param name="sessionIndex">Индекс блока в файле.</param>
+    /// <param name="isHeaderRow">Предикат строки-заголовка блока-сессии.</param>
+    /// <param name="timeColumnName">Имя колонки времени.</param>
+    /// <returns>Строки данных сессии (пусто — если файла или блока нет).</returns>
+    public static List<Dictionary<string, string>> ReadSessionRowsByPath(
+        string csvPath,
+        int sessionIndex,
+        Func<string, bool> isHeaderRow,
+        string timeColumnName)
+    {
+      return ReadSessionRowsByPath(csvPath, sessionIndex, isHeaderRow, timeColumnName, -1);
+    }
+
+    /// <summary>
+    /// Строки данных указанной сессии файла по <b>полному пути</b> с ограничением числа
+    /// колонок: при <paramref name="maxColumns"/> &gt; 0 последняя колонка забирает остаток
+    /// строки целиком (нужно событийному логу — его текст токена содержит экранированные
+    /// «;», и обычный <c>Split(';')</c> обрезал бы текст по первому разделителю).
+    /// </summary>
+    /// <param name="csvPath">Полный путь к CSV-файлу.</param>
+    /// <param name="sessionIndex">Индекс блока в файле.</param>
+    /// <param name="isHeaderRow">Предикат строки-заголовка блока-сессии.</param>
+    /// <param name="timeColumnName">Имя колонки времени.</param>
+    /// <param name="maxColumns">Максимум колонок (0 или отрицательное — без ограничения).</param>
+    /// <returns>Строки данных сессии (пусто — если файла или блока нет).</returns>
+    public static List<Dictionary<string, string>> ReadSessionRowsByPath(
+        string csvPath,
+        int sessionIndex,
+        Func<string, bool> isHeaderRow,
+        string timeColumnName,
+        int maxColumns)
+    {
+      if (!File.Exists(csvPath))
         return new List<Dictionary<string, string>>();
 
-      var blocks = ReadBlocks(path, isHeaderRow, timeColumnName);
+      var blocks = ReadBlocks(csvPath, isHeaderRow, timeColumnName, maxColumns);
       if (sessionIndex < 0 || sessionIndex >= blocks.Count)
         return new List<Dictionary<string, string>>();
       return blocks[sessionIndex].Rows;
@@ -192,6 +270,50 @@ namespace Velum.UI.Logs
           }
         }
       });
+
+      return toDelete.Count;
+    }
+
+    /// <summary>
+    /// Удаляет из CSV-файла по <b>полному пути</b> блоки указанных сессий (без парного JSONL).
+    /// Используется событийным логом (<c>AgentLogs_Events.csv</c>): его пишет сам Velum
+    /// append-режимом и не держит открытым, поэтому освобождение writers логгера
+    /// (<see cref="VelumLogFileSessionDeletion"/>) не требуется — достаточно чтения/записи
+    /// с общим доступом. Возвращает число фактически удалённых сессий.
+    /// </summary>
+    /// <param name="csvPath">Полный путь к CSV-файлу.</param>
+    /// <param name="sessionIndices">Индексы удаляемых блоков (по порядку в файле).</param>
+    /// <param name="isHeaderRow">Предикат строки-заголовка блока-сессии.</param>
+    /// <returns>Число удалённых сессий.</returns>
+    public static int DeleteSessionsByPath(
+        string csvPath,
+        IEnumerable<int> sessionIndices,
+        Func<string, bool> isHeaderRow)
+    {
+      if (!File.Exists(csvPath))
+        return 0;
+
+      var toDelete = new HashSet<int>(sessionIndices ?? Enumerable.Empty<int>());
+      if (toDelete.Count == 0)
+        return 0;
+
+      List<string> lines;
+      using (var fs = new FileStream(csvPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
+      using (var reader = new StreamReader(fs, Encoding.UTF8, detectEncodingFromByteOrderMarks: true))
+      {
+        lines = new List<string>();
+        string line;
+        while ((line = reader.ReadLine()) != null)
+          lines.Add(line);
+      }
+
+      var kept = VelumLogSessionRules.KeepLinesExceptSessions(lines, isHeaderRow, toDelete);
+
+      using (var writer = new StreamWriter(csvPath, append: false, encoding: new UTF8Encoding(encoderShouldEmitUTF8Identifier: true)))
+      {
+        foreach (string line in kept)
+          writer.WriteLine(line);
+      }
 
       return toDelete.Count;
     }
@@ -282,6 +404,20 @@ namespace Velum.UI.Logs
 
     private static List<Block> ReadBlocks(string path, Func<string, bool> isHeaderRow, string timeColumnName)
     {
+      return ReadBlocks(path, isHeaderRow, timeColumnName, -1);
+    }
+
+    /// <summary>
+    /// Чтение блоков-сессий файла. При <paramref name="maxColumns"/> &gt; 0 строка данных
+    /// делится на ограниченное число колонок — последняя забирает остаток строки целиком
+    /// (текст событийного лога содержит экранированные «;» и обрезался бы обычным Split).
+    /// </summary>
+    private static List<Block> ReadBlocks(
+        string path,
+        Func<string, bool> isHeaderRow,
+        string timeColumnName,
+        int maxColumns)
+    {
       var blocks = new List<Block>();
       Block current = null;
       Dictionary<string, int> columns = null;
@@ -298,7 +434,7 @@ namespace Velum.UI.Logs
         }
         if (current == null || columns == null)
           continue;
-        var row = ParseDataRow(line, columns, timeColumnName);
+        var row = ParseDataRow(line, columns, timeColumnName, maxColumns);
         if (row == null)
           continue;
         current.Rows.Add(row);
@@ -332,7 +468,23 @@ namespace Velum.UI.Logs
         Dictionary<string, int> columns,
         string timeColumnName)
     {
-      var parts = line.Split(';');
+      return ParseDataRow(line, columns, timeColumnName, -1);
+    }
+
+    /// <summary>
+    /// Разбор строки данных. При <paramref name="maxColumns"/> &gt; 0 строка делится на
+    /// ограниченное число частей: последняя колонка получает остаток строки целиком
+    /// (для событийного лога, где текст токена содержит экранированные «;»).
+    /// </summary>
+    private static Dictionary<string, string> ParseDataRow(
+        string line,
+        Dictionary<string, int> columns,
+        string timeColumnName,
+        int maxColumns)
+    {
+      string[] parts = maxColumns > 0
+          ? line.Split(new[] { ';' }, maxColumns)
+          : line.Split(';');
       if (parts.Length < 3)
         return null;
       if (!columns.TryGetValue(timeColumnName, out int timeIx) || timeIx >= parts.Length)

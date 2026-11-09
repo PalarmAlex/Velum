@@ -56,6 +56,7 @@
     <Compile Include="..\Common\Logs\VelumAgentLogCondensedRules.cs" Link="src\VelumAgentLogCondensedRules.cs" />
     <Compile Include="..\Common\Logs\VelumAgentCreationLogRules.cs" Link="src\VelumAgentCreationLogRules.cs" />
     <Compile Include="..\Common\Logs\VelumLogsReportHtmlRules.cs" Link="src\VelumLogsReportHtmlRules.cs" />
+    <Compile Include="..\Common\Logs\VelumEventLogCsvRules.cs" Link="src\VelumEventLogCsvRules.cs" />
     <Compile Include="..\ReactiveCore\VelumPdfOutdatedRules.cs" Link="src\VelumPdfOutdatedRules.cs" />
   </ItemGroup>
 
@@ -110,6 +111,7 @@
     <Compile Include="VelumAgentLogCondensedRulesTests.cs" />
     <Compile Include="VelumAgentCreationLogRulesTests.cs" />
     <Compile Include="VelumLogsReportHtmlRulesTests.cs" />
+    <Compile Include="VelumEventLogCsvRulesTests.cs" />
     <Compile Include="VelumPdfOutdatedRulesTests.cs" />
     <Compile Include="VelumProblemCacheSyncTests.cs" />
     <Compile Include="DisableTestParallelization.cs" />

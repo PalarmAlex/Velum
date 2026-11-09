@@ -286,6 +286,36 @@ namespace Velum.UI.Logs
   }
 
   /// <summary>
+  /// Запись событийного лога (<c>AgentLogs_Events.csv</c>) — токен сокращённого
+  /// (семантического) лога движка после чтения и декодирования текста.
+  /// </summary>
+  internal sealed class VelumEventLogEntry
+  {
+    /// <summary>Время токена внутри дня (из <c>ShortLogToken.Time</c>).</summary>
+    public TimeSpan Time { get; set; }
+
+    /// <summary>Номер глобального пульса последнего показа токена.</summary>
+    public int Pulse { get; set; }
+
+    /// <summary>Число показов блока подряд (1 — без повторов).</summary>
+    public int RepeatCount { get; set; } = 1;
+
+    /// <summary>Декодированный текст токена (переносы восстановлены).</summary>
+    public string Text { get; set; } = string.Empty;
+
+    /// <summary>Отформатированное время для отображения (<c>HH:mm:ss</c>).</summary>
+    public string DisplayTime => Time.ToString(@"hh\:mm\:ss", CultureInfo.InvariantCulture);
+
+    /// <summary>
+    /// Заголовок блока как в окне панели: <c>№ пульса: NNN</c>, при повторах — с суффиксом
+    /// <c> ×K</c> (совпадает с форматом <c>ShortLogToken.ToString()</c>, пульс без дополнения нулями).
+    /// </summary>
+    public string DisplayPulseLine =>
+        "№ пульса: " + Pulse.ToString(CultureInfo.InvariantCulture)
+        + (RepeatCount > 1 ? " ×" + RepeatCount.ToString(CultureInfo.InvariantCulture) : string.Empty);
+  }
+
+  /// <summary>
   /// Данные сессии лога стилей: итоговые стили и активации от параметров.
   /// </summary>
   internal sealed class VelumStyleLogSessionData

@@ -734,7 +734,7 @@ namespace Velum.UI
       this._lblOutputCaption.Name = "_lblOutputCaption";
       this._lblOutputCaption.Size = new System.Drawing.Size(79, 15);
       this._lblOutputCaption.TabIndex = 7;
-      this._lblOutputCaption.Text = "Ответ агента:";
+      this._lblOutputCaption.Text = "Реакции симбионта:";
       // 
       // _txtAgentOutput
       // 

@@ -31,6 +31,7 @@ namespace Velum.UI.Logs
     private readonly List<SessionListItem> _systemSessions = new List<SessionListItem>();
     private readonly List<SessionListItem> _styleSessions = new List<SessionListItem>();
     private readonly List<SessionListItem> _parameterSessions = new List<SessionListItem>();
+    private readonly List<SessionListItem> _eventSessions = new List<SessionListItem>();
     private bool _loading;
     private string _filterText = string.Empty;
 
@@ -63,6 +64,7 @@ namespace Velum.UI.Logs
       _clbSystem.ItemCheck += OnSessionItemCheck;
       _clbStyles.ItemCheck += OnSessionItemCheck;
       _clbParameters.ItemCheck += OnSessionItemCheck;
+      _clbEvents.ItemCheck += OnSessionItemCheck;
       _txtFilter.TextChanged += OnFilterTextChanged;
       _btnFilterClear.Click += OnFilterClearClick;
 
@@ -77,6 +79,7 @@ namespace Velum.UI.Logs
         LoadSessions(_systemSessions, VelumAgentLogFileSessions.ListFileSessions());
         LoadSessions(_styleSessions, VelumStyleLogFileSessions.ListFileSessions());
         LoadSessions(_parameterSessions, VelumParameterLogFileSessions.ListFileSessions());
+        LoadSessions(_eventSessions, VelumEventLogFileSessions.ListFileSessions());
         ApplyFilterToAllTabs();
       }
       finally
@@ -116,7 +119,7 @@ namespace Velum.UI.Logs
       _txtFilter.Text = string.Empty;
     }
 
-    /// <summary>Применяет текущий фильтр ко всем трём вкладкам (сохраняя отметки).</summary>
+    /// <summary>Применяет текущий фильтр ко всем вкладкам (сохраняя отметки).</summary>
     private void ApplyFilterToAllTabs()
     {
       _loading = true;
@@ -125,6 +128,7 @@ namespace Velum.UI.Logs
         ApplyFilterToList(_clbSystem, _systemSessions);
         ApplyFilterToList(_clbStyles, _styleSessions);
         ApplyFilterToList(_clbParameters, _parameterSessions);
+        ApplyFilterToList(_clbEvents, _eventSessions);
       }
       finally
       {
@@ -216,6 +220,8 @@ namespace Velum.UI.Logs
           return _clbStyles;
         case 2:
           return _clbParameters;
+        case 3:
+          return _clbEvents;
         default:
           return _clbSystem;
       }
@@ -229,6 +235,8 @@ namespace Velum.UI.Logs
           return _styleSessions;
         case 2:
           return _parameterSessions;
+        case 3:
+          return _eventSessions;
         default:
           return _systemSessions;
       }
@@ -315,6 +323,11 @@ namespace Velum.UI.Logs
             html = VelumLogsReportHtmlBuilder.BuildParameterLogHtml(
                 VelumParameterLogFileSessions.LoadMergedSessions(indices));
             prefix = "Логи_параметров";
+            break;
+          case 3:
+            html = VelumLogsReportHtmlBuilder.BuildEventLogHtml(
+                VelumEventLogFileSessions.LoadMergedSessions(indices));
+            prefix = "Логи_событий";
             break;
           default:
             html = VelumLogsReportHtmlBuilder.BuildSystemLogHtml(
@@ -419,6 +432,8 @@ namespace Velum.UI.Logs
           return "Логи_стилей";
         case 2:
           return "Логи_параметров";
+        case 3:
+          return "Логи_событий";
         default:
           return "Логи_системы";
       }
@@ -478,6 +493,9 @@ namespace Velum.UI.Logs
             break;
           case 2:
             removed = VelumParameterLogFileSessions.DeleteSessions(indices);
+            break;
+          case 3:
+            removed = VelumEventLogFileSessions.DeleteSessions(indices);
             break;
           default:
             removed = VelumAgentLogFileSessions.DeleteSessions(indices);
