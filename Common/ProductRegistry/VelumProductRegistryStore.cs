@@ -189,6 +189,19 @@ namespace Velum.UI.ProductRegistry
       _itemsByFolder.Clear();
       _itemsByDesignationKey.Clear();
 
+      // Успешно прочитанный, но пустой по содержимому файл — тоже след обрезки при
+      // передаче по сети, а не легитимное отсутствие данных: ParseJson вернул бы null,
+      // и дальше либо NRE, либо ложное «пусто» с затиранием живого файла. Считаем это
+      // сбоем чтения (E41/E42, случай 20).
+      if (folderRead.Success && string.IsNullOrWhiteSpace(folderRead.Content))
+        throw new IOException(
+            "folders.json прочитан пустым (файл обрезан или повреждён при передаче " +
+            "по сети). Реестр в памяти не обновлён, файлы на диске не изменялись.");
+      if (itemRead.Success && string.IsNullOrWhiteSpace(itemRead.Content))
+        throw new IOException(
+            "items.json прочитан пустым (файл обрезан или повреждён при передаче " +
+            "по сети). Реестр в памяти не обновлён, файлы на диске не изменялись.");
+
       VelumProductFolderFile folderFile = folderRead.Success
           ? ParseJson<VelumProductFolderFile>(folderRead.Content, FoldersFilePath)
           : new VelumProductFolderFile();
@@ -234,6 +247,21 @@ namespace Velum.UI.ProductRegistry
 
       if (_folders.Count == 0)
       {
+        // Автовосстановление дефолта допустимо ТОЛЬКО при доказанном отсутствии
+        // данных (FileMissing — первый запуск/пустой стор). Если файл был прочитан
+        // (Success), но каталогов ноль — это след обрезки/порчи на шаре, а не
+        // легитимное пустое состояние: создавать корень и Save() здесь значило бы
+        // затереть живой folders.json одним корнем «Изделия» (E42, случай 20).
+        // Кейс CASEBOOK-2: «folders.json затёрт одним корнем после VPN-сбоя».
+        if (!VelumReadTextOutcomeRules.ShouldBootstrapDefault(
+                folderRead.Outcome, dataIsEmpty: true))
+        {
+          throw new IOException(
+              "Реестр документов прочитан, но не содержит ни одного каталога " +
+              "(folders.json повреждён или обрезан при передаче по сети). " +
+              "Реестр в памяти не обновлён, файлы на диске не изменялись.");
+        }
+
         var root = new VelumProductFolder
         {
           Id = _nextFolderId++,
@@ -1133,13 +1161,60 @@ namespace Velum.UI.ProductRegistry
         throw new IOException(
             "Не удалось записать временный файл реестра (корень недоступен по таймауту): " + tempPath);
 
-      // Файл только что записан на том же томе, поэтому проверка существования и
-      // атомарная замена выполняются быстро; при оборвавшейся шаре бросят исключение,
-      // которое обработает вызывающий код (как и раньше).
+      // КРИТИЧНО (кейс CASEBOOK-2 «folders.json затёрт после VPN-сбоя»):
+      // запись .tmp через File.WriteAllText на обрыве сети может вернуть успех,
+      // оставив усечённое/пустое содержимое (ошибка всплывает лишь при сбросе
+      // кэша ОС на шару). Заменять живой файл таким .tmp нельзя. Перед заменой
+      // перечитываем .tmp и убеждаемся, что он содержит ровно записанный JSON и
+      // разбирается десериализатором — тогда подмена доказуемо безопасна.
+      VerifyWrittenTempFile(tempPath, json);
+
+      // Файл только что записан и проверен на том же томе, поэтому проверка
+      // существования и атомарная замена выполняются быстро; при оборвавшейся
+      // шаре бросят исключение, которое обработает вызывающий код.
       if (VelumPathExists.FileExists(path))
         File.Replace(tempPath, path, null);
       else
         File.Move(tempPath, path);
+    }
+
+    /// <summary>
+    /// Проверяет только что записанный временный файл до атомарной замены живого:
+    /// перечитывает содержимое и убеждается, что оно непусто, совпадает с тем, что
+    /// записали, и разбирается как JSON. Усечённая/пустая запись (следствие обрыва
+    /// сети на шаре) отклоняется — живой файл остаётся нетронутым.
+    /// </summary>
+    /// <param name="tempPath">Путь к записанному временному файлу.</param>
+    /// <param name="expectedJson">Содержимое, которое должно было быть записано.</param>
+    private static void VerifyWrittenTempFile(string tempPath, string expectedJson)
+    {
+      ReadTextResult verify = VelumPathExists.ReadAllTextWithStatus(tempPath);
+      bool isEmpty = !verify.Success || string.IsNullOrWhiteSpace(verify.Content);
+      bool matches = !isEmpty
+          && string.Equals(verify.Content, expectedJson, StringComparison.Ordinal);
+
+      // Десериализация как страховка от «валидной длины, но битого содержимого».
+      bool parses = false;
+      if (matches)
+      {
+        try
+        {
+          JsonConvert.DeserializeObject(verify.Content, JsonSettings);
+          parses = true;
+        }
+        catch
+        {
+          parses = false;
+        }
+      }
+
+      if (!VelumReadTextOutcomeRules.ShouldReplaceWithTemp(
+              verify.Outcome, isEmpty, matches, parses))
+      {
+        throw new IOException(
+            "Временный файл реестра записан неполностью или повреждён (сбой сети): " +
+            tempPath + ". Живой файл не изменён.");
+      }
     }
   }
 }

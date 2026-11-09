@@ -83,5 +83,30 @@ namespace Velum.ReactiveCore.Export
     {
       return folderCount <= 0;
     }
+
+    /// <summary>
+    /// Гейт замены живого файла хранилища только что записанным временным: подмена
+    /// допустима, лишь если временный файл доказуемо целостен. На обрыве сети запись
+    /// .tmp через File.WriteAllText может вернуть успех, оставив пустое или усечённое
+    /// содержимое (ошибка всплывает позже при сбросе кэша ОС на шару) — тогда живой
+    /// файл обязан остаться нетронутым (случай 20, E42: «не при каком варианте файлы
+    /// реестра не должны перезаписываться обрезанным кэшем»).
+    /// </summary>
+    /// <param name="readOutcome">Исход перечитывания временного файла.</param>
+    /// <param name="contentIsEmpty">Пусто ли перечитанное содержимое (пробелы = пусто).</param>
+    /// <param name="contentMatchesWritten">Совпадает ли содержимое с тем, что записали.</param>
+    /// <param name="contentParses">Разбирается ли содержимое как ожидаемая структура.</param>
+    /// <returns>true, если живой файл можно заменить этим временным.</returns>
+    internal static bool ShouldReplaceWithTemp(
+        ReadTextOutcome readOutcome,
+        bool contentIsEmpty,
+        bool contentMatchesWritten,
+        bool contentParses)
+    {
+      return readOutcome == ReadTextOutcome.Success
+          && !contentIsEmpty
+          && contentMatchesWritten
+          && contentParses;
+    }
   }
 }

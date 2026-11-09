@@ -6,7 +6,8 @@ namespace Velum.ReactiveCore.Tests
   /// <summary>
   /// Тесты pure-правил интерпретации трёхзначного исхода чтения и гейта записи.
   /// Защищают регрессии CASEBOOK-2 случай 20: E41 («не удалось прочитать» ≠ «пусто»)
-  /// и E42 (дефолт только при доказанном отсутствии; блок записи пустого набора каталогов).
+  /// и E42 (дефолт только при доказанном отсутствии; блок записи пустого набора
+  /// каталогов; подмена живого файла только доказуемо целостным .tmp).
   /// </summary>
   public class VelumReadTextOutcomeRulesTests
   {
@@ -85,6 +86,29 @@ namespace Velum.ReactiveCore.Tests
     {
       // E42: запись folders.json с нулём каталогов — всегда след сбоя, а не легитимное состояние.
       Assert.Equal(expected, VelumReadTextOutcomeRules.ShouldBlockEmptyFoldersWrite(folderCount));
+    }
+
+    [Fact]
+    public void ShouldReplaceWithTemp_AllConditionsMet_True()
+    {
+      // Доказуемо целостный .tmp: прочитан, непуст, совпадает, разбирается.
+      Assert.True(VelumReadTextOutcomeRules.ShouldReplaceWithTemp(
+          ReadTextOutcome.Success, contentIsEmpty: false,
+          contentMatchesWritten: true, contentParses: true));
+    }
+
+    [Theory]
+    [InlineData(Failed, false, true, true)]   // .tmp не перечитался (обрыв сети)
+    [InlineData(FileMissing, false, true, true)]
+    [InlineData(Success, true, false, false)] // .tmp записан пустым (обрезка)
+    [InlineData(Success, false, false, true)] // .tmp записан неполностью (обрезка)
+    [InlineData(Success, false, true, false)] // содержимое не разбирается как JSON
+    public void ShouldReplaceWithTemp_AnyConditionBroken_False(
+        int outcome, bool contentIsEmpty, bool contentMatchesWritten, bool contentParses)
+    {
+      // Случай 20: живой файл нельзя подменять обрезанным/пустым .tmp ни при каком варианте.
+      Assert.False(VelumReadTextOutcomeRules.ShouldReplaceWithTemp(
+          (ReadTextOutcome)outcome, contentIsEmpty, contentMatchesWritten, contentParses));
     }
   }
 }
