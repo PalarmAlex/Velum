@@ -62,6 +62,16 @@ namespace Velum.ReactiveCore
       int adaptiveActionId = action.Id;
       int activationPulse = action.ActivationPulse;
 
+      // Эхо-комментарий стадии 3: действие лежит в моторе только ради рецепта (для будущего сдвига).
+      // При первичном попугайском запуске рецепт выполнять нельзя — иначе команда уйдёт в SolidWorks
+      // повторно (задвоение). Пропускаем диспатч до поиска рецепта; фраза-комментарий рисуется отдельно.
+      if (action.ActivationSource == AdaptiveActionsSystem.ActionActivationSource.AutomatizmEchoCommentary)
+      {
+        Logger.Info(
+            "Velum motor skipped (echo commentary): action=" + adaptiveActionId.ToString(CultureInfo.InvariantCulture));
+        return false;
+      }
+
       RecipeDefinition recipe = RecipeCatalog.FindByAdaptiveActionId(adaptiveActionId);
       if (recipe == null)
       {
