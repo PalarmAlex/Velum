@@ -24,10 +24,12 @@ namespace Velum.ReactiveCore
           return;
 
         GlobalTimer.OnPulseCompleted += OnPulseCompleted;
+        GlobalTimer.OnPulseAfterGomeostasisBeforePsychic += OnPulseAfterGomeostasisBeforePsychic;
         GlobalTimer.PulsationStateChanged += OnPulsationStateChanged;
         _hooked = true;
       }
 
+      VelumScenarioHost.EnsureWired();
       Velum.UI.ProductRegistry.VelumProductRegistryIntegrityScheduler.EnsureAttached();
     }
 
@@ -40,6 +42,7 @@ namespace Velum.ReactiveCore
           return;
 
         GlobalTimer.OnPulseCompleted -= OnPulseCompleted;
+        GlobalTimer.OnPulseAfterGomeostasisBeforePsychic -= OnPulseAfterGomeostasisBeforePsychic;
         GlobalTimer.PulsationStateChanged -= OnPulsationStateChanged;
         _hooked = false;
       }
@@ -60,10 +63,33 @@ namespace Velum.ReactiveCore
 
         LogOverallStateTransitionIfChanged(pulseNumber);
         RecipeDispatcher.ProcessPulse(pulseNumber);
+        VelumScenarioHost.OnPulseCompleted();
       }
       catch (Exception ex)
       {
         Logger.Warning("Velum motor pulse error: " + ex.Message);
+      }
+    }
+
+    /// <summary>
+    /// Фаза пульса «после гомеостаза, до психики»: прогон сценария оператора.
+    /// Обработка обязана завершиться до продолжения пульса, поэтому выполняется синхронно
+    /// на UI-потоке панели (<see cref="VelumSolidEnvironmentBridge.RunOnTaskPaneUiThread"/> делает <c>Invoke</c>),
+    /// где пульт имеет доступ к COM и синглтонам движка.
+    /// </summary>
+    private static void OnPulseAfterGomeostasisBeforePsychic(int pulseNumber)
+    {
+      try
+      {
+        if (!GlobalTimer.IsPulsationRunning)
+          return;
+
+        VelumSolidEnvironmentBridge.RunOnTaskPaneUiThread(
+            () => VelumScenarioHost.OnPulseAfterGomeostasisBeforePsychic(pulseNumber));
+      }
+      catch (Exception ex)
+      {
+        Logger.Warning("Velum scenario pulse error: " + ex.Message);
       }
     }
 
@@ -93,6 +119,9 @@ namespace Velum.ReactiveCore
 
         if (!GlobalTimer.IsPulsationRunning)
         {
+          // Прервать прогон сценария при любой остановке пульса (смерть, ошибка, внешний/UI-стоп).
+          VelumScenarioHost.OnPulsationStopped();
+
           // Зафиксировать UpdateStamp документа при остановке пульсации
           // (покрывает все сценарии: смерть агента, ошибка, внешний стоп, UI-стоп)
           VelumSolidProbeRefreshPlanner.CaptureDocumentStampOnPulseStop();
