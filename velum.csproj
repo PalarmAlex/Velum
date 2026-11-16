@@ -98,13 +98,13 @@
     <Compile Include="ReactiveCore\ISolidWorksSessionProbe.cs" />
     <Compile Include="ReactiveCore\VelumSolidWorksSessionProbe.cs" />
     <Compile Include="ReactiveCore\RecipeArgsParser.cs" />
-    <Compile Include="ReactiveCore\RecipeStepExecutionContext.cs" />
+    <Compile Include="ReactiveCore\RecipeExecutor\RecipeStepExecutionContext.cs" />
     <Compile Include="ReactiveCore\RecipeStepHandlerRegistry.cs" />
-    <Compile Include="ReactiveCore\RecipeExecutorHandlers.cs" />
-    <Compile Include="ReactiveCore\RecipeExecutorHandlersExport.cs" />
-    <Compile Include="ReactiveCore\RecipeExecutorHandlersBlankSize.cs" />
-    <Compile Include="ReactiveCore\RecipeExecutorHandlersRegistry.cs" />
-    <Compile Include="ReactiveCore\RecipeExecutorHandlersBomExport.cs" />
+    <Compile Include="ReactiveCore\RecipeExecutor\RecipeExecutorHandlers.cs" />
+    <Compile Include="ReactiveCore\RecipeExecutor\RecipeExecutorHandlersExport.cs" />
+    <Compile Include="ReactiveCore\RecipeExecutor\RecipeExecutorHandlersBlankSize.cs" />
+    <Compile Include="ReactiveCore\RecipeExecutor\RecipeExecutorHandlersRegistry.cs" />
+    <Compile Include="ReactiveCore\RecipeExecutor\RecipeExecutorHandlersBomExport.cs" />
     <Compile Include="ReactiveCore\Export\VelumDxfProjectionView.cs" />
     <Compile Include="ReactiveCore\Export\VelumSolidSheetMetalHelper.cs" />
     <Compile Include="ReactiveCore\Export\VelumDxfPartGeometryHelper.cs" />
@@ -146,11 +146,11 @@
     <Compile Include="ReactiveCore\Export\VelumPdfBatchDocumentHelper.cs" />
     <Compile Include="ReactiveCore\Export\VelumPdfExportService.cs" />
     <Compile Include="ReactiveCore\Export\VelumPdfExportDialogHost.cs" />
-    <Compile Include="ReactiveCore\VelumExportDocumentationProperties.cs" />
+    <Compile Include="ReactiveCore\Export\VelumExportDocumentationProperties.cs" />
     <Compile Include="ReactiveCore\VelumNeedDrawingPropertyWriter.cs" />
     <Compile Include="ReactiveCore\VelumBlankSizeProperties.cs" />
     <Compile Include="ReactiveCore\VelumBlankSizePropertyLinksService.cs" />
-    <Compile Include="ReactiveCore\VelumExportDocumentationGeometryStampHelper.cs" />
+    <Compile Include="ReactiveCore\Export\VelumExportDocumentationGeometryStampHelper.cs" />
     <Compile Include="ReactiveCore\VelumPdfOutdatedRules.cs" />
     <Compile Include="ReactiveCore\RecipeStepDefinition.cs" />
     <Compile Include="ReactiveCore\RecipeDefinition.cs" />
@@ -158,14 +158,14 @@
     <Compile Include="ReactiveCore\EnvironmentContractMapper.cs" />
     <Compile Include="ReactiveCore\EnvironmentCatalogFileIo.cs" />
     <Compile Include="ReactiveCore\RecipeCatalog.cs" />
-    <Compile Include="ReactiveCore\RecipeExecutionResult.cs" />
-    <Compile Include="ReactiveCore\RecipeStepExecutionResult.cs" />
+    <Compile Include="ReactiveCore\RecipeExecutor\RecipeExecutionResult.cs" />
+    <Compile Include="ReactiveCore\RecipeExecutor\RecipeStepExecutionResult.cs" />
     <Compile Include="ReactiveCore\VelumEnginePulseBridge.cs" />
     <Compile Include="ReactiveCore\VelumRecipeSeqAllocator.cs" />
     <Compile Include="ReactiveCore\VelumRecipeTemplateResolver.cs" />
     <Compile Include="ReactiveCore\VelumRecipeSolidWorksCustomProperties.cs" />
     <Compile Include="ReactiveCore\VelumSolidCustomPropertyTypes.cs" />
-    <Compile Include="ReactiveCore\RecipeExecutor.cs" />
+    <Compile Include="ReactiveCore\RecipeExecutor\RecipeExecutor.cs" />
     <Compile Include="ReactiveCore\RecipeDispatchCooldownTracker.cs" />
     <Compile Include="ReactiveCore\RecipeDispatchEpisodeTracker.cs" />
     <Compile Include="ReactiveCore\RecipeDispatcher.cs" />
@@ -247,7 +247,7 @@
       <DependentUpon>VelumProjectSettingsForm.cs</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Common\VelumConditionedReflexSettingsStore.cs" />
+    <Compile Include="Common\Reflex\VelumConditionedReflexSettingsStore.cs" />
     <Compile Include="Common\VelumAgentTaskPane.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -266,22 +266,22 @@
       <DependentUpon>VelumAgentTaskPane.cs</DependentUpon>
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Common\VelumListFilterHelper.cs" />
-    <Compile Include="Common\VelumListFilterFormatter.cs" />
-    <Compile Include="Common\VelumListViewCellFilterMenu.cs" />
-    <Compile Include="Common\VelumHelp.cs" />
-    <Compile Include="Common\VelumFormHelp.cs" />
+    <Compile Include="Common\ListFilter\VelumListFilterHelper.cs" />
+    <Compile Include="Common\ListFilter\VelumListFilterFormatter.cs" />
+    <Compile Include="Common\ListFilter\VelumListViewCellFilterMenu.cs" />
+    <Compile Include="Common\Help\VelumHelp.cs" />
+    <Compile Include="Common\Help\VelumFormHelp.cs" />
     <Compile Include="Common\VelumFormIcon.cs" />
     <Compile Include="Common\VelumScenarioRunForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Common\VelumHelpViewerForm.cs">
+    <Compile Include="Common\Help\VelumHelpViewerForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Common\VelumListFilterHelpForm.cs">
+    <Compile Include="Common\ListFilter\VelumListFilterHelpForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Common\VelumListFilterHelpForm.Designer.cs">
+    <Compile Include="Common\ListFilter\VelumListFilterHelpForm.Designer.cs">
       <DependentUpon>VelumListFilterHelpForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Common\VelumEnvironmentMetricsPickerForm.cs">
@@ -299,8 +299,8 @@
     <Compile Include="Common\Export\VelumDxfExportDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Common\VelumConditionedReflexForbidHelper.cs" />
-    <Compile Include="Common\VelumReflexForbidTargetRules.cs" />
+    <Compile Include="Common\Reflex\VelumConditionedReflexForbidHelper.cs" />
+    <Compile Include="Common\Reflex\VelumReflexForbidTargetRules.cs" />
     <Compile Include="Common\Export\VelumDxfExportDialog.Designer.cs">
       <DependentUpon>VelumDxfExportDialog.cs</DependentUpon>
     </Compile>
@@ -529,8 +529,8 @@
     <Compile Include="Common\Logs\VelumLogCellFillRules.cs" />
     <Compile Include="Common\Logs\VelumAgentLogCondensedRules.cs" />
     <Compile Include="Common\Logs\VelumLogCellTooltipProvider.cs" />
-    <Compile Include="Common\Logs\VelumLogsReportHtmlRules.cs" />   
-    <Compile Include="Common\Logs\VelumLogsReportHtmlBuilder.cs" /> 
+    <Compile Include="Common\Logs\VelumLogsReportHtmlRules.cs" />
+    <Compile Include="Common\Logs\VelumLogsReportHtmlBuilder.cs" />
     <Compile Include="Common\Logs\VelumEventLogCsvRules.cs" />
     <Compile Include="Common\Logs\VelumEventLogFileSessions.cs" />
     <Compile Include="Common\Logs\VelumLogsFormHost.cs" />
@@ -540,10 +540,10 @@
     <Compile Include="Common\Logs\VelumLogsForm.Designer.cs">
       <DependentUpon>VelumLogsForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Common\VelumDocumentPropertyPickerForm.cs">
+    <Compile Include="Common\DocumentProperties\VelumDocumentPropertyPickerForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Common\VelumDocumentPropertyPickerForm.Designer.cs">
+    <Compile Include="Common\DocumentProperties\VelumDocumentPropertyPickerForm.Designer.cs">
       <DependentUpon>VelumDocumentPropertyPickerForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Common\Export\VelumDxfFileNameSuffixPickerForm.cs">
@@ -591,16 +591,16 @@
     <EmbeddedResource Include="Common\VelumAgentBrickDetailForm.resx">
       <DependentUpon>VelumAgentBrickDetailForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Common\VelumDocumentPropertyPickerForm.resx">
+    <EmbeddedResource Include="Common\DocumentProperties\VelumDocumentPropertyPickerForm.resx">
       <DependentUpon>VelumDocumentPropertyPickerForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Common\Export\VelumDxfFileNameSuffixPickerForm.resx">
       <DependentUpon>VelumDxfFileNameSuffixPickerForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Common\VelumHelpViewerForm.resx">
+    <EmbeddedResource Include="Common\Help\VelumHelpViewerForm.resx">
       <DependentUpon>VelumHelpViewerForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Common\VelumListFilterHelpForm.resx">
+    <EmbeddedResource Include="Common\ListFilter\VelumListFilterHelpForm.resx">
       <DependentUpon>VelumListFilterHelpForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Common\VelumEnvironmentMetricsPickerForm.resx">
