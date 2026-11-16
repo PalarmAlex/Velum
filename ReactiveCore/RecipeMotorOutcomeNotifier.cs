@@ -47,6 +47,11 @@ namespace Velum.ReactiveCore
       if (recipe == null || result == null)
         return;
 
+      // Удачные (и пропущенные как неактуальные) исполнения проходят молча:
+      // исход и так виден в логах Recipe OK. MessageBox — только при провале рецепта.
+      if (result.Success)
+        return;
+
       if (!ShouldNotify(recipe))
         return;
 
