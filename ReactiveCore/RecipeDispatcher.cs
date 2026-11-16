@@ -117,7 +117,12 @@ namespace Velum.ReactiveCore
         return false;
       }
 
-      if (!RecipeExecutor.TryExecute(recipe, DefaultProbe, action.ActivationSource, out RecipeExecutionResult result))
+      // Триггер рецепта из командного канала (CommandPatternId > 0): SolidWorks уже выполнил
+      // команду по нажатию оператора. Пробрасываем паттерн в исполнитель, чтобы шаг
+      // run_sw_command с той же командой не задвоил действие оператора (см. VelumCommandIdResolver).
+      int commandPatternId = action.CommandPatternId;
+
+      if (!RecipeExecutor.TryExecute(recipe, DefaultProbe, action.ActivationSource, commandPatternId, out RecipeExecutionResult result))
       {
         LogDispatchFailure(recipe, adaptiveActionId, pulse, activationPulse, result);
         RecipeMotorOutcomeNotifier.TryNotify(recipe, result);

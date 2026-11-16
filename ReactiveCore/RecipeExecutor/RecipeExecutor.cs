@@ -70,6 +70,7 @@ namespace Velum.ReactiveCore
           recipe,
           DefaultProbe,
           ISIDA.Actions.AdaptiveActionsSystem.ActionActivationSource.GeneticReflex,
+          0,
           out result);
     }
 
@@ -85,6 +86,7 @@ namespace Velum.ReactiveCore
           recipe,
           probe,
           ISIDA.Actions.AdaptiveActionsSystem.ActionActivationSource.GeneticReflex,
+          0,
           out result);
     }
 
@@ -97,11 +99,17 @@ namespace Velum.ReactiveCore
     /// Источник активации (безусловный/условный рефлекс, автоматизм): влияет на то,
     /// показывать ли пользовательские предупреждения при несовпадении типа документа.
     /// </param>
+    /// <param name="commandPatternId">
+    /// ID паттерна Command-канала, запустившего рецепт (<c>AdaptiveAction.CommandPatternId</c>);
+    /// 0 — рецепт запущен не командным триггером. Нужен, чтобы шаг <c>run_sw_command</c>
+    /// не повторял команду, уже выполненную SolidWorks по нажатию оператора (защита от задвоения).
+    /// </param>
     /// <param name="result">Результат исполнения.</param>
     public static bool TryExecute(
         RecipeDefinition recipe,
         ISolidWorksSessionProbe probe,
         ISIDA.Actions.AdaptiveActionsSystem.ActionActivationSource activationSource,
+        int commandPatternId,
         out RecipeExecutionResult result)
     {
       result = null;
@@ -173,7 +181,10 @@ namespace Velum.ReactiveCore
                   modelDoc,
                   sw,
                   templateContext,
-                  activationSource);
+                  activationSource)
+              {
+                CommandPatternId = commandPatternId
+              };
 
               if (!TryExecuteStep(step, context, out RecipeStepExecutionResult stepResult))
               {

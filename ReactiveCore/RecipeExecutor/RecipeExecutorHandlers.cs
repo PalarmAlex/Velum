@@ -407,6 +407,7 @@ namespace Velum.ReactiveCore
         int index,
         IReadOnlyDictionary<string, string> parameters,
         SldWorks sw,
+        int commandPatternId,
         out RecipeStepExecutionResult result)
     {
       if (sw == null)
@@ -419,6 +420,29 @@ namespace Velum.ReactiveCore
       {
         result = new RecipeStepExecutionResult(index, "invoke", false, false, "invalid_command_id");
         return false;
+      }
+
+      // Защита от задвоения: если рецепт запущен командным триггером (CommandPatternId > 0),
+      // резолвим sw-код оператора и пропускаем шаг, если он совпадает с командой рецепта.
+      // SolidWorks уже выполнил команду по нажатию оператора — дублировать нельзя.
+      if (commandPatternId > 0)
+      {
+        int operatorCommandId = VelumCommandIdResolver.ResolveSwCode(commandPatternId);
+        if (VelumRunSwCommandEchoRules.ShouldSuppressAsEcho(operatorCommandId, commandId))
+        {
+          Logger.Info(
+              "Velum run_sw_command skipped (operator command duplicate): " +
+              "pattern=" + commandPatternId.ToString(CultureInfo.InvariantCulture) +
+              " command_id=" + commandId.ToString(CultureInfo.InvariantCulture));
+          result = new RecipeStepExecutionResult(
+              index,
+              "invoke",
+              true,
+              true,
+              "command_id=" + commandId.ToString(CultureInfo.InvariantCulture) +
+              " (skipped_operator_command)");
+          return true;
+        }
       }
 
       try

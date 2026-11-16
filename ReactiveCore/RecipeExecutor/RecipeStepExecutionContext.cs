@@ -50,6 +50,14 @@ namespace Velum.ReactiveCore
     public AdaptiveActionsSystem.ActionActivationSource ActivationSource { get; }
 
     /// <summary>
+    /// ID паттерна Command-канала, запустившего рецепт (из <c>AdaptiveAction.CommandPatternId</c>).
+    /// 0 — если рецепт запущен не командным триггером (например, безусловный рефлекс или метрика среды).
+    /// Используется для предотвращения дублирования: если триггер — команда SolidWorks, а шаг рецепта
+    /// пытается вызвать ту же команду через <c>run_sw_command</c>, шаг пропускается.
+    /// </summary>
+    public int CommandPatternId { get; internal set; }
+
+    /// <summary>
     /// Рецепт запущен условным рефлексом: при несовпадении типа документа интерактивные
     /// шаги должны тихо пропускаться без пользовательского MessageBox (оператор не просил действие).
     /// </summary>

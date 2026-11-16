@@ -147,6 +147,7 @@ namespace Velum.ReactiveCore
           context.StepIndex,
           args,
           context.Sw,
+          context.CommandPatternId,
           out result);
     }
 
