@@ -237,6 +237,10 @@ namespace Velum.UI
       // Инициализация таймера пульсации индикатора обратного отсчёта (1 пульс = 1 секунда).
       _countdownPulseTimer = new Timer { Interval = 1000 };
       _countdownPulseTimer.Tick += OnCountdownPulseTick;
+
+      // Принудительный сброс ожидания оценки кликом по надписи-индикатору (как клик по плашке в AIStudio).
+      if (_lblCountdown != null)
+        _lblCountdown.Click += OnCountdownResetClick;
     }
 
     private void ScrollPanel_Resize(object sender, EventArgs e)
@@ -1209,6 +1213,63 @@ namespace Velum.UI
     #region Countdown indicator (in-header waiting pulse display)
 
     /// <summary>
+    /// Глиф ручного сброса в конце надписи-индикатора: буква «х» имитирует закрытие по крестику
+    /// и подсказывает оператору, что ожидание оценки можно сбросить кликом по надписи.
+    /// </summary>
+    private const string CountdownResetGlyph = " х";
+
+    /// <summary>
+    /// Применить к надписи-индикатору оформление клика-сброса: активное ожидание — курсор-рука и
+    /// подсказка про сброс кликом; покой — обычный курсор и без подсказки.
+    /// </summary>
+    /// <param name="resettable"><c>true</c> — ожидание активно, клик по надписи сбросит его.</param>
+    private void ApplyCountdownResetChrome(bool resettable)
+    {
+      if (_lblCountdown == null || _lblCountdown.IsDisposed)
+        return;
+
+      _lblCountdown.Cursor = resettable ? Cursors.Hand : Cursors.Default;
+      if (_parameterToolTip != null)
+      {
+        _parameterToolTip.SetToolTip(
+            _lblCountdown,
+            resettable ? "Кликните, чтобы сбросить ожидание оценки" : string.Empty);
+      }
+    }
+
+    /// <summary>
+    /// Обработчик клика по надписи-индикатору ожидания: принудительно сбрасывает период ожидания
+    /// оценки так же, как клик по плашке в AIStudio (полный сброс через движок — ожидание, индикаторы
+    /// автоматизма и зеркало диалога цепочки). Игнорируется, если активного ожидания нет.
+    /// </summary>
+    private void OnCountdownResetClick(object sender, EventArgs e)
+    {
+      try
+      {
+        if (!AppGlobalState.WaitingForOperatorEvaluation)
+          return;
+
+        if (VelumIsidaHost.IsReady)
+        {
+          // Тот же путь, что CancelWaitingPeriodCommand в AIStudio: ожидание + сброс зеркального диалога.
+          VelumIsidaHost.Context.CancelWaitingPeriodAndResetMirror();
+        }
+        else
+        {
+          AppGlobalState.ForceStopWaitingForOperatorEvaluation();
+        }
+
+        // Немедленно гасим индикатор, не дожидаясь ближайшего RefreshFromEngine.
+        HideCountdown();
+      }
+      catch (Exception ex)
+      {
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          System.Diagnostics.Trace.WriteLine("VelumAgentTaskPane countdown reset click: " + ex.Message);
+      }
+    }
+
+    /// <summary>
     /// Показать индикатор обратного отсчёта в шапке панели.
     /// Вызывается после успешного исполнения рецепта через RecipeDispatcher.
     /// </summary>
@@ -1217,9 +1278,10 @@ namespace Velum.UI
       if (_lblCountdown == null || _lblCountdown.IsDisposed)
         return;
 
-      _lblCountdown.Text = actionName ?? "Action";
+      _lblCountdown.Text = (actionName ?? "Action") + CountdownResetGlyph;
       _lblCountdown.Visible = true;
       _countdownColorPulseState = 0;
+      ApplyCountdownResetChrome(true);
       _countdownPulseTimer?.Start();
     }
 
@@ -1236,6 +1298,7 @@ namespace Velum.UI
         _lblCountdown.Visible = false;
         _lblCountdown.Text = "…";
         _lblCountdown.ForeColor = Color.FromArgb(0, 112, 192);
+        ApplyCountdownResetChrome(false);
       }
     }
 
@@ -1254,19 +1317,22 @@ namespace Velum.UI
 
       if (waiting)
       {
-        // Активное ожидание — показываем обратный отсчёт.
+        // Активное ожидание — показываем обратный отсчёт и глиф «х» ручного сброса кликом.
         _lblCountdown.Text = "Ожидание оценки: " +
-            AppGlobalState.WaitingPeriodCountdown.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            AppGlobalState.WaitingPeriodCountdown.ToString(System.Globalization.CultureInfo.InvariantCulture) +
+            CountdownResetGlyph;
         _lblCountdown.Visible = true;
         _countdownColorPulseState = 0;
+        ApplyCountdownResetChrome(true);
         _countdownPulseTimer?.Start();
       }
       else
       {
-        // Нет активного ожидания — показываем серый текст.
+        // Нет активного ожидания — показываем серый текст без глифа сброса.
         _lblCountdown.Text = "Ожидание оценки: Нет";
         _lblCountdown.Visible = true;
         _lblCountdown.ForeColor = Color.Gray;
+        ApplyCountdownResetChrome(false);
         _countdownPulseTimer?.Stop();
       }
     }
