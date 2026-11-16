@@ -180,14 +180,6 @@
     <Compile Include="Isida\VelumPulseController.cs" />
     <Compile Include="Isida\VelumAdapterSleepReset.cs" />
     <Compile Include="Isida\VelumSensorPrimariesBuffer.cs" />
-    <Compile Include="Isida\VelumScenarioProbeApplier.cs" />
-    <Compile Include="Isida\VelumScenarioPult.cs" />
-    <Compile Include="Isida\VelumScenarioHost.cs" />
-    <Compile Include="Isida\VelumScenarioStorage.cs" />
-    <Compile Include="Isida\VelumScenarioGroupModels.cs" />
-    <Compile Include="Isida\VelumScenarioGroupStorage.cs" />
-    <Compile Include="Isida\VelumScenarioLogComparer.cs" />
-    <Compile Include="Isida\VelumScenarioReportHtmlBuilder.cs" />
     <Compile Include="Isida\Logs\VelumLogPaths.cs" />
     <Compile Include="SolidHomeostasis\VelumSolidEnvironmentInfluenceCatalog.cs" />
     <Compile Include="SolidHomeostasis\MetricProbes\VelumSolidMetricProbeThresholds.cs" />
@@ -272,9 +264,6 @@
     <Compile Include="Common\Help\VelumHelp.cs" />
     <Compile Include="Common\Help\VelumFormHelp.cs" />
     <Compile Include="Common\VelumFormIcon.cs" />
-    <Compile Include="Common\VelumScenarioRunForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Common\Help\VelumHelpViewerForm.cs">
       <SubType>Form</SubType>
     </Compile>

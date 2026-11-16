@@ -460,10 +460,6 @@ namespace Velum
         case Velum_Commands.Help:
           OpenHelp();
           break;
-
-        case Velum_Commands.ScenarioRun:
-          OpenScenarioRunForm();
-          break;
       }
     }
 
@@ -472,18 +468,6 @@ namespace Velum
       try
       {
         VelumHelp.Show(null, VelumHelpTopics.Index);
-      }
-      catch (Exception ex)
-      {
-        MessageBox.Show(FormatExceptionForUi(ex), "Velum", MessageBoxButtons.OK, MessageBoxIcon.Error);
-      }
-    }
-
-    private void OpenScenarioRunForm()
-    {
-      try
-      {
-        VelumScenarioRunForm.Show(null);
       }
       catch (Exception ex)
       {
@@ -649,11 +633,6 @@ namespace Velum
 
         case Velum_Commands.Help:
           state.Enabled = true;
-          break;
-
-        case Velum_Commands.ScenarioRun:
-          // Прогон сценариев — инструмент отладки; доступен при поднятой ISIDA (нужен живой контекст).
-          state.Enabled = ready;
           break;
       }
     }
@@ -897,17 +876,6 @@ namespace Velum
           showInCmdTabBox: true,
           textStyle: RibbonTabTextDisplay_e.TextBelow)]
       Help = 11,
-
-      [Title("Сценарии")]
-      [Description("Прогон тестового сценария оператора (сверка ожидаемого и фактического поведения).")]
-      [Icon(typeof(Resources), nameof(Resources.Scenario))]
-      [CommandItemInfo(
-          hasMenu: true,
-          hasToolbar: true,
-          suppWorkspaces: WorkspaceTypes_e.AllDocuments,
-          showInCmdTabBox: true,
-          textStyle: RibbonTabTextDisplay_e.TextBelow)]
-      ScenarioRun = 12,
     }
 
     /// <summary>
