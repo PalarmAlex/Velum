@@ -118,6 +118,8 @@ namespace Velum.UI
       Image removeDefaultImg = TryLoadMenuBitmap("Fall.png");
       Image eraseImg = TryLoadMenuBitmap("Erase.png");
       Image deleteImg = TryLoadMenuBitmap("Delete.png");
+      Image upImg = TryLoadMenuBitmap("Up.png");
+      Image downImg = TryLoadMenuBitmap("Down.png");
 
       _partGridHelper = new VelumDocumentPropertyTemplateGridHelper(
           _partsGrid,
@@ -130,7 +132,9 @@ namespace Velum.UI
           defaultImg,
           removeDefaultImg,
           eraseImg,
-          deleteImg);
+          deleteImg,
+          upImg,
+          downImg);
       _partGridHelper.LoadDataFromXml();
 
       _asmGridHelper = new VelumDocumentPropertyTemplateGridHelper(
@@ -144,7 +148,9 @@ namespace Velum.UI
           defaultImg,
           removeDefaultImg,
           eraseImg,
-          deleteImg);
+          deleteImg,
+          upImg,
+          downImg);
       _asmGridHelper.LoadDataFromXml();
     }
 

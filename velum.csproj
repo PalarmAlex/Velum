@@ -328,6 +328,7 @@
       <DependentUpon>VelumMaterialBatchForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Common\Material\VelumMaterialBatchFormHost.cs" />
+    <Compile Include="Common\DocumentProperties\VelumDocumentPropertyChoiceRules.cs" />
     <Compile Include="Common\DocumentProperties\VelumDocumentPropertyTemplateGridHelper.cs" />
     <Compile Include="Common\DocumentProperties\VelumDocumentPropertyBatchForm.cs">
       <SubType>Form</SubType>

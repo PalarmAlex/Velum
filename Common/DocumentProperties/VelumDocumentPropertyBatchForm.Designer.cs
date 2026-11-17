@@ -15,6 +15,8 @@ namespace Velum.UI
 
     private void InitializeComponent()
     {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(VelumDocumentPropertyBatchForm));
             this._rootLayout = new System.Windows.Forms.TableLayoutPanel();
             this._catalogCaptionLabel = new System.Windows.Forms.Label();
@@ -29,8 +31,8 @@ namespace Velum.UI
             this._lblPartsProps = new System.Windows.Forms.Label();
             this._partsGrid = new System.Windows.Forms.DataGridView();
             this.colPartPropName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colPartPropValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colPartPropType = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.colPartPropValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this._partTemplateRow = new System.Windows.Forms.TableLayoutPanel();
             this._lblPartTemplate = new System.Windows.Forms.Label();
             this._partTemplateBox = new System.Windows.Forms.TextBox();
@@ -51,8 +53,8 @@ namespace Velum.UI
             this._lblAsmProps = new System.Windows.Forms.Label();
             this._asmGrid = new System.Windows.Forms.DataGridView();
             this.colAsmPropName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colAsmPropValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colAsmPropType = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.colAsmPropValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this._asmTemplateRow = new System.Windows.Forms.TableLayoutPanel();
             this._lblAsmTemplate = new System.Windows.Forms.Label();
             this._asmTemplateBox = new System.Windows.Forms.TextBox();
@@ -276,26 +278,27 @@ namespace Velum.UI
             this.colPartPropName.Name = "colPartPropName";
             this.colPartPropName.Width = 180;
             // 
-            // colPartPropValue
-            // 
-            this.colPartPropValue.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.colPartPropValue.HeaderText = "Значение";
-            this.colPartPropValue.Name = "colPartPropValue";
-            // 
             // colPartPropType
             // 
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            this.colPartPropType.DefaultCellStyle = dataGridViewCellStyle1;
             this.colPartPropType.HeaderText = "Тип свойства";
-            this.colPartPropType.Name = "colPartPropType";
-            this.colPartPropType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.colPartPropType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            this.colPartPropType.Width = 120;
-            this.colPartPropType.ToolTipText = "Тип свойства SolidWorks при записи";
-            this.colPartPropType.DefaultCellStyle.BackColor = System.Drawing.SystemColors.Window;
             this.colPartPropType.Items.AddRange(new object[] {
             "Текст",
             "Дата",
             "Номер",
             "Да или Нет"});
+            this.colPartPropType.Name = "colPartPropType";
+            this.colPartPropType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.colPartPropType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.colPartPropType.ToolTipText = "Тип свойства SolidWorks при записи";
+            this.colPartPropType.Width = 120;
+            // 
+            // colPartPropValue
+            // 
+            this.colPartPropValue.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.colPartPropValue.HeaderText = "Значение";
+            this.colPartPropValue.Name = "colPartPropValue";
             // 
             // _partTemplateRow
             // 
@@ -540,26 +543,27 @@ namespace Velum.UI
             this.colAsmPropName.Name = "colAsmPropName";
             this.colAsmPropName.Width = 180;
             // 
-            // colAsmPropValue
-            // 
-            this.colAsmPropValue.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.colAsmPropValue.HeaderText = "Значение";
-            this.colAsmPropValue.Name = "colAsmPropValue";
-            // 
             // colAsmPropType
             // 
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            this.colAsmPropType.DefaultCellStyle = dataGridViewCellStyle2;
             this.colAsmPropType.HeaderText = "Тип свойства";
-            this.colAsmPropType.Name = "colAsmPropType";
-            this.colAsmPropType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.colAsmPropType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            this.colAsmPropType.Width = 120;
-            this.colAsmPropType.ToolTipText = "Тип свойства SolidWorks при записи";
-            this.colAsmPropType.DefaultCellStyle.BackColor = System.Drawing.SystemColors.Window;
             this.colAsmPropType.Items.AddRange(new object[] {
             "Текст",
             "Дата",
             "Номер",
             "Да или Нет"});
+            this.colAsmPropType.Name = "colAsmPropType";
+            this.colAsmPropType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.colAsmPropType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.colAsmPropType.ToolTipText = "Тип свойства SolidWorks при записи";
+            this.colAsmPropType.Width = 120;
+            // 
+            // colAsmPropValue
+            // 
+            this.colAsmPropValue.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.colAsmPropValue.HeaderText = "Значение";
+            this.colAsmPropValue.Name = "colAsmPropValue";
             // 
             // _asmTemplateRow
             // 

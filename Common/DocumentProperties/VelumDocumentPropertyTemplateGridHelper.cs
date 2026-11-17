@@ -32,7 +32,9 @@ namespace Velum.UI
         Image defaultImage,
         Image removeDefaultImage,
         Image clearImage,
-        Image deleteImage)
+        Image deleteImage,
+        Image moveUpImage,
+        Image moveDownImage)
     {
       _grid = grid ?? throw new ArgumentNullException(nameof(grid));
       _nameColumn = nameColumn;
@@ -53,7 +55,8 @@ namespace Velum.UI
       _grid.DefaultValuesNeeded += OnDefaultValuesNeeded;
       _grid.DataError += (s, e) => e.ThrowException = false;
 
-      BuildContextMenu(addImage, removeImage, defaultImage, removeDefaultImage, clearImage, deleteImage);
+      BuildContextMenu(addImage, removeImage, defaultImage, removeDefaultImage, clearImage, deleteImage,
+          moveUpImage, moveDownImage);
     }
 
     /// <summary>
@@ -372,11 +375,16 @@ namespace Velum.UI
         Image defaultImage,
         Image removeDefaultImage,
         Image clearImage,
-        Image deleteImage)
+        Image deleteImage,
+        Image moveUpImage,
+        Image moveDownImage)
     {
       _contextMenu = new ContextMenuStrip();
       _contextMenu.Items.Add(new ToolStripMenuItem("Добавить в список выбора", addImage, OnAddChoice));
-      _contextMenu.Items.Add(new ToolStripMenuItem("Удалить из списка выбора", removeImage, OnRemoveRowsFromList));
+      _contextMenu.Items.Add(new ToolStripMenuItem("Удалить из списка выбора", removeImage, OnRemoveChoice));
+      _contextMenu.Items.Add(new ToolStripSeparator());
+      _contextMenu.Items.Add(new ToolStripMenuItem("Переместить вверх", moveUpImage, OnMoveRowUp));
+      _contextMenu.Items.Add(new ToolStripMenuItem("Переместить вниз", moveDownImage, OnMoveRowDown));
       _contextMenu.Items.Add(new ToolStripSeparator());
       _contextMenu.Items.Add(new ToolStripMenuItem("Назначить по умолчанию", defaultImage, OnSetDefault));
       _contextMenu.Items.Add(new ToolStripMenuItem("Удалить значение по умолчанию", removeDefaultImage, OnRemoveDefault));
@@ -565,6 +573,10 @@ namespace Velum.UI
       _editingComboBox = null;
     }
 
+    /// <summary>
+    /// Добавляет в виртуальный список подстановок ячейки «Значение» элемент,
+    /// равный текущему значению строки
+    /// </summary>
     private void OnAddChoice(object sender, EventArgs e)
     {
       if (_currentRow == null)
@@ -575,28 +587,202 @@ namespace Velum.UI
       if (controlNode == null || string.IsNullOrEmpty(value))
         return;
 
-      XmlNode dataNode = controlNode.SelectSingleNode("Data");
-      if (dataNode == null)
+      if (VelumDocumentPropertyChoiceRules.AddChoice(controlNode, value))
       {
-        dataNode = controlNode.OwnerDocument.CreateElement("Data");
-        controlNode.AppendChild(dataNode);
-      }
-
-      foreach (XmlNode item in dataNode.SelectNodes("Item"))
+        SaveXml(controlNode.OwnerDocument);
+        MessageBox.Show(
+            $"Значение [{value}] успешно добавлено в список выбора",
+            "Свойства документов",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Information);
+        }
+      else
       {
-        if (string.Equals(item.InnerText, value, StringComparison.Ordinal))
-          return;
+        MessageBox.Show(
+            $"Не удалось добавить [{value}] в список выбора",
+            "Свойства документов",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Warning);
       }
-
-      XmlElement newItem = controlNode.OwnerDocument.CreateElement("Item");
-      newItem.InnerText = value;
-      dataNode.AppendChild(newItem);
-      SaveXml(controlNode.OwnerDocument);
     }
 
-    private void OnRemoveRowsFromList(object sender, EventArgs e)
+    /// <summary>
+    /// Удаляет из виртуального списка подстановок ячейки «Значение» элемент,
+    /// равный текущему значению строки (симметрично «Добавить в список выбора»),
+    /// не трогая саму строку таблицы.
+    /// </summary>
+    private void OnRemoveChoice(object sender, EventArgs e)
     {
-      TryRemoveSelectedRowsFromGrid();
+      if (_currentRow == null)
+        return;
+
+      string value = _currentRow.Cells[_valueColumn].Value?.ToString();
+      var controlNode = _currentRow.Tag as XmlNode;
+      if (controlNode == null || string.IsNullOrEmpty(value))
+        return;
+
+      if (VelumDocumentPropertyChoiceRules.RemoveChoice(controlNode, value))
+      {
+        SaveXml(controlNode.OwnerDocument);
+        MessageBox.Show(
+            $"Значение [{value}] успешно удалено из списка выбора",
+            "Свойства документов",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Information);
+      }
+      else
+      {
+        MessageBox.Show(
+            $"Не удалось удалить [{value}] из списка выбора",
+            "Свойства документов",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Warning);
+      }
+    }
+
+    /// <summary>
+    /// Перемещает текущую строку на одну позицию вверх в таблице шаблона.
+    /// </summary>
+    private void OnMoveRowUp(object sender, EventArgs e)
+    {
+      DataGridViewRow row = ResolveMoveTargetRow();
+      if (row == null)
+        return;
+
+      int index = row.Index;
+      if (index <= 0)
+        return;
+
+      SwapRowContent(index, index - 1);
+    }
+
+    /// <summary>
+    /// Перемещает текущую строку на одну позицию вниз в таблице шаблона.
+    /// </summary>
+    private void OnMoveRowDown(object sender, EventArgs e)
+    {
+      DataGridViewRow row = ResolveMoveTargetRow();
+      if (row == null)
+        return;
+
+      int index = row.Index;
+      // Не опускаем за последнюю реальную строку (без учёта новой пустой строки внизу).
+      int lastIndex = _grid.Rows.Count - 1;
+      if (_grid.AllowUserToAddRows && _grid.Rows[lastIndex].IsNewRow)
+        lastIndex--;
+
+      if (index >= lastIndex)
+        return;
+
+      SwapRowContent(index, index + 1);
+    }
+
+    /// <summary>
+    /// Возвращает строку, над которой было вызвано контекстное меню, либо текущую.
+    /// </summary>
+    private DataGridViewRow ResolveMoveTargetRow()
+    {
+      if (_currentRow != null &&
+          !_currentRow.IsNewRow &&
+          _grid.Rows.Contains(_currentRow))
+        return _currentRow;
+
+      if (_grid.CurrentRow != null && !_grid.CurrentRow.IsNewRow)
+        return _grid.CurrentRow;
+
+      return null;
+    }
+
+    /// <summary>
+    /// Меняет местами содержимое (значения ячеек и привязку XML-узла Tag) двух строк.
+    /// Позиции строк в таблице не меняются — это даёт плавный перенос без мерцания
+    /// и потери выделения. Затем порядок узлов <c>Control</c> в XML приводится
+    /// к текущему порядку строк.
+    /// </summary>
+    private void SwapRowContent(int aIndex, int bIndex)
+    {
+      if (aIndex < 0 || bIndex < 0 || aIndex >= _grid.Rows.Count || bIndex >= _grid.Rows.Count)
+        return;
+
+      DataGridViewRow a = _grid.Rows[aIndex];
+      DataGridViewRow b = _grid.Rows[bIndex];
+      if (a.IsNewRow || b.IsNewRow)
+        return;
+
+      RemoveComboBox();
+
+      _grid.SuspendLayout();
+      try
+      {
+        for (int c = 0; c < _grid.Columns.Count; c++)
+        {
+          object tmp = a.Cells[c].Value;
+          a.Cells[c].Value = b.Cells[c].Value;
+          b.Cells[c].Value = tmp;
+        }
+
+        object tmpTag = a.Tag;
+        a.Tag = b.Tag;
+        b.Tag = tmpTag;
+      }
+      finally
+      {
+        _grid.ResumeLayout();
+      }
+
+      // Приводим порядок <Control> в XML-шаблоне к порядку строк таблицы,
+      // чтобы перестановка сохранилась после перезагрузки шаблона.
+      PersistGridOrderToXml();
+
+      _grid.ClearSelection();
+      a.Selected = true;
+      _currentRow = a;
+    }
+
+    /// <summary>
+    /// Переставляет узлы <c>Control</c> в XML-шаблоне так, чтобы их порядок
+    /// соответствовал текущему порядку строк таблицы (для сохранения сортировки).
+    /// </summary>
+    private void PersistGridOrderToXml()
+    {
+      var orderByNode = new Dictionary<XmlNode, int>();
+      for (int i = 0; i < _grid.Rows.Count; i++)
+      {
+        if (_grid.Rows[i].IsNewRow)
+          continue;
+        var node = _grid.Rows[i].Tag as XmlNode;
+        if (node != null && node.ParentNode != null)
+          orderByNode[node] = i;
+      }
+
+      if (orderByNode.Count == 0)
+        return;
+
+      // Группируем узлы по родительскому <GroupBox>.
+      var byParent = new Dictionary<XmlNode, List<XmlNode>>();
+      foreach (KeyValuePair<XmlNode, int> pair in orderByNode)
+      {
+        XmlNode parent = pair.Key.ParentNode;
+        if (!byParent.TryGetValue(parent, out List<XmlNode> list))
+        {
+          list = new List<XmlNode>();
+          byParent[parent] = list;
+        }
+
+        list.Add(pair.Key);
+      }
+
+      XmlDocument xmlDoc = null;
+      foreach (KeyValuePair<XmlNode, List<XmlNode>> entry in byParent)
+      {
+        List<XmlNode> nodes = entry.Value;
+        nodes.Sort((x, y) => orderByNode[x].CompareTo(orderByNode[y]));
+        if (VelumDocumentPropertyChoiceRules.ReorderControls(entry.Key, nodes))
+          xmlDoc = entry.Key.OwnerDocument;
+      }
+
+      if (xmlDoc != null)
+        SaveXml(xmlDoc);
     }
 
     private void OnSetDefault(object sender, EventArgs e)

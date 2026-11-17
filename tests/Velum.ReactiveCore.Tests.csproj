@@ -60,6 +60,7 @@
     <Compile Include="..\Common\Logs\VelumEventLogCsvRules.cs" Link="src\VelumEventLogCsvRules.cs" />
     <Compile Include="..\ReactiveCore\VelumPdfOutdatedRules.cs" Link="src\VelumPdfOutdatedRules.cs" />
     <Compile Include="..\ReactiveCore\VelumDocumentPropertyTypeDisplayRules.cs" Link="src\VelumDocumentPropertyTypeDisplayRules.cs" />
+    <Compile Include="..\Common\DocumentProperties\VelumDocumentPropertyChoiceRules.cs" Link="src\VelumDocumentPropertyChoiceRules.cs" />
   </ItemGroup>
 
   <!-- Конвейер «сканер → кэш проблем → снимок gate → плашка»: оригиналы без COM/WinForms -->
@@ -122,6 +123,7 @@
     <Compile Include="VelumMetricPipelinePropertyTests.cs" />
     <Compile Include="VelumAdapterMetricProbesCatalogTests.cs" />
     <Compile Include="VelumDocumentPropertyTypeDisplayRulesTests.cs" />
+    <Compile Include="VelumDocumentPropertyChoiceRulesTests.cs" />
   </ItemGroup>
 
 </Project>
