@@ -49,6 +49,7 @@ namespace Velum.UI
     private ToolStripMenuItem _menuListPrintDrawings;
     private ToolStripMenuItem _menuListChangeCatalog;
     private ToolStripMenuItem _menuListChangeMaterial;
+    private ToolStripMenuItem _menuListChangeProperties;
     private VelumListViewCellFilterMenu _listCellFilterMenu;
     private TreeNode _treeShiftAnchor;
     private int _idxFolderClosed = -1, _idxFolderOpen = -1;
@@ -818,6 +819,12 @@ namespace Velum.UI
             "Database.ico",
             Keys.None,
             (s, e) => ChangeSelectedMaterial());
+        _menuListChangeProperties = AddMenuItem(
+            _listMenu,
+            "Изменить свойства",
+            "List.png",
+            Keys.None,
+            (s, e) => ChangeSelectedProperties());
       }
       _listMenu.Opening += OnListMenuOpening;
       _listView.ContextMenuStrip = _listMenu;
@@ -869,6 +876,8 @@ namespace Velum.UI
         _menuListChangeCatalog.Enabled = selected && idle;
       if (_menuListChangeMaterial != null)
         _menuListChangeMaterial.Enabled = selected && idle;
+      if (_menuListChangeProperties != null)
+        _menuListChangeProperties.Enabled = selected && idle;
     }
 
     /// <summary>Сопоставление видимого индекса столбца (позиция в панели фильтров) с реальным индексом в _activeColumns.</summary>
@@ -2192,6 +2201,62 @@ namespace Velum.UI
 
       bool applied;
       if (!VelumMaterialBatchFormHost.TryShowWithRows(_swApp, this, rows, out applied))
+        return;
+
+      if (applied)
+        RebuildTreeAfterMutation();
+    }
+
+    /// <summary>
+    /// Открывает пакетную форму обновления свойств документов с выделенными записями списка.
+    /// </summary>
+    private void ChangeSelectedProperties()
+    {
+      if (!IsAdmin || _loading)
+        return;
+
+      List<VelumAssemblyRegistryComponent> selected = GetSelectedListComponents();
+      if (selected.Count == 0)
+        return;
+
+      var rows = new List<VelumDocumentPropertyBatchRow>();
+      foreach (VelumAssemblyRegistryComponent item in selected)
+      {
+        if (string.IsNullOrWhiteSpace(item.FilePath))
+          continue;
+
+        string displayName = string.Empty;
+        try
+        {
+          displayName = Path.GetFileName(item.FilePath);
+        }
+        catch
+        {
+        }
+
+        if (string.IsNullOrWhiteSpace(displayName))
+          displayName = item.FileTitle ?? string.Empty;
+
+        rows.Add(new VelumDocumentPropertyBatchRow
+        {
+          FilePath = item.FilePath,
+          DisplayName = displayName,
+          ConfigurationName = item.ConfigurationName ?? string.Empty,
+          IsAssembly = item.IsAssemblyDocument,
+          Selected = true
+        });
+      }
+
+      if (rows.Count == 0)
+      {
+        ShowMessage(
+            "В выделении нет записей с путём к документу.",
+            MessageBoxIcon.Information);
+        return;
+      }
+
+      bool applied;
+      if (!VelumDocumentPropertyBatchFormHost.TryShowWithRows(_swApp, this, rows, out applied))
         return;
 
       if (applied)

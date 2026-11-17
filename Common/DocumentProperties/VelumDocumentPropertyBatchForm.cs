@@ -44,15 +44,31 @@ namespace Velum.UI
     private int _asmSortColumn = -1;
     private ListSortDirection _asmSortDirection = ListSortDirection.Ascending;
 
+    private bool _anythingApplied;
+
     public VelumDocumentPropertyBatchForm(ISwApplication swApp)
     {
       _swApp = swApp;
       InitializeComponent();
       VelumFormHelp.Bind(this, VelumHelpTopics.DocumentProperties);
-      InitializeRuntime();
+      InitializeRuntime(seedRows: null);
     }
 
-    private void InitializeRuntime()
+    /// <summary>
+    /// Запуск из реестра изделия: список документов заполняется переданными строками
+    /// (выделенные записи), автозагрузка из активной сборки/детали пропускается.
+    /// </summary>
+    public VelumDocumentPropertyBatchForm(
+        ISwApplication swApp,
+        IReadOnlyList<VelumDocumentPropertyBatchRow> seedRows)
+    {
+      _swApp = swApp;
+      InitializeComponent();
+      VelumFormHelp.Bind(this, VelumHelpTopics.DocumentProperties);
+      InitializeRuntime(seedRows);
+    }
+
+    private void InitializeRuntime(IReadOnlyList<VelumDocumentPropertyBatchRow> seedRows)
     {
       Icon icon = TryLoadFormIcon();
       if (icon != null)
@@ -72,6 +88,12 @@ namespace Velum.UI
       InitializeGrids();
       InitializeListInteractions();
       BindFolderPathTooltip();
+
+      if (seedRows != null && seedRows.Count > 0)
+      {
+        ApplySeedRows(seedRows);
+        return;
+      }
 
       VelumBatchFormFolderBootstrap.DocumentPropertyFolders folders =
           VelumBatchFormFolderBootstrap.ResolveDocumentPropertyFolders(_swApp);
@@ -285,6 +307,50 @@ namespace Velum.UI
           _catalogFolderBox,
           folders?.CatalogFolder,
           null);
+    }
+
+    /// <summary>
+    /// Заполняет списки документов строками, переданными из реестра изделия
+    /// (выделенные записи). Каталог и активный контекст не автозагружаются.
+    /// </summary>
+    private void ApplySeedRows(IReadOnlyList<VelumDocumentPropertyBatchRow> seedRows)
+    {
+      _partRows.Clear();
+      _assemblyRows.Clear();
+
+      for (int i = 0; i < seedRows.Count; i++)
+      {
+        VelumDocumentPropertyBatchRow src = seedRows[i];
+        if (src == null || string.IsNullOrWhiteSpace(src.FilePath))
+          continue;
+
+        var row = new VelumDocumentPropertyBatchRow
+        {
+          FilePath = src.FilePath,
+          DisplayName = string.IsNullOrWhiteSpace(src.DisplayName)
+              ? Path.GetFileName(src.FilePath)
+              : src.DisplayName,
+          ConfigurationName = src.ConfigurationName ?? string.Empty,
+          IsAssembly = src.IsAssembly,
+          Selected = true
+        };
+
+        if (row.IsAssembly)
+          _assemblyRows.Add(row);
+        else
+          _partRows.Add(row);
+      }
+
+      BindPartsList();
+      BindAssembliesList();
+      SelectAll(_partsList);
+      SelectAll(_asmList);
+
+      // Открываем вкладку с непустым списком, если детальная пуста.
+      if (_partRows.Count == 0 && _assemblyRows.Count > 0)
+        _tabs.SelectedTab = _tabAssemblies;
+
+      UpdateStatusLabels();
     }
 
     private void AutoLoadFromContext(VelumBatchFormFolderBootstrap.DocumentPropertyFolders folders)
@@ -597,6 +663,9 @@ namespace Velum.UI
 
       UpdateStatusLabels();
 
+      if (applied > 0)
+        _anythingApplied = true;
+
       string message = _cancelRequested
           ? "Обработка остановлена. Обновлено: " + applied
           : "Обновлено: " + applied;
@@ -630,6 +699,10 @@ namespace Velum.UI
       catch
       {
       }
+
+      // Сигнал вызывающему хосту: свойства действительно применялись.
+      if (_anythingApplied && DialogResult == DialogResult.None)
+        DialogResult = DialogResult.OK;
 
       base.OnFormClosing(e);
     }
