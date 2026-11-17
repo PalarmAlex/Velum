@@ -292,7 +292,8 @@ namespace Velum.UI.AssemblyRegistry
           ConfigurationName = configName,
           Kind = kind,
           FolderSegments = folderSegments ?? Array.Empty<string>(),
-          Quantity = 0
+          Quantity = 0,
+          IsAssemblyDocument = isAssembly
         };
 
         VelumAssemblyRegistryPropertyReader.FillProperties(item, modelDoc);
