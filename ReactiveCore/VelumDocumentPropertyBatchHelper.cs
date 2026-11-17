@@ -33,6 +33,9 @@ namespace Velum.ReactiveCore
       internal string Name { get; set; }
 
       internal string Value { get; set; }
+
+      /// <summary>Ключ типа свойства SolidWorks («text», «number», «date», «boolean»).</summary>
+      internal string PropertyTypeKey { get; set; }
     }
 
     /// <summary>
@@ -361,6 +364,7 @@ namespace Velum.ReactiveCore
 
         string name = pair.Name.Trim();
         string value = pair.Value ?? string.Empty;
+        string typeKey = pair.PropertyTypeKey ?? VelumSolidCustomPropertyTypes.TypeKeyText;
 
         bool inConfig = configCpm != null &&
             VelumRecipeSolidWorksCustomProperties.TryPropertyExists(configCpm, name);
@@ -369,13 +373,13 @@ namespace Velum.ReactiveCore
 
         if (inConfig)
         {
-          if (TryWriteProperty(configCpm, name, value))
+          if (TryWriteProperty(configCpm, name, value, typeKey))
             any = true;
         }
 
         if (inDocument)
         {
-          if (TryWriteProperty(docCpm, name, value))
+          if (TryWriteProperty(docCpm, name, value, typeKey))
             any = true;
         }
 
@@ -384,10 +388,10 @@ namespace Velum.ReactiveCore
 
         if (createTarget == VelumDocumentPropertyCreateTarget.DocumentSettings)
         {
-          if (TryWriteProperty(docCpm, name, value))
+          if (TryWriteProperty(docCpm, name, value, typeKey))
             any = true;
         }
-        else if (TryCreatePropertyInAllConfigurations(modelDoc, name, value))
+        else if (TryCreatePropertyInAllConfigurations(modelDoc, name, value, typeKey))
         {
           any = true;
         }
@@ -402,7 +406,8 @@ namespace Velum.ReactiveCore
     private static bool TryCreatePropertyInAllConfigurations(
         ModelDoc2 modelDoc,
         string propertyName,
-        string value)
+        string value,
+        string typeKey)
     {
       IReadOnlyList<string> configs = VelumDxfArtifactResolver.TryGetConfigurationNames(modelDoc);
       bool any = false;
@@ -414,7 +419,7 @@ namespace Velum.ReactiveCore
 
         CustomPropertyManager cpm =
             VelumRecipeSolidWorksCustomProperties.TryGetManager(modelDoc, configName);
-        if (TryWriteProperty(cpm, propertyName, value))
+        if (TryWriteProperty(cpm, propertyName, value, typeKey))
           any = true;
       }
 
@@ -424,7 +429,8 @@ namespace Velum.ReactiveCore
     private static bool TryWriteProperty(
         CustomPropertyManager cpm,
         string name,
-        string value)
+        string value,
+        string typeKey)
     {
       if (cpm == null)
         return false;
@@ -434,7 +440,7 @@ namespace Velum.ReactiveCore
           name,
           value,
           overwrite: "always",
-          propertyTypeKey: "text",
+          propertyTypeKey: typeKey,
           out _,
           out _);
     }

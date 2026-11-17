@@ -15,6 +15,7 @@ namespace Velum.UI
     private readonly DataGridView _grid;
     private readonly string _nameColumn;
     private readonly string _valueColumn;
+    private readonly string _typeColumn;
     private string _xmlFilePath;
     private ComboBox _editingComboBox;
     private ContextMenuStrip _contextMenu;
@@ -24,6 +25,7 @@ namespace Velum.UI
         DataGridView grid,
         string nameColumn,
         string valueColumn,
+        string typeColumn,
         string xmlFilePath,
         Image addImage,
         Image removeImage,
@@ -35,6 +37,7 @@ namespace Velum.UI
       _grid = grid ?? throw new ArgumentNullException(nameof(grid));
       _nameColumn = nameColumn;
       _valueColumn = valueColumn;
+      _typeColumn = typeColumn ?? string.Empty;
       _xmlFilePath = xmlFilePath ?? string.Empty;
 
       _grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -47,6 +50,8 @@ namespace Velum.UI
       _grid.CellEndEdit += OnCellEndEdit;
       _grid.CellLeave += (s, e) => RemoveComboBox();
       _grid.KeyDown += OnKeyDown;
+      _grid.DefaultValuesNeeded += OnDefaultValuesNeeded;
+      _grid.DataError += (s, e) => e.ThrowException = false;
 
       BuildContextMenu(addImage, removeImage, defaultImage, removeDefaultImage, clearImage, deleteImage);
     }
@@ -153,6 +158,15 @@ namespace Velum.UI
         DataGridViewRow row = _grid.Rows[rowIndex];
         row.Cells[_nameColumn].Value = propName;
         row.Cells[_valueColumn].Value = controlNode.Attributes?["DefaultValue"]?.Value;
+
+        if (!string.IsNullOrEmpty(_typeColumn) &&
+            _grid.Columns.Contains(_typeColumn))
+        {
+          string typeKey = controlNode.Attributes?["ValueType"]?.Value;
+          row.Cells[_typeColumn].Value =
+              Velum.ReactiveCore.VelumDocumentPropertyTypeDisplayRules.KeyToDisplay(typeKey);
+        }
+
         row.Tag = controlNode;
       }
     }
@@ -172,11 +186,51 @@ namespace Velum.UI
         list.Add(new Velum.ReactiveCore.VelumDocumentPropertyBatchHelper.PropertyPair
         {
           Name = name.Trim(),
-          Value = row.Cells[_valueColumn].Value?.ToString() ?? string.Empty
+          Value = row.Cells[_valueColumn].Value?.ToString() ?? string.Empty,
+          PropertyTypeKey = GetRowTypeKey(row)
         });
       }
 
       return list;
+    }
+
+    /// <summary>
+    /// Ключ типа свойства SolidWorks из ячейки «Тип» строки; при отсутствии столбца — текст.
+    /// </summary>
+    private string GetRowTypeKey(DataGridViewRow row)
+    {
+      if (string.IsNullOrEmpty(_typeColumn) || !_grid.Columns.Contains(_typeColumn))
+        return Velum.ReactiveCore.VelumDocumentPropertyTypeDisplayRules.KeyText;
+
+      string display = row.Cells[_typeColumn].Value?.ToString();
+      return Velum.ReactiveCore.VelumDocumentPropertyTypeDisplayRules.DisplayToKey(display);
+    }
+
+    /// <summary>
+    /// Синхронизирует атрибут <c>ValueType</c> XML-узла свойства с выбранной ячейкой «Тип».
+    /// </summary>
+    private void PersistTypeToXml(DataGridViewRow row)
+    {
+      if (row == null || row.IsNewRow)
+        return;
+
+      var controlNode = row.Tag as XmlNode;
+      if (controlNode == null)
+        return;
+
+      string typeKey = GetRowTypeKey(row);
+      if (controlNode.Attributes["ValueType"] == null)
+      {
+        XmlAttribute attr = controlNode.OwnerDocument.CreateAttribute("ValueType");
+        attr.Value = typeKey;
+        controlNode.Attributes.Append(attr);
+      }
+      else
+      {
+        controlNode.Attributes["ValueType"].Value = typeKey;
+      }
+
+      SaveXml(controlNode.OwnerDocument);
     }
 
     internal bool HasEmptyPropertyValues(out string firstEmptyName)
@@ -214,7 +268,7 @@ namespace Velum.UI
           continue;
 
         string propValue = row.Cells[_valueColumn].Value?.ToString() ?? string.Empty;
-        if (AddNewSettingToXml(propName.Trim(), propValue))
+        if (AddNewSettingToXml(propName.Trim(), propValue, GetRowTypeKey(row)))
         {
           try
           {
@@ -229,7 +283,7 @@ namespace Velum.UI
       }
     }
 
-    internal bool AddNewSettingToXml(string propName, string defaultValue)
+    internal bool AddNewSettingToXml(string propName, string defaultValue, string typeKey)
     {
       if (string.IsNullOrWhiteSpace(_xmlFilePath) || string.IsNullOrWhiteSpace(propName))
         return false;
@@ -261,6 +315,11 @@ namespace Velum.UI
         control.SetAttribute("Type", "ComboBox");
         control.SetAttribute("ReadOnly", "False");
         control.SetAttribute("UserDefineable", "True");
+        control.SetAttribute(
+            "ValueType",
+            string.IsNullOrWhiteSpace(typeKey)
+                ? Velum.ReactiveCore.VelumDocumentPropertyTypeDisplayRules.KeyText
+                : typeKey);
 
         XmlElement data = xmlDoc.CreateElement("Data");
         data.SetAttribute("Path", string.Empty);
@@ -363,10 +422,22 @@ namespace Velum.UI
         return;
 
       DataGridViewRow row = _grid.Rows[e.RowIndex];
-      if (row.IsNewRow || row.Tag != null)
+      if (row.IsNewRow)
         return;
 
-      if (_grid.Columns[e.ColumnIndex].Name != _nameColumn)
+      string changedColumn = _grid.Columns[e.ColumnIndex].Name;
+
+      // Изменён тип у уже существующего свойства — синхронизируем атрибут ValueType в XML.
+      if (changedColumn == _typeColumn && row.Tag != null)
+      {
+        PersistTypeToXml(row);
+        return;
+      }
+
+      if (row.Tag != null)
+        return;
+
+      if (changedColumn != _nameColumn)
         return;
 
       string propName = row.Cells[_nameColumn].Value?.ToString();
@@ -374,7 +445,7 @@ namespace Velum.UI
       if (string.IsNullOrWhiteSpace(propName))
         return;
 
-      if (AddNewSettingToXml(propName.Trim(), propValue))
+      if (AddNewSettingToXml(propName.Trim(), propValue, GetRowTypeKey(row)))
       {
         try
         {
@@ -386,6 +457,18 @@ namespace Velum.UI
         {
         }
       }
+    }
+
+    /// <summary>
+    /// Значение столбца «Тип» для новой строки по умолчанию — «Текст».
+    /// </summary>
+    private void OnDefaultValuesNeeded(object sender, DataGridViewRowEventArgs e)
+    {
+      if (string.IsNullOrEmpty(_typeColumn) || !_grid.Columns.Contains(_typeColumn))
+        return;
+
+      e.Row.Cells[_typeColumn].Value =
+          Velum.ReactiveCore.VelumDocumentPropertyTypeDisplayRules.DefaultDisplay;
     }
 
     private void OnKeyDown(object sender, KeyEventArgs e)

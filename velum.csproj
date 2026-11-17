@@ -165,6 +165,7 @@
     <Compile Include="ReactiveCore\VelumRecipeTemplateResolver.cs" />
     <Compile Include="ReactiveCore\VelumRecipeSolidWorksCustomProperties.cs" />
     <Compile Include="ReactiveCore\VelumSolidCustomPropertyTypes.cs" />
+    <Compile Include="ReactiveCore\VelumDocumentPropertyTypeDisplayRules.cs" />
     <Compile Include="ReactiveCore\RecipeExecutor\RecipeExecutor.cs" />
     <Compile Include="ReactiveCore\RecipeDispatchCooldownTracker.cs" />
     <Compile Include="ReactiveCore\RecipeDispatchEpisodeTracker.cs" />
