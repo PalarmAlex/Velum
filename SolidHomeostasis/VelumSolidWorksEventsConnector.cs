@@ -728,7 +728,7 @@ namespace Velum.SolidHomeostasis
       if (!IsNativePartOrAssemblySavePath(fileName, ".sldprt"))
         return 0;
 
-      VelumExportDocumentationGeometryStampHelper.BeginPartSave();
+      VelumExportDocumentationGeometryStampHelper.BeginPartSave(_part as ModelDoc2);
       VelumNeedDrawingOnSaveCoordinator.TryEnsureBeforeSaveIfEligible(_part as ModelDoc2);
       return 0;
     }
@@ -740,7 +740,7 @@ namespace Velum.SolidHomeostasis
       if (!IsNativePartOrAssemblySavePath(fileName, ".sldprt"))
         return 0;
 
-      VelumExportDocumentationGeometryStampHelper.BeginPartSave();
+      VelumExportDocumentationGeometryStampHelper.BeginPartSave(_part as ModelDoc2);
       VelumNeedDrawingOnSaveCoordinator.TryEnsureBeforeSaveIfEligible(_part as ModelDoc2);
       return 0;
     }

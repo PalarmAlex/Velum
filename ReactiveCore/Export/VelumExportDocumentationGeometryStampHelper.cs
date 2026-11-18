@@ -71,6 +71,17 @@ namespace Velum.ReactiveCore
     private static string _trackedPartDocKey;
 
     /// <summary>
+    /// Был ли документ изменён (<c>GetSaveFlag()</c>) ДО начала сохранения. «Сохранить»
+    /// сбрасывает флаг при записи файла, а genuine rebuild («обновить перед сохранением»)
+    /// приходит внутри save-контура, где live-запись pending подавлена. Фиксируем dirty
+    /// заранее, чтобы в post-save дожать DXF pending (Случай 57).
+    /// </summary>
+    private static bool _partDirtyBeforeSave;
+
+    /// <summary>Ключ документа, для которого зафиксирован <see cref="_partDirtyBeforeSave"/>.</summary>
+    private static string _partDirtyBeforeSaveKey;
+
+    /// <summary>
     /// После записи свойств DXF-экспорта документ dirty: не считать Save/Regen «правкой»,
     /// пока не будет реальной смены геометрии (не fold/unfold развёртки).
     /// </summary>
@@ -131,11 +142,19 @@ namespace Velum.ReactiveCore
         _drawingSaveDepth--;
     }
 
-    /// <summary>Save детали: не писать pending, пока идёт FileSave.</summary>
-    internal static void BeginPartSave()
+    /// <summary>
+    /// Save детали: не писать pending, пока идёт FileSave. Фиксирует <c>GetSaveFlag()</c>
+    /// ДО сохранения — genuine rebuild («обновить перед сохранением») приходит внутри
+    /// save-контура и live-запись pending подавлена; флаг нужен для post-save дожима (Случай 57).
+    /// </summary>
+    internal static void BeginPartSave(ModelDoc2 modelDoc)
     {
       if (_partSaveDepth < 1)
         _partSaveDepth = 1;
+
+      string key = TryGetDocumentKey(modelDoc);
+      _partDirtyBeforeSave = TryGetPartSaveFlag(modelDoc);
+      _partDirtyBeforeSaveKey = key;
     }
 
     /// <summary>Конец Save детали.</summary>
@@ -143,6 +162,22 @@ namespace Velum.ReactiveCore
     {
       if (_partSaveDepth > 0)
         _partSaveDepth--;
+    }
+
+    /// <summary>Значение <c>GetSaveFlag()</c> детали; false при недоступности COM.</summary>
+    private static bool TryGetPartSaveFlag(ModelDoc2 modelDoc)
+    {
+      if (modelDoc == null)
+        return false;
+
+      try
+      {
+        return modelDoc.GetSaveFlag();
+      }
+      catch
+      {
+        return false;
+      }
     }
 
     /// <summary>
@@ -456,8 +491,16 @@ namespace Velum.ReactiveCore
     /// <summary>
     /// После FileSave детали. Если после DXF-экспорта не было правки геометрии —
     /// дожимает export-штампы (Save раньше давал «DXF устарел»).
+    /// <para>
+    /// Если документ был изменён ДО Save (Случай 57), genuine rebuild («обновить перед
+    /// сохранением») пришёл внутри save-контура, где live-запись pending подавлена, а
+    /// ModifyNotify на правку толщины/радиуса не доходит. Post-save regen глотается
+    /// <c>_absorbPartSaveRebuild</c> — метрика молчала до ручного «Обновить». Дожимает
+    /// DXF pending по <c>GetSaveFlag()</c>, зафиксированному в <see cref="BeginPartSave"/>,
+    /// исключая fold/unfold и смену активной конфигурации (не DXF-геометрия, E38-щиты).
+    /// </para>
     /// </summary>
-    /// <returns>true, если штампы перефинализированы (нужен MarkStale Export).</returns>
+    /// <returns>true, если штампы перефинализированы или дописан pending (нужен MarkStale Export).</returns>
     internal static bool NotifyPartSaved(ModelDoc2 modelDoc)
     {
       if (modelDoc == null)
@@ -466,6 +509,17 @@ namespace Velum.ReactiveCore
       string key = TryGetDocumentKey(modelDoc);
       bool sameDoc = string.Equals(key, _trackedPartDocKey, StringComparison.Ordinal);
       bool wasAbsorbing = sameDoc && _absorbDxfExportPropertyDirtyUntilSave;
+
+      // Genuine-правка геометрии, подавленная save-контуром: GetSaveFlag() был true ДО save.
+      // Сравниваем fold/config ДО пересъёма baseline (CaptureFlatPatternFoldSignature ниже).
+      bool wasDirtyBeforeSave =
+          string.Equals(key, _partDirtyBeforeSaveKey, StringComparison.Ordinal) &&
+          _partDirtyBeforeSave;
+      bool foldOnlyChange = IsFlatPatternFoldOnlyChange(modelDoc);
+      bool configOnlyChange = TryAbsorbActiveConfigurationChange(modelDoc);
+
+      _partDirtyBeforeSave = false;
+      _partDirtyBeforeSaveKey = null;
       _absorbDxfExportPropertyDirtyUntilSave = false;
       _absorbPartSaveRebuild = true;
 
@@ -474,19 +528,36 @@ namespace Velum.ReactiveCore
 
       CaptureFlatPatternFoldSignature(modelDoc);
 
-      if (!wasAbsorbing)
+      if (wasAbsorbing)
+      {
+        bool finalized = false;
+        RunWithGeometryPendingStampSyncSuppressed(() =>
+        {
+          IReadOnlyList<string> configs = VelumDxfArtifactResolver.TryGetConfigurationNames(modelDoc);
+          TryResyncPerConfigDxfGeometryStampsCore(modelDoc, configs);
+          finalized = true;
+          Logger.Info("Velum DXF stamps after save (no content change since export)");
+        });
+
+        return finalized;
+      }
+
+      // Не DXF-экспорт: если была genuine-правка геометрии — дожать pending.
+      bool needPending = VelumDxfGeometryStampRules.ShouldWriteDxfPendingAfterSave(
+          wasAbsorbingExportDirty: false,
+          wasDirtyBeforeSave: wasDirtyBeforeSave,
+          isFlatPatternFoldOnlyChange: foldOnlyChange,
+          isActiveConfigurationOnlyChange: configOnlyChange);
+
+      if (!needPending)
         return false;
 
-      bool finalized = false;
+      string dxfConfigName =
+          VelumDxfArtifactResolver.TryResolveDefaultExportConfigurationName(modelDoc);
       RunWithGeometryPendingStampSyncSuppressed(() =>
-      {
-        IReadOnlyList<string> configs = VelumDxfArtifactResolver.TryGetConfigurationNames(modelDoc);
-        TryResyncPerConfigDxfGeometryStampsCore(modelDoc, configs);
-        finalized = true;
-        Logger.Info("Velum DXF stamps after save (no content change since export)");
-      });
-
-      return finalized;
+          TrySyncPendingGeometryStamp(modelDoc, dxfConfigName, out _));
+      Logger.Info("Velum DXF pending after save (geometry changed before save, suppressed in save contour)");
+      return true;
     }
 
     /// <summary>
@@ -1600,33 +1671,48 @@ _trackedDrawingDocKey = null;
           return false;
         }
 
+        // Случай 56: добавление радиуса / изменение толщины может не поднять GetUpdateStamp
+        // в момент ModifyNotify — тогда pending == export и метрика «DXF устарел» молчит.
+        // Форсим pending > export (по образцу PDF-версии), если счётчик не вырос относительно
+        // экспортного штампа.
+        TryReadStoredUpdateStamp(
+            modelDoc,
+            VelumExportDocumentationProperties.DxfGeometryUpdateStamp,
+            config,
+            out int exportStamp);
+        int pendingToWrite = VelumDxfGeometryStampRules.ComputeForcedPendingStamp(stamp, exportStamp);
+
         if (TryReadStoredUpdateStamp(
                 modelDoc,
                 VelumExportDocumentationProperties.DxfGeometryPendingStamp,
                 config,
                 out int existingPending) &&
-            existingPending >= stamp)
+            existingPending >= pendingToWrite)
           return true;
 
         if (!TryWriteExportGeometryStamp(
                 modelDoc,
                 VelumExportDocumentationProperties.DxfGeometryPendingStamp,
                 config,
-                stamp,
+                pendingToWrite,
                 out message))
           return false;
 
         if (!TryGetCurrentUpdateStamp(modelDoc, out int afterStamp) || afterStamp <= 0)
           return true;
 
-        if (afterStamp == stamp)
+        // Запись свойства могла сдвинуть GetUpdateStamp — догоняем pending, но не понижаем
+        // его ниже уже записанного форса (после форса pendingToWrite может быть больше
+        // реального GetUpdateStamp, а afterStamp — вернуться к exportStamp).
+        int finalPending = VelumDxfGeometryStampRules.ComputeForcedPendingStamp(afterStamp, exportStamp);
+        if (finalPending <= pendingToWrite)
           return true;
 
         return TryWriteExportGeometryStamp(
             modelDoc,
             VelumExportDocumentationProperties.DxfGeometryPendingStamp,
             config,
-            afterStamp,
+            finalPending,
             out message);
       }
     }

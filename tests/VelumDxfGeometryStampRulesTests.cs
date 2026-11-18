@@ -1,0 +1,167 @@
+using Velum.ReactiveCore.Export;
+using Xunit;
+
+namespace Velum.ReactiveCore.Tests
+{
+  /// <summary>
+  /// Регрессия ложного «DXF устарел» при правке, не поднимающей GetUpdateStamp.
+  /// <para>
+  /// Случай 56: при добавлении радиуса скругления или изменении толщины листовой детали
+  /// SolidWorks может не поднять GetUpdateStamp в момент ModifyNotify. Если pending == export,
+  /// метрика «DXF устарел» (pending &gt; export) молчит. Форс pending выше export закрывает
+  /// эту дыру (по образцу PDF-версии, Случай 18 / E38).
+  /// </para>
+  /// </summary>
+  public class VelumDxfGeometryStampRulesTests
+  {
+    // --- ShouldForcePendingBeyondExport ---
+
+    [Fact]
+    public void Force_NoExportStamp_ReturnsFalse()
+    {
+      // Нет экспортного штампа — форсить нечего, первый запуск.
+      Assert.False(VelumDxfGeometryStampRules.ShouldForcePendingBeyondExport(currentStamp: 10, exportStamp: 0));
+    }
+
+    [Fact]
+    public void Force_CurrentEqualsExport_ReturnsTrue()
+    {
+      // GetUpdateStamp не вырос от экспорта — правка могла не поднять счётчик (add радиуса).
+      Assert.True(VelumDxfGeometryStampRules.ShouldForcePendingBeyondExport(currentStamp: 15, exportStamp: 15));
+    }
+
+    [Fact]
+    public void Force_CurrentLessThanExport_ReturnsTrue()
+    {
+      // Текущий штамп меньше экспортного (возврат GetUpdateStamp) — форсим pending.
+      Assert.True(VelumDxfGeometryStampRules.ShouldForcePendingBeyondExport(currentStamp: 10, exportStamp: 15));
+    }
+
+    [Fact]
+    public void Force_CurrentGreaterThanExport_ReturnsFalse()
+    {
+      // GetUpdateStamp реально вырос — правка зафиксирована, форс не нужен.
+      Assert.False(VelumDxfGeometryStampRules.ShouldForcePendingBeyondExport(currentStamp: 16, exportStamp: 15));
+    }
+
+    [Fact]
+    public void Force_ExportZero_CurrentZero_ReturnsFalse()
+    {
+      // Оба нулевых — exportStamp <= 0, форс не нужен.
+      Assert.False(VelumDxfGeometryStampRules.ShouldForcePendingBeyondExport(currentStamp: 0, exportStamp: 0));
+    }
+
+    // --- ComputeForcedPendingStamp ---
+
+    [Fact]
+    public void Forced_ExportZero_ReturnsCurrentStamp()
+    {
+      // Нет экспортного штампа — вернуть текущий без изменений.
+      Assert.Equal(42, VelumDxfGeometryStampRules.ComputeForcedPendingStamp(currentStamp: 42, exportStamp: 0));
+    }
+
+    [Fact]
+    public void Forced_CurrentEqualsExport_ReturnsExportPlusOne()
+    {
+      // GetUpdateStamp не вырос — форсим pending = export + 1.
+      Assert.Equal(16, VelumDxfGeometryStampRules.ComputeForcedPendingStamp(currentStamp: 15, exportStamp: 15));
+    }
+
+    [Fact]
+    public void Forced_CurrentLessThanExport_ReturnsExportPlusOne()
+    {
+      // Текущий меньше экспортного — форсим pending = export + 1.
+      Assert.Equal(16, VelumDxfGeometryStampRules.ComputeForcedPendingStamp(currentStamp: 10, exportStamp: 15));
+    }
+
+    [Fact]
+    public void Forced_CurrentGreaterThanExport_ReturnsCurrentStamp()
+    {
+      // GetUpdateStamp вырос — вернуть текущий, форс не нужен.
+      Assert.Equal(16, VelumDxfGeometryStampRules.ComputeForcedPendingStamp(currentStamp: 16, exportStamp: 15));
+    }
+
+    [Fact]
+    public void Forced_ZeroStamps_ReturnsZero()
+    {
+      // Оба нуля — exportStamp <= 0, возвращаем currentStamp.
+      Assert.Equal(0, VelumDxfGeometryStampRules.ComputeForcedPendingStamp(currentStamp: 0, exportStamp: 0));
+    }
+
+    [Fact]
+    public void Forced_Edge_LargeExport_ReturnsExportPlusOne()
+    {
+      // Большой экспортный штамп — форс работает корректно.
+      Assert.Equal(int.MaxValue, VelumDxfGeometryStampRules.ComputeForcedPendingStamp(
+          currentStamp: 100, exportStamp: int.MaxValue - 1));
+    }
+
+    // --- ShouldWriteDxfPendingAfterSave (Случай 57) ---
+
+    [Fact]
+    public void AfterSave_GenuineEdit_WritesPending()
+    {
+      // Правка толщины/радиуса: dirty до Save, не fold, не смена конфигурации → пишем pending.
+      Assert.True(VelumDxfGeometryStampRules.ShouldWriteDxfPendingAfterSave(
+          wasAbsorbingExportDirty: false,
+          wasDirtyBeforeSave: true,
+          isFlatPatternFoldOnlyChange: false,
+          isActiveConfigurationOnlyChange: false));
+    }
+
+    [Fact]
+    public void AfterSave_AbsorbingExportDirty_DoesNotWritePending()
+    {
+      // Dirty от записи свойств DXF-экспорта перифинализируется отдельно — pending не пишем.
+      Assert.False(VelumDxfGeometryStampRules.ShouldWriteDxfPendingAfterSave(
+          wasAbsorbingExportDirty: true,
+          wasDirtyBeforeSave: true,
+          isFlatPatternFoldOnlyChange: false,
+          isActiveConfigurationOnlyChange: false));
+    }
+
+    [Fact]
+    public void AfterSave_NotDirtyBeforeSave_DoesNotWritePending()
+    {
+      // Документ не менялся до Save — правки геометрии не было, pending не нужен.
+      Assert.False(VelumDxfGeometryStampRules.ShouldWriteDxfPendingAfterSave(
+          wasAbsorbingExportDirty: false,
+          wasDirtyBeforeSave: false,
+          isFlatPatternFoldOnlyChange: false,
+          isActiveConfigurationOnlyChange: false));
+    }
+
+    [Fact]
+    public void AfterSave_FoldOnlyChange_DoesNotWritePending()
+    {
+      // Свернуть/развернуть развёртку DXF-геометрию не меняет — pending не пишем.
+      Assert.False(VelumDxfGeometryStampRules.ShouldWriteDxfPendingAfterSave(
+          wasAbsorbingExportDirty: false,
+          wasDirtyBeforeSave: true,
+          isFlatPatternFoldOnlyChange: true,
+          isActiveConfigurationOnlyChange: false));
+    }
+
+    [Fact]
+    public void AfterSave_ActiveConfigOnlyChange_DoesNotWritePending()
+    {
+      // Переключение активной конфигурации — не правка DXF-геометрии, pending не пишем.
+      Assert.False(VelumDxfGeometryStampRules.ShouldWriteDxfPendingAfterSave(
+          wasAbsorbingExportDirty: false,
+          wasDirtyBeforeSave: true,
+          isFlatPatternFoldOnlyChange: false,
+          isActiveConfigurationOnlyChange: true));
+    }
+
+    [Fact]
+    public void AfterSave_NotDirtyAndFoldOnly_DoesNotWritePending()
+    {
+      // Комбинация «не грязный» + fold-only — тем более не пишем.
+      Assert.False(VelumDxfGeometryStampRules.ShouldWriteDxfPendingAfterSave(
+          wasAbsorbingExportDirty: false,
+          wasDirtyBeforeSave: false,
+          isFlatPatternFoldOnlyChange: true,
+          isActiveConfigurationOnlyChange: false));
+    }
+  }
+}

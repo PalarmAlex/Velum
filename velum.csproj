@@ -147,6 +147,7 @@
     <Compile Include="ReactiveCore\Export\VelumPdfExportService.cs" />
     <Compile Include="ReactiveCore\Export\VelumPdfExportDialogHost.cs" />
     <Compile Include="ReactiveCore\Export\VelumExportDocumentationProperties.cs" />
+    <Compile Include="ReactiveCore\Export\VelumDxfGeometryStampRules.cs" />
     <Compile Include="ReactiveCore\VelumNeedDrawingPropertyWriter.cs" />
     <Compile Include="ReactiveCore\VelumBlankSizeProperties.cs" />
     <Compile Include="ReactiveCore\VelumBlankSizePropertyLinksService.cs" />
