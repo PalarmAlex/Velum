@@ -138,52 +138,117 @@ namespace Velum.UI
         if (!File.Exists(filePath))
           continue;
 
-        try
-        {
-          var doc = new XmlDocument();
-          doc.Load(filePath);
-          materialHierarchy[fileName] = new List<string>();
+        // Разобранный XML переиспользуется между вызовами и экземплярами формы
+        // (см. VelumMaterialDatabaseCache): дерево раскрывает/ищет узлы, повторно
+        // обращаясь к одной и той же базе, — без кэша файл парсился на каждый узел.
+        List<string> entries = VelumMaterialDatabaseCache.GetOrLoad(filePath);
+        if (entries == null || entries.Count == 0)
+          continue;
 
-          XmlNodeList classifications = doc.SelectNodes("//*[local-name()='classification']") ??
-                                        doc.SelectNodes("//classification");
-          if (classifications == null || classifications.Count == 0)
-          {
-            classifications = doc.SelectNodes("//materials/classification") ??
-                              doc.SelectNodes("/classification");
-          }
-
-          if (classifications == null || classifications.Count == 0)
-            continue;
-
-          foreach (XmlNode classification in classifications)
-          {
-            string categoryName = classification.Attributes?["name"]?.Value;
-            if (string.IsNullOrEmpty(categoryName))
-              continue;
-
-            materialHierarchy[fileName].Add(categoryName);
-
-            XmlNodeList materials = classification.SelectNodes("*[local-name()='material']") ??
-                                    classification.SelectNodes("material");
-            if (materials == null)
-              continue;
-
-            foreach (XmlNode material in materials)
-            {
-              string materialName = material.Attributes?["name"]?.Value;
-              if (!string.IsNullOrEmpty(materialName))
-                materialHierarchy[fileName].Add("  " + materialName);
-            }
-          }
-        }
-        catch (Exception ex)
-        {
-          if (VelumAppConfig.SolidHomeostasisDebugLog)
-            Debug.WriteLine("Velum material XML load error: " + ex.Message);
-        }
+        materialHierarchy[fileName] = entries;
       }
 
       return materialHierarchy;
+    }
+  }
+
+  /// <summary>
+  /// Разделяемый кэш разобранных баз материалов (.sldmat). Переживает закрытие формы,
+  /// поэтому повторные открытия и поиск в дереве не перечитывают XML. Инвалидация — по
+  /// дате изменения файла, чтобы отредактированная вручную база перечиталась автоматически.
+  /// </summary>
+  internal static class VelumMaterialDatabaseCache
+  {
+    private static readonly object _sync = new object();
+    private static readonly Dictionary<string, CacheEntry> _entries =
+        new Dictionary<string, CacheEntry>(StringComparer.OrdinalIgnoreCase);
+
+    private sealed class CacheEntry
+    {
+      internal DateTime LastWriteUtc;
+      internal List<string> Values;
+    }
+
+    /// <summary>
+    /// Возвращает плоский список записей базы (имена категорий и материалов с отступом «  »),
+    /// либо null, если файл не удалось разобрать.
+    /// </summary>
+    internal static List<string> GetOrLoad(string filePath)
+    {
+      DateTime lastWriteUtc;
+      try
+      {
+        lastWriteUtc = File.GetLastWriteTimeUtc(filePath);
+      }
+      catch
+      {
+        return null;
+      }
+
+      lock (_sync)
+      {
+        CacheEntry cached;
+        if (_entries.TryGetValue(filePath, out cached) && cached.LastWriteUtc == lastWriteUtc)
+          return cached.Values;
+      }
+
+      List<string> parsed = ParseFile(filePath);
+
+      lock (_sync)
+      {
+        _entries[filePath] = new CacheEntry { LastWriteUtc = lastWriteUtc, Values = parsed };
+      }
+
+      return parsed;
+    }
+
+    private static List<string> ParseFile(string filePath)
+    {
+      var entries = new List<string>();
+      try
+      {
+        var doc = new XmlDocument();
+        doc.Load(filePath);
+
+        XmlNodeList classifications = doc.SelectNodes("//*[local-name()='classification']") ??
+                                      doc.SelectNodes("//classification");
+        if (classifications == null || classifications.Count == 0)
+        {
+          classifications = doc.SelectNodes("//materials/classification") ??
+                            doc.SelectNodes("/classification");
+        }
+
+        if (classifications == null || classifications.Count == 0)
+          return entries;
+
+        foreach (XmlNode classification in classifications)
+        {
+          string categoryName = classification.Attributes?["name"]?.Value;
+          if (string.IsNullOrEmpty(categoryName))
+            continue;
+
+          entries.Add(categoryName);
+
+          XmlNodeList materials = classification.SelectNodes("*[local-name()='material']") ??
+                                  classification.SelectNodes("material");
+          if (materials == null)
+            continue;
+
+          foreach (XmlNode material in materials)
+          {
+            string materialName = material.Attributes?["name"]?.Value;
+            if (!string.IsNullOrEmpty(materialName))
+              entries.Add("  " + materialName);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        if (VelumAppConfig.SolidHomeostasisDebugLog)
+          Debug.WriteLine("Velum material XML load error: " + ex.Message);
+      }
+
+      return entries;
     }
   }
 }
