@@ -447,6 +447,7 @@
     <Compile Include="Common\AssemblyRegistry\VelumBomExchangeLayoutForm.Designer.cs">
       <DependentUpon>VelumBomExchangeLayoutForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Common\ProductRegistry\VelumProductRegistryLinkFolderRules.cs" />
     <Compile Include="Common\ProductRegistry\VelumProductRegistryModels.cs" />
     <Compile Include="Common\ProductRegistry\VelumProductRegistryStore.cs" />
     <Compile Include="Common\ProductRegistry\VelumProductRegistryPathStatus.cs" />

@@ -3314,20 +3314,20 @@ namespace Velum.UI
         return;
       }
 
-      int? initialFolderId = null;
+      var folderIds = new List<int>();
+      var folderIdByItem = new Dictionary<int, int>();
       foreach (int itemId in ids)
       {
         VelumProductItem item = _store.GetItem(itemId);
         if (item == null)
           continue;
-        if (initialFolderId == null)
-          initialFolderId = item.FolderId;
-        else if (initialFolderId.Value != item.FolderId)
-        {
-          initialFolderId = null;
-          break;
-        }
+        folderIdByItem[itemId] = item.FolderId;
+        folderIds.Add(item.FolderId);
       }
+
+      int? initialFolderId = VelumProductRegistryLinkFolderRules.ResolveInitialFolderId(
+          folderIds,
+          folderId => _store.GetFolder(folderId)?.ParentId ?? 0);
 
       using (var form = new VelumProductRegistryFolderPickerForm(_store, initialFolderId))
       {
