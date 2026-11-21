@@ -637,6 +637,20 @@ namespace Velum.Configuration
     /// </summary>
     public static int DocumentColorDrawing => GetIntSetting("DocumentColorDrawing", 3);
 
+    /// <summary>
+    /// ID воздействия-триггера для кнопки «Поощрить» на пульте агента.
+    /// По клику применяется это воздействие (через стандартный путь стимула), что запускает
+    /// привязанный к нему б/у рефлекс. 0 — кнопка не настроена.
+    /// </summary>
+    public static int RewardInfluenceId => GetIntSetting("RewardInfluenceId", 0);
+
+    /// <summary>
+    /// ID воздействия-триггера для кнопки «Наказать» на пульте агента.
+    /// По клику применяется это воздействие (через стандартный путь стимула), что запускает
+    /// привязанный к нему б/у рефлекс. 0 — кнопка не настроена.
+    /// </summary>
+    public static int PunishInfluenceId => GetIntSetting("PunishInfluenceId", 0);
+
     /// <summary>Шаблон имени DXF, сохранённый при последнем экспорте.</summary>
     public static string DxfFileNameTemplate =>
         GetSetting("DxfFileNameTemplate") ?? string.Empty;

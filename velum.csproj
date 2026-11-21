@@ -294,6 +294,7 @@
     </Compile>
     <Compile Include="Common\Reflex\VelumConditionedReflexForbidHelper.cs" />
     <Compile Include="Common\Reflex\VelumReflexForbidTargetRules.cs" />
+    <Compile Include="Common\Reflex\VelumInfluenceButtonRules.cs" />
     <Compile Include="Common\Export\VelumDxfExportDialog.Designer.cs">
       <DependentUpon>VelumDxfExportDialog.cs</DependentUpon>
     </Compile>

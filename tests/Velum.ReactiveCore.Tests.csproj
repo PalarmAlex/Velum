@@ -50,6 +50,7 @@
     <Compile Include="..\ReactiveCore\VelumChainStepOutcomeRules.cs" Link="src\VelumChainStepOutcomeRules.cs" />
     <Compile Include="..\ReactiveCore\VelumRunSwCommandEchoRules.cs" Link="src\VelumRunSwCommandEchoRules.cs" />
     <Compile Include="..\Common\Reflex\VelumReflexForbidTargetRules.cs" Link="src\VelumReflexForbidTargetRules.cs" />
+    <Compile Include="..\Common\Reflex\VelumInfluenceButtonRules.cs" Link="src\VelumInfluenceButtonRules.cs" />
     <Compile Include="..\Common\ListFilter\VelumListFilterFormatter.cs" Link="src\VelumListFilterFormatter.cs" />
     <Compile Include="..\Common\Logs\VelumLogSessionRules.cs" Link="src\VelumLogSessionRules.cs" />
     <Compile Include="..\Common\Logs\VelumLogCellFillRules.cs" Link="src\VelumLogCellFillRules.cs" />
@@ -110,6 +111,7 @@
     <Compile Include="VelumChainStepOutcomeRulesTests.cs" />
     <Compile Include="VelumRunSwCommandEchoRulesTests.cs" />
     <Compile Include="VelumReflexForbidTargetRulesTests.cs" />
+    <Compile Include="VelumInfluenceButtonRulesTests.cs" />
     <Compile Include="VelumListFilterFormatterTests.cs" />
     <Compile Include="VelumLogSessionRulesTests.cs" />
     <Compile Include="VelumLogSessionDeletionTests.cs" />

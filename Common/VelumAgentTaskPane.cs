@@ -138,6 +138,10 @@ namespace Velum.UI
     {
       if (_btnSend != null)
         _btnSend.Click -= OnSendMessageClick;
+      if (_btnReward != null)
+        _btnReward.Click -= OnRewardInfluenceClick;
+      if (_btnPunish != null)
+        _btnPunish.Click -= OnPunishInfluenceClick;
       if (_chkVerbalAuthoritative != null)
         _chkVerbalAuthoritative.CheckedChanged -= OnVerbalAuthoritativeCheckedChanged;
       if (_chkAutoAddSensors != null)
@@ -181,6 +185,11 @@ namespace Velum.UI
       HookPulseEvents();
       _scrollPanel.Resize += ScrollPanel_Resize;
       _btnSend.Click += OnSendMessageClick;
+      if (_btnReward != null)
+        _btnReward.Click += OnRewardInfluenceClick;
+      if (_btnPunish != null)
+        _btnPunish.Click += OnPunishInfluenceClick;
+      RefreshInfluenceButtonTooltips();
       if (_chkVerbalAuthoritative != null)
       {
         _chkVerbalAuthoritative.Checked = false;
@@ -714,9 +723,30 @@ namespace Velum.UI
         return;
 
       int pad = 2;
+      int gap = 2;
       int btnH = SendButtonHeightPx - 2;
-      int btnW = Math.Max(1, innerW - 2 * pad);
-      _btnSend.SetBounds(pad, pad, btnW, btnH);
+
+      // Кнопки «Наказать» и «Поощрить» — по 1/4 ширины панели, «Отправить» — остальное.
+      // Если Designer не создал кнопки奖惩 (защита от partial-сборок) — «Отправить» на всю ширину.
+      int avail = innerW - 2 * pad;
+      if (_btnPunish != null && _btnReward != null)
+      {
+        avail -= 2 * gap;
+        int quarter = Math.Max(1, avail / 4);
+        int sendW = Math.Max(1, avail - 2 * quarter);
+
+        int cx = pad;
+        _btnPunish.SetBounds(cx, pad, quarter, btnH);
+        cx += quarter + gap;
+        _btnReward.SetBounds(cx, pad, quarter, btnH);
+        cx += quarter + gap;
+        _btnSend.SetBounds(cx, pad, sendW, btnH);
+      }
+      else
+      {
+        _btnSend.SetBounds(pad, pad, Math.Max(1, avail), btnH);
+      }
+
       _pnlSendRow.Height = pad + btnH + pad;
     }
 
@@ -890,9 +920,14 @@ namespace Velum.UI
         return;
       }
 
+      // Воздействия кнопок «Поощрить»/«Наказать» скрыты из списка, чтобы оператор не
+      // выбирал их вручную и не дублировал действия кнопок.
+      HashSet<int> hiddenInfluenceIds = VelumInfluenceButtonRules.BuildHiddenInfluenceIds(
+          VelumAppConfig.RewardInfluenceId, VelumAppConfig.PunishInfluenceId);
+
       IReadOnlyList<InfluenceActionSystem.GomeostasisInfluenceAction> list =
           InfluenceActionSystem.Instance.GetAllInfluenceActions()
-              .Where(a => a != null && !a.IsEnvironmentProbeAction)
+              .Where(a => a != null && !a.IsEnvironmentProbeAction && !hiddenInfluenceIds.Contains(a.Id))
               .ToList();
 
       using (var dlg = new VelumOperatorInfluencesPickerForm(
@@ -952,6 +987,13 @@ namespace Velum.UI
     {
       UnhookPulseEvents();
       HookPulseEvents();
+      RefreshInfluenceButtonTooltips();
+
+      // Обновить учительские воздействия в движке после перезагрузки ISIDA.
+      AppGlobalState.SetTeacherInfluenceIds(
+          VelumAppConfig.RewardInfluenceId,
+          VelumAppConfig.PunishInfluenceId);
+
       RequestRefresh();
     }
 
@@ -2123,6 +2165,113 @@ namespace Velum.UI
 
         _operatorInfluenceIds.Clear();
         RefreshOperatorInfluencesDisplay();
+      }
+      finally
+      {
+        RefreshSwBufferText();
+      }
+    }
+
+    /// <summary>
+    /// Кнопка «Поощрить»: применяет воздействие из настройки <see cref="VelumAppConfig.RewardInfluenceId"/>
+    /// стандартным путём стимула (запускает привязанный к нему б/у рефлекс).
+    /// </summary>
+    private void OnRewardInfluenceClick(object sender, EventArgs e)
+    {
+      TryTriggerInfluenceFromButton(VelumAppConfig.RewardInfluenceId, "Поощрить");
+    }
+
+    /// <summary>
+    /// Кнопка «Наказать»: применяет воздействие из настройки <see cref="VelumAppConfig.PunishInfluenceId"/>
+    /// стандартным путём стимула (запускает привязанный к нему б/у рефлекс).
+    /// </summary>
+    private void OnPunishInfluenceClick(object sender, EventArgs e)
+    {
+      TryTriggerInfluenceFromButton(VelumAppConfig.PunishInfluenceId, "Наказать");
+    }
+
+    /// <summary>
+    /// Обновляет всплывающие подсказки кнопок «Поощрить» / «Наказать» по текущим настройкам
+    /// (ID воздействия или указание, что кнопка не настроена).
+    /// </summary>
+    private void RefreshInfluenceButtonTooltips()
+    {
+      if (_parameterToolTip == null)
+        return;
+      if (_btnReward != null)
+      {
+        int id = VelumAppConfig.RewardInfluenceId;
+        _parameterToolTip.SetToolTip(_btnReward,
+            VelumInfluenceButtonRules.IsConfigured(id)
+                ? VelumInfluenceButtonRules.BuildConfiguredTooltip("Поощрить", id)
+                : VelumInfluenceButtonRules.RewardNotConfiguredTooltip);
+      }
+      if (_btnPunish != null)
+      {
+        int id = VelumAppConfig.PunishInfluenceId;
+        _parameterToolTip.SetToolTip(_btnPunish,
+            VelumInfluenceButtonRules.IsConfigured(id)
+                ? VelumInfluenceButtonRules.BuildConfiguredTooltip("Наказать", id)
+                : VelumInfluenceButtonRules.PunishNotConfiguredTooltip);
+      }
+    }
+
+    /// <summary>
+    /// Запуск воздействия по клику кнопки: проверяет настройку и существование воздействия,
+    /// затем отправляет стимул без вербального/командного текста (только воздействие + текущие
+    /// тон/настроение пульта).
+    /// </summary>
+    /// <param name="influenceId">ID воздействия-триггера из настройки (0 — не настроен).</param>
+    /// <param name="buttonCaption">Подпись кнопки для сообщений.</param>
+    private void TryTriggerInfluenceFromButton(int influenceId, string buttonCaption)
+    {
+      if (!VelumInfluenceButtonRules.IsConfigured(influenceId))
+      {
+        AppendAgentOutputLine("Ошибка: " + VelumInfluenceButtonRules.NotConfiguredMessage);
+        return;
+      }
+
+      try
+      {
+        if (!VelumIsidaHost.TryInitialize(out string initErr))
+        {
+          AppendAgentOutputLine("Ошибка: " + initErr);
+          return;
+        }
+
+        if (!GlobalTimer.IsPulsationRunning)
+        {
+          AppendAgentOutputLine("Пульсация выключена — стимул не применён.");
+          return;
+        }
+
+        if (AppGlobalState.IsDead)
+        {
+          AppendAgentOutputLine("Агент мёртв — стимул не применён.");
+          return;
+        }
+
+        if (InfluenceActionSystem.IsInitialized
+            && InfluenceActionSystem.Instance.GetInfluenceAction(influenceId) == null)
+        {
+          AppendAgentOutputLine("Ошибка: " + VelumInfluenceButtonRules.BuildInfluenceNotFoundMessage(influenceId));
+          return;
+        }
+
+        List<int> triggerIds = VelumInfluenceButtonRules.ResolveTriggerIds(influenceId);
+        if (!VelumAgentStimulusSender.TrySendOperatorStimulus(
+                string.Empty,
+                string.Empty,
+                triggerIds,
+                SelectedToneId,
+                SelectedMoodId,
+                out string sendErr))
+        {
+          AppendAgentOutputLine("Ошибка: " + (sendErr ?? "неизвестная ошибка"));
+          return;
+        }
+
+        AppendAgentOutputLine("Кнопка «" + buttonCaption + "»: применено воздействие ID=" + influenceId + ".");
       }
       finally
       {

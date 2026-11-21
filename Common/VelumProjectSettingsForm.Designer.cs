@@ -27,6 +27,11 @@ namespace Velum.UI
     private System.Windows.Forms.ComboBox _cmbDocumentColorAssembly;
     private System.Windows.Forms.Label _lblDocumentColorDrawing;
     private System.Windows.Forms.ComboBox _cmbDocumentColorDrawing;
+    private System.Windows.Forms.Label _lblReflexButtonsHint;
+    private System.Windows.Forms.Label _lblRewardReflexId;
+    private System.Windows.Forms.TextBox _tbRewardReflexId;
+    private System.Windows.Forms.Label _lblPunishReflexId;
+    private System.Windows.Forms.TextBox _tbPunishReflexId;
 
     /// <summary>
     /// Clean up any resources being used.
@@ -49,2342 +54,2401 @@ namespace Velum.UI
     /// </summary>
     private void InitializeComponent()
     {
-      this.components = new System.ComponentModel.Container();
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(VelumProjectSettingsForm));
-      this.tabControl1 = new System.Windows.Forms.TabControl();
-      this.tabPage1 = new System.Windows.Forms.TabPage();
-      this._lblPathProductRegistry = new System.Windows.Forms.Label();
-      this._tbProductRegistry = new System.Windows.Forms.TextBox();
-      this._btnBrowseProductRegistry = new System.Windows.Forms.Button();
-      this._lblBomExchange = new System.Windows.Forms.Label();
-      this._tbBomExchange = new System.Windows.Forms.TextBox();
-      this._btnBrowseBomExchange = new System.Windows.Forms.Button();
-      this._lblDocumentRootPaths = new System.Windows.Forms.Label();
-      this._tbDocumentRootPaths = new System.Windows.Forms.TextBox();
-      this._lblPathScenario = new System.Windows.Forms.Label();
-      this._tbScenarioReports = new System.Windows.Forms.TextBox();
-      this._btnBrowseScenario = new System.Windows.Forms.Button();
-      this._lblPathBoot = new System.Windows.Forms.Label();
-      this._tbBoot = new System.Windows.Forms.TextBox();
-      this._btnBrowseBoot = new System.Windows.Forms.Button();
-      this._lblPathLogs = new System.Windows.Forms.Label();
-      this._tbLogs = new System.Windows.Forms.TextBox();
-      this._btnBrowseLogs = new System.Windows.Forms.Button();
-      this._lblPathGomeostas = new System.Windows.Forms.Label();
-      this._tbGomeostas = new System.Windows.Forms.TextBox();
-      this._btnBrowseGomeostas = new System.Windows.Forms.Button();
-      this._lblPathSettings = new System.Windows.Forms.Label();
-      this._tbSettingsPath = new System.Windows.Forms.TextBox();
-      this._btnBrowseSettings = new System.Windows.Forms.Button();
-      this.tabPage2 = new System.Windows.Forms.TabPage();
-      this._chkVerbalAuthoritative = new System.Windows.Forms.CheckBox();
-      this._chkObservationMode = new System.Windows.Forms.CheckBox();
-      this._lblLogFormat = new System.Windows.Forms.Label();
-      this._cmbLogFormat = new System.Windows.Forms.ComboBox();
-      this._lblLogEnabled = new System.Windows.Forms.Label();
-      this._chkLog = new System.Windows.Forms.CheckBox();
-      this._lblSolidHomeostasisDebugLog = new System.Windows.Forms.Label();
-      this._chkSolidHomeostasisDebugLog = new System.Windows.Forms.CheckBox();
-      this._lblSolidHostMinDelta = new System.Windows.Forms.Label();
-      this._tbSolidHostMinDelta = new System.Windows.Forms.TextBox();
-      this._lblSolidMetricEpsilon = new System.Windows.Forms.Label();
-      this._tbSolidMetricEpsilon = new System.Windows.Forms.TextBox();
-      this._lblRecognition = new System.Windows.Forms.Label();
-      this._tbRecognition = new System.Windows.Forms.TextBox();
-      this._lblReflexDur = new System.Windows.Forms.Label();
-      this._tbReflexDur = new System.Windows.Forms.TextBox();
-      this._lblDynamic = new System.Windows.Forms.Label();
-      this._tbDynamic = new System.Windows.Forms.TextBox();
-      this._lblDifSensor = new System.Windows.Forms.Label();
-      this._tbDifSensor = new System.Windows.Forms.TextBox();
-      this._lblHomeostasisPulseDrift = new System.Windows.Forms.Label();
-      this._chkHomeostasisPulseDrift = new System.Windows.Forms.CheckBox();
-      this._lblCompare = new System.Windows.Forms.Label();
-      this._tbCompare = new System.Windows.Forms.TextBox();
-      this._lblAdaptive = new System.Windows.Forms.Label();
-      this._cmbAdaptive = new System.Windows.Forms.ComboBox();
-      this._lblStyle = new System.Windows.Forms.Label();
-      this._cmbStyle = new System.Windows.Forms.ComboBox();
-      this.tabPage3 = new System.Windows.Forms.TabPage();
-      this._chkFirstRun = new System.Windows.Forms.CheckBox();
-      this._tbDefaultGeneticReflexId = new System.Windows.Forms.TextBox();
-      this._lblDefaultGeneticReflexId = new System.Windows.Forms.Label();
-      this._lblSilence = new System.Windows.Forms.Label();
-      this._tbSilence = new System.Windows.Forms.TextBox();
-      this._lblCondensedLogPoll = new System.Windows.Forms.Label();
-      this._tbCondensedLogPoll = new System.Windows.Forms.TextBox();
-      this._lblMainMaxAge = new System.Windows.Forms.Label();
-      this._tbMainMaxAge = new System.Windows.Forms.TextBox();
-      this._lblCycleBase = new System.Windows.Forms.Label();
-      this._tbCycleBase = new System.Windows.Forms.TextBox();
-      this._lblCycleDiv = new System.Windows.Forms.Label();
-      this._tbCycleDiv = new System.Windows.Forms.TextBox();
-      this._lblWait = new System.Windows.Forms.Label();
-      this._tbWaitOperator = new System.Windows.Forms.TextBox();
-      this._lblTheme = new System.Windows.Forms.Label();
-      this._cmbTheme = new System.Windows.Forms.ComboBox();
-      this.tabPageAdapter = new System.Windows.Forms.TabPage();
-      this._lblHeavyMetricsPulsePeriod = new System.Windows.Forms.Label();
-      this._tbHeavyMetricsPulsePeriod = new System.Windows.Forms.TextBox();
-      this._lblScannerProbeConcurrency = new System.Windows.Forms.Label();
-      this._tbScannerProbeConcurrency = new System.Windows.Forms.TextBox();
-      this._lblScannerBatchSize = new System.Windows.Forms.Label();
-      this._tbScannerBatchSize = new System.Windows.Forms.TextBox();
-      this._lblScannerUnavailableRootPoll = new System.Windows.Forms.Label();
-      this._tbScannerUnavailableRootPoll = new System.Windows.Forms.TextBox();
-      this._lblBomDiffScanPeriod = new System.Windows.Forms.Label();
-      this._tbBomDiffScanPeriod = new System.Windows.Forms.TextBox();
-      this._lblCommandBufferFlushHint = new System.Windows.Forms.Label();
-      this._tbCommandBufferMaxAgeSec = new System.Windows.Forms.TextBox();
-      this._lblCommandBufferMaxAgeSec = new System.Windows.Forms.Label();
-      this._tbCommandBufferMaxTokens = new System.Windows.Forms.TextBox();
-      this._lblCommandBufferMaxTokens = new System.Windows.Forms.Label();
-      this._tbCommandBufferIdleFlushSec = new System.Windows.Forms.TextBox();
-      this._lblCommandBufferIdleFlushSec = new System.Windows.Forms.Label();
-      this._lblCommandBufferRecordingHint = new System.Windows.Forms.Label();
-      this._chkCommandBufferRecording = new System.Windows.Forms.CheckBox();
-      this.tabPageDocuments = new System.Windows.Forms.TabPage();
-      this._chkNeedDrawingDefault = new System.Windows.Forms.CheckBox();
-      this._chkNeedPdfDefault = new System.Windows.Forms.CheckBox();
-      this._chkNeedDxfDefault = new System.Windows.Forms.CheckBox();
-      this._lblDocumentColorsHint = new System.Windows.Forms.Label();
-      this._lblDocumentColorPart = new System.Windows.Forms.Label();
-      this._cmbDocumentColorPart = new System.Windows.Forms.ComboBox();
-      this._lblDocumentColorAssembly = new System.Windows.Forms.Label();
-      this._cmbDocumentColorAssembly = new System.Windows.Forms.ComboBox();
-      this._lblDocumentColorDrawing = new System.Windows.Forms.Label();
-      this._cmbDocumentColorDrawing = new System.Windows.Forms.ComboBox();
-      this.tabPageReflexes = new System.Windows.Forms.TabPage();
-      this.grpCrxMain = new System.Windows.Forms.GroupBox();
-      this.lblCrxLearningRate = new System.Windows.Forms.Label();
-      this._tbCrxLearningRate = new System.Windows.Forms.TextBox();
-      this.rngCrxLearningRate = new System.Windows.Forms.Label();
-      this.lblCrxDecayRate = new System.Windows.Forms.Label();
-      this._tbCrxDecayRate = new System.Windows.Forms.TextBox();
-      this.rngCrxDecayRate = new System.Windows.Forms.Label();
-      this.lblCrxActivationThreshold = new System.Windows.Forms.Label();
-      this._tbCrxActivationThreshold = new System.Windows.Forms.TextBox();
-      this.rngCrxActivationThreshold = new System.Windows.Forms.Label();
-      this.lblCrxInitialLifetimePulses = new System.Windows.Forms.Label();
-      this._tbCrxInitialLifetimePulses = new System.Windows.Forms.TextBox();
-      this.rngCrxInitialLifetimePulses = new System.Windows.Forms.Label();
-      this.lblCrxActiveExtinctionRate = new System.Windows.Forms.Label();
-      this._tbCrxActiveExtinctionRate = new System.Windows.Forms.TextBox();
-      this.rngCrxActiveExtinctionRate = new System.Windows.Forms.Label();
-      this.lblCrxTimeWindowPulses = new System.Windows.Forms.Label();
-      this._tbCrxTimeWindowPulses = new System.Windows.Forms.TextBox();
-      this.rngCrxTimeWindowPulses = new System.Windows.Forms.Label();
-      this.lblCrxMinAssociationStrength = new System.Windows.Forms.Label();
-      this._tbCrxMinAssociationStrength = new System.Windows.Forms.TextBox();
-      this.rngCrxMinAssociationStrength = new System.Windows.Forms.Label();
-      this.lblCrxHigherOrderStrengthReductionCoefficient = new System.Windows.Forms.Label();
-      this._tbCrxHigherOrderStrengthReductionCoefficient = new System.Windows.Forms.TextBox();
-      this.rngCrxHigherOrderStrengthReductionCoefficient = new System.Windows.Forms.Label();
-      this.lblCrxCompetitionStrengthRatioThreshold = new System.Windows.Forms.Label();
-      this._tbCrxCompetitionStrengthRatioThreshold = new System.Windows.Forms.TextBox();
-      this.rngCrxCompetitionStrengthRatioThreshold = new System.Windows.Forms.Label();
-      this._chkCrxTieBreakPreferSmallerReflexId = new System.Windows.Forms.CheckBox();
-      this.grpCrxDecay = new System.Windows.Forms.GroupBox();
-      this.lblCrxPassiveDecayPeriodPulses = new System.Windows.Forms.Label();
-      this._tbCrxPassiveDecayPeriodPulses = new System.Windows.Forms.TextBox();
-      this.rngCrxPassiveDecayPeriodPulses = new System.Windows.Forms.Label();
-      this.lblCrxPassiveDecayFallbackPeriodPulses = new System.Windows.Forms.Label();
-      this._tbCrxPassiveDecayFallbackPeriodPulses = new System.Windows.Forms.TextBox();
-      this.rngCrxPassiveDecayFallbackPeriodPulses = new System.Windows.Forms.Label();
-      this.grpCrxComp = new System.Windows.Forms.GroupBox();
-      this._chkCrxEnableCompetitiveLearning = new System.Windows.Forms.CheckBox();
-      this.lblCrxCompetitionSuppressionCoefficient = new System.Windows.Forms.Label();
-      this._tbCrxCompetitionSuppressionCoefficient = new System.Windows.Forms.TextBox();
-      this.rngCrxCompetitionSuppressionCoefficient = new System.Windows.Forms.Label();
-      this.grpCrxStart = new System.Windows.Forms.GroupBox();
-      this.lblCrxInitialStrengthBonus = new System.Windows.Forms.Label();
-      this._tbCrxInitialStrengthBonus = new System.Windows.Forms.TextBox();
-      this.rngCrxInitialStrengthBonus = new System.Windows.Forms.Label();
-      this.lblCrxAuthoritativeStrength = new System.Windows.Forms.Label();
-      this._tbCrxAuthoritativeStrength = new System.Windows.Forms.TextBox();
-      this.rngCrxAuthoritativeStrength = new System.Windows.Forms.Label();
-      this.lblCrxEstablishedStrengthThreshold = new System.Windows.Forms.Label();
-      this._tbCrxEstablishedStrengthThreshold = new System.Windows.Forms.TextBox();
-      this.rngCrxEstablishedStrengthThreshold = new System.Windows.Forms.Label();
-      this.lblCrxActivationReinforcementFraction = new System.Windows.Forms.Label();
-      this._tbCrxActivationReinforcementFraction = new System.Windows.Forms.TextBox();
-      this.rngCrxActivationReinforcementFraction = new System.Windows.Forms.Label();
-      this.lblCrxMaxLifetimePulsesCap = new System.Windows.Forms.Label();
-      this._tbCrxMaxLifetimePulsesCap = new System.Windows.Forms.TextBox();
-      this.rngCrxMaxLifetimePulsesCap = new System.Windows.Forms.Label();
-      this.grpCrxSens = new System.Windows.Forms.GroupBox();
-      this.lblCrxSensoryDecayPeriodPulses = new System.Windows.Forms.Label();
-      this._tbCrxSensoryDecayPeriodPulses = new System.Windows.Forms.TextBox();
-      this.rngCrxSensoryDecayPeriodPulses = new System.Windows.Forms.Label();
-      this.lblCrxSensoryStrengthFloor = new System.Windows.Forms.Label();
-      this._tbCrxSensoryStrengthFloor = new System.Windows.Forms.TextBox();
-      this.rngCrxSensoryStrengthFloor = new System.Windows.Forms.Label();
-      this.lblCrxSensoryHighStrengthThreshold = new System.Windows.Forms.Label();
-      this._tbCrxSensoryHighStrengthThreshold = new System.Windows.Forms.TextBox();
-      this.rngCrxSensoryHighStrengthThreshold = new System.Windows.Forms.Label();
-      this.lblCrxSensoryHighStrengthDecayRate = new System.Windows.Forms.Label();
-      this._tbCrxSensoryHighStrengthDecayRate = new System.Windows.Forms.TextBox();
-      this.rngCrxSensoryHighStrengthDecayRate = new System.Windows.Forms.Label();
-      this.lblCrxSensoryMidStrengthThreshold = new System.Windows.Forms.Label();
-      this._tbCrxSensoryMidStrengthThreshold = new System.Windows.Forms.TextBox();
-      this.rngCrxSensoryMidStrengthThreshold = new System.Windows.Forms.Label();
-      this._lblStage2SearchPlayStyleIds = new System.Windows.Forms.Label();
-      this._tbStage2SearchPlayStyleIds = new System.Windows.Forms.TextBox();
-      this._btnCancel = new System.Windows.Forms.Button();
-      this._btnSave = new System.Windows.Forms.Button();
-      this._lblStageEvolution = new System.Windows.Forms.Label();
-      this.stage_evolution = new System.Windows.Forms.ComboBox();
-      this._ttpStageEvolution = new System.Windows.Forms.ToolTip(this.components);
-      this._pnlStageBusyOverlay = new System.Windows.Forms.Panel();
-      this._lblStageBusy = new System.Windows.Forms.Label();
-      this.tabControl1.SuspendLayout();
-      this.tabPage1.SuspendLayout();
-      this.tabPage2.SuspendLayout();
-      this.tabPage3.SuspendLayout();
-      this.tabPageAdapter.SuspendLayout();
-      this.tabPageDocuments.SuspendLayout();
-      this.tabPageReflexes.SuspendLayout();
-      this.grpCrxMain.SuspendLayout();
-      this.grpCrxDecay.SuspendLayout();
-      this.grpCrxComp.SuspendLayout();
-      this.grpCrxStart.SuspendLayout();
-      this.grpCrxSens.SuspendLayout();
-      this._pnlStageBusyOverlay.SuspendLayout();
-      this.SuspendLayout();
-      // 
-      // tabControl1
-      // 
-      this.tabControl1.Controls.Add(this.tabPage1);
-      this.tabControl1.Controls.Add(this.tabPage2);
-      this.tabControl1.Controls.Add(this.tabPage3);
-      this.tabControl1.Controls.Add(this.tabPageAdapter);
-      this.tabControl1.Controls.Add(this.tabPageDocuments);
-      this.tabControl1.Controls.Add(this.tabPageReflexes);
-      this.tabControl1.Location = new System.Drawing.Point(12, 12);
-      this.tabControl1.Name = "tabControl1";
-      this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(808, 318);
-      this.tabControl1.TabIndex = 0;
-      // 
-      // tabPage1
-      // 
-      this.tabPage1.Controls.Add(this._lblPathProductRegistry);
-      this.tabPage1.Controls.Add(this._tbProductRegistry);
-      this.tabPage1.Controls.Add(this._btnBrowseProductRegistry);
-      this.tabPage1.Controls.Add(this._lblBomExchange);
-      this.tabPage1.Controls.Add(this._tbBomExchange);
-      this.tabPage1.Controls.Add(this._btnBrowseBomExchange);
-      this.tabPage1.Controls.Add(this._lblDocumentRootPaths);
-      this.tabPage1.Controls.Add(this._tbDocumentRootPaths);
-      this.tabPage1.Controls.Add(this._lblPathScenario);
-      this.tabPage1.Controls.Add(this._tbScenarioReports);
-      this.tabPage1.Controls.Add(this._btnBrowseScenario);
-      this.tabPage1.Controls.Add(this._lblPathBoot);
-      this.tabPage1.Controls.Add(this._tbBoot);
-      this.tabPage1.Controls.Add(this._btnBrowseBoot);
-      this.tabPage1.Controls.Add(this._lblPathLogs);
-      this.tabPage1.Controls.Add(this._tbLogs);
-      this.tabPage1.Controls.Add(this._btnBrowseLogs);
-      this.tabPage1.Controls.Add(this._lblPathGomeostas);
-      this.tabPage1.Controls.Add(this._tbGomeostas);
-      this.tabPage1.Controls.Add(this._btnBrowseGomeostas);
-      this.tabPage1.Controls.Add(this._lblPathSettings);
-      this.tabPage1.Controls.Add(this._tbSettingsPath);
-      this.tabPage1.Controls.Add(this._btnBrowseSettings);
-      this.tabPage1.Location = new System.Drawing.Point(4, 22);
-      this.tabPage1.Name = "tabPage1";
-      this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(800, 292);
-      this.tabPage1.TabIndex = 0;
-      this.tabPage1.Text = "Пути данных";
-      this.tabPage1.UseVisualStyleBackColor = true;
-      // 
-      // _lblPathProductRegistry
-      // 
-      this._lblPathProductRegistry.Location = new System.Drawing.Point(3, 148);
-      this._lblPathProductRegistry.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblPathProductRegistry.Name = "_lblPathProductRegistry";
-      this._lblPathProductRegistry.Size = new System.Drawing.Size(175, 20);
-      this._lblPathProductRegistry.TabIndex = 31;
-      this._lblPathProductRegistry.Text = "Реестр документов:";
-      this._lblPathProductRegistry.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _tbProductRegistry
-      // 
-      this._tbProductRegistry.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
-      this._tbProductRegistry.Location = new System.Drawing.Point(181, 149);
-      this._tbProductRegistry.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-      this._tbProductRegistry.Name = "_tbProductRegistry";
-      this._tbProductRegistry.ReadOnly = true;
-      this._tbProductRegistry.Size = new System.Drawing.Size(522, 20);
-      this._tbProductRegistry.TabIndex = 32;
-      // 
-      // _btnBrowseProductRegistry
-      // 
-      this._btnBrowseProductRegistry.Location = new System.Drawing.Point(712, 148);
-      this._btnBrowseProductRegistry.Margin = new System.Windows.Forms.Padding(6, 2, 0, 0);
-      this._btnBrowseProductRegistry.Name = "_btnBrowseProductRegistry";
-      this._btnBrowseProductRegistry.Size = new System.Drawing.Size(75, 23);
-      this._btnBrowseProductRegistry.TabIndex = 33;
-      this._btnBrowseProductRegistry.Tag = this._tbProductRegistry;
-      this._btnBrowseProductRegistry.Text = "Обзор...";
-      this._btnBrowseProductRegistry.UseVisualStyleBackColor = true;
-      this._btnBrowseProductRegistry.Click += new System.EventHandler(this.PathBrowse_Click);
-      // 
-      // _lblBomExchange
-      // 
-      this._lblBomExchange.Location = new System.Drawing.Point(3, 176);
-      this._lblBomExchange.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblBomExchange.Name = "_lblBomExchange";
-      this._lblBomExchange.Size = new System.Drawing.Size(175, 20);
-      this._lblBomExchange.TabIndex = 34;
-      this._lblBomExchange.Text = "Каталог обмена с 1С:";
-      this._lblBomExchange.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _tbBomExchange
-      // 
-      this._tbBomExchange.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
-      this._tbBomExchange.Location = new System.Drawing.Point(181, 177);
-      this._tbBomExchange.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-      this._tbBomExchange.Name = "_tbBomExchange";
-      this._tbBomExchange.ReadOnly = true;
-      this._tbBomExchange.Size = new System.Drawing.Size(522, 20);
-      this._tbBomExchange.TabIndex = 35;
-      // 
-      // _btnBrowseBomExchange
-      // 
-      this._btnBrowseBomExchange.Location = new System.Drawing.Point(712, 175);
-      this._btnBrowseBomExchange.Margin = new System.Windows.Forms.Padding(6, 2, 0, 0);
-      this._btnBrowseBomExchange.Name = "_btnBrowseBomExchange";
-      this._btnBrowseBomExchange.Size = new System.Drawing.Size(75, 23);
-      this._btnBrowseBomExchange.TabIndex = 36;
-      this._btnBrowseBomExchange.Tag = this._tbBomExchange;
-      this._btnBrowseBomExchange.Text = "Обзор...";
-      this._btnBrowseBomExchange.UseVisualStyleBackColor = true;
-      this._btnBrowseBomExchange.Click += new System.EventHandler(this.PathBrowse_Click);
-      // 
-      // _lblDocumentRootPaths
-      // 
-      this._lblDocumentRootPaths.Location = new System.Drawing.Point(3, 204);
-      this._lblDocumentRootPaths.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblDocumentRootPaths.Name = "_lblDocumentRootPaths";
-      this._lblDocumentRootPaths.Size = new System.Drawing.Size(175, 20);
-      this._lblDocumentRootPaths.TabIndex = 37;
-      this._lblDocumentRootPaths.Text = "Путь к корневому каталогу:";
-      this._lblDocumentRootPaths.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _tbDocumentRootPaths
-      // 
-      this._tbDocumentRootPaths.Location = new System.Drawing.Point(181, 205);
-      this._tbDocumentRootPaths.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-      this._tbDocumentRootPaths.Name = "_tbDocumentRootPaths";
-      this._tbDocumentRootPaths.Size = new System.Drawing.Size(522, 20);
-      this._tbDocumentRootPaths.TabIndex = 38;
-      // 
-      // _lblPathScenario
-      // 
-      this._lblPathScenario.Location = new System.Drawing.Point(3, 120);
-      this._lblPathScenario.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblPathScenario.Name = "_lblPathScenario";
-      this._lblPathScenario.Size = new System.Drawing.Size(175, 20);
-      this._lblPathScenario.TabIndex = 28;
-      this._lblPathScenario.Text = "Отчёты сценариев (HTML):";
-      this._lblPathScenario.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _tbScenarioReports
-      // 
-      this._tbScenarioReports.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
-      this._tbScenarioReports.Location = new System.Drawing.Point(181, 121);
-      this._tbScenarioReports.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-      this._tbScenarioReports.Name = "_tbScenarioReports";
-      this._tbScenarioReports.ReadOnly = true;
-      this._tbScenarioReports.Size = new System.Drawing.Size(522, 20);
-      this._tbScenarioReports.TabIndex = 29;
-      // 
-      // _btnBrowseScenario
-      // 
-      this._btnBrowseScenario.Location = new System.Drawing.Point(712, 119);
-      this._btnBrowseScenario.Margin = new System.Windows.Forms.Padding(6, 2, 0, 0);
-      this._btnBrowseScenario.Name = "_btnBrowseScenario";
-      this._btnBrowseScenario.Size = new System.Drawing.Size(75, 23);
-      this._btnBrowseScenario.TabIndex = 30;
-      this._btnBrowseScenario.Tag = this._tbScenarioReports;
-      this._btnBrowseScenario.Text = "Обзор...";
-      this._btnBrowseScenario.UseVisualStyleBackColor = true;
-      this._btnBrowseScenario.Click += new System.EventHandler(this.PathBrowse_Click);
-      // 
-      // _lblPathBoot
-      // 
-      this._lblPathBoot.Location = new System.Drawing.Point(3, 92);
-      this._lblPathBoot.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblPathBoot.Name = "_lblPathBoot";
-      this._lblPathBoot.Size = new System.Drawing.Size(175, 20);
-      this._lblPathBoot.TabIndex = 25;
-      this._lblPathBoot.Text = "Данные загрузки:";
-      this._lblPathBoot.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _tbBoot
-      // 
-      this._tbBoot.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
-      this._tbBoot.Location = new System.Drawing.Point(181, 93);
-      this._tbBoot.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-      this._tbBoot.Name = "_tbBoot";
-      this._tbBoot.ReadOnly = true;
-      this._tbBoot.Size = new System.Drawing.Size(522, 20);
-      this._tbBoot.TabIndex = 26;
-      // 
-      // _btnBrowseBoot
-      // 
-      this._btnBrowseBoot.Location = new System.Drawing.Point(712, 92);
-      this._btnBrowseBoot.Margin = new System.Windows.Forms.Padding(6, 2, 0, 0);
-      this._btnBrowseBoot.Name = "_btnBrowseBoot";
-      this._btnBrowseBoot.Size = new System.Drawing.Size(75, 23);
-      this._btnBrowseBoot.TabIndex = 27;
-      this._btnBrowseBoot.Tag = this._tbBoot;
-      this._btnBrowseBoot.Text = "Обзор...";
-      this._btnBrowseBoot.UseVisualStyleBackColor = true;
-      this._btnBrowseBoot.Click += new System.EventHandler(this.PathBrowse_Click);
-      // 
-      // _lblPathLogs
-      // 
-      this._lblPathLogs.Location = new System.Drawing.Point(3, 64);
-      this._lblPathLogs.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblPathLogs.Name = "_lblPathLogs";
-      this._lblPathLogs.Size = new System.Drawing.Size(175, 20);
-      this._lblPathLogs.TabIndex = 22;
-      this._lblPathLogs.Text = "Каталог логов:";
-      this._lblPathLogs.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _tbLogs
-      // 
-      this._tbLogs.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
-      this._tbLogs.Location = new System.Drawing.Point(181, 65);
-      this._tbLogs.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-      this._tbLogs.Name = "_tbLogs";
-      this._tbLogs.ReadOnly = true;
-      this._tbLogs.Size = new System.Drawing.Size(522, 20);
-      this._tbLogs.TabIndex = 23;
-      // 
-      // _btnBrowseLogs
-      // 
-      this._btnBrowseLogs.Location = new System.Drawing.Point(712, 63);
-      this._btnBrowseLogs.Margin = new System.Windows.Forms.Padding(6, 2, 0, 0);
-      this._btnBrowseLogs.Name = "_btnBrowseLogs";
-      this._btnBrowseLogs.Size = new System.Drawing.Size(75, 23);
-      this._btnBrowseLogs.TabIndex = 24;
-      this._btnBrowseLogs.Tag = this._tbLogs;
-      this._btnBrowseLogs.Text = "Обзор...";
-      this._btnBrowseLogs.UseVisualStyleBackColor = true;
-      this._btnBrowseLogs.Click += new System.EventHandler(this.PathBrowse_Click);
-      // 
-      // _lblPathGomeostas
-      // 
-      this._lblPathGomeostas.Location = new System.Drawing.Point(3, 36);
-      this._lblPathGomeostas.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblPathGomeostas.Name = "_lblPathGomeostas";
-      this._lblPathGomeostas.Size = new System.Drawing.Size(175, 20);
-      this._lblPathGomeostas.TabIndex = 7;
-      this._lblPathGomeostas.Text = "Каталог данных:";
-      this._lblPathGomeostas.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _tbGomeostas
-      // 
-      this._tbGomeostas.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
-      this._tbGomeostas.Location = new System.Drawing.Point(181, 37);
-      this._tbGomeostas.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-      this._tbGomeostas.Name = "_tbGomeostas";
-      this._tbGomeostas.ReadOnly = true;
-      this._tbGomeostas.Size = new System.Drawing.Size(522, 20);
-      this._tbGomeostas.TabIndex = 8;
-      // 
-      // _btnBrowseGomeostas
-      // 
-      this._btnBrowseGomeostas.Location = new System.Drawing.Point(712, 37);
-      this._btnBrowseGomeostas.Margin = new System.Windows.Forms.Padding(6, 2, 0, 0);
-      this._btnBrowseGomeostas.Name = "_btnBrowseGomeostas";
-      this._btnBrowseGomeostas.Size = new System.Drawing.Size(75, 23);
-      this._btnBrowseGomeostas.TabIndex = 9;
-      this._btnBrowseGomeostas.Tag = this._tbGomeostas;
-      this._btnBrowseGomeostas.Text = "Обзор...";
-      this._btnBrowseGomeostas.UseVisualStyleBackColor = true;
-      this._btnBrowseGomeostas.Click += new System.EventHandler(this.PathBrowse_Click);
-      // 
-      // _lblPathSettings
-      // 
-      this._lblPathSettings.Location = new System.Drawing.Point(3, 9);
-      this._lblPathSettings.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblPathSettings.Name = "_lblPathSettings";
-      this._lblPathSettings.Size = new System.Drawing.Size(175, 20);
-      this._lblPathSettings.TabIndex = 3;
-      this._lblPathSettings.Text = "Каталог настроек:";
-      this._lblPathSettings.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _tbSettingsPath
-      // 
-      this._tbSettingsPath.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
-      this._tbSettingsPath.Location = new System.Drawing.Point(181, 10);
-      this._tbSettingsPath.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-      this._tbSettingsPath.Name = "_tbSettingsPath";
-      this._tbSettingsPath.ReadOnly = true;
-      this._tbSettingsPath.Size = new System.Drawing.Size(522, 20);
-      this._tbSettingsPath.TabIndex = 4;
-      // 
-      // _btnBrowseSettings
-      // 
-      this._btnBrowseSettings.Location = new System.Drawing.Point(712, 7);
-      this._btnBrowseSettings.Margin = new System.Windows.Forms.Padding(6, 2, 0, 0);
-      this._btnBrowseSettings.Name = "_btnBrowseSettings";
-      this._btnBrowseSettings.Size = new System.Drawing.Size(75, 23);
-      this._btnBrowseSettings.TabIndex = 5;
-      this._btnBrowseSettings.Tag = this._tbSettingsPath;
-      this._btnBrowseSettings.Text = "Обзор...";
-      this._btnBrowseSettings.UseVisualStyleBackColor = true;
-      this._btnBrowseSettings.Click += new System.EventHandler(this.PathBrowse_Click);
-      // 
-      // tabPage2
-      // 
-      this.tabPage2.Controls.Add(this._chkVerbalAuthoritative);
-      this.tabPage2.Controls.Add(this._chkObservationMode);
-      this.tabPage2.Controls.Add(this._lblLogFormat);
-      this.tabPage2.Controls.Add(this._cmbLogFormat);
-      this.tabPage2.Controls.Add(this._lblLogEnabled);
-      this.tabPage2.Controls.Add(this._chkLog);
-      this.tabPage2.Controls.Add(this._lblSolidHomeostasisDebugLog);
-      this.tabPage2.Controls.Add(this._chkSolidHomeostasisDebugLog);
-      this.tabPage2.Controls.Add(this._lblSolidHostMinDelta);
-      this.tabPage2.Controls.Add(this._tbSolidHostMinDelta);
-      this.tabPage2.Controls.Add(this._lblSolidMetricEpsilon);
-      this.tabPage2.Controls.Add(this._tbSolidMetricEpsilon);
-      this.tabPage2.Controls.Add(this._lblRecognition);
-      this.tabPage2.Controls.Add(this._tbRecognition);
-      this.tabPage2.Controls.Add(this._lblReflexDur);
-      this.tabPage2.Controls.Add(this._tbReflexDur);
-      this.tabPage2.Controls.Add(this._lblDynamic);
-      this.tabPage2.Controls.Add(this._tbDynamic);
-      this.tabPage2.Controls.Add(this._lblDifSensor);
-      this.tabPage2.Controls.Add(this._tbDifSensor);
-      this.tabPage2.Controls.Add(this._lblHomeostasisPulseDrift);
-      this.tabPage2.Controls.Add(this._chkHomeostasisPulseDrift);
-      this.tabPage2.Controls.Add(this._lblCompare);
-      this.tabPage2.Controls.Add(this._tbCompare);
-      this.tabPage2.Controls.Add(this._lblAdaptive);
-      this.tabPage2.Controls.Add(this._cmbAdaptive);
-      this.tabPage2.Controls.Add(this._lblStyle);
-      this.tabPage2.Controls.Add(this._cmbStyle);
-      this.tabPage2.Location = new System.Drawing.Point(4, 22);
-      this.tabPage2.Name = "tabPage2";
-      this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage2.Size = new System.Drawing.Size(800, 292);
-      this.tabPage2.TabIndex = 1;
-      this.tabPage2.Text = "Регуляция";
-      this.tabPage2.UseVisualStyleBackColor = true;
-      // 
-      // _chkVerbalAuthoritative
-      // 
-      this._chkVerbalAuthoritative.AutoSize = true;
-      this._chkVerbalAuthoritative.Location = new System.Drawing.Point(374, 7);
-      this._chkVerbalAuthoritative.Margin = new System.Windows.Forms.Padding(0, 3, 0, 0);
-      this._chkVerbalAuthoritative.Name = "_chkVerbalAuthoritative";
-      this._chkVerbalAuthoritative.Size = new System.Drawing.Size(299, 17);
-      this._chkVerbalAuthoritative.TabIndex = 44;
-      this._chkVerbalAuthoritative.Text = "Авторитарная запись вербального канала (оператор)";
-      this._ttpStageEvolution.SetToolTip(this._chkVerbalAuthoritative, "VerbalAuthoritativeMode и CommandAuthoritativeMode: сразу в дерево (иначе песочни" +
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(VelumProjectSettingsForm));
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this._lblPathProductRegistry = new System.Windows.Forms.Label();
+            this._tbProductRegistry = new System.Windows.Forms.TextBox();
+            this._btnBrowseProductRegistry = new System.Windows.Forms.Button();
+            this._lblBomExchange = new System.Windows.Forms.Label();
+            this._tbBomExchange = new System.Windows.Forms.TextBox();
+            this._btnBrowseBomExchange = new System.Windows.Forms.Button();
+            this._lblDocumentRootPaths = new System.Windows.Forms.Label();
+            this._tbDocumentRootPaths = new System.Windows.Forms.TextBox();
+            this._lblPathScenario = new System.Windows.Forms.Label();
+            this._tbScenarioReports = new System.Windows.Forms.TextBox();
+            this._btnBrowseScenario = new System.Windows.Forms.Button();
+            this._lblPathBoot = new System.Windows.Forms.Label();
+            this._tbBoot = new System.Windows.Forms.TextBox();
+            this._btnBrowseBoot = new System.Windows.Forms.Button();
+            this._lblPathLogs = new System.Windows.Forms.Label();
+            this._tbLogs = new System.Windows.Forms.TextBox();
+            this._btnBrowseLogs = new System.Windows.Forms.Button();
+            this._lblPathGomeostas = new System.Windows.Forms.Label();
+            this._tbGomeostas = new System.Windows.Forms.TextBox();
+            this._btnBrowseGomeostas = new System.Windows.Forms.Button();
+            this._lblPathSettings = new System.Windows.Forms.Label();
+            this._tbSettingsPath = new System.Windows.Forms.TextBox();
+            this._btnBrowseSettings = new System.Windows.Forms.Button();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this._chkVerbalAuthoritative = new System.Windows.Forms.CheckBox();
+            this._chkObservationMode = new System.Windows.Forms.CheckBox();
+            this._lblLogFormat = new System.Windows.Forms.Label();
+            this._cmbLogFormat = new System.Windows.Forms.ComboBox();
+            this._lblLogEnabled = new System.Windows.Forms.Label();
+            this._chkLog = new System.Windows.Forms.CheckBox();
+            this._lblSolidHomeostasisDebugLog = new System.Windows.Forms.Label();
+            this._chkSolidHomeostasisDebugLog = new System.Windows.Forms.CheckBox();
+            this._lblSolidHostMinDelta = new System.Windows.Forms.Label();
+            this._tbSolidHostMinDelta = new System.Windows.Forms.TextBox();
+            this._lblSolidMetricEpsilon = new System.Windows.Forms.Label();
+            this._tbSolidMetricEpsilon = new System.Windows.Forms.TextBox();
+            this._lblRecognition = new System.Windows.Forms.Label();
+            this._tbRecognition = new System.Windows.Forms.TextBox();
+            this._lblReflexDur = new System.Windows.Forms.Label();
+            this._tbReflexDur = new System.Windows.Forms.TextBox();
+            this._lblDynamic = new System.Windows.Forms.Label();
+            this._tbDynamic = new System.Windows.Forms.TextBox();
+            this._lblDifSensor = new System.Windows.Forms.Label();
+            this._tbDifSensor = new System.Windows.Forms.TextBox();
+            this._lblHomeostasisPulseDrift = new System.Windows.Forms.Label();
+            this._chkHomeostasisPulseDrift = new System.Windows.Forms.CheckBox();
+            this._lblCompare = new System.Windows.Forms.Label();
+            this._tbCompare = new System.Windows.Forms.TextBox();
+            this._lblAdaptive = new System.Windows.Forms.Label();
+            this._cmbAdaptive = new System.Windows.Forms.ComboBox();
+            this._lblStyle = new System.Windows.Forms.Label();
+            this._cmbStyle = new System.Windows.Forms.ComboBox();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this._chkFirstRun = new System.Windows.Forms.CheckBox();
+            this._tbDefaultGeneticReflexId = new System.Windows.Forms.TextBox();
+            this._lblDefaultGeneticReflexId = new System.Windows.Forms.Label();
+            this._lblSilence = new System.Windows.Forms.Label();
+            this._tbSilence = new System.Windows.Forms.TextBox();
+            this._lblCondensedLogPoll = new System.Windows.Forms.Label();
+            this._tbCondensedLogPoll = new System.Windows.Forms.TextBox();
+            this._lblMainMaxAge = new System.Windows.Forms.Label();
+            this._tbMainMaxAge = new System.Windows.Forms.TextBox();
+            this._lblCycleBase = new System.Windows.Forms.Label();
+            this._tbCycleBase = new System.Windows.Forms.TextBox();
+            this._lblCycleDiv = new System.Windows.Forms.Label();
+            this._tbCycleDiv = new System.Windows.Forms.TextBox();
+            this._lblWait = new System.Windows.Forms.Label();
+            this._tbWaitOperator = new System.Windows.Forms.TextBox();
+            this._lblTheme = new System.Windows.Forms.Label();
+            this._cmbTheme = new System.Windows.Forms.ComboBox();
+            this.tabPageAdapter = new System.Windows.Forms.TabPage();
+            this._lblHeavyMetricsPulsePeriod = new System.Windows.Forms.Label();
+            this._tbHeavyMetricsPulsePeriod = new System.Windows.Forms.TextBox();
+            this._lblScannerProbeConcurrency = new System.Windows.Forms.Label();
+            this._tbScannerProbeConcurrency = new System.Windows.Forms.TextBox();
+            this._lblScannerBatchSize = new System.Windows.Forms.Label();
+            this._tbScannerBatchSize = new System.Windows.Forms.TextBox();
+            this._lblScannerUnavailableRootPoll = new System.Windows.Forms.Label();
+            this._tbScannerUnavailableRootPoll = new System.Windows.Forms.TextBox();
+            this._lblBomDiffScanPeriod = new System.Windows.Forms.Label();
+            this._tbBomDiffScanPeriod = new System.Windows.Forms.TextBox();
+            this._lblCommandBufferFlushHint = new System.Windows.Forms.Label();
+            this._tbCommandBufferMaxAgeSec = new System.Windows.Forms.TextBox();
+            this._lblCommandBufferMaxAgeSec = new System.Windows.Forms.Label();
+            this._tbCommandBufferMaxTokens = new System.Windows.Forms.TextBox();
+            this._lblCommandBufferMaxTokens = new System.Windows.Forms.Label();
+            this._tbCommandBufferIdleFlushSec = new System.Windows.Forms.TextBox();
+            this._lblCommandBufferIdleFlushSec = new System.Windows.Forms.Label();
+            this._lblCommandBufferRecordingHint = new System.Windows.Forms.Label();
+            this._chkCommandBufferRecording = new System.Windows.Forms.CheckBox();
+            this.tabPageDocuments = new System.Windows.Forms.TabPage();
+            this._chkNeedDrawingDefault = new System.Windows.Forms.CheckBox();
+            this._chkNeedPdfDefault = new System.Windows.Forms.CheckBox();
+            this._chkNeedDxfDefault = new System.Windows.Forms.CheckBox();
+            this._lblDocumentColorsHint = new System.Windows.Forms.Label();
+            this._lblDocumentColorPart = new System.Windows.Forms.Label();
+            this._cmbDocumentColorPart = new System.Windows.Forms.ComboBox();
+            this._lblDocumentColorAssembly = new System.Windows.Forms.Label();
+            this._cmbDocumentColorAssembly = new System.Windows.Forms.ComboBox();
+            this._lblDocumentColorDrawing = new System.Windows.Forms.Label();
+            this._cmbDocumentColorDrawing = new System.Windows.Forms.ComboBox();
+            this._lblReflexButtonsHint = new System.Windows.Forms.Label();
+            this._lblRewardReflexId = new System.Windows.Forms.Label();
+            this._tbRewardReflexId = new System.Windows.Forms.TextBox();
+            this._lblPunishReflexId = new System.Windows.Forms.Label();
+            this._tbPunishReflexId = new System.Windows.Forms.TextBox();
+            this.tabPageReflexes = new System.Windows.Forms.TabPage();
+            this.grpCrxMain = new System.Windows.Forms.GroupBox();
+            this.lblCrxLearningRate = new System.Windows.Forms.Label();
+            this._tbCrxLearningRate = new System.Windows.Forms.TextBox();
+            this.rngCrxLearningRate = new System.Windows.Forms.Label();
+            this.lblCrxDecayRate = new System.Windows.Forms.Label();
+            this._tbCrxDecayRate = new System.Windows.Forms.TextBox();
+            this.rngCrxDecayRate = new System.Windows.Forms.Label();
+            this.lblCrxActivationThreshold = new System.Windows.Forms.Label();
+            this._tbCrxActivationThreshold = new System.Windows.Forms.TextBox();
+            this.rngCrxActivationThreshold = new System.Windows.Forms.Label();
+            this.lblCrxInitialLifetimePulses = new System.Windows.Forms.Label();
+            this._tbCrxInitialLifetimePulses = new System.Windows.Forms.TextBox();
+            this.rngCrxInitialLifetimePulses = new System.Windows.Forms.Label();
+            this.lblCrxActiveExtinctionRate = new System.Windows.Forms.Label();
+            this._tbCrxActiveExtinctionRate = new System.Windows.Forms.TextBox();
+            this.rngCrxActiveExtinctionRate = new System.Windows.Forms.Label();
+            this.lblCrxTimeWindowPulses = new System.Windows.Forms.Label();
+            this._tbCrxTimeWindowPulses = new System.Windows.Forms.TextBox();
+            this.rngCrxTimeWindowPulses = new System.Windows.Forms.Label();
+            this.lblCrxMinAssociationStrength = new System.Windows.Forms.Label();
+            this._tbCrxMinAssociationStrength = new System.Windows.Forms.TextBox();
+            this.rngCrxMinAssociationStrength = new System.Windows.Forms.Label();
+            this.lblCrxHigherOrderStrengthReductionCoefficient = new System.Windows.Forms.Label();
+            this._tbCrxHigherOrderStrengthReductionCoefficient = new System.Windows.Forms.TextBox();
+            this.rngCrxHigherOrderStrengthReductionCoefficient = new System.Windows.Forms.Label();
+            this.lblCrxCompetitionStrengthRatioThreshold = new System.Windows.Forms.Label();
+            this._tbCrxCompetitionStrengthRatioThreshold = new System.Windows.Forms.TextBox();
+            this.rngCrxCompetitionStrengthRatioThreshold = new System.Windows.Forms.Label();
+            this._chkCrxTieBreakPreferSmallerReflexId = new System.Windows.Forms.CheckBox();
+            this.grpCrxDecay = new System.Windows.Forms.GroupBox();
+            this.lblCrxPassiveDecayPeriodPulses = new System.Windows.Forms.Label();
+            this._tbCrxPassiveDecayPeriodPulses = new System.Windows.Forms.TextBox();
+            this.rngCrxPassiveDecayPeriodPulses = new System.Windows.Forms.Label();
+            this.lblCrxPassiveDecayFallbackPeriodPulses = new System.Windows.Forms.Label();
+            this._tbCrxPassiveDecayFallbackPeriodPulses = new System.Windows.Forms.TextBox();
+            this.rngCrxPassiveDecayFallbackPeriodPulses = new System.Windows.Forms.Label();
+            this.grpCrxComp = new System.Windows.Forms.GroupBox();
+            this._chkCrxEnableCompetitiveLearning = new System.Windows.Forms.CheckBox();
+            this.lblCrxCompetitionSuppressionCoefficient = new System.Windows.Forms.Label();
+            this._tbCrxCompetitionSuppressionCoefficient = new System.Windows.Forms.TextBox();
+            this.rngCrxCompetitionSuppressionCoefficient = new System.Windows.Forms.Label();
+            this.grpCrxStart = new System.Windows.Forms.GroupBox();
+            this.lblCrxInitialStrengthBonus = new System.Windows.Forms.Label();
+            this._tbCrxInitialStrengthBonus = new System.Windows.Forms.TextBox();
+            this.rngCrxInitialStrengthBonus = new System.Windows.Forms.Label();
+            this.lblCrxAuthoritativeStrength = new System.Windows.Forms.Label();
+            this._tbCrxAuthoritativeStrength = new System.Windows.Forms.TextBox();
+            this.rngCrxAuthoritativeStrength = new System.Windows.Forms.Label();
+            this.lblCrxEstablishedStrengthThreshold = new System.Windows.Forms.Label();
+            this._tbCrxEstablishedStrengthThreshold = new System.Windows.Forms.TextBox();
+            this.rngCrxEstablishedStrengthThreshold = new System.Windows.Forms.Label();
+            this.lblCrxActivationReinforcementFraction = new System.Windows.Forms.Label();
+            this._tbCrxActivationReinforcementFraction = new System.Windows.Forms.TextBox();
+            this.rngCrxActivationReinforcementFraction = new System.Windows.Forms.Label();
+            this.lblCrxMaxLifetimePulsesCap = new System.Windows.Forms.Label();
+            this._tbCrxMaxLifetimePulsesCap = new System.Windows.Forms.TextBox();
+            this.rngCrxMaxLifetimePulsesCap = new System.Windows.Forms.Label();
+            this.grpCrxSens = new System.Windows.Forms.GroupBox();
+            this.lblCrxSensoryDecayPeriodPulses = new System.Windows.Forms.Label();
+            this._tbCrxSensoryDecayPeriodPulses = new System.Windows.Forms.TextBox();
+            this.rngCrxSensoryDecayPeriodPulses = new System.Windows.Forms.Label();
+            this.lblCrxSensoryStrengthFloor = new System.Windows.Forms.Label();
+            this._tbCrxSensoryStrengthFloor = new System.Windows.Forms.TextBox();
+            this.rngCrxSensoryStrengthFloor = new System.Windows.Forms.Label();
+            this.lblCrxSensoryHighStrengthThreshold = new System.Windows.Forms.Label();
+            this._tbCrxSensoryHighStrengthThreshold = new System.Windows.Forms.TextBox();
+            this.rngCrxSensoryHighStrengthThreshold = new System.Windows.Forms.Label();
+            this.lblCrxSensoryHighStrengthDecayRate = new System.Windows.Forms.Label();
+            this._tbCrxSensoryHighStrengthDecayRate = new System.Windows.Forms.TextBox();
+            this.rngCrxSensoryHighStrengthDecayRate = new System.Windows.Forms.Label();
+            this.lblCrxSensoryMidStrengthThreshold = new System.Windows.Forms.Label();
+            this._tbCrxSensoryMidStrengthThreshold = new System.Windows.Forms.TextBox();
+            this.rngCrxSensoryMidStrengthThreshold = new System.Windows.Forms.Label();
+            this._lblStage2SearchPlayStyleIds = new System.Windows.Forms.Label();
+            this._tbStage2SearchPlayStyleIds = new System.Windows.Forms.TextBox();
+            this._btnCancel = new System.Windows.Forms.Button();
+            this._btnSave = new System.Windows.Forms.Button();
+            this._lblStageEvolution = new System.Windows.Forms.Label();
+            this.stage_evolution = new System.Windows.Forms.ComboBox();
+            this._ttpStageEvolution = new System.Windows.Forms.ToolTip(this.components);
+            this._pnlStageBusyOverlay = new System.Windows.Forms.Panel();
+            this._lblStageBusy = new System.Windows.Forms.Label();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
+            this.tabPage3.SuspendLayout();
+            this.tabPageAdapter.SuspendLayout();
+            this.tabPageDocuments.SuspendLayout();
+            this.tabPageReflexes.SuspendLayout();
+            this.grpCrxMain.SuspendLayout();
+            this.grpCrxDecay.SuspendLayout();
+            this.grpCrxComp.SuspendLayout();
+            this.grpCrxStart.SuspendLayout();
+            this.grpCrxSens.SuspendLayout();
+            this._pnlStageBusyOverlay.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPageAdapter);
+            this.tabControl1.Controls.Add(this.tabPageDocuments);
+            this.tabControl1.Controls.Add(this.tabPageReflexes);
+            this.tabControl1.Location = new System.Drawing.Point(12, 12);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(808, 318);
+            this.tabControl1.TabIndex = 0;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this._lblPathProductRegistry);
+            this.tabPage1.Controls.Add(this._tbProductRegistry);
+            this.tabPage1.Controls.Add(this._btnBrowseProductRegistry);
+            this.tabPage1.Controls.Add(this._lblBomExchange);
+            this.tabPage1.Controls.Add(this._tbBomExchange);
+            this.tabPage1.Controls.Add(this._btnBrowseBomExchange);
+            this.tabPage1.Controls.Add(this._lblDocumentRootPaths);
+            this.tabPage1.Controls.Add(this._tbDocumentRootPaths);
+            this.tabPage1.Controls.Add(this._lblPathScenario);
+            this.tabPage1.Controls.Add(this._tbScenarioReports);
+            this.tabPage1.Controls.Add(this._btnBrowseScenario);
+            this.tabPage1.Controls.Add(this._lblPathBoot);
+            this.tabPage1.Controls.Add(this._tbBoot);
+            this.tabPage1.Controls.Add(this._btnBrowseBoot);
+            this.tabPage1.Controls.Add(this._lblPathLogs);
+            this.tabPage1.Controls.Add(this._tbLogs);
+            this.tabPage1.Controls.Add(this._btnBrowseLogs);
+            this.tabPage1.Controls.Add(this._lblPathGomeostas);
+            this.tabPage1.Controls.Add(this._tbGomeostas);
+            this.tabPage1.Controls.Add(this._btnBrowseGomeostas);
+            this.tabPage1.Controls.Add(this._lblPathSettings);
+            this.tabPage1.Controls.Add(this._tbSettingsPath);
+            this.tabPage1.Controls.Add(this._btnBrowseSettings);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(800, 292);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Пути данных";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // _lblPathProductRegistry
+            // 
+            this._lblPathProductRegistry.Location = new System.Drawing.Point(3, 148);
+            this._lblPathProductRegistry.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblPathProductRegistry.Name = "_lblPathProductRegistry";
+            this._lblPathProductRegistry.Size = new System.Drawing.Size(175, 20);
+            this._lblPathProductRegistry.TabIndex = 31;
+            this._lblPathProductRegistry.Text = "Реестр документов:";
+            this._lblPathProductRegistry.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbProductRegistry
+            // 
+            this._tbProductRegistry.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
+            this._tbProductRegistry.Location = new System.Drawing.Point(181, 149);
+            this._tbProductRegistry.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._tbProductRegistry.Name = "_tbProductRegistry";
+            this._tbProductRegistry.ReadOnly = true;
+            this._tbProductRegistry.Size = new System.Drawing.Size(522, 20);
+            this._tbProductRegistry.TabIndex = 32;
+            // 
+            // _btnBrowseProductRegistry
+            // 
+            this._btnBrowseProductRegistry.Location = new System.Drawing.Point(712, 148);
+            this._btnBrowseProductRegistry.Margin = new System.Windows.Forms.Padding(6, 2, 0, 0);
+            this._btnBrowseProductRegistry.Name = "_btnBrowseProductRegistry";
+            this._btnBrowseProductRegistry.Size = new System.Drawing.Size(75, 23);
+            this._btnBrowseProductRegistry.TabIndex = 33;
+            this._btnBrowseProductRegistry.Tag = this._tbProductRegistry;
+            this._btnBrowseProductRegistry.Text = "Обзор...";
+            this._btnBrowseProductRegistry.UseVisualStyleBackColor = true;
+            this._btnBrowseProductRegistry.Click += new System.EventHandler(this.PathBrowse_Click);
+            // 
+            // _lblBomExchange
+            // 
+            this._lblBomExchange.Location = new System.Drawing.Point(3, 176);
+            this._lblBomExchange.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblBomExchange.Name = "_lblBomExchange";
+            this._lblBomExchange.Size = new System.Drawing.Size(175, 20);
+            this._lblBomExchange.TabIndex = 34;
+            this._lblBomExchange.Text = "Каталог обмена с 1С:";
+            this._lblBomExchange.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbBomExchange
+            // 
+            this._tbBomExchange.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
+            this._tbBomExchange.Location = new System.Drawing.Point(181, 177);
+            this._tbBomExchange.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._tbBomExchange.Name = "_tbBomExchange";
+            this._tbBomExchange.ReadOnly = true;
+            this._tbBomExchange.Size = new System.Drawing.Size(522, 20);
+            this._tbBomExchange.TabIndex = 35;
+            // 
+            // _btnBrowseBomExchange
+            // 
+            this._btnBrowseBomExchange.Location = new System.Drawing.Point(712, 175);
+            this._btnBrowseBomExchange.Margin = new System.Windows.Forms.Padding(6, 2, 0, 0);
+            this._btnBrowseBomExchange.Name = "_btnBrowseBomExchange";
+            this._btnBrowseBomExchange.Size = new System.Drawing.Size(75, 23);
+            this._btnBrowseBomExchange.TabIndex = 36;
+            this._btnBrowseBomExchange.Tag = this._tbBomExchange;
+            this._btnBrowseBomExchange.Text = "Обзор...";
+            this._btnBrowseBomExchange.UseVisualStyleBackColor = true;
+            this._btnBrowseBomExchange.Click += new System.EventHandler(this.PathBrowse_Click);
+            // 
+            // _lblDocumentRootPaths
+            // 
+            this._lblDocumentRootPaths.Location = new System.Drawing.Point(3, 204);
+            this._lblDocumentRootPaths.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblDocumentRootPaths.Name = "_lblDocumentRootPaths";
+            this._lblDocumentRootPaths.Size = new System.Drawing.Size(175, 20);
+            this._lblDocumentRootPaths.TabIndex = 37;
+            this._lblDocumentRootPaths.Text = "Путь к корневому каталогу:";
+            this._lblDocumentRootPaths.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbDocumentRootPaths
+            // 
+            this._tbDocumentRootPaths.Location = new System.Drawing.Point(181, 205);
+            this._tbDocumentRootPaths.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._tbDocumentRootPaths.Name = "_tbDocumentRootPaths";
+            this._tbDocumentRootPaths.Size = new System.Drawing.Size(522, 20);
+            this._tbDocumentRootPaths.TabIndex = 38;
+            // 
+            // _lblPathScenario
+            // 
+            this._lblPathScenario.Location = new System.Drawing.Point(3, 120);
+            this._lblPathScenario.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblPathScenario.Name = "_lblPathScenario";
+            this._lblPathScenario.Size = new System.Drawing.Size(175, 20);
+            this._lblPathScenario.TabIndex = 28;
+            this._lblPathScenario.Text = "Отчёты сценариев (HTML):";
+            this._lblPathScenario.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbScenarioReports
+            // 
+            this._tbScenarioReports.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
+            this._tbScenarioReports.Location = new System.Drawing.Point(181, 121);
+            this._tbScenarioReports.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._tbScenarioReports.Name = "_tbScenarioReports";
+            this._tbScenarioReports.ReadOnly = true;
+            this._tbScenarioReports.Size = new System.Drawing.Size(522, 20);
+            this._tbScenarioReports.TabIndex = 29;
+            // 
+            // _btnBrowseScenario
+            // 
+            this._btnBrowseScenario.Location = new System.Drawing.Point(712, 119);
+            this._btnBrowseScenario.Margin = new System.Windows.Forms.Padding(6, 2, 0, 0);
+            this._btnBrowseScenario.Name = "_btnBrowseScenario";
+            this._btnBrowseScenario.Size = new System.Drawing.Size(75, 23);
+            this._btnBrowseScenario.TabIndex = 30;
+            this._btnBrowseScenario.Tag = this._tbScenarioReports;
+            this._btnBrowseScenario.Text = "Обзор...";
+            this._btnBrowseScenario.UseVisualStyleBackColor = true;
+            this._btnBrowseScenario.Click += new System.EventHandler(this.PathBrowse_Click);
+            // 
+            // _lblPathBoot
+            // 
+            this._lblPathBoot.Location = new System.Drawing.Point(3, 92);
+            this._lblPathBoot.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblPathBoot.Name = "_lblPathBoot";
+            this._lblPathBoot.Size = new System.Drawing.Size(175, 20);
+            this._lblPathBoot.TabIndex = 25;
+            this._lblPathBoot.Text = "Данные загрузки:";
+            this._lblPathBoot.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbBoot
+            // 
+            this._tbBoot.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
+            this._tbBoot.Location = new System.Drawing.Point(181, 93);
+            this._tbBoot.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._tbBoot.Name = "_tbBoot";
+            this._tbBoot.ReadOnly = true;
+            this._tbBoot.Size = new System.Drawing.Size(522, 20);
+            this._tbBoot.TabIndex = 26;
+            // 
+            // _btnBrowseBoot
+            // 
+            this._btnBrowseBoot.Location = new System.Drawing.Point(712, 92);
+            this._btnBrowseBoot.Margin = new System.Windows.Forms.Padding(6, 2, 0, 0);
+            this._btnBrowseBoot.Name = "_btnBrowseBoot";
+            this._btnBrowseBoot.Size = new System.Drawing.Size(75, 23);
+            this._btnBrowseBoot.TabIndex = 27;
+            this._btnBrowseBoot.Tag = this._tbBoot;
+            this._btnBrowseBoot.Text = "Обзор...";
+            this._btnBrowseBoot.UseVisualStyleBackColor = true;
+            this._btnBrowseBoot.Click += new System.EventHandler(this.PathBrowse_Click);
+            // 
+            // _lblPathLogs
+            // 
+            this._lblPathLogs.Location = new System.Drawing.Point(3, 64);
+            this._lblPathLogs.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblPathLogs.Name = "_lblPathLogs";
+            this._lblPathLogs.Size = new System.Drawing.Size(175, 20);
+            this._lblPathLogs.TabIndex = 22;
+            this._lblPathLogs.Text = "Каталог логов:";
+            this._lblPathLogs.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbLogs
+            // 
+            this._tbLogs.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
+            this._tbLogs.Location = new System.Drawing.Point(181, 65);
+            this._tbLogs.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._tbLogs.Name = "_tbLogs";
+            this._tbLogs.ReadOnly = true;
+            this._tbLogs.Size = new System.Drawing.Size(522, 20);
+            this._tbLogs.TabIndex = 23;
+            // 
+            // _btnBrowseLogs
+            // 
+            this._btnBrowseLogs.Location = new System.Drawing.Point(712, 63);
+            this._btnBrowseLogs.Margin = new System.Windows.Forms.Padding(6, 2, 0, 0);
+            this._btnBrowseLogs.Name = "_btnBrowseLogs";
+            this._btnBrowseLogs.Size = new System.Drawing.Size(75, 23);
+            this._btnBrowseLogs.TabIndex = 24;
+            this._btnBrowseLogs.Tag = this._tbLogs;
+            this._btnBrowseLogs.Text = "Обзор...";
+            this._btnBrowseLogs.UseVisualStyleBackColor = true;
+            this._btnBrowseLogs.Click += new System.EventHandler(this.PathBrowse_Click);
+            // 
+            // _lblPathGomeostas
+            // 
+            this._lblPathGomeostas.Location = new System.Drawing.Point(3, 36);
+            this._lblPathGomeostas.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblPathGomeostas.Name = "_lblPathGomeostas";
+            this._lblPathGomeostas.Size = new System.Drawing.Size(175, 20);
+            this._lblPathGomeostas.TabIndex = 7;
+            this._lblPathGomeostas.Text = "Каталог данных:";
+            this._lblPathGomeostas.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbGomeostas
+            // 
+            this._tbGomeostas.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
+            this._tbGomeostas.Location = new System.Drawing.Point(181, 37);
+            this._tbGomeostas.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._tbGomeostas.Name = "_tbGomeostas";
+            this._tbGomeostas.ReadOnly = true;
+            this._tbGomeostas.Size = new System.Drawing.Size(522, 20);
+            this._tbGomeostas.TabIndex = 8;
+            // 
+            // _btnBrowseGomeostas
+            // 
+            this._btnBrowseGomeostas.Location = new System.Drawing.Point(712, 37);
+            this._btnBrowseGomeostas.Margin = new System.Windows.Forms.Padding(6, 2, 0, 0);
+            this._btnBrowseGomeostas.Name = "_btnBrowseGomeostas";
+            this._btnBrowseGomeostas.Size = new System.Drawing.Size(75, 23);
+            this._btnBrowseGomeostas.TabIndex = 9;
+            this._btnBrowseGomeostas.Tag = this._tbGomeostas;
+            this._btnBrowseGomeostas.Text = "Обзор...";
+            this._btnBrowseGomeostas.UseVisualStyleBackColor = true;
+            this._btnBrowseGomeostas.Click += new System.EventHandler(this.PathBrowse_Click);
+            // 
+            // _lblPathSettings
+            // 
+            this._lblPathSettings.Location = new System.Drawing.Point(3, 9);
+            this._lblPathSettings.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblPathSettings.Name = "_lblPathSettings";
+            this._lblPathSettings.Size = new System.Drawing.Size(175, 20);
+            this._lblPathSettings.TabIndex = 3;
+            this._lblPathSettings.Text = "Каталог настроек:";
+            this._lblPathSettings.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbSettingsPath
+            // 
+            this._tbSettingsPath.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
+            this._tbSettingsPath.Location = new System.Drawing.Point(181, 10);
+            this._tbSettingsPath.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._tbSettingsPath.Name = "_tbSettingsPath";
+            this._tbSettingsPath.ReadOnly = true;
+            this._tbSettingsPath.Size = new System.Drawing.Size(522, 20);
+            this._tbSettingsPath.TabIndex = 4;
+            // 
+            // _btnBrowseSettings
+            // 
+            this._btnBrowseSettings.Location = new System.Drawing.Point(712, 7);
+            this._btnBrowseSettings.Margin = new System.Windows.Forms.Padding(6, 2, 0, 0);
+            this._btnBrowseSettings.Name = "_btnBrowseSettings";
+            this._btnBrowseSettings.Size = new System.Drawing.Size(75, 23);
+            this._btnBrowseSettings.TabIndex = 5;
+            this._btnBrowseSettings.Tag = this._tbSettingsPath;
+            this._btnBrowseSettings.Text = "Обзор...";
+            this._btnBrowseSettings.UseVisualStyleBackColor = true;
+            this._btnBrowseSettings.Click += new System.EventHandler(this.PathBrowse_Click);
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this._chkVerbalAuthoritative);
+            this.tabPage2.Controls.Add(this._chkObservationMode);
+            this.tabPage2.Controls.Add(this._lblLogFormat);
+            this.tabPage2.Controls.Add(this._cmbLogFormat);
+            this.tabPage2.Controls.Add(this._lblLogEnabled);
+            this.tabPage2.Controls.Add(this._chkLog);
+            this.tabPage2.Controls.Add(this._lblSolidHomeostasisDebugLog);
+            this.tabPage2.Controls.Add(this._chkSolidHomeostasisDebugLog);
+            this.tabPage2.Controls.Add(this._lblSolidHostMinDelta);
+            this.tabPage2.Controls.Add(this._tbSolidHostMinDelta);
+            this.tabPage2.Controls.Add(this._lblSolidMetricEpsilon);
+            this.tabPage2.Controls.Add(this._tbSolidMetricEpsilon);
+            this.tabPage2.Controls.Add(this._lblRecognition);
+            this.tabPage2.Controls.Add(this._tbRecognition);
+            this.tabPage2.Controls.Add(this._lblReflexDur);
+            this.tabPage2.Controls.Add(this._tbReflexDur);
+            this.tabPage2.Controls.Add(this._lblDynamic);
+            this.tabPage2.Controls.Add(this._tbDynamic);
+            this.tabPage2.Controls.Add(this._lblDifSensor);
+            this.tabPage2.Controls.Add(this._tbDifSensor);
+            this.tabPage2.Controls.Add(this._lblHomeostasisPulseDrift);
+            this.tabPage2.Controls.Add(this._chkHomeostasisPulseDrift);
+            this.tabPage2.Controls.Add(this._lblCompare);
+            this.tabPage2.Controls.Add(this._tbCompare);
+            this.tabPage2.Controls.Add(this._lblAdaptive);
+            this.tabPage2.Controls.Add(this._cmbAdaptive);
+            this.tabPage2.Controls.Add(this._lblStyle);
+            this.tabPage2.Controls.Add(this._cmbStyle);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(800, 292);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Регуляция";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // _chkVerbalAuthoritative
+            // 
+            this._chkVerbalAuthoritative.AutoSize = true;
+            this._chkVerbalAuthoritative.Location = new System.Drawing.Point(374, 7);
+            this._chkVerbalAuthoritative.Margin = new System.Windows.Forms.Padding(0, 3, 0, 0);
+            this._chkVerbalAuthoritative.Name = "_chkVerbalAuthoritative";
+            this._chkVerbalAuthoritative.Size = new System.Drawing.Size(299, 17);
+            this._chkVerbalAuthoritative.TabIndex = 44;
+            this._chkVerbalAuthoritative.Text = "Авторитарная запись вербального канала (оператор)";
+            this._ttpStageEvolution.SetToolTip(this._chkVerbalAuthoritative, "VerbalAuthoritativeMode и CommandAuthoritativeMode: сразу в дерево (иначе песочни" +
         "ца, RecognitionThreshold).");
-      this._chkVerbalAuthoritative.UseVisualStyleBackColor = true;
-      // 
-      // _chkObservationMode
-      // 
-      this._chkObservationMode.AutoSize = true;
-      this._chkObservationMode.Location = new System.Drawing.Point(374, 32);
-      this._chkObservationMode.Margin = new System.Windows.Forms.Padding(0, 3, 0, 0);
-      this._chkObservationMode.Name = "_chkObservationMode";
-      this._chkObservationMode.Size = new System.Drawing.Size(275, 17);
-      this._chkObservationMode.TabIndex = 45;
-      this._chkObservationMode.Text = "Режим наблюдения (без изменения гомеостаза)";
-      this._ttpStageEvolution.SetToolTip(this._chkObservationMode, "AppGlobalState.ObservationMode: воздействия с пульта не меняют параметры гомеоста" +
+            this._chkVerbalAuthoritative.UseVisualStyleBackColor = true;
+            // 
+            // _chkObservationMode
+            // 
+            this._chkObservationMode.AutoSize = true;
+            this._chkObservationMode.Location = new System.Drawing.Point(374, 32);
+            this._chkObservationMode.Margin = new System.Windows.Forms.Padding(0, 3, 0, 0);
+            this._chkObservationMode.Name = "_chkObservationMode";
+            this._chkObservationMode.Size = new System.Drawing.Size(275, 17);
+            this._chkObservationMode.TabIndex = 45;
+            this._chkObservationMode.Text = "Режим наблюдения (без изменения гомеостаза)";
+            this._ttpStageEvolution.SetToolTip(this._chkObservationMode, "AppGlobalState.ObservationMode: воздействия с пульта не меняют параметры гомеоста" +
         "за; автоматизмы и рефлексы исполняются.");
-      this._chkObservationMode.UseVisualStyleBackColor = true;
-      // 
-      // _lblLogFormat
-      // 
-      this._lblLogFormat.Location = new System.Drawing.Point(3, 188);
-      this._lblLogFormat.Margin = new System.Windows.Forms.Padding(0, 6, 4, 0);
-      this._lblLogFormat.Name = "_lblLogFormat";
-      this._lblLogFormat.Size = new System.Drawing.Size(169, 13);
-      this._lblLogFormat.TabIndex = 18;
-      this._lblLogFormat.Text = "Формат логов:";
-      // 
-      // _cmbLogFormat
-      // 
-      this._cmbLogFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this._cmbLogFormat.Location = new System.Drawing.Point(180, 185);
-      this._cmbLogFormat.Margin = new System.Windows.Forms.Padding(0, 2, 0, 0);
-      this._cmbLogFormat.Name = "_cmbLogFormat";
-      this._cmbLogFormat.Size = new System.Drawing.Size(150, 21);
-      this._cmbLogFormat.TabIndex = 19;
-      // 
-      // _lblLogEnabled
-      // 
-      this._lblLogEnabled.Location = new System.Drawing.Point(393, 80);
-      this._lblLogEnabled.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblLogEnabled.Name = "_lblLogEnabled";
-      this._lblLogEnabled.Size = new System.Drawing.Size(176, 20);
-      this._lblLogEnabled.TabIndex = 16;
-      this._lblLogEnabled.Text = "Лог событий:";
-      this._lblLogEnabled.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _chkLog
-      // 
-      this._chkLog.AutoSize = true;
-      this._chkLog.Location = new System.Drawing.Point(374, 86);
-      this._chkLog.Margin = new System.Windows.Forms.Padding(8, 4, 40, 0);
-      this._chkLog.Name = "_chkLog";
-      this._chkLog.Size = new System.Drawing.Size(15, 14);
-      this._chkLog.TabIndex = 17;
-      this._chkLog.UseVisualStyleBackColor = true;
-      // 
-      // _lblSolidHomeostasisDebugLog
-      // 
-      this._lblSolidHomeostasisDebugLog.Location = new System.Drawing.Point(393, 108);
-      this._lblSolidHomeostasisDebugLog.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblSolidHomeostasisDebugLog.Name = "_lblSolidHomeostasisDebugLog";
-      this._lblSolidHomeostasisDebugLog.Size = new System.Drawing.Size(270, 20);
-      this._lblSolidHomeostasisDebugLog.TabIndex = 18;
-      this._lblSolidHomeostasisDebugLog.Text = "Отладка SolidHomeostasis (Trace/Debug):";
-      this._lblSolidHomeostasisDebugLog.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _chkSolidHomeostasisDebugLog
-      // 
-      this._chkSolidHomeostasisDebugLog.AutoSize = true;
-      this._chkSolidHomeostasisDebugLog.Location = new System.Drawing.Point(374, 114);
-      this._chkSolidHomeostasisDebugLog.Margin = new System.Windows.Forms.Padding(8, 4, 40, 0);
-      this._chkSolidHomeostasisDebugLog.Name = "_chkSolidHomeostasisDebugLog";
-      this._chkSolidHomeostasisDebugLog.Size = new System.Drawing.Size(15, 14);
-      this._chkSolidHomeostasisDebugLog.TabIndex = 18;
-      this._chkSolidHomeostasisDebugLog.UseVisualStyleBackColor = true;
-      // 
-      // _lblSolidHostMinDelta
-      // 
-      this._lblSolidHostMinDelta.Location = new System.Drawing.Point(3, 162);
-      this._lblSolidHostMinDelta.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblSolidHostMinDelta.Name = "_lblSolidHostMinDelta";
-      this._lblSolidHostMinDelta.Size = new System.Drawing.Size(169, 13);
-      this._lblSolidHostMinDelta.TabIndex = 42;
-      this._lblSolidHostMinDelta.Text = "Мин. |ΔP_i| для записи:";
-      this._lblSolidHostMinDelta.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this._lblSolidHostMinDelta, "Минимальное |целевое P_i − текущее в движке| на шкале 0…100 для записи в ISIDA за" +
+            this._chkObservationMode.UseVisualStyleBackColor = true;
+            // 
+            // _lblLogFormat
+            // 
+            this._lblLogFormat.Location = new System.Drawing.Point(3, 188);
+            this._lblLogFormat.Margin = new System.Windows.Forms.Padding(0, 6, 4, 0);
+            this._lblLogFormat.Name = "_lblLogFormat";
+            this._lblLogFormat.Size = new System.Drawing.Size(169, 13);
+            this._lblLogFormat.TabIndex = 18;
+            this._lblLogFormat.Text = "Формат логов:";
+            // 
+            // _cmbLogFormat
+            // 
+            this._cmbLogFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._cmbLogFormat.Location = new System.Drawing.Point(180, 185);
+            this._cmbLogFormat.Margin = new System.Windows.Forms.Padding(0, 2, 0, 0);
+            this._cmbLogFormat.Name = "_cmbLogFormat";
+            this._cmbLogFormat.Size = new System.Drawing.Size(150, 21);
+            this._cmbLogFormat.TabIndex = 19;
+            // 
+            // _lblLogEnabled
+            // 
+            this._lblLogEnabled.Location = new System.Drawing.Point(393, 80);
+            this._lblLogEnabled.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblLogEnabled.Name = "_lblLogEnabled";
+            this._lblLogEnabled.Size = new System.Drawing.Size(176, 20);
+            this._lblLogEnabled.TabIndex = 16;
+            this._lblLogEnabled.Text = "Лог событий:";
+            this._lblLogEnabled.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _chkLog
+            // 
+            this._chkLog.AutoSize = true;
+            this._chkLog.Location = new System.Drawing.Point(374, 86);
+            this._chkLog.Margin = new System.Windows.Forms.Padding(8, 4, 40, 0);
+            this._chkLog.Name = "_chkLog";
+            this._chkLog.Size = new System.Drawing.Size(15, 14);
+            this._chkLog.TabIndex = 17;
+            this._chkLog.UseVisualStyleBackColor = true;
+            // 
+            // _lblSolidHomeostasisDebugLog
+            // 
+            this._lblSolidHomeostasisDebugLog.Location = new System.Drawing.Point(393, 108);
+            this._lblSolidHomeostasisDebugLog.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblSolidHomeostasisDebugLog.Name = "_lblSolidHomeostasisDebugLog";
+            this._lblSolidHomeostasisDebugLog.Size = new System.Drawing.Size(270, 20);
+            this._lblSolidHomeostasisDebugLog.TabIndex = 18;
+            this._lblSolidHomeostasisDebugLog.Text = "Отладка SolidHomeostasis (Trace/Debug):";
+            this._lblSolidHomeostasisDebugLog.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _chkSolidHomeostasisDebugLog
+            // 
+            this._chkSolidHomeostasisDebugLog.AutoSize = true;
+            this._chkSolidHomeostasisDebugLog.Location = new System.Drawing.Point(374, 114);
+            this._chkSolidHomeostasisDebugLog.Margin = new System.Windows.Forms.Padding(8, 4, 40, 0);
+            this._chkSolidHomeostasisDebugLog.Name = "_chkSolidHomeostasisDebugLog";
+            this._chkSolidHomeostasisDebugLog.Size = new System.Drawing.Size(15, 14);
+            this._chkSolidHomeostasisDebugLog.TabIndex = 18;
+            this._chkSolidHomeostasisDebugLog.UseVisualStyleBackColor = true;
+            // 
+            // _lblSolidHostMinDelta
+            // 
+            this._lblSolidHostMinDelta.Location = new System.Drawing.Point(3, 162);
+            this._lblSolidHostMinDelta.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblSolidHostMinDelta.Name = "_lblSolidHostMinDelta";
+            this._lblSolidHostMinDelta.Size = new System.Drawing.Size(169, 13);
+            this._lblSolidHostMinDelta.TabIndex = 42;
+            this._lblSolidHostMinDelta.Text = "Мин. |ΔP_i| для записи:";
+            this._lblSolidHostMinDelta.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this._lblSolidHostMinDelta, "Минимальное |целевое P_i − текущее в движке| на шкале 0…100 для записи в ISIDA за" +
         " такт. 0 — фильтр выключен.");
-      // 
-      // _tbSolidHostMinDelta
-      // 
-      this._tbSolidHostMinDelta.Location = new System.Drawing.Point(180, 159);
-      this._tbSolidHostMinDelta.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
-      this._tbSolidHostMinDelta.Name = "_tbSolidHostMinDelta";
-      this._tbSolidHostMinDelta.Size = new System.Drawing.Size(150, 20);
-      this._tbSolidHostMinDelta.TabIndex = 43;
-      this._ttpStageEvolution.SetToolTip(this._tbSolidHostMinDelta, "Минимальное |целевое P_i − текущее в движке| на шкале 0…100 для записи в ISIDA за" +
+            // 
+            // _tbSolidHostMinDelta
+            // 
+            this._tbSolidHostMinDelta.Location = new System.Drawing.Point(180, 159);
+            this._tbSolidHostMinDelta.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
+            this._tbSolidHostMinDelta.Name = "_tbSolidHostMinDelta";
+            this._tbSolidHostMinDelta.Size = new System.Drawing.Size(150, 20);
+            this._tbSolidHostMinDelta.TabIndex = 43;
+            this._ttpStageEvolution.SetToolTip(this._tbSolidHostMinDelta, "Минимальное |целевое P_i − текущее в движке| на шкале 0…100 для записи в ISIDA за" +
         " такт. 0 — фильтр выключен.");
-      // 
-      // _lblSolidMetricEpsilon
-      // 
-      this._lblSolidMetricEpsilon.Location = new System.Drawing.Point(3, 139);
-      this._lblSolidMetricEpsilon.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblSolidMetricEpsilon.Name = "_lblSolidMetricEpsilon";
-      this._lblSolidMetricEpsilon.Size = new System.Drawing.Size(169, 13);
-      this._lblSolidMetricEpsilon.TabIndex = 40;
-      this._lblSolidMetricEpsilon.Text = "Порог Δ метрики SW:";
-      this._lblSolidMetricEpsilon.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this._lblSolidMetricEpsilon, "Порог заметного изменения метрики среды SolidWorks между пульсами (шкала 0…100).");
-      // 
-      // _tbSolidMetricEpsilon
-      // 
-      this._tbSolidMetricEpsilon.Location = new System.Drawing.Point(180, 132);
-      this._tbSolidMetricEpsilon.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
-      this._tbSolidMetricEpsilon.Name = "_tbSolidMetricEpsilon";
-      this._tbSolidMetricEpsilon.Size = new System.Drawing.Size(150, 20);
-      this._tbSolidMetricEpsilon.TabIndex = 41;
-      this._ttpStageEvolution.SetToolTip(this._tbSolidMetricEpsilon, "Порог заметного изменения метрики среды SolidWorks между пульсами (шкала 0…100).");
-      // 
-      // _lblRecognition
-      // 
-      this._lblRecognition.Location = new System.Drawing.Point(3, 113);
-      this._lblRecognition.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblRecognition.Name = "_lblRecognition";
-      this._lblRecognition.Size = new System.Drawing.Size(169, 13);
-      this._lblRecognition.TabIndex = 14;
-      this._lblRecognition.Text = "Повторы для фиксации образа:";
-      this._lblRecognition.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _tbRecognition
-      // 
-      this._tbRecognition.Location = new System.Drawing.Point(180, 106);
-      this._tbRecognition.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
-      this._tbRecognition.Name = "_tbRecognition";
-      this._tbRecognition.Size = new System.Drawing.Size(150, 20);
-      this._tbRecognition.TabIndex = 15;
-      // 
-      // _lblReflexDur
-      // 
-      this._lblReflexDur.Location = new System.Drawing.Point(3, 87);
-      this._lblReflexDur.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblReflexDur.Name = "_lblReflexDur";
-      this._lblReflexDur.Size = new System.Drawing.Size(169, 13);
-      this._lblReflexDur.TabIndex = 12;
-      this._lblReflexDur.Text = "Удержание действия (пульс.):";
-      this._lblReflexDur.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _tbReflexDur
-      // 
-      this._tbReflexDur.Location = new System.Drawing.Point(180, 81);
-      this._tbReflexDur.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
-      this._tbReflexDur.Name = "_tbReflexDur";
-      this._tbReflexDur.Size = new System.Drawing.Size(150, 20);
-      this._tbReflexDur.TabIndex = 13;
-      // 
-      // _lblDynamic
-      // 
-      this._lblDynamic.Location = new System.Drawing.Point(3, 61);
-      this._lblDynamic.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblDynamic.Name = "_lblDynamic";
-      this._lblDynamic.Size = new System.Drawing.Size(169, 13);
-      this._lblDynamic.TabIndex = 10;
-      this._lblDynamic.Text = "Удержание Плохо/Хорошо (пульс.):";
-      this._lblDynamic.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this._lblDynamic, resources.GetString("_lblDynamic.ToolTip"));
-      // 
-      // _tbDynamic
-      // 
-      this._tbDynamic.Location = new System.Drawing.Point(180, 55);
-      this._tbDynamic.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
-      this._tbDynamic.Name = "_tbDynamic";
-      this._tbDynamic.Size = new System.Drawing.Size(150, 20);
-      this._tbDynamic.TabIndex = 11;
-      this._ttpStageEvolution.SetToolTip(this._tbDynamic, resources.GetString("_tbDynamic.ToolTip"));
-      // 
-      // _lblDifSensor
-      // 
-      this._lblDifSensor.Location = new System.Drawing.Point(3, 35);
-      this._lblDifSensor.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblDifSensor.Name = "_lblDifSensor";
-      this._lblDifSensor.Size = new System.Drawing.Size(169, 13);
-      this._lblDifSensor.TabIndex = 8;
-      this._lblDifSensor.Text = "Минимальный шаг параметра:";
-      this._lblDifSensor.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _tbDifSensor
-      // 
-      this._tbDifSensor.Location = new System.Drawing.Point(180, 32);
-      this._tbDifSensor.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
-      this._tbDifSensor.Name = "_tbDifSensor";
-      this._tbDifSensor.Size = new System.Drawing.Size(150, 20);
-      this._tbDifSensor.TabIndex = 9;
-      // 
-      // _lblHomeostasisPulseDrift
-      // 
-      this._lblHomeostasisPulseDrift.Location = new System.Drawing.Point(393, 58);
-      this._lblHomeostasisPulseDrift.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblHomeostasisPulseDrift.Name = "_lblHomeostasisPulseDrift";
-      this._lblHomeostasisPulseDrift.Size = new System.Drawing.Size(221, 21);
-      this._lblHomeostasisPulseDrift.TabIndex = 20;
-      this._lblHomeostasisPulseDrift.Text = "Дрейф параметров по Speed на пульсе:";
-      // 
-      // _chkHomeostasisPulseDrift
-      // 
-      this._chkHomeostasisPulseDrift.AutoSize = true;
-      this._chkHomeostasisPulseDrift.Location = new System.Drawing.Point(374, 61);
-      this._chkHomeostasisPulseDrift.Margin = new System.Windows.Forms.Padding(8, 4, 40, 0);
-      this._chkHomeostasisPulseDrift.Name = "_chkHomeostasisPulseDrift";
-      this._chkHomeostasisPulseDrift.Size = new System.Drawing.Size(15, 14);
-      this._chkHomeostasisPulseDrift.TabIndex = 21;
-      this._chkHomeostasisPulseDrift.UseVisualStyleBackColor = true;
-      // 
-      // _lblCompare
-      // 
-      this._lblCompare.Location = new System.Drawing.Point(3, 7);
-      this._lblCompare.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblCompare.Name = "_lblCompare";
-      this._lblCompare.Size = new System.Drawing.Size(169, 13);
-      this._lblCompare.TabIndex = 6;
-      this._lblCompare.Text = "Интегральный порог, %:";
-      this._lblCompare.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _tbCompare
-      // 
-      this._tbCompare.Location = new System.Drawing.Point(180, 5);
-      this._tbCompare.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
-      this._tbCompare.Name = "_tbCompare";
-      this._tbCompare.Size = new System.Drawing.Size(150, 20);
-      this._tbCompare.TabIndex = 7;
-      // 
-      // _lblAdaptive
-      // 
-      this._lblAdaptive.Location = new System.Drawing.Point(3, 213);
-      this._lblAdaptive.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblAdaptive.Name = "_lblAdaptive";
-      this._lblAdaptive.Size = new System.Drawing.Size(169, 13);
-      this._lblAdaptive.TabIndex = 4;
-      this._lblAdaptive.Text = "Адаптивные действия:";
-      this._lblAdaptive.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _cmbAdaptive
-      // 
-      this._cmbAdaptive.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this._cmbAdaptive.Location = new System.Drawing.Point(180, 210);
-      this._cmbAdaptive.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
-      this._cmbAdaptive.Name = "_cmbAdaptive";
-      this._cmbAdaptive.Size = new System.Drawing.Size(150, 21);
-      this._cmbAdaptive.TabIndex = 5;
-      // 
-      // _lblStyle
-      // 
-      this._lblStyle.Location = new System.Drawing.Point(3, 238);
-      this._lblStyle.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblStyle.Name = "_lblStyle";
-      this._lblStyle.Size = new System.Drawing.Size(169, 13);
-      this._lblStyle.TabIndex = 2;
-      this._lblStyle.Text = "Стиль поведения агента:";
-      this._lblStyle.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _cmbStyle
-      // 
-      this._cmbStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this._cmbStyle.Location = new System.Drawing.Point(180, 235);
-      this._cmbStyle.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
-      this._cmbStyle.Name = "_cmbStyle";
-      this._cmbStyle.Size = new System.Drawing.Size(150, 21);
-      this._cmbStyle.TabIndex = 3;
-      // 
-      // tabPage3
-      // 
-      this.tabPage3.Controls.Add(this._chkFirstRun);
-      this.tabPage3.Controls.Add(this._tbDefaultGeneticReflexId);
-      this.tabPage3.Controls.Add(this._lblDefaultGeneticReflexId);
-      this.tabPage3.Controls.Add(this._lblSilence);
-      this.tabPage3.Controls.Add(this._tbSilence);
-      this.tabPage3.Controls.Add(this._lblCondensedLogPoll);
-      this.tabPage3.Controls.Add(this._tbCondensedLogPoll);
-      this.tabPage3.Controls.Add(this._lblMainMaxAge);
-      this.tabPage3.Controls.Add(this._tbMainMaxAge);
-      this.tabPage3.Controls.Add(this._lblCycleBase);
-      this.tabPage3.Controls.Add(this._tbCycleBase);
-      this.tabPage3.Controls.Add(this._lblCycleDiv);
-      this.tabPage3.Controls.Add(this._tbCycleDiv);
-      this.tabPage3.Controls.Add(this._lblWait);
-      this.tabPage3.Controls.Add(this._tbWaitOperator);
-      this.tabPage3.Controls.Add(this._lblTheme);
-      this.tabPage3.Controls.Add(this._cmbTheme);
-      this.tabPage3.Location = new System.Drawing.Point(4, 22);
-      this.tabPage3.Name = "tabPage3";
-      this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage3.Size = new System.Drawing.Size(800, 292);
-      this.tabPage3.TabIndex = 2;
-      this.tabPage3.Text = "Аналитика";
-      this.tabPage3.UseVisualStyleBackColor = true;
-      // 
-      // _chkFirstRun
-      // 
-      this._chkFirstRun.AutoSize = true;
-      this._chkFirstRun.Location = new System.Drawing.Point(8, 192);
-      this._chkFirstRun.Margin = new System.Windows.Forms.Padding(8, 4, 40, 0);
-      this._chkFirstRun.Name = "_chkFirstRun";
-      this._chkFirstRun.Size = new System.Drawing.Size(104, 17);
-      this._chkFirstRun.TabIndex = 16;
-      this._chkFirstRun.Text = "Первый запуск";
-      this._chkFirstRun.UseVisualStyleBackColor = true;
-      // 
-      // _tbDefaultGeneticReflexId
-      // 
-      this._tbDefaultGeneticReflexId.Location = new System.Drawing.Point(187, 163);
-      this._tbDefaultGeneticReflexId.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
-      this._tbDefaultGeneticReflexId.Name = "_tbDefaultGeneticReflexId";
-      this._tbDefaultGeneticReflexId.Size = new System.Drawing.Size(100, 20);
-      this._tbDefaultGeneticReflexId.TabIndex = 15;
-      // 
-      // _lblDefaultGeneticReflexId
-      // 
-      this._lblDefaultGeneticReflexId.Location = new System.Drawing.Point(5, 162);
-      this._lblDefaultGeneticReflexId.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblDefaultGeneticReflexId.Name = "_lblDefaultGeneticReflexId";
-      this._lblDefaultGeneticReflexId.Size = new System.Drawing.Size(174, 20);
-      this._lblDefaultGeneticReflexId.TabIndex = 14;
-      this._lblDefaultGeneticReflexId.Text = "Безусловный рефлекс (ID):";
-      this._lblDefaultGeneticReflexId.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _lblSilence
-      // 
-      this._lblSilence.Location = new System.Drawing.Point(5, 136);
-      this._lblSilence.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblSilence.Name = "_lblSilence";
-      this._lblSilence.Size = new System.Drawing.Size(174, 20);
-      this._lblSilence.TabIndex = 12;
-      this._lblSilence.Text = "Простой оператора (пульс.):";
-      this._lblSilence.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _tbSilence
-      // 
-      this._tbSilence.Location = new System.Drawing.Point(187, 137);
-      this._tbSilence.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
-      this._tbSilence.Name = "_tbSilence";
-      this._tbSilence.Size = new System.Drawing.Size(100, 20);
-      this._tbSilence.TabIndex = 13;
-      // 
-      // _lblCondensedLogPoll
-      // 
-      this._lblCondensedLogPoll.Location = new System.Drawing.Point(5, 218);
-      this._lblCondensedLogPoll.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblCondensedLogPoll.Name = "_lblCondensedLogPoll";
-      this._lblCondensedLogPoll.Size = new System.Drawing.Size(174, 20);
-      this._lblCondensedLogPoll.TabIndex = 17;
-      this._lblCondensedLogPoll.Text = "Период кратких логов (пульс.):";
-      this._lblCondensedLogPoll.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _tbCondensedLogPoll
-      // 
-      this._tbCondensedLogPoll.Location = new System.Drawing.Point(187, 219);
-      this._tbCondensedLogPoll.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
-      this._tbCondensedLogPoll.Name = "_tbCondensedLogPoll";
-      this._tbCondensedLogPoll.Size = new System.Drawing.Size(100, 20);
-      this._tbCondensedLogPoll.TabIndex = 18;
-      // 
-      // _lblMainMaxAge
-      // 
-      this._lblMainMaxAge.Location = new System.Drawing.Point(5, 110);
-      this._lblMainMaxAge.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblMainMaxAge.Name = "_lblMainMaxAge";
-      this._lblMainMaxAge.Size = new System.Drawing.Size(174, 20);
-      this._lblMainMaxAge.TabIndex = 10;
-      this._lblMainMaxAge.Text = "Цикл: max возраст (пульс.):";
-      this._lblMainMaxAge.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _tbMainMaxAge
-      // 
-      this._tbMainMaxAge.Location = new System.Drawing.Point(187, 111);
-      this._tbMainMaxAge.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
-      this._tbMainMaxAge.Name = "_tbMainMaxAge";
-      this._tbMainMaxAge.Size = new System.Drawing.Size(100, 20);
-      this._tbMainMaxAge.TabIndex = 11;
-      // 
-      // _lblCycleBase
-      // 
-      this._lblCycleBase.Location = new System.Drawing.Point(5, 84);
-      this._lblCycleBase.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblCycleBase.Name = "_lblCycleBase";
-      this._lblCycleBase.Size = new System.Drawing.Size(174, 20);
-      this._lblCycleBase.TabIndex = 8;
-      this._lblCycleBase.Text = "Цикл: снятие B за пульс:";
-      this._lblCycleBase.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _tbCycleBase
-      // 
-      this._tbCycleBase.Location = new System.Drawing.Point(187, 85);
-      this._tbCycleBase.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
-      this._tbCycleBase.Name = "_tbCycleBase";
-      this._tbCycleBase.Size = new System.Drawing.Size(100, 20);
-      this._tbCycleBase.TabIndex = 9;
-      // 
-      // _lblCycleDiv
-      // 
-      this._lblCycleDiv.Location = new System.Drawing.Point(5, 58);
-      this._lblCycleDiv.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblCycleDiv.Name = "_lblCycleDiv";
-      this._lblCycleDiv.Size = new System.Drawing.Size(174, 20);
-      this._lblCycleDiv.TabIndex = 6;
-      this._lblCycleDiv.Text = "Цикл: делитель A (B+age/A):";
-      this._lblCycleDiv.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _tbCycleDiv
-      // 
-      this._tbCycleDiv.Location = new System.Drawing.Point(187, 59);
-      this._tbCycleDiv.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
-      this._tbCycleDiv.Name = "_tbCycleDiv";
-      this._tbCycleDiv.Size = new System.Drawing.Size(100, 20);
-      this._tbCycleDiv.TabIndex = 7;
-      // 
-      // _lblWait
-      // 
-      this._lblWait.Location = new System.Drawing.Point(5, 32);
-      this._lblWait.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblWait.Name = "_lblWait";
-      this._lblWait.Size = new System.Drawing.Size(174, 20);
-      this._lblWait.TabIndex = 4;
-      this._lblWait.Text = "Ожидание оператора (пульс.):";
-      this._lblWait.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _tbWaitOperator
-      // 
-      this._tbWaitOperator.Location = new System.Drawing.Point(187, 33);
-      this._tbWaitOperator.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
-      this._tbWaitOperator.Name = "_tbWaitOperator";
-      this._tbWaitOperator.Size = new System.Drawing.Size(100, 20);
-      this._tbWaitOperator.TabIndex = 5;
-      // 
-      // _lblTheme
-      // 
-      this._lblTheme.Location = new System.Drawing.Point(5, 6);
-      this._lblTheme.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblTheme.Name = "_lblTheme";
-      this._lblTheme.Size = new System.Drawing.Size(174, 20);
-      this._lblTheme.TabIndex = 2;
-      this._lblTheme.Text = "Тема анализа:";
-      this._lblTheme.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _cmbTheme
-      // 
-      this._cmbTheme.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this._cmbTheme.Location = new System.Drawing.Point(187, 6);
-      this._cmbTheme.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
-      this._cmbTheme.Name = "_cmbTheme";
-      this._cmbTheme.Size = new System.Drawing.Size(220, 21);
-      this._cmbTheme.TabIndex = 3;
-      // 
-      // tabPageAdapter
-      // 
-      this.tabPageAdapter.Controls.Add(this._lblHeavyMetricsPulsePeriod);
-      this.tabPageAdapter.Controls.Add(this._tbHeavyMetricsPulsePeriod);
-      this.tabPageAdapter.Controls.Add(this._lblScannerProbeConcurrency);
-      this.tabPageAdapter.Controls.Add(this._tbScannerProbeConcurrency);
-      this.tabPageAdapter.Controls.Add(this._lblScannerBatchSize);
-      this.tabPageAdapter.Controls.Add(this._tbScannerBatchSize);
-      this.tabPageAdapter.Controls.Add(this._lblScannerUnavailableRootPoll);
-      this.tabPageAdapter.Controls.Add(this._tbScannerUnavailableRootPoll);
-      this.tabPageAdapter.Controls.Add(this._lblBomDiffScanPeriod);
-      this.tabPageAdapter.Controls.Add(this._tbBomDiffScanPeriod);
-      this.tabPageAdapter.Controls.Add(this._lblCommandBufferFlushHint);
-      this.tabPageAdapter.Controls.Add(this._tbCommandBufferMaxAgeSec);
-      this.tabPageAdapter.Controls.Add(this._lblCommandBufferMaxAgeSec);
-      this.tabPageAdapter.Controls.Add(this._tbCommandBufferMaxTokens);
-      this.tabPageAdapter.Controls.Add(this._lblCommandBufferMaxTokens);
-      this.tabPageAdapter.Controls.Add(this._tbCommandBufferIdleFlushSec);
-      this.tabPageAdapter.Controls.Add(this._lblCommandBufferIdleFlushSec);
-      this.tabPageAdapter.Controls.Add(this._lblCommandBufferRecordingHint);
-      this.tabPageAdapter.Controls.Add(this._chkCommandBufferRecording);
-      this.tabPageAdapter.Location = new System.Drawing.Point(4, 22);
-      this.tabPageAdapter.Name = "tabPageAdapter";
-      this.tabPageAdapter.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageAdapter.Size = new System.Drawing.Size(800, 292);
-      this.tabPageAdapter.TabIndex = 3;
-      this.tabPageAdapter.Text = "Адаптер";
-      this.tabPageAdapter.UseVisualStyleBackColor = true;
-      // 
-      // _lblHeavyMetricsPulsePeriod
-      // 
-      this._lblHeavyMetricsPulsePeriod.Location = new System.Drawing.Point(3, 9);
-      this._lblHeavyMetricsPulsePeriod.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblHeavyMetricsPulsePeriod.Name = "_lblHeavyMetricsPulsePeriod";
-      this._lblHeavyMetricsPulsePeriod.Size = new System.Drawing.Size(175, 20);
-      this._lblHeavyMetricsPulsePeriod.TabIndex = 0;
-      this._lblHeavyMetricsPulsePeriod.Text = "Период пульсации метрик:";
-      this._lblHeavyMetricsPulsePeriod.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _tbHeavyMetricsPulsePeriod
-      // 
-      this._tbHeavyMetricsPulsePeriod.BackColor = System.Drawing.SystemColors.Window;
-      this._tbHeavyMetricsPulsePeriod.Location = new System.Drawing.Point(181, 10);
-      this._tbHeavyMetricsPulsePeriod.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-      this._tbHeavyMetricsPulsePeriod.Name = "_tbHeavyMetricsPulsePeriod";
-      this._tbHeavyMetricsPulsePeriod.Size = new System.Drawing.Size(150, 20);
-      this._tbHeavyMetricsPulsePeriod.TabIndex = 1;
-      // 
-      // _lblScannerProbeConcurrency
-      // 
-      this._lblScannerProbeConcurrency.Location = new System.Drawing.Point(3, 35);
-      this._lblScannerProbeConcurrency.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblScannerProbeConcurrency.Name = "_lblScannerProbeConcurrency";
-      this._lblScannerProbeConcurrency.Size = new System.Drawing.Size(175, 20);
-      this._lblScannerProbeConcurrency.TabIndex = 11;
-      this._lblScannerProbeConcurrency.Text = "Параллелизм проверок сканера:";
-      this._lblScannerProbeConcurrency.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _tbScannerProbeConcurrency
-      // 
-      this._tbScannerProbeConcurrency.BackColor = System.Drawing.SystemColors.Window;
-      this._tbScannerProbeConcurrency.Location = new System.Drawing.Point(181, 36);
-      this._tbScannerProbeConcurrency.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-      this._tbScannerProbeConcurrency.Name = "_tbScannerProbeConcurrency";
-      this._tbScannerProbeConcurrency.Size = new System.Drawing.Size(150, 20);
-      this._tbScannerProbeConcurrency.TabIndex = 12;
-      // 
-      // _lblScannerBatchSize
-      // 
-      this._lblScannerBatchSize.Location = new System.Drawing.Point(3, 61);
-      this._lblScannerBatchSize.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblScannerBatchSize.Name = "_lblScannerBatchSize";
-      this._lblScannerBatchSize.Size = new System.Drawing.Size(175, 20);
-      this._lblScannerBatchSize.TabIndex = 13;
-      this._lblScannerBatchSize.Text = "Квант сканирования (строк):";
-      this._lblScannerBatchSize.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _tbScannerBatchSize
-      // 
-      this._tbScannerBatchSize.BackColor = System.Drawing.SystemColors.Window;
-      this._tbScannerBatchSize.Location = new System.Drawing.Point(181, 62);
-      this._tbScannerBatchSize.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-      this._tbScannerBatchSize.Name = "_tbScannerBatchSize";
-      this._tbScannerBatchSize.Size = new System.Drawing.Size(150, 20);
-      this._tbScannerBatchSize.TabIndex = 14;
-      // 
-      // _lblScannerUnavailableRootPoll
-      // 
-      this._lblScannerUnavailableRootPoll.Location = new System.Drawing.Point(3, 87);
-      this._lblScannerUnavailableRootPoll.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblScannerUnavailableRootPoll.Name = "_lblScannerUnavailableRootPoll";
-      this._lblScannerUnavailableRootPoll.Size = new System.Drawing.Size(175, 20);
-      this._lblScannerUnavailableRootPoll.TabIndex = 15;
-      this._lblScannerUnavailableRootPoll.Text = "Опрос недоступного реестра:";
-      this._lblScannerUnavailableRootPoll.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _tbScannerUnavailableRootPoll
-      // 
-      this._tbScannerUnavailableRootPoll.BackColor = System.Drawing.SystemColors.Window;
-      this._tbScannerUnavailableRootPoll.Location = new System.Drawing.Point(181, 88);
-      this._tbScannerUnavailableRootPoll.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-      this._tbScannerUnavailableRootPoll.Name = "_tbScannerUnavailableRootPoll";
-      this._tbScannerUnavailableRootPoll.Size = new System.Drawing.Size(150, 20);
-      this._tbScannerUnavailableRootPoll.TabIndex = 16;
-      // 
-      // _lblBomDiffScanPeriod
-      // 
-      this._lblBomDiffScanPeriod.Location = new System.Drawing.Point(3, 113);
-      this._lblBomDiffScanPeriod.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblBomDiffScanPeriod.Name = "_lblBomDiffScanPeriod";
-      this._lblBomDiffScanPeriod.Size = new System.Drawing.Size(175, 20);
-      this._lblBomDiffScanPeriod.TabIndex = 17;
-      this._lblBomDiffScanPeriod.Text = "Период сверки BOM с 1С:";
-      this._lblBomDiffScanPeriod.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _tbBomDiffScanPeriod
-      // 
-      this._tbBomDiffScanPeriod.BackColor = System.Drawing.SystemColors.Window;
-      this._tbBomDiffScanPeriod.Location = new System.Drawing.Point(181, 114);
-      this._tbBomDiffScanPeriod.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-      this._tbBomDiffScanPeriod.Name = "_tbBomDiffScanPeriod";
-      this._tbBomDiffScanPeriod.Size = new System.Drawing.Size(150, 20);
-      this._tbBomDiffScanPeriod.TabIndex = 18;
-      // 
-      // _lblCommandBufferFlushHint
-      // 
-      this._lblCommandBufferFlushHint.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this._lblCommandBufferFlushHint.Location = new System.Drawing.Point(3, 142);
-      this._lblCommandBufferFlushHint.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblCommandBufferFlushHint.Name = "_lblCommandBufferFlushHint";
-      this._lblCommandBufferFlushHint.Size = new System.Drawing.Size(650, 20);
-      this._lblCommandBufferFlushHint.TabIndex = 2;
-      this._lblCommandBufferFlushHint.Text = "Параметры буфера команд (для отладки адаптера):";
-      this._lblCommandBufferFlushHint.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _tbCommandBufferMaxAgeSec
-      // 
-      this._tbCommandBufferMaxAgeSec.BackColor = System.Drawing.SystemColors.Window;
-      this._tbCommandBufferMaxAgeSec.Location = new System.Drawing.Point(181, 168);
-      this._tbCommandBufferMaxAgeSec.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-      this._tbCommandBufferMaxAgeSec.Name = "_tbCommandBufferMaxAgeSec";
-      this._tbCommandBufferMaxAgeSec.Size = new System.Drawing.Size(150, 20);
-      this._tbCommandBufferMaxAgeSec.TabIndex = 3;
-      // 
-      // _lblCommandBufferMaxAgeSec
-      // 
-      this._lblCommandBufferMaxAgeSec.Location = new System.Drawing.Point(3, 167);
-      this._lblCommandBufferMaxAgeSec.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblCommandBufferMaxAgeSec.Name = "_lblCommandBufferMaxAgeSec";
-      this._lblCommandBufferMaxAgeSec.Size = new System.Drawing.Size(175, 20);
-      this._lblCommandBufferMaxAgeSec.TabIndex = 4;
-      this._lblCommandBufferMaxAgeSec.Text = "Макс. возраст буфера (пульсов):";
-      this._lblCommandBufferMaxAgeSec.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _tbCommandBufferMaxTokens
-      // 
-      this._tbCommandBufferMaxTokens.BackColor = System.Drawing.SystemColors.Window;
-      this._tbCommandBufferMaxTokens.Location = new System.Drawing.Point(181, 194);
-      this._tbCommandBufferMaxTokens.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-      this._tbCommandBufferMaxTokens.Name = "_tbCommandBufferMaxTokens";
-      this._tbCommandBufferMaxTokens.Size = new System.Drawing.Size(150, 20);
-      this._tbCommandBufferMaxTokens.TabIndex = 5;
-      // 
-      // _lblCommandBufferMaxTokens
-      // 
-      this._lblCommandBufferMaxTokens.Location = new System.Drawing.Point(3, 193);
-      this._lblCommandBufferMaxTokens.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblCommandBufferMaxTokens.Name = "_lblCommandBufferMaxTokens";
-      this._lblCommandBufferMaxTokens.Size = new System.Drawing.Size(175, 20);
-      this._lblCommandBufferMaxTokens.TabIndex = 6;
-      this._lblCommandBufferMaxTokens.Text = "Макс. токенов в буфере:";
-      this._lblCommandBufferMaxTokens.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _tbCommandBufferIdleFlushSec
-      // 
-      this._tbCommandBufferIdleFlushSec.BackColor = System.Drawing.SystemColors.Window;
-      this._tbCommandBufferIdleFlushSec.Location = new System.Drawing.Point(181, 220);
-      this._tbCommandBufferIdleFlushSec.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-      this._tbCommandBufferIdleFlushSec.Name = "_tbCommandBufferIdleFlushSec";
-      this._tbCommandBufferIdleFlushSec.Size = new System.Drawing.Size(150, 20);
-      this._tbCommandBufferIdleFlushSec.TabIndex = 7;
-      // 
-      // _lblCommandBufferIdleFlushSec
-      // 
-      this._lblCommandBufferIdleFlushSec.Location = new System.Drawing.Point(3, 219);
-      this._lblCommandBufferIdleFlushSec.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblCommandBufferIdleFlushSec.Name = "_lblCommandBufferIdleFlushSec";
-      this._lblCommandBufferIdleFlushSec.Size = new System.Drawing.Size(175, 20);
-      this._lblCommandBufferIdleFlushSec.TabIndex = 8;
-      this._lblCommandBufferIdleFlushSec.Text = "Сброс простоя (пульсов):";
-      this._lblCommandBufferIdleFlushSec.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _lblCommandBufferRecordingHint
-      // 
-      this._lblCommandBufferRecordingHint.Location = new System.Drawing.Point(3, 251);
-      this._lblCommandBufferRecordingHint.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblCommandBufferRecordingHint.Name = "_lblCommandBufferRecordingHint";
-      this._lblCommandBufferRecordingHint.Size = new System.Drawing.Size(175, 20);
-      this._lblCommandBufferRecordingHint.TabIndex = 9;
-      this._lblCommandBufferRecordingHint.Text = "Запись команд в буфер:";
-      this._lblCommandBufferRecordingHint.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _chkCommandBufferRecording
-      // 
-      this._chkCommandBufferRecording.AutoSize = true;
-      this._chkCommandBufferRecording.Checked = true;
-      this._chkCommandBufferRecording.CheckState = System.Windows.Forms.CheckState.Checked;
-      this._chkCommandBufferRecording.Location = new System.Drawing.Point(180, 254);
-      this._chkCommandBufferRecording.Margin = new System.Windows.Forms.Padding(8, 4, 40, 0);
-      this._chkCommandBufferRecording.Name = "_chkCommandBufferRecording";
-      this._chkCommandBufferRecording.Size = new System.Drawing.Size(15, 14);
-      this._chkCommandBufferRecording.TabIndex = 10;
-      this._chkCommandBufferRecording.UseVisualStyleBackColor = true;
-      // 
-      // tabPageDocuments
-      // 
-      this.tabPageDocuments.Controls.Add(this._chkNeedDrawingDefault);
-      this.tabPageDocuments.Controls.Add(this._chkNeedPdfDefault);
-      this.tabPageDocuments.Controls.Add(this._chkNeedDxfDefault);
-      this.tabPageDocuments.Controls.Add(this._lblDocumentColorsHint);
-      this.tabPageDocuments.Controls.Add(this._lblDocumentColorPart);
-      this.tabPageDocuments.Controls.Add(this._cmbDocumentColorPart);
-      this.tabPageDocuments.Controls.Add(this._lblDocumentColorAssembly);
-      this.tabPageDocuments.Controls.Add(this._cmbDocumentColorAssembly);
-      this.tabPageDocuments.Controls.Add(this._lblDocumentColorDrawing);
-      this.tabPageDocuments.Controls.Add(this._cmbDocumentColorDrawing);
-      this.tabPageDocuments.Location = new System.Drawing.Point(4, 22);
-      this.tabPageDocuments.Name = "tabPageDocuments";
-      this.tabPageDocuments.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageDocuments.Size = new System.Drawing.Size(800, 292);
-      this.tabPageDocuments.TabIndex = 4;
-      this.tabPageDocuments.Text = "Документы";
-      this.tabPageDocuments.UseVisualStyleBackColor = true;
-      // 
-      // _chkNeedDrawingDefault
-      // 
-      this._chkNeedDrawingDefault.AutoSize = true;
-      this._chkNeedDrawingDefault.Location = new System.Drawing.Point(8, 58);
-      this._chkNeedDrawingDefault.Name = "_chkNeedDrawingDefault";
-      this._chkNeedDrawingDefault.Size = new System.Drawing.Size(411, 17);
-      this._chkNeedDrawingDefault.TabIndex = 2;
-      this._chkNeedDrawingDefault.Text = "По умолчанию «Нужен чертеж = Да» при создании новых деталей и сборок";
-      this._chkNeedDrawingDefault.UseVisualStyleBackColor = true;
-      // 
-      // _chkNeedPdfDefault
-      // 
-      this._chkNeedPdfDefault.AutoSize = true;
-      this._chkNeedPdfDefault.Location = new System.Drawing.Point(8, 35);
-      this._chkNeedPdfDefault.Name = "_chkNeedPdfDefault";
-      this._chkNeedPdfDefault.Size = new System.Drawing.Size(349, 17);
-      this._chkNeedPdfDefault.TabIndex = 1;
-      this._chkNeedPdfDefault.Text = "По умолчанию «Нужен pdf = Да» при создании новых чертежей";
-      this._chkNeedPdfDefault.UseVisualStyleBackColor = true;
-      // 
-      // _chkNeedDxfDefault
-      // 
-      this._chkNeedDxfDefault.AutoSize = true;
-      this._chkNeedDxfDefault.Location = new System.Drawing.Point(8, 12);
-      this._chkNeedDxfDefault.Name = "_chkNeedDxfDefault";
-      this._chkNeedDxfDefault.Size = new System.Drawing.Size(341, 17);
-      this._chkNeedDxfDefault.TabIndex = 0;
-      this._chkNeedDxfDefault.Text = "По умолчанию «Нужен dxf = Да» при создании новых деталей";
-      this._chkNeedDxfDefault.UseVisualStyleBackColor = true;
-      // 
-      // _lblDocumentColorsHint
-      // 
-      this._lblDocumentColorsHint.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this._lblDocumentColorsHint.Location = new System.Drawing.Point(3, 92);
-      this._lblDocumentColorsHint.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblDocumentColorsHint.Name = "_lblDocumentColorsHint";
-      this._lblDocumentColorsHint.Size = new System.Drawing.Size(650, 20);
-      this._lblDocumentColorsHint.TabIndex = 3;
-      this._lblDocumentColorsHint.Text = "Коды зрительного канала по типу активного документа (для контекста у-рефлексов):";
-      this._lblDocumentColorsHint.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _lblDocumentColorPart
-      // 
-      this._lblDocumentColorPart.Location = new System.Drawing.Point(3, 118);
-      this._lblDocumentColorPart.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblDocumentColorPart.Name = "_lblDocumentColorPart";
-      this._lblDocumentColorPart.Size = new System.Drawing.Size(175, 20);
-      this._lblDocumentColorPart.TabIndex = 4;
-      this._lblDocumentColorPart.Text = "Деталь (цвет):";
-      this._lblDocumentColorPart.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _cmbDocumentColorPart
-      // 
-      this._cmbDocumentColorPart.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this._cmbDocumentColorPart.Location = new System.Drawing.Point(181, 118);
-      this._cmbDocumentColorPart.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-      this._cmbDocumentColorPart.Name = "_cmbDocumentColorPart";
-      this._cmbDocumentColorPart.Size = new System.Drawing.Size(150, 21);
-      this._cmbDocumentColorPart.TabIndex = 5;
-      // 
-      // _lblDocumentColorAssembly
-      // 
-      this._lblDocumentColorAssembly.Location = new System.Drawing.Point(3, 144);
-      this._lblDocumentColorAssembly.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblDocumentColorAssembly.Name = "_lblDocumentColorAssembly";
-      this._lblDocumentColorAssembly.Size = new System.Drawing.Size(175, 20);
-      this._lblDocumentColorAssembly.TabIndex = 6;
-      this._lblDocumentColorAssembly.Text = "Сборка (цвет):";
-      this._lblDocumentColorAssembly.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _cmbDocumentColorAssembly
-      // 
-      this._cmbDocumentColorAssembly.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this._cmbDocumentColorAssembly.Location = new System.Drawing.Point(181, 144);
-      this._cmbDocumentColorAssembly.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-      this._cmbDocumentColorAssembly.Name = "_cmbDocumentColorAssembly";
-      this._cmbDocumentColorAssembly.Size = new System.Drawing.Size(150, 21);
-      this._cmbDocumentColorAssembly.TabIndex = 7;
-      // 
-      // _lblDocumentColorDrawing
-      // 
-      this._lblDocumentColorDrawing.Location = new System.Drawing.Point(3, 170);
-      this._lblDocumentColorDrawing.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblDocumentColorDrawing.Name = "_lblDocumentColorDrawing";
-      this._lblDocumentColorDrawing.Size = new System.Drawing.Size(175, 20);
-      this._lblDocumentColorDrawing.TabIndex = 8;
-      this._lblDocumentColorDrawing.Text = "Чертёж (цвет):";
-      this._lblDocumentColorDrawing.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _cmbDocumentColorDrawing
-      // 
-      this._cmbDocumentColorDrawing.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this._cmbDocumentColorDrawing.Location = new System.Drawing.Point(181, 170);
-      this._cmbDocumentColorDrawing.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-      this._cmbDocumentColorDrawing.Name = "_cmbDocumentColorDrawing";
-      this._cmbDocumentColorDrawing.Size = new System.Drawing.Size(150, 21);
-      this._cmbDocumentColorDrawing.TabIndex = 9;
-      // 
-      // tabPageReflexes
-      // 
-      this.tabPageReflexes.AutoScroll = true;
-      this.tabPageReflexes.Controls.Add(this.grpCrxMain);
-      this.tabPageReflexes.Controls.Add(this.grpCrxDecay);
-      this.tabPageReflexes.Controls.Add(this.grpCrxComp);
-      this.tabPageReflexes.Controls.Add(this.grpCrxStart);
-      this.tabPageReflexes.Controls.Add(this.grpCrxSens);
-      this.tabPageReflexes.Location = new System.Drawing.Point(4, 22);
-      this.tabPageReflexes.Name = "tabPageReflexes";
-      this.tabPageReflexes.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageReflexes.Size = new System.Drawing.Size(800, 292);
-      this.tabPageReflexes.TabIndex = 5;
-      this.tabPageReflexes.Text = "У-рефлексы";
-      this.tabPageReflexes.UseVisualStyleBackColor = true;
-      // 
-      // grpCrxMain
-      // 
-      this.grpCrxMain.Controls.Add(this.lblCrxLearningRate);
-      this.grpCrxMain.Controls.Add(this._tbCrxLearningRate);
-      this.grpCrxMain.Controls.Add(this.rngCrxLearningRate);
-      this.grpCrxMain.Controls.Add(this.lblCrxDecayRate);
-      this.grpCrxMain.Controls.Add(this._tbCrxDecayRate);
-      this.grpCrxMain.Controls.Add(this.rngCrxDecayRate);
-      this.grpCrxMain.Controls.Add(this.lblCrxActivationThreshold);
-      this.grpCrxMain.Controls.Add(this._tbCrxActivationThreshold);
-      this.grpCrxMain.Controls.Add(this.rngCrxActivationThreshold);
-      this.grpCrxMain.Controls.Add(this.lblCrxInitialLifetimePulses);
-      this.grpCrxMain.Controls.Add(this._tbCrxInitialLifetimePulses);
-      this.grpCrxMain.Controls.Add(this.rngCrxInitialLifetimePulses);
-      this.grpCrxMain.Controls.Add(this.lblCrxActiveExtinctionRate);
-      this.grpCrxMain.Controls.Add(this._tbCrxActiveExtinctionRate);
-      this.grpCrxMain.Controls.Add(this.rngCrxActiveExtinctionRate);
-      this.grpCrxMain.Controls.Add(this.lblCrxTimeWindowPulses);
-      this.grpCrxMain.Controls.Add(this._tbCrxTimeWindowPulses);
-      this.grpCrxMain.Controls.Add(this.rngCrxTimeWindowPulses);
-      this.grpCrxMain.Controls.Add(this.lblCrxMinAssociationStrength);
-      this.grpCrxMain.Controls.Add(this._tbCrxMinAssociationStrength);
-      this.grpCrxMain.Controls.Add(this.rngCrxMinAssociationStrength);
-      this.grpCrxMain.Controls.Add(this.lblCrxHigherOrderStrengthReductionCoefficient);
-      this.grpCrxMain.Controls.Add(this._tbCrxHigherOrderStrengthReductionCoefficient);
-      this.grpCrxMain.Controls.Add(this.rngCrxHigherOrderStrengthReductionCoefficient);
-      this.grpCrxMain.Controls.Add(this.lblCrxCompetitionStrengthRatioThreshold);
-      this.grpCrxMain.Controls.Add(this._tbCrxCompetitionStrengthRatioThreshold);
-      this.grpCrxMain.Controls.Add(this.rngCrxCompetitionStrengthRatioThreshold);
-      this.grpCrxMain.Controls.Add(this._chkCrxTieBreakPreferSmallerReflexId);
-      this.grpCrxMain.Location = new System.Drawing.Point(6, 6);
-      this.grpCrxMain.Name = "grpCrxMain";
-      this.grpCrxMain.Size = new System.Drawing.Size(380, 264);
-      this.grpCrxMain.TabIndex = 0;
-      this.grpCrxMain.TabStop = false;
-      this.grpCrxMain.Text = "Основные параметры";
-      // 
-      // lblCrxLearningRate
-      // 
-      this.lblCrxLearningRate.Location = new System.Drawing.Point(8, 21);
-      this.lblCrxLearningRate.Name = "lblCrxLearningRate";
-      this.lblCrxLearningRate.Size = new System.Drawing.Size(232, 18);
-      this.lblCrxLearningRate.TabIndex = 0;
-      this.lblCrxLearningRate.Text = "Коэффициент обучения (α):";
-      this.lblCrxLearningRate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.lblCrxLearningRate, "Скорость изменения крепости связи при подкреплении. Диапазон 0.1–0.3.");
-      // 
-      // _tbCrxLearningRate
-      // 
-      this._tbCrxLearningRate.Location = new System.Drawing.Point(244, 20);
-      this._tbCrxLearningRate.Name = "_tbCrxLearningRate";
-      this._tbCrxLearningRate.Size = new System.Drawing.Size(64, 20);
-      this._tbCrxLearningRate.TabIndex = 1;
-      this._tbCrxLearningRate.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      this._ttpStageEvolution.SetToolTip(this._tbCrxLearningRate, "Скорость изменения крепости связи при подкреплении. Диапазон 0.1–0.3.");
-      this._tbCrxLearningRate.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
-      // 
-      // rngCrxLearningRate
-      // 
-      this.rngCrxLearningRate.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.rngCrxLearningRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxLearningRate.Location = new System.Drawing.Point(310, 21);
-      this.rngCrxLearningRate.Name = "rngCrxLearningRate";
-      this.rngCrxLearningRate.Size = new System.Drawing.Size(66, 18);
-      this.rngCrxLearningRate.TabIndex = 2;
-      this.rngCrxLearningRate.Text = "(0.1 – 0.3)";
-      this.rngCrxLearningRate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.rngCrxLearningRate, "Скорость изменения крепости связи при подкреплении. Диапазон 0.1–0.3.");
-      // 
-      // lblCrxDecayRate
-      // 
-      this.lblCrxDecayRate.Location = new System.Drawing.Point(8, 45);
-      this.lblCrxDecayRate.Name = "lblCrxDecayRate";
-      this.lblCrxDecayRate.Size = new System.Drawing.Size(232, 18);
-      this.lblCrxDecayRate.TabIndex = 3;
-      this.lblCrxDecayRate.Text = "Коэфф. затухания λ (CS↔CS):";
-      this.lblCrxDecayRate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.lblCrxDecayRate, "Коэффициент затухания λ для сенсорных ассоциаций CS↔CS; проходит через InitialLif" +
+            // 
+            // _lblSolidMetricEpsilon
+            // 
+            this._lblSolidMetricEpsilon.Location = new System.Drawing.Point(3, 139);
+            this._lblSolidMetricEpsilon.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblSolidMetricEpsilon.Name = "_lblSolidMetricEpsilon";
+            this._lblSolidMetricEpsilon.Size = new System.Drawing.Size(169, 13);
+            this._lblSolidMetricEpsilon.TabIndex = 40;
+            this._lblSolidMetricEpsilon.Text = "Порог Δ метрики SW:";
+            this._lblSolidMetricEpsilon.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this._lblSolidMetricEpsilon, "Порог заметного изменения метрики среды SolidWorks между пульсами (шкала 0…100).");
+            // 
+            // _tbSolidMetricEpsilon
+            // 
+            this._tbSolidMetricEpsilon.Location = new System.Drawing.Point(180, 132);
+            this._tbSolidMetricEpsilon.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
+            this._tbSolidMetricEpsilon.Name = "_tbSolidMetricEpsilon";
+            this._tbSolidMetricEpsilon.Size = new System.Drawing.Size(150, 20);
+            this._tbSolidMetricEpsilon.TabIndex = 41;
+            this._ttpStageEvolution.SetToolTip(this._tbSolidMetricEpsilon, "Порог заметного изменения метрики среды SolidWorks между пульсами (шкала 0…100).");
+            // 
+            // _lblRecognition
+            // 
+            this._lblRecognition.Location = new System.Drawing.Point(3, 113);
+            this._lblRecognition.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblRecognition.Name = "_lblRecognition";
+            this._lblRecognition.Size = new System.Drawing.Size(169, 13);
+            this._lblRecognition.TabIndex = 14;
+            this._lblRecognition.Text = "Повторы для фиксации образа:";
+            this._lblRecognition.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbRecognition
+            // 
+            this._tbRecognition.Location = new System.Drawing.Point(180, 106);
+            this._tbRecognition.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
+            this._tbRecognition.Name = "_tbRecognition";
+            this._tbRecognition.Size = new System.Drawing.Size(150, 20);
+            this._tbRecognition.TabIndex = 15;
+            // 
+            // _lblReflexDur
+            // 
+            this._lblReflexDur.Location = new System.Drawing.Point(3, 87);
+            this._lblReflexDur.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblReflexDur.Name = "_lblReflexDur";
+            this._lblReflexDur.Size = new System.Drawing.Size(169, 13);
+            this._lblReflexDur.TabIndex = 12;
+            this._lblReflexDur.Text = "Удержание действия (пульс.):";
+            this._lblReflexDur.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbReflexDur
+            // 
+            this._tbReflexDur.Location = new System.Drawing.Point(180, 81);
+            this._tbReflexDur.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
+            this._tbReflexDur.Name = "_tbReflexDur";
+            this._tbReflexDur.Size = new System.Drawing.Size(150, 20);
+            this._tbReflexDur.TabIndex = 13;
+            // 
+            // _lblDynamic
+            // 
+            this._lblDynamic.Location = new System.Drawing.Point(3, 61);
+            this._lblDynamic.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblDynamic.Name = "_lblDynamic";
+            this._lblDynamic.Size = new System.Drawing.Size(169, 13);
+            this._lblDynamic.TabIndex = 10;
+            this._lblDynamic.Text = "Удержание Плохо/Хорошо (пульс.):";
+            this._lblDynamic.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this._lblDynamic, resources.GetString("_lblDynamic.ToolTip"));
+            // 
+            // _tbDynamic
+            // 
+            this._tbDynamic.Location = new System.Drawing.Point(180, 55);
+            this._tbDynamic.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
+            this._tbDynamic.Name = "_tbDynamic";
+            this._tbDynamic.Size = new System.Drawing.Size(150, 20);
+            this._tbDynamic.TabIndex = 11;
+            this._ttpStageEvolution.SetToolTip(this._tbDynamic, resources.GetString("_tbDynamic.ToolTip"));
+            // 
+            // _lblDifSensor
+            // 
+            this._lblDifSensor.Location = new System.Drawing.Point(3, 35);
+            this._lblDifSensor.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblDifSensor.Name = "_lblDifSensor";
+            this._lblDifSensor.Size = new System.Drawing.Size(169, 13);
+            this._lblDifSensor.TabIndex = 8;
+            this._lblDifSensor.Text = "Минимальный шаг параметра:";
+            this._lblDifSensor.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbDifSensor
+            // 
+            this._tbDifSensor.Location = new System.Drawing.Point(180, 32);
+            this._tbDifSensor.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
+            this._tbDifSensor.Name = "_tbDifSensor";
+            this._tbDifSensor.Size = new System.Drawing.Size(150, 20);
+            this._tbDifSensor.TabIndex = 9;
+            // 
+            // _lblHomeostasisPulseDrift
+            // 
+            this._lblHomeostasisPulseDrift.Location = new System.Drawing.Point(393, 58);
+            this._lblHomeostasisPulseDrift.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblHomeostasisPulseDrift.Name = "_lblHomeostasisPulseDrift";
+            this._lblHomeostasisPulseDrift.Size = new System.Drawing.Size(221, 21);
+            this._lblHomeostasisPulseDrift.TabIndex = 20;
+            this._lblHomeostasisPulseDrift.Text = "Дрейф параметров по Speed на пульсе:";
+            // 
+            // _chkHomeostasisPulseDrift
+            // 
+            this._chkHomeostasisPulseDrift.AutoSize = true;
+            this._chkHomeostasisPulseDrift.Location = new System.Drawing.Point(374, 61);
+            this._chkHomeostasisPulseDrift.Margin = new System.Windows.Forms.Padding(8, 4, 40, 0);
+            this._chkHomeostasisPulseDrift.Name = "_chkHomeostasisPulseDrift";
+            this._chkHomeostasisPulseDrift.Size = new System.Drawing.Size(15, 14);
+            this._chkHomeostasisPulseDrift.TabIndex = 21;
+            this._chkHomeostasisPulseDrift.UseVisualStyleBackColor = true;
+            // 
+            // _lblCompare
+            // 
+            this._lblCompare.Location = new System.Drawing.Point(3, 7);
+            this._lblCompare.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblCompare.Name = "_lblCompare";
+            this._lblCompare.Size = new System.Drawing.Size(169, 13);
+            this._lblCompare.TabIndex = 6;
+            this._lblCompare.Text = "Интегральный порог, %:";
+            this._lblCompare.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbCompare
+            // 
+            this._tbCompare.Location = new System.Drawing.Point(180, 5);
+            this._tbCompare.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
+            this._tbCompare.Name = "_tbCompare";
+            this._tbCompare.Size = new System.Drawing.Size(150, 20);
+            this._tbCompare.TabIndex = 7;
+            // 
+            // _lblAdaptive
+            // 
+            this._lblAdaptive.Location = new System.Drawing.Point(3, 213);
+            this._lblAdaptive.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblAdaptive.Name = "_lblAdaptive";
+            this._lblAdaptive.Size = new System.Drawing.Size(169, 13);
+            this._lblAdaptive.TabIndex = 4;
+            this._lblAdaptive.Text = "Адаптивные действия:";
+            this._lblAdaptive.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _cmbAdaptive
+            // 
+            this._cmbAdaptive.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._cmbAdaptive.Location = new System.Drawing.Point(180, 210);
+            this._cmbAdaptive.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
+            this._cmbAdaptive.Name = "_cmbAdaptive";
+            this._cmbAdaptive.Size = new System.Drawing.Size(150, 21);
+            this._cmbAdaptive.TabIndex = 5;
+            // 
+            // _lblStyle
+            // 
+            this._lblStyle.Location = new System.Drawing.Point(3, 238);
+            this._lblStyle.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblStyle.Name = "_lblStyle";
+            this._lblStyle.Size = new System.Drawing.Size(169, 13);
+            this._lblStyle.TabIndex = 2;
+            this._lblStyle.Text = "Стиль поведения агента:";
+            this._lblStyle.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _cmbStyle
+            // 
+            this._cmbStyle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._cmbStyle.Location = new System.Drawing.Point(180, 235);
+            this._cmbStyle.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
+            this._cmbStyle.Name = "_cmbStyle";
+            this._cmbStyle.Size = new System.Drawing.Size(150, 21);
+            this._cmbStyle.TabIndex = 3;
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this._chkFirstRun);
+            this.tabPage3.Controls.Add(this._tbDefaultGeneticReflexId);
+            this.tabPage3.Controls.Add(this._lblDefaultGeneticReflexId);
+            this.tabPage3.Controls.Add(this._lblSilence);
+            this.tabPage3.Controls.Add(this._tbSilence);
+            this.tabPage3.Controls.Add(this._lblCondensedLogPoll);
+            this.tabPage3.Controls.Add(this._tbCondensedLogPoll);
+            this.tabPage3.Controls.Add(this._lblMainMaxAge);
+            this.tabPage3.Controls.Add(this._tbMainMaxAge);
+            this.tabPage3.Controls.Add(this._lblCycleBase);
+            this.tabPage3.Controls.Add(this._tbCycleBase);
+            this.tabPage3.Controls.Add(this._lblCycleDiv);
+            this.tabPage3.Controls.Add(this._tbCycleDiv);
+            this.tabPage3.Controls.Add(this._lblWait);
+            this.tabPage3.Controls.Add(this._tbWaitOperator);
+            this.tabPage3.Controls.Add(this._lblTheme);
+            this.tabPage3.Controls.Add(this._cmbTheme);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(800, 292);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Аналитика";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // _chkFirstRun
+            // 
+            this._chkFirstRun.AutoSize = true;
+            this._chkFirstRun.Location = new System.Drawing.Point(8, 192);
+            this._chkFirstRun.Margin = new System.Windows.Forms.Padding(8, 4, 40, 0);
+            this._chkFirstRun.Name = "_chkFirstRun";
+            this._chkFirstRun.Size = new System.Drawing.Size(104, 17);
+            this._chkFirstRun.TabIndex = 16;
+            this._chkFirstRun.Text = "Первый запуск";
+            this._chkFirstRun.UseVisualStyleBackColor = true;
+            // 
+            // _tbDefaultGeneticReflexId
+            // 
+            this._tbDefaultGeneticReflexId.Location = new System.Drawing.Point(187, 163);
+            this._tbDefaultGeneticReflexId.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
+            this._tbDefaultGeneticReflexId.Name = "_tbDefaultGeneticReflexId";
+            this._tbDefaultGeneticReflexId.Size = new System.Drawing.Size(100, 20);
+            this._tbDefaultGeneticReflexId.TabIndex = 15;
+            // 
+            // _lblDefaultGeneticReflexId
+            // 
+            this._lblDefaultGeneticReflexId.Location = new System.Drawing.Point(5, 162);
+            this._lblDefaultGeneticReflexId.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblDefaultGeneticReflexId.Name = "_lblDefaultGeneticReflexId";
+            this._lblDefaultGeneticReflexId.Size = new System.Drawing.Size(174, 20);
+            this._lblDefaultGeneticReflexId.TabIndex = 14;
+            this._lblDefaultGeneticReflexId.Text = "Безусловный рефлекс (ID):";
+            this._lblDefaultGeneticReflexId.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _lblSilence
+            // 
+            this._lblSilence.Location = new System.Drawing.Point(5, 136);
+            this._lblSilence.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblSilence.Name = "_lblSilence";
+            this._lblSilence.Size = new System.Drawing.Size(174, 20);
+            this._lblSilence.TabIndex = 12;
+            this._lblSilence.Text = "Простой оператора (пульс.):";
+            this._lblSilence.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbSilence
+            // 
+            this._tbSilence.Location = new System.Drawing.Point(187, 137);
+            this._tbSilence.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
+            this._tbSilence.Name = "_tbSilence";
+            this._tbSilence.Size = new System.Drawing.Size(100, 20);
+            this._tbSilence.TabIndex = 13;
+            // 
+            // _lblCondensedLogPoll
+            // 
+            this._lblCondensedLogPoll.Location = new System.Drawing.Point(5, 218);
+            this._lblCondensedLogPoll.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblCondensedLogPoll.Name = "_lblCondensedLogPoll";
+            this._lblCondensedLogPoll.Size = new System.Drawing.Size(174, 20);
+            this._lblCondensedLogPoll.TabIndex = 17;
+            this._lblCondensedLogPoll.Text = "Период кратких логов (пульс.):";
+            this._lblCondensedLogPoll.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbCondensedLogPoll
+            // 
+            this._tbCondensedLogPoll.Location = new System.Drawing.Point(187, 219);
+            this._tbCondensedLogPoll.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
+            this._tbCondensedLogPoll.Name = "_tbCondensedLogPoll";
+            this._tbCondensedLogPoll.Size = new System.Drawing.Size(100, 20);
+            this._tbCondensedLogPoll.TabIndex = 18;
+            // 
+            // _lblMainMaxAge
+            // 
+            this._lblMainMaxAge.Location = new System.Drawing.Point(5, 110);
+            this._lblMainMaxAge.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblMainMaxAge.Name = "_lblMainMaxAge";
+            this._lblMainMaxAge.Size = new System.Drawing.Size(174, 20);
+            this._lblMainMaxAge.TabIndex = 10;
+            this._lblMainMaxAge.Text = "Цикл: max возраст (пульс.):";
+            this._lblMainMaxAge.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbMainMaxAge
+            // 
+            this._tbMainMaxAge.Location = new System.Drawing.Point(187, 111);
+            this._tbMainMaxAge.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
+            this._tbMainMaxAge.Name = "_tbMainMaxAge";
+            this._tbMainMaxAge.Size = new System.Drawing.Size(100, 20);
+            this._tbMainMaxAge.TabIndex = 11;
+            // 
+            // _lblCycleBase
+            // 
+            this._lblCycleBase.Location = new System.Drawing.Point(5, 84);
+            this._lblCycleBase.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblCycleBase.Name = "_lblCycleBase";
+            this._lblCycleBase.Size = new System.Drawing.Size(174, 20);
+            this._lblCycleBase.TabIndex = 8;
+            this._lblCycleBase.Text = "Цикл: снятие B за пульс:";
+            this._lblCycleBase.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbCycleBase
+            // 
+            this._tbCycleBase.Location = new System.Drawing.Point(187, 85);
+            this._tbCycleBase.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
+            this._tbCycleBase.Name = "_tbCycleBase";
+            this._tbCycleBase.Size = new System.Drawing.Size(100, 20);
+            this._tbCycleBase.TabIndex = 9;
+            // 
+            // _lblCycleDiv
+            // 
+            this._lblCycleDiv.Location = new System.Drawing.Point(5, 58);
+            this._lblCycleDiv.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblCycleDiv.Name = "_lblCycleDiv";
+            this._lblCycleDiv.Size = new System.Drawing.Size(174, 20);
+            this._lblCycleDiv.TabIndex = 6;
+            this._lblCycleDiv.Text = "Цикл: делитель A (B+age/A):";
+            this._lblCycleDiv.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbCycleDiv
+            // 
+            this._tbCycleDiv.Location = new System.Drawing.Point(187, 59);
+            this._tbCycleDiv.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
+            this._tbCycleDiv.Name = "_tbCycleDiv";
+            this._tbCycleDiv.Size = new System.Drawing.Size(100, 20);
+            this._tbCycleDiv.TabIndex = 7;
+            // 
+            // _lblWait
+            // 
+            this._lblWait.Location = new System.Drawing.Point(5, 32);
+            this._lblWait.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblWait.Name = "_lblWait";
+            this._lblWait.Size = new System.Drawing.Size(174, 20);
+            this._lblWait.TabIndex = 4;
+            this._lblWait.Text = "Ожидание оператора (пульс.):";
+            this._lblWait.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbWaitOperator
+            // 
+            this._tbWaitOperator.Location = new System.Drawing.Point(187, 33);
+            this._tbWaitOperator.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
+            this._tbWaitOperator.Name = "_tbWaitOperator";
+            this._tbWaitOperator.Size = new System.Drawing.Size(100, 20);
+            this._tbWaitOperator.TabIndex = 5;
+            // 
+            // _lblTheme
+            // 
+            this._lblTheme.Location = new System.Drawing.Point(5, 6);
+            this._lblTheme.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblTheme.Name = "_lblTheme";
+            this._lblTheme.Size = new System.Drawing.Size(174, 20);
+            this._lblTheme.TabIndex = 2;
+            this._lblTheme.Text = "Тема анализа:";
+            this._lblTheme.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _cmbTheme
+            // 
+            this._cmbTheme.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._cmbTheme.Location = new System.Drawing.Point(187, 6);
+            this._cmbTheme.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
+            this._cmbTheme.Name = "_cmbTheme";
+            this._cmbTheme.Size = new System.Drawing.Size(220, 21);
+            this._cmbTheme.TabIndex = 3;
+            // 
+            // tabPageAdapter
+            // 
+            this.tabPageAdapter.Controls.Add(this._lblHeavyMetricsPulsePeriod);
+            this.tabPageAdapter.Controls.Add(this._tbHeavyMetricsPulsePeriod);
+            this.tabPageAdapter.Controls.Add(this._lblScannerProbeConcurrency);
+            this.tabPageAdapter.Controls.Add(this._tbScannerProbeConcurrency);
+            this.tabPageAdapter.Controls.Add(this._lblScannerBatchSize);
+            this.tabPageAdapter.Controls.Add(this._tbScannerBatchSize);
+            this.tabPageAdapter.Controls.Add(this._lblScannerUnavailableRootPoll);
+            this.tabPageAdapter.Controls.Add(this._tbScannerUnavailableRootPoll);
+            this.tabPageAdapter.Controls.Add(this._lblBomDiffScanPeriod);
+            this.tabPageAdapter.Controls.Add(this._tbBomDiffScanPeriod);
+            this.tabPageAdapter.Controls.Add(this._lblCommandBufferFlushHint);
+            this.tabPageAdapter.Controls.Add(this._tbCommandBufferMaxAgeSec);
+            this.tabPageAdapter.Controls.Add(this._lblCommandBufferMaxAgeSec);
+            this.tabPageAdapter.Controls.Add(this._tbCommandBufferMaxTokens);
+            this.tabPageAdapter.Controls.Add(this._lblCommandBufferMaxTokens);
+            this.tabPageAdapter.Controls.Add(this._tbCommandBufferIdleFlushSec);
+            this.tabPageAdapter.Controls.Add(this._lblCommandBufferIdleFlushSec);
+            this.tabPageAdapter.Controls.Add(this._lblCommandBufferRecordingHint);
+            this.tabPageAdapter.Controls.Add(this._chkCommandBufferRecording);
+            this.tabPageAdapter.Location = new System.Drawing.Point(4, 22);
+            this.tabPageAdapter.Name = "tabPageAdapter";
+            this.tabPageAdapter.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageAdapter.Size = new System.Drawing.Size(800, 292);
+            this.tabPageAdapter.TabIndex = 3;
+            this.tabPageAdapter.Text = "Адаптер";
+            this.tabPageAdapter.UseVisualStyleBackColor = true;
+            // 
+            // _lblHeavyMetricsPulsePeriod
+            // 
+            this._lblHeavyMetricsPulsePeriod.Location = new System.Drawing.Point(3, 9);
+            this._lblHeavyMetricsPulsePeriod.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblHeavyMetricsPulsePeriod.Name = "_lblHeavyMetricsPulsePeriod";
+            this._lblHeavyMetricsPulsePeriod.Size = new System.Drawing.Size(175, 20);
+            this._lblHeavyMetricsPulsePeriod.TabIndex = 0;
+            this._lblHeavyMetricsPulsePeriod.Text = "Период пульсации метрик:";
+            this._lblHeavyMetricsPulsePeriod.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbHeavyMetricsPulsePeriod
+            // 
+            this._tbHeavyMetricsPulsePeriod.BackColor = System.Drawing.SystemColors.Window;
+            this._tbHeavyMetricsPulsePeriod.Location = new System.Drawing.Point(181, 10);
+            this._tbHeavyMetricsPulsePeriod.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._tbHeavyMetricsPulsePeriod.Name = "_tbHeavyMetricsPulsePeriod";
+            this._tbHeavyMetricsPulsePeriod.Size = new System.Drawing.Size(150, 20);
+            this._tbHeavyMetricsPulsePeriod.TabIndex = 1;
+            // 
+            // _lblScannerProbeConcurrency
+            // 
+            this._lblScannerProbeConcurrency.Location = new System.Drawing.Point(3, 35);
+            this._lblScannerProbeConcurrency.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblScannerProbeConcurrency.Name = "_lblScannerProbeConcurrency";
+            this._lblScannerProbeConcurrency.Size = new System.Drawing.Size(175, 20);
+            this._lblScannerProbeConcurrency.TabIndex = 11;
+            this._lblScannerProbeConcurrency.Text = "Параллелизм проверок сканера:";
+            this._lblScannerProbeConcurrency.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbScannerProbeConcurrency
+            // 
+            this._tbScannerProbeConcurrency.BackColor = System.Drawing.SystemColors.Window;
+            this._tbScannerProbeConcurrency.Location = new System.Drawing.Point(181, 36);
+            this._tbScannerProbeConcurrency.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._tbScannerProbeConcurrency.Name = "_tbScannerProbeConcurrency";
+            this._tbScannerProbeConcurrency.Size = new System.Drawing.Size(150, 20);
+            this._tbScannerProbeConcurrency.TabIndex = 12;
+            // 
+            // _lblScannerBatchSize
+            // 
+            this._lblScannerBatchSize.Location = new System.Drawing.Point(3, 61);
+            this._lblScannerBatchSize.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblScannerBatchSize.Name = "_lblScannerBatchSize";
+            this._lblScannerBatchSize.Size = new System.Drawing.Size(175, 20);
+            this._lblScannerBatchSize.TabIndex = 13;
+            this._lblScannerBatchSize.Text = "Квант сканирования (строк):";
+            this._lblScannerBatchSize.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbScannerBatchSize
+            // 
+            this._tbScannerBatchSize.BackColor = System.Drawing.SystemColors.Window;
+            this._tbScannerBatchSize.Location = new System.Drawing.Point(181, 62);
+            this._tbScannerBatchSize.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._tbScannerBatchSize.Name = "_tbScannerBatchSize";
+            this._tbScannerBatchSize.Size = new System.Drawing.Size(150, 20);
+            this._tbScannerBatchSize.TabIndex = 14;
+            // 
+            // _lblScannerUnavailableRootPoll
+            // 
+            this._lblScannerUnavailableRootPoll.Location = new System.Drawing.Point(3, 87);
+            this._lblScannerUnavailableRootPoll.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblScannerUnavailableRootPoll.Name = "_lblScannerUnavailableRootPoll";
+            this._lblScannerUnavailableRootPoll.Size = new System.Drawing.Size(175, 20);
+            this._lblScannerUnavailableRootPoll.TabIndex = 15;
+            this._lblScannerUnavailableRootPoll.Text = "Опрос недоступного реестра:";
+            this._lblScannerUnavailableRootPoll.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbScannerUnavailableRootPoll
+            // 
+            this._tbScannerUnavailableRootPoll.BackColor = System.Drawing.SystemColors.Window;
+            this._tbScannerUnavailableRootPoll.Location = new System.Drawing.Point(181, 88);
+            this._tbScannerUnavailableRootPoll.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._tbScannerUnavailableRootPoll.Name = "_tbScannerUnavailableRootPoll";
+            this._tbScannerUnavailableRootPoll.Size = new System.Drawing.Size(150, 20);
+            this._tbScannerUnavailableRootPoll.TabIndex = 16;
+            // 
+            // _lblBomDiffScanPeriod
+            // 
+            this._lblBomDiffScanPeriod.Location = new System.Drawing.Point(3, 113);
+            this._lblBomDiffScanPeriod.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblBomDiffScanPeriod.Name = "_lblBomDiffScanPeriod";
+            this._lblBomDiffScanPeriod.Size = new System.Drawing.Size(175, 20);
+            this._lblBomDiffScanPeriod.TabIndex = 17;
+            this._lblBomDiffScanPeriod.Text = "Период сверки BOM с 1С:";
+            this._lblBomDiffScanPeriod.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbBomDiffScanPeriod
+            // 
+            this._tbBomDiffScanPeriod.BackColor = System.Drawing.SystemColors.Window;
+            this._tbBomDiffScanPeriod.Location = new System.Drawing.Point(181, 114);
+            this._tbBomDiffScanPeriod.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._tbBomDiffScanPeriod.Name = "_tbBomDiffScanPeriod";
+            this._tbBomDiffScanPeriod.Size = new System.Drawing.Size(150, 20);
+            this._tbBomDiffScanPeriod.TabIndex = 18;
+            // 
+            // _lblCommandBufferFlushHint
+            // 
+            this._lblCommandBufferFlushHint.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this._lblCommandBufferFlushHint.Location = new System.Drawing.Point(3, 142);
+            this._lblCommandBufferFlushHint.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblCommandBufferFlushHint.Name = "_lblCommandBufferFlushHint";
+            this._lblCommandBufferFlushHint.Size = new System.Drawing.Size(650, 20);
+            this._lblCommandBufferFlushHint.TabIndex = 2;
+            this._lblCommandBufferFlushHint.Text = "Параметры буфера команд (для отладки адаптера):";
+            this._lblCommandBufferFlushHint.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbCommandBufferMaxAgeSec
+            // 
+            this._tbCommandBufferMaxAgeSec.BackColor = System.Drawing.SystemColors.Window;
+            this._tbCommandBufferMaxAgeSec.Location = new System.Drawing.Point(181, 168);
+            this._tbCommandBufferMaxAgeSec.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._tbCommandBufferMaxAgeSec.Name = "_tbCommandBufferMaxAgeSec";
+            this._tbCommandBufferMaxAgeSec.Size = new System.Drawing.Size(150, 20);
+            this._tbCommandBufferMaxAgeSec.TabIndex = 3;
+            // 
+            // _lblCommandBufferMaxAgeSec
+            // 
+            this._lblCommandBufferMaxAgeSec.Location = new System.Drawing.Point(3, 167);
+            this._lblCommandBufferMaxAgeSec.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblCommandBufferMaxAgeSec.Name = "_lblCommandBufferMaxAgeSec";
+            this._lblCommandBufferMaxAgeSec.Size = new System.Drawing.Size(175, 20);
+            this._lblCommandBufferMaxAgeSec.TabIndex = 4;
+            this._lblCommandBufferMaxAgeSec.Text = "Макс. возраст буфера (пульсов):";
+            this._lblCommandBufferMaxAgeSec.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbCommandBufferMaxTokens
+            // 
+            this._tbCommandBufferMaxTokens.BackColor = System.Drawing.SystemColors.Window;
+            this._tbCommandBufferMaxTokens.Location = new System.Drawing.Point(181, 194);
+            this._tbCommandBufferMaxTokens.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._tbCommandBufferMaxTokens.Name = "_tbCommandBufferMaxTokens";
+            this._tbCommandBufferMaxTokens.Size = new System.Drawing.Size(150, 20);
+            this._tbCommandBufferMaxTokens.TabIndex = 5;
+            // 
+            // _lblCommandBufferMaxTokens
+            // 
+            this._lblCommandBufferMaxTokens.Location = new System.Drawing.Point(3, 193);
+            this._lblCommandBufferMaxTokens.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblCommandBufferMaxTokens.Name = "_lblCommandBufferMaxTokens";
+            this._lblCommandBufferMaxTokens.Size = new System.Drawing.Size(175, 20);
+            this._lblCommandBufferMaxTokens.TabIndex = 6;
+            this._lblCommandBufferMaxTokens.Text = "Макс. токенов в буфере:";
+            this._lblCommandBufferMaxTokens.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbCommandBufferIdleFlushSec
+            // 
+            this._tbCommandBufferIdleFlushSec.BackColor = System.Drawing.SystemColors.Window;
+            this._tbCommandBufferIdleFlushSec.Location = new System.Drawing.Point(181, 220);
+            this._tbCommandBufferIdleFlushSec.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._tbCommandBufferIdleFlushSec.Name = "_tbCommandBufferIdleFlushSec";
+            this._tbCommandBufferIdleFlushSec.Size = new System.Drawing.Size(150, 20);
+            this._tbCommandBufferIdleFlushSec.TabIndex = 7;
+            // 
+            // _lblCommandBufferIdleFlushSec
+            // 
+            this._lblCommandBufferIdleFlushSec.Location = new System.Drawing.Point(3, 219);
+            this._lblCommandBufferIdleFlushSec.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblCommandBufferIdleFlushSec.Name = "_lblCommandBufferIdleFlushSec";
+            this._lblCommandBufferIdleFlushSec.Size = new System.Drawing.Size(175, 20);
+            this._lblCommandBufferIdleFlushSec.TabIndex = 8;
+            this._lblCommandBufferIdleFlushSec.Text = "Сброс простоя (пульсов):";
+            this._lblCommandBufferIdleFlushSec.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _lblCommandBufferRecordingHint
+            // 
+            this._lblCommandBufferRecordingHint.Location = new System.Drawing.Point(3, 251);
+            this._lblCommandBufferRecordingHint.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblCommandBufferRecordingHint.Name = "_lblCommandBufferRecordingHint";
+            this._lblCommandBufferRecordingHint.Size = new System.Drawing.Size(175, 20);
+            this._lblCommandBufferRecordingHint.TabIndex = 9;
+            this._lblCommandBufferRecordingHint.Text = "Запись команд в буфер:";
+            this._lblCommandBufferRecordingHint.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _chkCommandBufferRecording
+            // 
+            this._chkCommandBufferRecording.AutoSize = true;
+            this._chkCommandBufferRecording.Checked = true;
+            this._chkCommandBufferRecording.CheckState = System.Windows.Forms.CheckState.Checked;
+            this._chkCommandBufferRecording.Location = new System.Drawing.Point(180, 254);
+            this._chkCommandBufferRecording.Margin = new System.Windows.Forms.Padding(8, 4, 40, 0);
+            this._chkCommandBufferRecording.Name = "_chkCommandBufferRecording";
+            this._chkCommandBufferRecording.Size = new System.Drawing.Size(15, 14);
+            this._chkCommandBufferRecording.TabIndex = 10;
+            this._chkCommandBufferRecording.UseVisualStyleBackColor = true;
+            // 
+            // tabPageDocuments
+            // 
+            this.tabPageDocuments.Controls.Add(this._chkNeedDrawingDefault);
+            this.tabPageDocuments.Controls.Add(this._chkNeedPdfDefault);
+            this.tabPageDocuments.Controls.Add(this._chkNeedDxfDefault);
+            this.tabPageDocuments.Controls.Add(this._lblDocumentColorsHint);
+            this.tabPageDocuments.Controls.Add(this._lblDocumentColorPart);
+            this.tabPageDocuments.Controls.Add(this._cmbDocumentColorPart);
+            this.tabPageDocuments.Controls.Add(this._lblDocumentColorAssembly);
+            this.tabPageDocuments.Controls.Add(this._cmbDocumentColorAssembly);
+            this.tabPageDocuments.Controls.Add(this._lblDocumentColorDrawing);
+            this.tabPageDocuments.Controls.Add(this._cmbDocumentColorDrawing);
+            this.tabPageDocuments.Controls.Add(this._lblReflexButtonsHint);
+            this.tabPageDocuments.Controls.Add(this._lblRewardReflexId);
+            this.tabPageDocuments.Controls.Add(this._tbRewardReflexId);
+            this.tabPageDocuments.Controls.Add(this._lblPunishReflexId);
+            this.tabPageDocuments.Controls.Add(this._tbPunishReflexId);
+            this.tabPageDocuments.Location = new System.Drawing.Point(4, 22);
+            this.tabPageDocuments.Name = "tabPageDocuments";
+            this.tabPageDocuments.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageDocuments.Size = new System.Drawing.Size(800, 292);
+            this.tabPageDocuments.TabIndex = 4;
+            this.tabPageDocuments.Text = "Документы";
+            this.tabPageDocuments.UseVisualStyleBackColor = true;
+            // 
+            // _chkNeedDrawingDefault
+            // 
+            this._chkNeedDrawingDefault.AutoSize = true;
+            this._chkNeedDrawingDefault.Location = new System.Drawing.Point(8, 58);
+            this._chkNeedDrawingDefault.Name = "_chkNeedDrawingDefault";
+            this._chkNeedDrawingDefault.Size = new System.Drawing.Size(411, 17);
+            this._chkNeedDrawingDefault.TabIndex = 2;
+            this._chkNeedDrawingDefault.Text = "По умолчанию «Нужен чертеж = Да» при создании новых деталей и сборок";
+            this._chkNeedDrawingDefault.UseVisualStyleBackColor = true;
+            // 
+            // _chkNeedPdfDefault
+            // 
+            this._chkNeedPdfDefault.AutoSize = true;
+            this._chkNeedPdfDefault.Location = new System.Drawing.Point(8, 35);
+            this._chkNeedPdfDefault.Name = "_chkNeedPdfDefault";
+            this._chkNeedPdfDefault.Size = new System.Drawing.Size(349, 17);
+            this._chkNeedPdfDefault.TabIndex = 1;
+            this._chkNeedPdfDefault.Text = "По умолчанию «Нужен pdf = Да» при создании новых чертежей";
+            this._chkNeedPdfDefault.UseVisualStyleBackColor = true;
+            // 
+            // _chkNeedDxfDefault
+            // 
+            this._chkNeedDxfDefault.AutoSize = true;
+            this._chkNeedDxfDefault.Location = new System.Drawing.Point(8, 12);
+            this._chkNeedDxfDefault.Name = "_chkNeedDxfDefault";
+            this._chkNeedDxfDefault.Size = new System.Drawing.Size(341, 17);
+            this._chkNeedDxfDefault.TabIndex = 0;
+            this._chkNeedDxfDefault.Text = "По умолчанию «Нужен dxf = Да» при создании новых деталей";
+            this._chkNeedDxfDefault.UseVisualStyleBackColor = true;
+            // 
+            // _lblDocumentColorsHint
+            // 
+            this._lblDocumentColorsHint.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this._lblDocumentColorsHint.Location = new System.Drawing.Point(3, 92);
+            this._lblDocumentColorsHint.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblDocumentColorsHint.Name = "_lblDocumentColorsHint";
+            this._lblDocumentColorsHint.Size = new System.Drawing.Size(650, 20);
+            this._lblDocumentColorsHint.TabIndex = 3;
+            this._lblDocumentColorsHint.Text = "Коды зрительного канала по типу активного документа (для контекста у-рефлексов):";
+            this._lblDocumentColorsHint.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _lblDocumentColorPart
+            // 
+            this._lblDocumentColorPart.Location = new System.Drawing.Point(3, 118);
+            this._lblDocumentColorPart.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblDocumentColorPart.Name = "_lblDocumentColorPart";
+            this._lblDocumentColorPart.Size = new System.Drawing.Size(175, 20);
+            this._lblDocumentColorPart.TabIndex = 4;
+            this._lblDocumentColorPart.Text = "Деталь (цвет):";
+            this._lblDocumentColorPart.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _cmbDocumentColorPart
+            // 
+            this._cmbDocumentColorPart.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._cmbDocumentColorPart.Location = new System.Drawing.Point(181, 118);
+            this._cmbDocumentColorPart.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._cmbDocumentColorPart.Name = "_cmbDocumentColorPart";
+            this._cmbDocumentColorPart.Size = new System.Drawing.Size(150, 21);
+            this._cmbDocumentColorPart.TabIndex = 5;
+            // 
+            // _lblDocumentColorAssembly
+            // 
+            this._lblDocumentColorAssembly.Location = new System.Drawing.Point(3, 144);
+            this._lblDocumentColorAssembly.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblDocumentColorAssembly.Name = "_lblDocumentColorAssembly";
+            this._lblDocumentColorAssembly.Size = new System.Drawing.Size(175, 20);
+            this._lblDocumentColorAssembly.TabIndex = 6;
+            this._lblDocumentColorAssembly.Text = "Сборка (цвет):";
+            this._lblDocumentColorAssembly.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _cmbDocumentColorAssembly
+            // 
+            this._cmbDocumentColorAssembly.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._cmbDocumentColorAssembly.Location = new System.Drawing.Point(181, 144);
+            this._cmbDocumentColorAssembly.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._cmbDocumentColorAssembly.Name = "_cmbDocumentColorAssembly";
+            this._cmbDocumentColorAssembly.Size = new System.Drawing.Size(150, 21);
+            this._cmbDocumentColorAssembly.TabIndex = 7;
+            // 
+            // _lblDocumentColorDrawing
+            // 
+            this._lblDocumentColorDrawing.Location = new System.Drawing.Point(3, 170);
+            this._lblDocumentColorDrawing.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblDocumentColorDrawing.Name = "_lblDocumentColorDrawing";
+            this._lblDocumentColorDrawing.Size = new System.Drawing.Size(175, 20);
+            this._lblDocumentColorDrawing.TabIndex = 8;
+            this._lblDocumentColorDrawing.Text = "Чертёж (цвет):";
+            this._lblDocumentColorDrawing.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _cmbDocumentColorDrawing
+            // 
+            this._cmbDocumentColorDrawing.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._cmbDocumentColorDrawing.Location = new System.Drawing.Point(181, 170);
+            this._cmbDocumentColorDrawing.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._cmbDocumentColorDrawing.Name = "_cmbDocumentColorDrawing";
+            this._cmbDocumentColorDrawing.Size = new System.Drawing.Size(150, 21);
+            this._cmbDocumentColorDrawing.TabIndex = 9;
+            // 
+            // _lblReflexButtonsHint
+            // 
+            this._lblReflexButtonsHint.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this._lblReflexButtonsHint.Location = new System.Drawing.Point(3, 202);
+            this._lblReflexButtonsHint.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblReflexButtonsHint.Name = "_lblReflexButtonsHint";
+            this._lblReflexButtonsHint.Size = new System.Drawing.Size(650, 20);
+            this._lblReflexButtonsHint.TabIndex = 10;
+            this._lblReflexButtonsHint.Text = "Б/У рефлексы для кнопок пульта «Поощрить» / «Наказать»:";
+            this._lblReflexButtonsHint.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _lblRewardReflexId
+            // 
+            this._lblRewardReflexId.Location = new System.Drawing.Point(3, 228);
+            this._lblRewardReflexId.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblRewardReflexId.Name = "_lblRewardReflexId";
+            this._lblRewardReflexId.Size = new System.Drawing.Size(175, 20);
+            this._lblRewardReflexId.TabIndex = 11;
+            this._lblRewardReflexId.Text = "Триггер кнопки Поощрить:";
+            this._lblRewardReflexId.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbRewardReflexId
+            // 
+            this._tbRewardReflexId.BackColor = System.Drawing.SystemColors.Window;
+            this._tbRewardReflexId.Location = new System.Drawing.Point(181, 228);
+            this._tbRewardReflexId.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._tbRewardReflexId.Name = "_tbRewardReflexId";
+            this._tbRewardReflexId.Size = new System.Drawing.Size(150, 20);
+            this._tbRewardReflexId.TabIndex = 12;
+            // 
+            // _lblPunishReflexId
+            // 
+            this._lblPunishReflexId.Location = new System.Drawing.Point(3, 254);
+            this._lblPunishReflexId.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblPunishReflexId.Name = "_lblPunishReflexId";
+            this._lblPunishReflexId.Size = new System.Drawing.Size(175, 20);
+            this._lblPunishReflexId.TabIndex = 13;
+            this._lblPunishReflexId.Text = "Триггер кнопки Наказать:";
+            this._lblPunishReflexId.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbPunishReflexId
+            // 
+            this._tbPunishReflexId.BackColor = System.Drawing.SystemColors.Window;
+            this._tbPunishReflexId.Location = new System.Drawing.Point(181, 254);
+            this._tbPunishReflexId.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._tbPunishReflexId.Name = "_tbPunishReflexId";
+            this._tbPunishReflexId.Size = new System.Drawing.Size(150, 20);
+            this._tbPunishReflexId.TabIndex = 14;
+            // 
+            // tabPageReflexes
+            // 
+            this.tabPageReflexes.AutoScroll = true;
+            this.tabPageReflexes.Controls.Add(this.grpCrxMain);
+            this.tabPageReflexes.Controls.Add(this.grpCrxDecay);
+            this.tabPageReflexes.Controls.Add(this.grpCrxComp);
+            this.tabPageReflexes.Controls.Add(this.grpCrxStart);
+            this.tabPageReflexes.Controls.Add(this.grpCrxSens);
+            this.tabPageReflexes.Location = new System.Drawing.Point(4, 22);
+            this.tabPageReflexes.Name = "tabPageReflexes";
+            this.tabPageReflexes.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageReflexes.Size = new System.Drawing.Size(800, 292);
+            this.tabPageReflexes.TabIndex = 5;
+            this.tabPageReflexes.Text = "У-рефлексы";
+            this.tabPageReflexes.UseVisualStyleBackColor = true;
+            // 
+            // grpCrxMain
+            // 
+            this.grpCrxMain.Controls.Add(this.lblCrxLearningRate);
+            this.grpCrxMain.Controls.Add(this._tbCrxLearningRate);
+            this.grpCrxMain.Controls.Add(this.rngCrxLearningRate);
+            this.grpCrxMain.Controls.Add(this.lblCrxDecayRate);
+            this.grpCrxMain.Controls.Add(this._tbCrxDecayRate);
+            this.grpCrxMain.Controls.Add(this.rngCrxDecayRate);
+            this.grpCrxMain.Controls.Add(this.lblCrxActivationThreshold);
+            this.grpCrxMain.Controls.Add(this._tbCrxActivationThreshold);
+            this.grpCrxMain.Controls.Add(this.rngCrxActivationThreshold);
+            this.grpCrxMain.Controls.Add(this.lblCrxInitialLifetimePulses);
+            this.grpCrxMain.Controls.Add(this._tbCrxInitialLifetimePulses);
+            this.grpCrxMain.Controls.Add(this.rngCrxInitialLifetimePulses);
+            this.grpCrxMain.Controls.Add(this.lblCrxActiveExtinctionRate);
+            this.grpCrxMain.Controls.Add(this._tbCrxActiveExtinctionRate);
+            this.grpCrxMain.Controls.Add(this.rngCrxActiveExtinctionRate);
+            this.grpCrxMain.Controls.Add(this.lblCrxTimeWindowPulses);
+            this.grpCrxMain.Controls.Add(this._tbCrxTimeWindowPulses);
+            this.grpCrxMain.Controls.Add(this.rngCrxTimeWindowPulses);
+            this.grpCrxMain.Controls.Add(this.lblCrxMinAssociationStrength);
+            this.grpCrxMain.Controls.Add(this._tbCrxMinAssociationStrength);
+            this.grpCrxMain.Controls.Add(this.rngCrxMinAssociationStrength);
+            this.grpCrxMain.Controls.Add(this.lblCrxHigherOrderStrengthReductionCoefficient);
+            this.grpCrxMain.Controls.Add(this._tbCrxHigherOrderStrengthReductionCoefficient);
+            this.grpCrxMain.Controls.Add(this.rngCrxHigherOrderStrengthReductionCoefficient);
+            this.grpCrxMain.Controls.Add(this.lblCrxCompetitionStrengthRatioThreshold);
+            this.grpCrxMain.Controls.Add(this._tbCrxCompetitionStrengthRatioThreshold);
+            this.grpCrxMain.Controls.Add(this.rngCrxCompetitionStrengthRatioThreshold);
+            this.grpCrxMain.Controls.Add(this._chkCrxTieBreakPreferSmallerReflexId);
+            this.grpCrxMain.Location = new System.Drawing.Point(6, 6);
+            this.grpCrxMain.Name = "grpCrxMain";
+            this.grpCrxMain.Size = new System.Drawing.Size(380, 264);
+            this.grpCrxMain.TabIndex = 0;
+            this.grpCrxMain.TabStop = false;
+            this.grpCrxMain.Text = "Основные параметры";
+            // 
+            // lblCrxLearningRate
+            // 
+            this.lblCrxLearningRate.Location = new System.Drawing.Point(8, 21);
+            this.lblCrxLearningRate.Name = "lblCrxLearningRate";
+            this.lblCrxLearningRate.Size = new System.Drawing.Size(232, 18);
+            this.lblCrxLearningRate.TabIndex = 0;
+            this.lblCrxLearningRate.Text = "Коэффициент обучения (α):";
+            this.lblCrxLearningRate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.lblCrxLearningRate, "Скорость изменения крепости связи при подкреплении. Диапазон 0.1–0.3.");
+            // 
+            // _tbCrxLearningRate
+            // 
+            this._tbCrxLearningRate.Location = new System.Drawing.Point(244, 20);
+            this._tbCrxLearningRate.Name = "_tbCrxLearningRate";
+            this._tbCrxLearningRate.Size = new System.Drawing.Size(64, 20);
+            this._tbCrxLearningRate.TabIndex = 1;
+            this._tbCrxLearningRate.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this._ttpStageEvolution.SetToolTip(this._tbCrxLearningRate, "Скорость изменения крепости связи при подкреплении. Диапазон 0.1–0.3.");
+            this._tbCrxLearningRate.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
+            // 
+            // rngCrxLearningRate
+            // 
+            this.rngCrxLearningRate.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.rngCrxLearningRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
+            this.rngCrxLearningRate.Location = new System.Drawing.Point(310, 21);
+            this.rngCrxLearningRate.Name = "rngCrxLearningRate";
+            this.rngCrxLearningRate.Size = new System.Drawing.Size(66, 18);
+            this.rngCrxLearningRate.TabIndex = 2;
+            this.rngCrxLearningRate.Text = "(0.1 – 0.3)";
+            this.rngCrxLearningRate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.rngCrxLearningRate, "Скорость изменения крепости связи при подкреплении. Диапазон 0.1–0.3.");
+            // 
+            // lblCrxDecayRate
+            // 
+            this.lblCrxDecayRate.Location = new System.Drawing.Point(8, 45);
+            this.lblCrxDecayRate.Name = "lblCrxDecayRate";
+            this.lblCrxDecayRate.Size = new System.Drawing.Size(232, 18);
+            this.lblCrxDecayRate.TabIndex = 3;
+            this.lblCrxDecayRate.Text = "Коэфф. затухания λ (CS↔CS):";
+            this.lblCrxDecayRate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.lblCrxDecayRate, "Коэффициент затухания λ для сенсорных ассоциаций CS↔CS; проходит через InitialLif" +
         "etimePulses (динамический TTL).");
-      // 
-      // _tbCrxDecayRate
-      // 
-      this._tbCrxDecayRate.Location = new System.Drawing.Point(244, 44);
-      this._tbCrxDecayRate.Name = "_tbCrxDecayRate";
-      this._tbCrxDecayRate.Size = new System.Drawing.Size(64, 20);
-      this._tbCrxDecayRate.TabIndex = 4;
-      this._tbCrxDecayRate.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      this._ttpStageEvolution.SetToolTip(this._tbCrxDecayRate, "Коэффициент затухания λ для сенсорных ассоциаций CS↔CS; проходит через InitialLif" +
+            // 
+            // _tbCrxDecayRate
+            // 
+            this._tbCrxDecayRate.Location = new System.Drawing.Point(244, 44);
+            this._tbCrxDecayRate.Name = "_tbCrxDecayRate";
+            this._tbCrxDecayRate.Size = new System.Drawing.Size(64, 20);
+            this._tbCrxDecayRate.TabIndex = 4;
+            this._tbCrxDecayRate.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this._ttpStageEvolution.SetToolTip(this._tbCrxDecayRate, "Коэффициент затухания λ для сенсорных ассоциаций CS↔CS; проходит через InitialLif" +
         "etimePulses (динамический TTL).");
-      this._tbCrxDecayRate.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
-      // 
-      // rngCrxDecayRate
-      // 
-      this.rngCrxDecayRate.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.rngCrxDecayRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxDecayRate.Location = new System.Drawing.Point(310, 45);
-      this.rngCrxDecayRate.Name = "rngCrxDecayRate";
-      this.rngCrxDecayRate.Size = new System.Drawing.Size(66, 18);
-      this.rngCrxDecayRate.TabIndex = 5;
-      this.rngCrxDecayRate.Text = "(0.95 – 0.99)";
-      this.rngCrxDecayRate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.rngCrxDecayRate, "Коэффициент затухания λ для сенсорных ассоциаций CS↔CS; проходит через InitialLif" +
+            this._tbCrxDecayRate.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
+            // 
+            // rngCrxDecayRate
+            // 
+            this.rngCrxDecayRate.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.rngCrxDecayRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
+            this.rngCrxDecayRate.Location = new System.Drawing.Point(310, 45);
+            this.rngCrxDecayRate.Name = "rngCrxDecayRate";
+            this.rngCrxDecayRate.Size = new System.Drawing.Size(66, 18);
+            this.rngCrxDecayRate.TabIndex = 5;
+            this.rngCrxDecayRate.Text = "(0.95 – 0.99)";
+            this.rngCrxDecayRate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.rngCrxDecayRate, "Коэффициент затухания λ для сенсорных ассоциаций CS↔CS; проходит через InitialLif" +
         "etimePulses (динамический TTL).");
-      // 
-      // lblCrxActivationThreshold
-      // 
-      this.lblCrxActivationThreshold.Location = new System.Drawing.Point(8, 69);
-      this.lblCrxActivationThreshold.Name = "lblCrxActivationThreshold";
-      this.lblCrxActivationThreshold.Size = new System.Drawing.Size(232, 18);
-      this.lblCrxActivationThreshold.TabIndex = 6;
-      this.lblCrxActivationThreshold.Text = "Порог активации (γ):";
-      this.lblCrxActivationThreshold.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.lblCrxActivationThreshold, "Минимальная крепость, при которой у-рефлекс срабатывает. Диапазон 0.5–0.7.");
-      // 
-      // _tbCrxActivationThreshold
-      // 
-      this._tbCrxActivationThreshold.Location = new System.Drawing.Point(244, 68);
-      this._tbCrxActivationThreshold.Name = "_tbCrxActivationThreshold";
-      this._tbCrxActivationThreshold.Size = new System.Drawing.Size(64, 20);
-      this._tbCrxActivationThreshold.TabIndex = 7;
-      this._tbCrxActivationThreshold.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      this._ttpStageEvolution.SetToolTip(this._tbCrxActivationThreshold, "Минимальная крепость, при которой у-рефлекс срабатывает. Диапазон 0.5–0.7.");
-      this._tbCrxActivationThreshold.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
-      // 
-      // rngCrxActivationThreshold
-      // 
-      this.rngCrxActivationThreshold.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.rngCrxActivationThreshold.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxActivationThreshold.Location = new System.Drawing.Point(310, 69);
-      this.rngCrxActivationThreshold.Name = "rngCrxActivationThreshold";
-      this.rngCrxActivationThreshold.Size = new System.Drawing.Size(66, 18);
-      this.rngCrxActivationThreshold.TabIndex = 8;
-      this.rngCrxActivationThreshold.Text = "(0.5 – 0.7)";
-      this.rngCrxActivationThreshold.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.rngCrxActivationThreshold, "Минимальная крепость, при которой у-рефлекс срабатывает. Диапазон 0.5–0.7.");
-      // 
-      // lblCrxInitialLifetimePulses
-      // 
-      this.lblCrxInitialLifetimePulses.Location = new System.Drawing.Point(8, 93);
-      this.lblCrxInitialLifetimePulses.Name = "lblCrxInitialLifetimePulses";
-      this.lblCrxInitialLifetimePulses.Size = new System.Drawing.Size(232, 18);
-      this.lblCrxInitialLifetimePulses.TabIndex = 9;
-      this.lblCrxInitialLifetimePulses.Text = "Начальный лимит простоя (пульсы):";
-      this.lblCrxInitialLifetimePulses.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.lblCrxInitialLifetimePulses, "При создании у-рефлекса ExpiresAt = now + T0; при каждой активации T0 удваивается" +
+            // 
+            // lblCrxActivationThreshold
+            // 
+            this.lblCrxActivationThreshold.Location = new System.Drawing.Point(8, 69);
+            this.lblCrxActivationThreshold.Name = "lblCrxActivationThreshold";
+            this.lblCrxActivationThreshold.Size = new System.Drawing.Size(232, 18);
+            this.lblCrxActivationThreshold.TabIndex = 6;
+            this.lblCrxActivationThreshold.Text = "Порог активации (γ):";
+            this.lblCrxActivationThreshold.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.lblCrxActivationThreshold, "Минимальная крепость, при которой у-рефлекс срабатывает. Диапазон 0.5–0.7.");
+            // 
+            // _tbCrxActivationThreshold
+            // 
+            this._tbCrxActivationThreshold.Location = new System.Drawing.Point(244, 68);
+            this._tbCrxActivationThreshold.Name = "_tbCrxActivationThreshold";
+            this._tbCrxActivationThreshold.Size = new System.Drawing.Size(64, 20);
+            this._tbCrxActivationThreshold.TabIndex = 7;
+            this._tbCrxActivationThreshold.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this._ttpStageEvolution.SetToolTip(this._tbCrxActivationThreshold, "Минимальная крепость, при которой у-рефлекс срабатывает. Диапазон 0.5–0.7.");
+            this._tbCrxActivationThreshold.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
+            // 
+            // rngCrxActivationThreshold
+            // 
+            this.rngCrxActivationThreshold.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.rngCrxActivationThreshold.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
+            this.rngCrxActivationThreshold.Location = new System.Drawing.Point(310, 69);
+            this.rngCrxActivationThreshold.Name = "rngCrxActivationThreshold";
+            this.rngCrxActivationThreshold.Size = new System.Drawing.Size(66, 18);
+            this.rngCrxActivationThreshold.TabIndex = 8;
+            this.rngCrxActivationThreshold.Text = "(0.5 – 0.7)";
+            this.rngCrxActivationThreshold.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.rngCrxActivationThreshold, "Минимальная крепость, при которой у-рефлекс срабатывает. Диапазон 0.5–0.7.");
+            // 
+            // lblCrxInitialLifetimePulses
+            // 
+            this.lblCrxInitialLifetimePulses.Location = new System.Drawing.Point(8, 93);
+            this.lblCrxInitialLifetimePulses.Name = "lblCrxInitialLifetimePulses";
+            this.lblCrxInitialLifetimePulses.Size = new System.Drawing.Size(232, 18);
+            this.lblCrxInitialLifetimePulses.TabIndex = 9;
+            this.lblCrxInitialLifetimePulses.Text = "Начальный лимит простоя (пульсы):";
+            this.lblCrxInitialLifetimePulses.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.lblCrxInitialLifetimePulses, "При создании у-рефлекса ExpiresAt = now + T0; при каждой активации T0 удваивается" +
         ".");
-      // 
-      // _tbCrxInitialLifetimePulses
-      // 
-      this._tbCrxInitialLifetimePulses.Location = new System.Drawing.Point(244, 92);
-      this._tbCrxInitialLifetimePulses.Name = "_tbCrxInitialLifetimePulses";
-      this._tbCrxInitialLifetimePulses.Size = new System.Drawing.Size(64, 20);
-      this._tbCrxInitialLifetimePulses.TabIndex = 10;
-      this._tbCrxInitialLifetimePulses.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      this._ttpStageEvolution.SetToolTip(this._tbCrxInitialLifetimePulses, "При создании у-рефлекса ExpiresAt = now + T0; при каждой активации T0 удваивается" +
+            // 
+            // _tbCrxInitialLifetimePulses
+            // 
+            this._tbCrxInitialLifetimePulses.Location = new System.Drawing.Point(244, 92);
+            this._tbCrxInitialLifetimePulses.Name = "_tbCrxInitialLifetimePulses";
+            this._tbCrxInitialLifetimePulses.Size = new System.Drawing.Size(64, 20);
+            this._tbCrxInitialLifetimePulses.TabIndex = 10;
+            this._tbCrxInitialLifetimePulses.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this._ttpStageEvolution.SetToolTip(this._tbCrxInitialLifetimePulses, "При создании у-рефлекса ExpiresAt = now + T0; при каждой активации T0 удваивается" +
         ".");
-      this._tbCrxInitialLifetimePulses.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
-      // 
-      // rngCrxInitialLifetimePulses
-      // 
-      this.rngCrxInitialLifetimePulses.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.rngCrxInitialLifetimePulses.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxInitialLifetimePulses.Location = new System.Drawing.Point(310, 93);
-      this.rngCrxInitialLifetimePulses.Name = "rngCrxInitialLifetimePulses";
-      this.rngCrxInitialLifetimePulses.Size = new System.Drawing.Size(66, 18);
-      this.rngCrxInitialLifetimePulses.TabIndex = 11;
-      this.rngCrxInitialLifetimePulses.Text = "(3600 – 604800)";
-      this.rngCrxInitialLifetimePulses.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.rngCrxInitialLifetimePulses, "При создании у-рефлекса ExpiresAt = now + T0; при каждой активации T0 удваивается" +
+            this._tbCrxInitialLifetimePulses.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
+            // 
+            // rngCrxInitialLifetimePulses
+            // 
+            this.rngCrxInitialLifetimePulses.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.rngCrxInitialLifetimePulses.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
+            this.rngCrxInitialLifetimePulses.Location = new System.Drawing.Point(310, 93);
+            this.rngCrxInitialLifetimePulses.Name = "rngCrxInitialLifetimePulses";
+            this.rngCrxInitialLifetimePulses.Size = new System.Drawing.Size(66, 18);
+            this.rngCrxInitialLifetimePulses.TabIndex = 11;
+            this.rngCrxInitialLifetimePulses.Text = "(3600 – 604800)";
+            this.rngCrxInitialLifetimePulses.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.rngCrxInitialLifetimePulses, "При создании у-рефлекса ExpiresAt = now + T0; при каждой активации T0 удваивается" +
         ".");
-      // 
-      // lblCrxActiveExtinctionRate
-      // 
-      this.lblCrxActiveExtinctionRate.Location = new System.Drawing.Point(8, 117);
-      this.lblCrxActiveExtinctionRate.Name = "lblCrxActiveExtinctionRate";
-      this.lblCrxActiveExtinctionRate.Size = new System.Drawing.Size(232, 18);
-      this.lblCrxActiveExtinctionRate.TabIndex = 12;
-      this.lblCrxActiveExtinctionRate.Text = "Активное угасание (α_ext):";
-      this.lblCrxActiveExtinctionRate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.lblCrxActiveExtinctionRate, "Шаг снижения крепости при CS без US в окне τ; действует и на сильные у-рефлексы.");
-      // 
-      // _tbCrxActiveExtinctionRate
-      // 
-      this._tbCrxActiveExtinctionRate.Location = new System.Drawing.Point(244, 116);
-      this._tbCrxActiveExtinctionRate.Name = "_tbCrxActiveExtinctionRate";
-      this._tbCrxActiveExtinctionRate.Size = new System.Drawing.Size(64, 20);
-      this._tbCrxActiveExtinctionRate.TabIndex = 13;
-      this._tbCrxActiveExtinctionRate.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      this._ttpStageEvolution.SetToolTip(this._tbCrxActiveExtinctionRate, "Шаг снижения крепости при CS без US в окне τ; действует и на сильные у-рефлексы.");
-      this._tbCrxActiveExtinctionRate.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
-      // 
-      // rngCrxActiveExtinctionRate
-      // 
-      this.rngCrxActiveExtinctionRate.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.rngCrxActiveExtinctionRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxActiveExtinctionRate.Location = new System.Drawing.Point(310, 117);
-      this.rngCrxActiveExtinctionRate.Name = "rngCrxActiveExtinctionRate";
-      this.rngCrxActiveExtinctionRate.Size = new System.Drawing.Size(66, 18);
-      this.rngCrxActiveExtinctionRate.TabIndex = 14;
-      this.rngCrxActiveExtinctionRate.Text = "(0.01 – 0.2)";
-      this.rngCrxActiveExtinctionRate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.rngCrxActiveExtinctionRate, "Шаг снижения крепости при CS без US в окне τ; действует и на сильные у-рефлексы.");
-      // 
-      // lblCrxTimeWindowPulses
-      // 
-      this.lblCrxTimeWindowPulses.Location = new System.Drawing.Point(8, 141);
-      this.lblCrxTimeWindowPulses.Name = "lblCrxTimeWindowPulses";
-      this.lblCrxTimeWindowPulses.Size = new System.Drawing.Size(232, 18);
-      this.lblCrxTimeWindowPulses.TabIndex = 15;
-      this.lblCrxTimeWindowPulses.Text = "Временное окно корреляции (τ):";
-      this.lblCrxTimeWindowPulses.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.lblCrxTimeWindowPulses, "Окно корреляции CS–US в пульсах.");
-      // 
-      // _tbCrxTimeWindowPulses
-      // 
-      this._tbCrxTimeWindowPulses.Location = new System.Drawing.Point(244, 140);
-      this._tbCrxTimeWindowPulses.Name = "_tbCrxTimeWindowPulses";
-      this._tbCrxTimeWindowPulses.Size = new System.Drawing.Size(64, 20);
-      this._tbCrxTimeWindowPulses.TabIndex = 16;
-      this._tbCrxTimeWindowPulses.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      this._ttpStageEvolution.SetToolTip(this._tbCrxTimeWindowPulses, "Окно корреляции CS–US в пульсах.");
-      this._tbCrxTimeWindowPulses.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
-      // 
-      // rngCrxTimeWindowPulses
-      // 
-      this.rngCrxTimeWindowPulses.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.rngCrxTimeWindowPulses.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxTimeWindowPulses.Location = new System.Drawing.Point(310, 141);
-      this.rngCrxTimeWindowPulses.Name = "rngCrxTimeWindowPulses";
-      this.rngCrxTimeWindowPulses.Size = new System.Drawing.Size(66, 18);
-      this.rngCrxTimeWindowPulses.TabIndex = 17;
-      this.rngCrxTimeWindowPulses.Text = "(1 – 10)";
-      this.rngCrxTimeWindowPulses.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.rngCrxTimeWindowPulses, "Окно корреляции CS–US в пульсах.");
-      // 
-      // lblCrxMinAssociationStrength
-      // 
-      this.lblCrxMinAssociationStrength.Location = new System.Drawing.Point(8, 165);
-      this.lblCrxMinAssociationStrength.Name = "lblCrxMinAssociationStrength";
-      this.lblCrxMinAssociationStrength.Size = new System.Drawing.Size(232, 18);
-      this.lblCrxMinAssociationStrength.TabIndex = 18;
-      this.lblCrxMinAssociationStrength.Text = "Минимальная крепость связи (C_min):";
-      this.lblCrxMinAssociationStrength.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.lblCrxMinAssociationStrength, "Минимальная крепость связи C_min, ниже которой у-рефлекс не создаётся/удаляется.");
-      // 
-      // _tbCrxMinAssociationStrength
-      // 
-      this._tbCrxMinAssociationStrength.Location = new System.Drawing.Point(244, 164);
-      this._tbCrxMinAssociationStrength.Name = "_tbCrxMinAssociationStrength";
-      this._tbCrxMinAssociationStrength.Size = new System.Drawing.Size(64, 20);
-      this._tbCrxMinAssociationStrength.TabIndex = 19;
-      this._tbCrxMinAssociationStrength.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      this._ttpStageEvolution.SetToolTip(this._tbCrxMinAssociationStrength, "Минимальная крепость связи C_min, ниже которой у-рефлекс не создаётся/удаляется.");
-      this._tbCrxMinAssociationStrength.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
-      // 
-      // rngCrxMinAssociationStrength
-      // 
-      this.rngCrxMinAssociationStrength.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.rngCrxMinAssociationStrength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxMinAssociationStrength.Location = new System.Drawing.Point(310, 165);
-      this.rngCrxMinAssociationStrength.Name = "rngCrxMinAssociationStrength";
-      this.rngCrxMinAssociationStrength.Size = new System.Drawing.Size(66, 18);
-      this.rngCrxMinAssociationStrength.TabIndex = 20;
-      this.rngCrxMinAssociationStrength.Text = "(0.01 – 0.3)";
-      this.rngCrxMinAssociationStrength.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.rngCrxMinAssociationStrength, "Минимальная крепость связи C_min, ниже которой у-рефлекс не создаётся/удаляется.");
-      // 
-      // lblCrxHigherOrderStrengthReductionCoefficient
-      // 
-      this.lblCrxHigherOrderStrengthReductionCoefficient.Location = new System.Drawing.Point(8, 189);
-      this.lblCrxHigherOrderStrengthReductionCoefficient.Name = "lblCrxHigherOrderStrengthReductionCoefficient";
-      this.lblCrxHigherOrderStrengthReductionCoefficient.Size = new System.Drawing.Size(232, 18);
-      this.lblCrxHigherOrderStrengthReductionCoefficient.TabIndex = 21;
-      this.lblCrxHigherOrderStrengthReductionCoefficient.Text = "Коэфф. понижения крепости вторичных (K):";
-      this.lblCrxHigherOrderStrengthReductionCoefficient.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.lblCrxHigherOrderStrengthReductionCoefficient, "Влияет на начальную крепость, скорость обучения и начальный TTL. Для третичных ав" +
+            // 
+            // lblCrxActiveExtinctionRate
+            // 
+            this.lblCrxActiveExtinctionRate.Location = new System.Drawing.Point(8, 117);
+            this.lblCrxActiveExtinctionRate.Name = "lblCrxActiveExtinctionRate";
+            this.lblCrxActiveExtinctionRate.Size = new System.Drawing.Size(232, 18);
+            this.lblCrxActiveExtinctionRate.TabIndex = 12;
+            this.lblCrxActiveExtinctionRate.Text = "Активное угасание (α_ext):";
+            this.lblCrxActiveExtinctionRate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.lblCrxActiveExtinctionRate, "Шаг снижения крепости при CS без US в окне τ; действует и на сильные у-рефлексы.");
+            // 
+            // _tbCrxActiveExtinctionRate
+            // 
+            this._tbCrxActiveExtinctionRate.Location = new System.Drawing.Point(244, 116);
+            this._tbCrxActiveExtinctionRate.Name = "_tbCrxActiveExtinctionRate";
+            this._tbCrxActiveExtinctionRate.Size = new System.Drawing.Size(64, 20);
+            this._tbCrxActiveExtinctionRate.TabIndex = 13;
+            this._tbCrxActiveExtinctionRate.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this._ttpStageEvolution.SetToolTip(this._tbCrxActiveExtinctionRate, "Шаг снижения крепости при CS без US в окне τ; действует и на сильные у-рефлексы.");
+            this._tbCrxActiveExtinctionRate.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
+            // 
+            // rngCrxActiveExtinctionRate
+            // 
+            this.rngCrxActiveExtinctionRate.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.rngCrxActiveExtinctionRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
+            this.rngCrxActiveExtinctionRate.Location = new System.Drawing.Point(310, 117);
+            this.rngCrxActiveExtinctionRate.Name = "rngCrxActiveExtinctionRate";
+            this.rngCrxActiveExtinctionRate.Size = new System.Drawing.Size(66, 18);
+            this.rngCrxActiveExtinctionRate.TabIndex = 14;
+            this.rngCrxActiveExtinctionRate.Text = "(0.01 – 0.2)";
+            this.rngCrxActiveExtinctionRate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.rngCrxActiveExtinctionRate, "Шаг снижения крепости при CS без US в окне τ; действует и на сильные у-рефлексы.");
+            // 
+            // lblCrxTimeWindowPulses
+            // 
+            this.lblCrxTimeWindowPulses.Location = new System.Drawing.Point(8, 141);
+            this.lblCrxTimeWindowPulses.Name = "lblCrxTimeWindowPulses";
+            this.lblCrxTimeWindowPulses.Size = new System.Drawing.Size(232, 18);
+            this.lblCrxTimeWindowPulses.TabIndex = 15;
+            this.lblCrxTimeWindowPulses.Text = "Временное окно корреляции (τ):";
+            this.lblCrxTimeWindowPulses.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.lblCrxTimeWindowPulses, "Окно корреляции CS–US в пульсах.");
+            // 
+            // _tbCrxTimeWindowPulses
+            // 
+            this._tbCrxTimeWindowPulses.Location = new System.Drawing.Point(244, 140);
+            this._tbCrxTimeWindowPulses.Name = "_tbCrxTimeWindowPulses";
+            this._tbCrxTimeWindowPulses.Size = new System.Drawing.Size(64, 20);
+            this._tbCrxTimeWindowPulses.TabIndex = 16;
+            this._tbCrxTimeWindowPulses.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this._ttpStageEvolution.SetToolTip(this._tbCrxTimeWindowPulses, "Окно корреляции CS–US в пульсах.");
+            this._tbCrxTimeWindowPulses.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
+            // 
+            // rngCrxTimeWindowPulses
+            // 
+            this.rngCrxTimeWindowPulses.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.rngCrxTimeWindowPulses.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
+            this.rngCrxTimeWindowPulses.Location = new System.Drawing.Point(310, 141);
+            this.rngCrxTimeWindowPulses.Name = "rngCrxTimeWindowPulses";
+            this.rngCrxTimeWindowPulses.Size = new System.Drawing.Size(66, 18);
+            this.rngCrxTimeWindowPulses.TabIndex = 17;
+            this.rngCrxTimeWindowPulses.Text = "(1 – 10)";
+            this.rngCrxTimeWindowPulses.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.rngCrxTimeWindowPulses, "Окно корреляции CS–US в пульсах.");
+            // 
+            // lblCrxMinAssociationStrength
+            // 
+            this.lblCrxMinAssociationStrength.Location = new System.Drawing.Point(8, 165);
+            this.lblCrxMinAssociationStrength.Name = "lblCrxMinAssociationStrength";
+            this.lblCrxMinAssociationStrength.Size = new System.Drawing.Size(232, 18);
+            this.lblCrxMinAssociationStrength.TabIndex = 18;
+            this.lblCrxMinAssociationStrength.Text = "Минимальная крепость связи (C_min):";
+            this.lblCrxMinAssociationStrength.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.lblCrxMinAssociationStrength, "Минимальная крепость связи C_min, ниже которой у-рефлекс не создаётся/удаляется.");
+            // 
+            // _tbCrxMinAssociationStrength
+            // 
+            this._tbCrxMinAssociationStrength.Location = new System.Drawing.Point(244, 164);
+            this._tbCrxMinAssociationStrength.Name = "_tbCrxMinAssociationStrength";
+            this._tbCrxMinAssociationStrength.Size = new System.Drawing.Size(64, 20);
+            this._tbCrxMinAssociationStrength.TabIndex = 19;
+            this._tbCrxMinAssociationStrength.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this._ttpStageEvolution.SetToolTip(this._tbCrxMinAssociationStrength, "Минимальная крепость связи C_min, ниже которой у-рефлекс не создаётся/удаляется.");
+            this._tbCrxMinAssociationStrength.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
+            // 
+            // rngCrxMinAssociationStrength
+            // 
+            this.rngCrxMinAssociationStrength.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.rngCrxMinAssociationStrength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
+            this.rngCrxMinAssociationStrength.Location = new System.Drawing.Point(310, 165);
+            this.rngCrxMinAssociationStrength.Name = "rngCrxMinAssociationStrength";
+            this.rngCrxMinAssociationStrength.Size = new System.Drawing.Size(66, 18);
+            this.rngCrxMinAssociationStrength.TabIndex = 20;
+            this.rngCrxMinAssociationStrength.Text = "(0.01 – 0.3)";
+            this.rngCrxMinAssociationStrength.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.rngCrxMinAssociationStrength, "Минимальная крепость связи C_min, ниже которой у-рефлекс не создаётся/удаляется.");
+            // 
+            // lblCrxHigherOrderStrengthReductionCoefficient
+            // 
+            this.lblCrxHigherOrderStrengthReductionCoefficient.Location = new System.Drawing.Point(8, 189);
+            this.lblCrxHigherOrderStrengthReductionCoefficient.Name = "lblCrxHigherOrderStrengthReductionCoefficient";
+            this.lblCrxHigherOrderStrengthReductionCoefficient.Size = new System.Drawing.Size(232, 18);
+            this.lblCrxHigherOrderStrengthReductionCoefficient.TabIndex = 21;
+            this.lblCrxHigherOrderStrengthReductionCoefficient.Text = "Коэфф. понижения крепости вторичных (K):";
+            this.lblCrxHigherOrderStrengthReductionCoefficient.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.lblCrxHigherOrderStrengthReductionCoefficient, "Влияет на начальную крепость, скорость обучения и начальный TTL. Для третичных ав" +
         "томатически удваивается.");
-      // 
-      // _tbCrxHigherOrderStrengthReductionCoefficient
-      // 
-      this._tbCrxHigherOrderStrengthReductionCoefficient.Location = new System.Drawing.Point(244, 188);
-      this._tbCrxHigherOrderStrengthReductionCoefficient.Name = "_tbCrxHigherOrderStrengthReductionCoefficient";
-      this._tbCrxHigherOrderStrengthReductionCoefficient.Size = new System.Drawing.Size(64, 20);
-      this._tbCrxHigherOrderStrengthReductionCoefficient.TabIndex = 22;
-      this._tbCrxHigherOrderStrengthReductionCoefficient.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      this._ttpStageEvolution.SetToolTip(this._tbCrxHigherOrderStrengthReductionCoefficient, "Влияет на начальную крепость, скорость обучения и начальный TTL. Для третичных ав" +
+            // 
+            // _tbCrxHigherOrderStrengthReductionCoefficient
+            // 
+            this._tbCrxHigherOrderStrengthReductionCoefficient.Location = new System.Drawing.Point(244, 188);
+            this._tbCrxHigherOrderStrengthReductionCoefficient.Name = "_tbCrxHigherOrderStrengthReductionCoefficient";
+            this._tbCrxHigherOrderStrengthReductionCoefficient.Size = new System.Drawing.Size(64, 20);
+            this._tbCrxHigherOrderStrengthReductionCoefficient.TabIndex = 22;
+            this._tbCrxHigherOrderStrengthReductionCoefficient.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this._ttpStageEvolution.SetToolTip(this._tbCrxHigherOrderStrengthReductionCoefficient, "Влияет на начальную крепость, скорость обучения и начальный TTL. Для третичных ав" +
         "томатически удваивается.");
-      this._tbCrxHigherOrderStrengthReductionCoefficient.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
-      // 
-      // rngCrxHigherOrderStrengthReductionCoefficient
-      // 
-      this.rngCrxHigherOrderStrengthReductionCoefficient.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.rngCrxHigherOrderStrengthReductionCoefficient.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxHigherOrderStrengthReductionCoefficient.Location = new System.Drawing.Point(310, 189);
-      this.rngCrxHigherOrderStrengthReductionCoefficient.Name = "rngCrxHigherOrderStrengthReductionCoefficient";
-      this.rngCrxHigherOrderStrengthReductionCoefficient.Size = new System.Drawing.Size(66, 18);
-      this.rngCrxHigherOrderStrengthReductionCoefficient.TabIndex = 23;
-      this.rngCrxHigherOrderStrengthReductionCoefficient.Text = "(1.2 – 3.0)";
-      this.rngCrxHigherOrderStrengthReductionCoefficient.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.rngCrxHigherOrderStrengthReductionCoefficient, "Влияет на начальную крепость, скорость обучения и начальный TTL. Для третичных ав" +
+            this._tbCrxHigherOrderStrengthReductionCoefficient.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
+            // 
+            // rngCrxHigherOrderStrengthReductionCoefficient
+            // 
+            this.rngCrxHigherOrderStrengthReductionCoefficient.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.rngCrxHigherOrderStrengthReductionCoefficient.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
+            this.rngCrxHigherOrderStrengthReductionCoefficient.Location = new System.Drawing.Point(310, 189);
+            this.rngCrxHigherOrderStrengthReductionCoefficient.Name = "rngCrxHigherOrderStrengthReductionCoefficient";
+            this.rngCrxHigherOrderStrengthReductionCoefficient.Size = new System.Drawing.Size(66, 18);
+            this.rngCrxHigherOrderStrengthReductionCoefficient.TabIndex = 23;
+            this.rngCrxHigherOrderStrengthReductionCoefficient.Text = "(1.2 – 3.0)";
+            this.rngCrxHigherOrderStrengthReductionCoefficient.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.rngCrxHigherOrderStrengthReductionCoefficient, "Влияет на начальную крепость, скорость обучения и начальный TTL. Для третичных ав" +
         "томатически удваивается.");
-      // 
-      // lblCrxCompetitionStrengthRatioThreshold
-      // 
-      this.lblCrxCompetitionStrengthRatioThreshold.Location = new System.Drawing.Point(8, 213);
-      this.lblCrxCompetitionStrengthRatioThreshold.Name = "lblCrxCompetitionStrengthRatioThreshold";
-      this.lblCrxCompetitionStrengthRatioThreshold.Size = new System.Drawing.Size(232, 18);
-      this.lblCrxCompetitionStrengthRatioThreshold.TabIndex = 24;
-      this.lblCrxCompetitionStrengthRatioThreshold.Text = "Порог отношения крепостей (θ_comp):";
-      this.lblCrxCompetitionStrengthRatioThreshold.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.lblCrxCompetitionStrengthRatioThreshold, "Если min(C₁,C₂)/max(C₁,C₂) ≥ θ_comp — смешанный ответ, иначе конкурирующее подавл" +
+            // 
+            // lblCrxCompetitionStrengthRatioThreshold
+            // 
+            this.lblCrxCompetitionStrengthRatioThreshold.Location = new System.Drawing.Point(8, 213);
+            this.lblCrxCompetitionStrengthRatioThreshold.Name = "lblCrxCompetitionStrengthRatioThreshold";
+            this.lblCrxCompetitionStrengthRatioThreshold.Size = new System.Drawing.Size(232, 18);
+            this.lblCrxCompetitionStrengthRatioThreshold.TabIndex = 24;
+            this.lblCrxCompetitionStrengthRatioThreshold.Text = "Порог отношения крепостей (θ_comp):";
+            this.lblCrxCompetitionStrengthRatioThreshold.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.lblCrxCompetitionStrengthRatioThreshold, "Если min(C₁,C₂)/max(C₁,C₂) ≥ θ_comp — смешанный ответ, иначе конкурирующее подавл" +
         "ение.");
-      // 
-      // _tbCrxCompetitionStrengthRatioThreshold
-      // 
-      this._tbCrxCompetitionStrengthRatioThreshold.Location = new System.Drawing.Point(244, 212);
-      this._tbCrxCompetitionStrengthRatioThreshold.Name = "_tbCrxCompetitionStrengthRatioThreshold";
-      this._tbCrxCompetitionStrengthRatioThreshold.Size = new System.Drawing.Size(64, 20);
-      this._tbCrxCompetitionStrengthRatioThreshold.TabIndex = 25;
-      this._tbCrxCompetitionStrengthRatioThreshold.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      this._ttpStageEvolution.SetToolTip(this._tbCrxCompetitionStrengthRatioThreshold, "Если min(C₁,C₂)/max(C₁,C₂) ≥ θ_comp — смешанный ответ, иначе конкурирующее подавл" +
+            // 
+            // _tbCrxCompetitionStrengthRatioThreshold
+            // 
+            this._tbCrxCompetitionStrengthRatioThreshold.Location = new System.Drawing.Point(244, 212);
+            this._tbCrxCompetitionStrengthRatioThreshold.Name = "_tbCrxCompetitionStrengthRatioThreshold";
+            this._tbCrxCompetitionStrengthRatioThreshold.Size = new System.Drawing.Size(64, 20);
+            this._tbCrxCompetitionStrengthRatioThreshold.TabIndex = 25;
+            this._tbCrxCompetitionStrengthRatioThreshold.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this._ttpStageEvolution.SetToolTip(this._tbCrxCompetitionStrengthRatioThreshold, "Если min(C₁,C₂)/max(C₁,C₂) ≥ θ_comp — смешанный ответ, иначе конкурирующее подавл" +
         "ение.");
-      this._tbCrxCompetitionStrengthRatioThreshold.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
-      // 
-      // rngCrxCompetitionStrengthRatioThreshold
-      // 
-      this.rngCrxCompetitionStrengthRatioThreshold.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.rngCrxCompetitionStrengthRatioThreshold.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxCompetitionStrengthRatioThreshold.Location = new System.Drawing.Point(310, 213);
-      this.rngCrxCompetitionStrengthRatioThreshold.Name = "rngCrxCompetitionStrengthRatioThreshold";
-      this.rngCrxCompetitionStrengthRatioThreshold.Size = new System.Drawing.Size(66, 18);
-      this.rngCrxCompetitionStrengthRatioThreshold.TabIndex = 26;
-      this.rngCrxCompetitionStrengthRatioThreshold.Text = "(0.5 – 0.9)";
-      this.rngCrxCompetitionStrengthRatioThreshold.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.rngCrxCompetitionStrengthRatioThreshold, "Если min(C₁,C₂)/max(C₁,C₂) ≥ θ_comp — смешанный ответ, иначе конкурирующее подавл" +
+            this._tbCrxCompetitionStrengthRatioThreshold.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
+            // 
+            // rngCrxCompetitionStrengthRatioThreshold
+            // 
+            this.rngCrxCompetitionStrengthRatioThreshold.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.rngCrxCompetitionStrengthRatioThreshold.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
+            this.rngCrxCompetitionStrengthRatioThreshold.Location = new System.Drawing.Point(310, 213);
+            this.rngCrxCompetitionStrengthRatioThreshold.Name = "rngCrxCompetitionStrengthRatioThreshold";
+            this.rngCrxCompetitionStrengthRatioThreshold.Size = new System.Drawing.Size(66, 18);
+            this.rngCrxCompetitionStrengthRatioThreshold.TabIndex = 26;
+            this.rngCrxCompetitionStrengthRatioThreshold.Text = "(0.5 – 0.9)";
+            this.rngCrxCompetitionStrengthRatioThreshold.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.rngCrxCompetitionStrengthRatioThreshold, "Если min(C₁,C₂)/max(C₁,C₂) ≥ θ_comp — смешанный ответ, иначе конкурирующее подавл" +
         "ение.");
-      // 
-      // _chkCrxTieBreakPreferSmallerReflexId
-      // 
-      this._chkCrxTieBreakPreferSmallerReflexId.AutoSize = true;
-      this._chkCrxTieBreakPreferSmallerReflexId.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this._chkCrxTieBreakPreferSmallerReflexId.ForeColor = System.Drawing.SystemColors.ControlText;
-      this._chkCrxTieBreakPreferSmallerReflexId.Location = new System.Drawing.Point(8, 237);
-      this._chkCrxTieBreakPreferSmallerReflexId.Name = "_chkCrxTieBreakPreferSmallerReflexId";
-      this._chkCrxTieBreakPreferSmallerReflexId.Size = new System.Drawing.Size(296, 19);
-      this._chkCrxTieBreakPreferSmallerReflexId.TabIndex = 9;
-      this._chkCrxTieBreakPreferSmallerReflexId.Text = "при равной крепости — меньший ID у-рефлекса";
-      this._ttpStageEvolution.SetToolTip(this._chkCrxTieBreakPreferSmallerReflexId, "При равной крепости кандидатов предпочитать у-рефлекс с меньшим ID; иначе — с бол" +
+            // 
+            // _chkCrxTieBreakPreferSmallerReflexId
+            // 
+            this._chkCrxTieBreakPreferSmallerReflexId.AutoSize = true;
+            this._chkCrxTieBreakPreferSmallerReflexId.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this._chkCrxTieBreakPreferSmallerReflexId.ForeColor = System.Drawing.SystemColors.ControlText;
+            this._chkCrxTieBreakPreferSmallerReflexId.Location = new System.Drawing.Point(8, 237);
+            this._chkCrxTieBreakPreferSmallerReflexId.Name = "_chkCrxTieBreakPreferSmallerReflexId";
+            this._chkCrxTieBreakPreferSmallerReflexId.Size = new System.Drawing.Size(296, 19);
+            this._chkCrxTieBreakPreferSmallerReflexId.TabIndex = 9;
+            this._chkCrxTieBreakPreferSmallerReflexId.Text = "при равной крепости — меньший ID у-рефлекса";
+            this._ttpStageEvolution.SetToolTip(this._chkCrxTieBreakPreferSmallerReflexId, "При равной крепости кандидатов предпочитать у-рефлекс с меньшим ID; иначе — с бол" +
         "ьшим.");
-      this._chkCrxTieBreakPreferSmallerReflexId.UseVisualStyleBackColor = true;
-      // 
-      // grpCrxDecay
-      // 
-      this.grpCrxDecay.Controls.Add(this.lblCrxPassiveDecayPeriodPulses);
-      this.grpCrxDecay.Controls.Add(this._tbCrxPassiveDecayPeriodPulses);
-      this.grpCrxDecay.Controls.Add(this.rngCrxPassiveDecayPeriodPulses);
-      this.grpCrxDecay.Controls.Add(this.lblCrxPassiveDecayFallbackPeriodPulses);
-      this.grpCrxDecay.Controls.Add(this._tbCrxPassiveDecayFallbackPeriodPulses);
-      this.grpCrxDecay.Controls.Add(this.rngCrxPassiveDecayFallbackPeriodPulses);
-      this.grpCrxDecay.Location = new System.Drawing.Point(6, 274);
-      this.grpCrxDecay.Name = "grpCrxDecay";
-      this.grpCrxDecay.Size = new System.Drawing.Size(380, 72);
-      this.grpCrxDecay.TabIndex = 0;
-      this.grpCrxDecay.TabStop = false;
-      this.grpCrxDecay.Text = "Угасание";
-      // 
-      // lblCrxPassiveDecayPeriodPulses
-      // 
-      this.lblCrxPassiveDecayPeriodPulses.Location = new System.Drawing.Point(8, 21);
-      this.lblCrxPassiveDecayPeriodPulses.Name = "lblCrxPassiveDecayPeriodPulses";
-      this.lblCrxPassiveDecayPeriodPulses.Size = new System.Drawing.Size(232, 18);
-      this.lblCrxPassiveDecayPeriodPulses.TabIndex = 0;
-      this.lblCrxPassiveDecayPeriodPulses.Text = "Период пассивного угасания (пульсы):";
-      this.lblCrxPassiveDecayPeriodPulses.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.lblCrxPassiveDecayPeriodPulses, "Раз в PassiveDecayPeriodPulses пульсов крепость снижается. Значение ≤ 0 включает " +
+            this._chkCrxTieBreakPreferSmallerReflexId.UseVisualStyleBackColor = true;
+            // 
+            // grpCrxDecay
+            // 
+            this.grpCrxDecay.Controls.Add(this.lblCrxPassiveDecayPeriodPulses);
+            this.grpCrxDecay.Controls.Add(this._tbCrxPassiveDecayPeriodPulses);
+            this.grpCrxDecay.Controls.Add(this.rngCrxPassiveDecayPeriodPulses);
+            this.grpCrxDecay.Controls.Add(this.lblCrxPassiveDecayFallbackPeriodPulses);
+            this.grpCrxDecay.Controls.Add(this._tbCrxPassiveDecayFallbackPeriodPulses);
+            this.grpCrxDecay.Controls.Add(this.rngCrxPassiveDecayFallbackPeriodPulses);
+            this.grpCrxDecay.Location = new System.Drawing.Point(6, 274);
+            this.grpCrxDecay.Name = "grpCrxDecay";
+            this.grpCrxDecay.Size = new System.Drawing.Size(380, 72);
+            this.grpCrxDecay.TabIndex = 0;
+            this.grpCrxDecay.TabStop = false;
+            this.grpCrxDecay.Text = "Угасание";
+            // 
+            // lblCrxPassiveDecayPeriodPulses
+            // 
+            this.lblCrxPassiveDecayPeriodPulses.Location = new System.Drawing.Point(8, 21);
+            this.lblCrxPassiveDecayPeriodPulses.Name = "lblCrxPassiveDecayPeriodPulses";
+            this.lblCrxPassiveDecayPeriodPulses.Size = new System.Drawing.Size(232, 18);
+            this.lblCrxPassiveDecayPeriodPulses.TabIndex = 0;
+            this.lblCrxPassiveDecayPeriodPulses.Text = "Период пассивного угасания (пульсы):";
+            this.lblCrxPassiveDecayPeriodPulses.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.lblCrxPassiveDecayPeriodPulses, "Раз в PassiveDecayPeriodPulses пульсов крепость снижается. Значение ≤ 0 включает " +
         "резервный период.");
-      // 
-      // _tbCrxPassiveDecayPeriodPulses
-      // 
-      this._tbCrxPassiveDecayPeriodPulses.Location = new System.Drawing.Point(244, 20);
-      this._tbCrxPassiveDecayPeriodPulses.Name = "_tbCrxPassiveDecayPeriodPulses";
-      this._tbCrxPassiveDecayPeriodPulses.Size = new System.Drawing.Size(64, 20);
-      this._tbCrxPassiveDecayPeriodPulses.TabIndex = 1;
-      this._tbCrxPassiveDecayPeriodPulses.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      this._ttpStageEvolution.SetToolTip(this._tbCrxPassiveDecayPeriodPulses, "Раз в PassiveDecayPeriodPulses пульсов крепость снижается. Значение ≤ 0 включает " +
+            // 
+            // _tbCrxPassiveDecayPeriodPulses
+            // 
+            this._tbCrxPassiveDecayPeriodPulses.Location = new System.Drawing.Point(244, 20);
+            this._tbCrxPassiveDecayPeriodPulses.Name = "_tbCrxPassiveDecayPeriodPulses";
+            this._tbCrxPassiveDecayPeriodPulses.Size = new System.Drawing.Size(64, 20);
+            this._tbCrxPassiveDecayPeriodPulses.TabIndex = 1;
+            this._tbCrxPassiveDecayPeriodPulses.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this._ttpStageEvolution.SetToolTip(this._tbCrxPassiveDecayPeriodPulses, "Раз в PassiveDecayPeriodPulses пульсов крепость снижается. Значение ≤ 0 включает " +
         "резервный период.");
-      this._tbCrxPassiveDecayPeriodPulses.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
-      // 
-      // rngCrxPassiveDecayPeriodPulses
-      // 
-      this.rngCrxPassiveDecayPeriodPulses.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.rngCrxPassiveDecayPeriodPulses.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxPassiveDecayPeriodPulses.Location = new System.Drawing.Point(310, 21);
-      this.rngCrxPassiveDecayPeriodPulses.Name = "rngCrxPassiveDecayPeriodPulses";
-      this.rngCrxPassiveDecayPeriodPulses.Size = new System.Drawing.Size(66, 18);
-      this.rngCrxPassiveDecayPeriodPulses.TabIndex = 2;
-      this.rngCrxPassiveDecayPeriodPulses.Text = "(0 – 86400)";
-      this.rngCrxPassiveDecayPeriodPulses.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.rngCrxPassiveDecayPeriodPulses, "Раз в PassiveDecayPeriodPulses пульсов крепость снижается. Значение ≤ 0 включает " +
+            this._tbCrxPassiveDecayPeriodPulses.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
+            // 
+            // rngCrxPassiveDecayPeriodPulses
+            // 
+            this.rngCrxPassiveDecayPeriodPulses.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.rngCrxPassiveDecayPeriodPulses.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
+            this.rngCrxPassiveDecayPeriodPulses.Location = new System.Drawing.Point(310, 21);
+            this.rngCrxPassiveDecayPeriodPulses.Name = "rngCrxPassiveDecayPeriodPulses";
+            this.rngCrxPassiveDecayPeriodPulses.Size = new System.Drawing.Size(66, 18);
+            this.rngCrxPassiveDecayPeriodPulses.TabIndex = 2;
+            this.rngCrxPassiveDecayPeriodPulses.Text = "(0 – 86400)";
+            this.rngCrxPassiveDecayPeriodPulses.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.rngCrxPassiveDecayPeriodPulses, "Раз в PassiveDecayPeriodPulses пульсов крепость снижается. Значение ≤ 0 включает " +
         "резервный период.");
-      // 
-      // lblCrxPassiveDecayFallbackPeriodPulses
-      // 
-      this.lblCrxPassiveDecayFallbackPeriodPulses.Location = new System.Drawing.Point(8, 45);
-      this.lblCrxPassiveDecayFallbackPeriodPulses.Name = "lblCrxPassiveDecayFallbackPeriodPulses";
-      this.lblCrxPassiveDecayFallbackPeriodPulses.Size = new System.Drawing.Size(232, 18);
-      this.lblCrxPassiveDecayFallbackPeriodPulses.TabIndex = 3;
-      this.lblCrxPassiveDecayFallbackPeriodPulses.Text = "Резервный период угасания (пульсы):";
-      this.lblCrxPassiveDecayFallbackPeriodPulses.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.lblCrxPassiveDecayFallbackPeriodPulses, "Используется, если PassiveDecayPeriodPulses задан неверно (≤ 0).");
-      // 
-      // _tbCrxPassiveDecayFallbackPeriodPulses
-      // 
-      this._tbCrxPassiveDecayFallbackPeriodPulses.Location = new System.Drawing.Point(244, 44);
-      this._tbCrxPassiveDecayFallbackPeriodPulses.Name = "_tbCrxPassiveDecayFallbackPeriodPulses";
-      this._tbCrxPassiveDecayFallbackPeriodPulses.Size = new System.Drawing.Size(64, 20);
-      this._tbCrxPassiveDecayFallbackPeriodPulses.TabIndex = 4;
-      this._tbCrxPassiveDecayFallbackPeriodPulses.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      this._ttpStageEvolution.SetToolTip(this._tbCrxPassiveDecayFallbackPeriodPulses, "Используется, если PassiveDecayPeriodPulses задан неверно (≤ 0).");
-      this._tbCrxPassiveDecayFallbackPeriodPulses.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
-      // 
-      // rngCrxPassiveDecayFallbackPeriodPulses
-      // 
-      this.rngCrxPassiveDecayFallbackPeriodPulses.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.rngCrxPassiveDecayFallbackPeriodPulses.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxPassiveDecayFallbackPeriodPulses.Location = new System.Drawing.Point(310, 45);
-      this.rngCrxPassiveDecayFallbackPeriodPulses.Name = "rngCrxPassiveDecayFallbackPeriodPulses";
-      this.rngCrxPassiveDecayFallbackPeriodPulses.Size = new System.Drawing.Size(66, 18);
-      this.rngCrxPassiveDecayFallbackPeriodPulses.TabIndex = 5;
-      this.rngCrxPassiveDecayFallbackPeriodPulses.Text = "(1 – 86400)";
-      this.rngCrxPassiveDecayFallbackPeriodPulses.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.rngCrxPassiveDecayFallbackPeriodPulses, "Используется, если PassiveDecayPeriodPulses задан неверно (≤ 0).");
-      // 
-      // grpCrxComp
-      // 
-      this.grpCrxComp.Controls.Add(this._chkCrxEnableCompetitiveLearning);
-      this.grpCrxComp.Controls.Add(this.lblCrxCompetitionSuppressionCoefficient);
-      this.grpCrxComp.Controls.Add(this._tbCrxCompetitionSuppressionCoefficient);
-      this.grpCrxComp.Controls.Add(this.rngCrxCompetitionSuppressionCoefficient);
-      this.grpCrxComp.Location = new System.Drawing.Point(392, 6);
-      this.grpCrxComp.Name = "grpCrxComp";
-      this.grpCrxComp.Size = new System.Drawing.Size(380, 72);
-      this.grpCrxComp.TabIndex = 0;
-      this.grpCrxComp.TabStop = false;
-      this.grpCrxComp.Text = "Конкурентное обучение";
-      // 
-      // _chkCrxEnableCompetitiveLearning
-      // 
-      this._chkCrxEnableCompetitiveLearning.AutoSize = true;
-      this._chkCrxEnableCompetitiveLearning.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this._chkCrxEnableCompetitiveLearning.ForeColor = System.Drawing.SystemColors.ControlText;
-      this._chkCrxEnableCompetitiveLearning.Location = new System.Drawing.Point(8, 21);
-      this._chkCrxEnableCompetitiveLearning.Name = "_chkCrxEnableCompetitiveLearning";
-      this._chkCrxEnableCompetitiveLearning.Size = new System.Drawing.Size(312, 19);
-      this._chkCrxEnableCompetitiveLearning.TabIndex = 0;
-      this._chkCrxEnableCompetitiveLearning.Text = "конкурентный слой обучения (Kamin blocking / ΔV)";
-      this._ttpStageEvolution.SetToolTip(this._chkCrxEnableCompetitiveLearning, "При включении α при CS→US распределяется с учётом предсказуемости US другими CS. " +
+            // 
+            // lblCrxPassiveDecayFallbackPeriodPulses
+            // 
+            this.lblCrxPassiveDecayFallbackPeriodPulses.Location = new System.Drawing.Point(8, 45);
+            this.lblCrxPassiveDecayFallbackPeriodPulses.Name = "lblCrxPassiveDecayFallbackPeriodPulses";
+            this.lblCrxPassiveDecayFallbackPeriodPulses.Size = new System.Drawing.Size(232, 18);
+            this.lblCrxPassiveDecayFallbackPeriodPulses.TabIndex = 3;
+            this.lblCrxPassiveDecayFallbackPeriodPulses.Text = "Резервный период угасания (пульсы):";
+            this.lblCrxPassiveDecayFallbackPeriodPulses.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.lblCrxPassiveDecayFallbackPeriodPulses, "Используется, если PassiveDecayPeriodPulses задан неверно (≤ 0).");
+            // 
+            // _tbCrxPassiveDecayFallbackPeriodPulses
+            // 
+            this._tbCrxPassiveDecayFallbackPeriodPulses.Location = new System.Drawing.Point(244, 44);
+            this._tbCrxPassiveDecayFallbackPeriodPulses.Name = "_tbCrxPassiveDecayFallbackPeriodPulses";
+            this._tbCrxPassiveDecayFallbackPeriodPulses.Size = new System.Drawing.Size(64, 20);
+            this._tbCrxPassiveDecayFallbackPeriodPulses.TabIndex = 4;
+            this._tbCrxPassiveDecayFallbackPeriodPulses.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this._ttpStageEvolution.SetToolTip(this._tbCrxPassiveDecayFallbackPeriodPulses, "Используется, если PassiveDecayPeriodPulses задан неверно (≤ 0).");
+            this._tbCrxPassiveDecayFallbackPeriodPulses.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
+            // 
+            // rngCrxPassiveDecayFallbackPeriodPulses
+            // 
+            this.rngCrxPassiveDecayFallbackPeriodPulses.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.rngCrxPassiveDecayFallbackPeriodPulses.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
+            this.rngCrxPassiveDecayFallbackPeriodPulses.Location = new System.Drawing.Point(310, 45);
+            this.rngCrxPassiveDecayFallbackPeriodPulses.Name = "rngCrxPassiveDecayFallbackPeriodPulses";
+            this.rngCrxPassiveDecayFallbackPeriodPulses.Size = new System.Drawing.Size(66, 18);
+            this.rngCrxPassiveDecayFallbackPeriodPulses.TabIndex = 5;
+            this.rngCrxPassiveDecayFallbackPeriodPulses.Text = "(1 – 86400)";
+            this.rngCrxPassiveDecayFallbackPeriodPulses.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.rngCrxPassiveDecayFallbackPeriodPulses, "Используется, если PassiveDecayPeriodPulses задан неверно (≤ 0).");
+            // 
+            // grpCrxComp
+            // 
+            this.grpCrxComp.Controls.Add(this._chkCrxEnableCompetitiveLearning);
+            this.grpCrxComp.Controls.Add(this.lblCrxCompetitionSuppressionCoefficient);
+            this.grpCrxComp.Controls.Add(this._tbCrxCompetitionSuppressionCoefficient);
+            this.grpCrxComp.Controls.Add(this.rngCrxCompetitionSuppressionCoefficient);
+            this.grpCrxComp.Location = new System.Drawing.Point(392, 6);
+            this.grpCrxComp.Name = "grpCrxComp";
+            this.grpCrxComp.Size = new System.Drawing.Size(380, 72);
+            this.grpCrxComp.TabIndex = 0;
+            this.grpCrxComp.TabStop = false;
+            this.grpCrxComp.Text = "Конкурентное обучение";
+            // 
+            // _chkCrxEnableCompetitiveLearning
+            // 
+            this._chkCrxEnableCompetitiveLearning.AutoSize = true;
+            this._chkCrxEnableCompetitiveLearning.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this._chkCrxEnableCompetitiveLearning.ForeColor = System.Drawing.SystemColors.ControlText;
+            this._chkCrxEnableCompetitiveLearning.Location = new System.Drawing.Point(8, 21);
+            this._chkCrxEnableCompetitiveLearning.Name = "_chkCrxEnableCompetitiveLearning";
+            this._chkCrxEnableCompetitiveLearning.Size = new System.Drawing.Size(312, 19);
+            this._chkCrxEnableCompetitiveLearning.TabIndex = 0;
+            this._chkCrxEnableCompetitiveLearning.Text = "конкурентный слой обучения (Kamin blocking / ΔV)";
+            this._ttpStageEvolution.SetToolTip(this._chkCrxEnableCompetitiveLearning, "При включении α при CS→US распределяется с учётом предсказуемости US другими CS. " +
         "Иначе каждый CS обучается независимо.");
-      this._chkCrxEnableCompetitiveLearning.UseVisualStyleBackColor = true;
-      // 
-      // lblCrxCompetitionSuppressionCoefficient
-      // 
-      this.lblCrxCompetitionSuppressionCoefficient.Location = new System.Drawing.Point(8, 45);
-      this.lblCrxCompetitionSuppressionCoefficient.Name = "lblCrxCompetitionSuppressionCoefficient";
-      this.lblCrxCompetitionSuppressionCoefficient.Size = new System.Drawing.Size(232, 18);
-      this.lblCrxCompetitionSuppressionCoefficient.TabIndex = 3;
-      this.lblCrxCompetitionSuppressionCoefficient.Text = "Доля подавления конкурентами:";
-      this.lblCrxCompetitionSuppressionCoefficient.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.lblCrxCompetitionSuppressionCoefficient, "0 — блокировки нет; 1 — подавляющий конкурент гасит подкрепление целиком. Действу" +
+            this._chkCrxEnableCompetitiveLearning.UseVisualStyleBackColor = true;
+            // 
+            // lblCrxCompetitionSuppressionCoefficient
+            // 
+            this.lblCrxCompetitionSuppressionCoefficient.Location = new System.Drawing.Point(8, 45);
+            this.lblCrxCompetitionSuppressionCoefficient.Name = "lblCrxCompetitionSuppressionCoefficient";
+            this.lblCrxCompetitionSuppressionCoefficient.Size = new System.Drawing.Size(232, 18);
+            this.lblCrxCompetitionSuppressionCoefficient.TabIndex = 3;
+            this.lblCrxCompetitionSuppressionCoefficient.Text = "Доля подавления конкурентами:";
+            this.lblCrxCompetitionSuppressionCoefficient.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.lblCrxCompetitionSuppressionCoefficient, "0 — блокировки нет; 1 — подавляющий конкурент гасит подкрепление целиком. Действу" +
         "ет при включённом конкурентном слое.");
-      // 
-      // _tbCrxCompetitionSuppressionCoefficient
-      // 
-      this._tbCrxCompetitionSuppressionCoefficient.Location = new System.Drawing.Point(244, 44);
-      this._tbCrxCompetitionSuppressionCoefficient.Name = "_tbCrxCompetitionSuppressionCoefficient";
-      this._tbCrxCompetitionSuppressionCoefficient.Size = new System.Drawing.Size(64, 20);
-      this._tbCrxCompetitionSuppressionCoefficient.TabIndex = 4;
-      this._tbCrxCompetitionSuppressionCoefficient.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      this._ttpStageEvolution.SetToolTip(this._tbCrxCompetitionSuppressionCoefficient, "0 — блокировки нет; 1 — подавляющий конкурент гасит подкрепление целиком. Действу" +
+            // 
+            // _tbCrxCompetitionSuppressionCoefficient
+            // 
+            this._tbCrxCompetitionSuppressionCoefficient.Location = new System.Drawing.Point(244, 44);
+            this._tbCrxCompetitionSuppressionCoefficient.Name = "_tbCrxCompetitionSuppressionCoefficient";
+            this._tbCrxCompetitionSuppressionCoefficient.Size = new System.Drawing.Size(64, 20);
+            this._tbCrxCompetitionSuppressionCoefficient.TabIndex = 4;
+            this._tbCrxCompetitionSuppressionCoefficient.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this._ttpStageEvolution.SetToolTip(this._tbCrxCompetitionSuppressionCoefficient, "0 — блокировки нет; 1 — подавляющий конкурент гасит подкрепление целиком. Действу" +
         "ет при включённом конкурентном слое.");
-      this._tbCrxCompetitionSuppressionCoefficient.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
-      // 
-      // rngCrxCompetitionSuppressionCoefficient
-      // 
-      this.rngCrxCompetitionSuppressionCoefficient.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.rngCrxCompetitionSuppressionCoefficient.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxCompetitionSuppressionCoefficient.Location = new System.Drawing.Point(310, 45);
-      this.rngCrxCompetitionSuppressionCoefficient.Name = "rngCrxCompetitionSuppressionCoefficient";
-      this.rngCrxCompetitionSuppressionCoefficient.Size = new System.Drawing.Size(66, 18);
-      this.rngCrxCompetitionSuppressionCoefficient.TabIndex = 5;
-      this.rngCrxCompetitionSuppressionCoefficient.Text = "(0.0 – 1.0)";
-      this.rngCrxCompetitionSuppressionCoefficient.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.rngCrxCompetitionSuppressionCoefficient, "0 — блокировки нет; 1 — подавляющий конкурент гасит подкрепление целиком. Действу" +
+            this._tbCrxCompetitionSuppressionCoefficient.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
+            // 
+            // rngCrxCompetitionSuppressionCoefficient
+            // 
+            this.rngCrxCompetitionSuppressionCoefficient.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.rngCrxCompetitionSuppressionCoefficient.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
+            this.rngCrxCompetitionSuppressionCoefficient.Location = new System.Drawing.Point(310, 45);
+            this.rngCrxCompetitionSuppressionCoefficient.Name = "rngCrxCompetitionSuppressionCoefficient";
+            this.rngCrxCompetitionSuppressionCoefficient.Size = new System.Drawing.Size(66, 18);
+            this.rngCrxCompetitionSuppressionCoefficient.TabIndex = 5;
+            this.rngCrxCompetitionSuppressionCoefficient.Text = "(0.0 – 1.0)";
+            this.rngCrxCompetitionSuppressionCoefficient.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.rngCrxCompetitionSuppressionCoefficient, "0 — блокировки нет; 1 — подавляющий конкурент гасит подкрепление целиком. Действу" +
         "ет при включённом конкурентном слое.");
-      // 
-      // grpCrxStart
-      // 
-      this.grpCrxStart.Controls.Add(this.lblCrxInitialStrengthBonus);
-      this.grpCrxStart.Controls.Add(this._tbCrxInitialStrengthBonus);
-      this.grpCrxStart.Controls.Add(this.rngCrxInitialStrengthBonus);
-      this.grpCrxStart.Controls.Add(this.lblCrxAuthoritativeStrength);
-      this.grpCrxStart.Controls.Add(this._tbCrxAuthoritativeStrength);
-      this.grpCrxStart.Controls.Add(this.rngCrxAuthoritativeStrength);
-      this.grpCrxStart.Controls.Add(this.lblCrxEstablishedStrengthThreshold);
-      this.grpCrxStart.Controls.Add(this._tbCrxEstablishedStrengthThreshold);
-      this.grpCrxStart.Controls.Add(this.rngCrxEstablishedStrengthThreshold);
-      this.grpCrxStart.Controls.Add(this.lblCrxActivationReinforcementFraction);
-      this.grpCrxStart.Controls.Add(this._tbCrxActivationReinforcementFraction);
-      this.grpCrxStart.Controls.Add(this.rngCrxActivationReinforcementFraction);
-      this.grpCrxStart.Controls.Add(this.lblCrxMaxLifetimePulsesCap);
-      this.grpCrxStart.Controls.Add(this._tbCrxMaxLifetimePulsesCap);
-      this.grpCrxStart.Controls.Add(this.rngCrxMaxLifetimePulsesCap);
-      this.grpCrxStart.Location = new System.Drawing.Point(392, 82);
-      this.grpCrxStart.Name = "grpCrxStart";
-      this.grpCrxStart.Size = new System.Drawing.Size(380, 144);
-      this.grpCrxStart.TabIndex = 0;
-      this.grpCrxStart.TabStop = false;
-      this.grpCrxStart.Text = "Начальная крепость и установление";
-      // 
-      // lblCrxInitialStrengthBonus
-      // 
-      this.lblCrxInitialStrengthBonus.Location = new System.Drawing.Point(8, 21);
-      this.lblCrxInitialStrengthBonus.Name = "lblCrxInitialStrengthBonus";
-      this.lblCrxInitialStrengthBonus.Size = new System.Drawing.Size(232, 18);
-      this.lblCrxInitialStrengthBonus.TabIndex = 0;
-      this.lblCrxInitialStrengthBonus.Text = "Прибавка к стартовой крепости:";
-      this.lblCrxInitialStrengthBonus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.lblCrxInitialStrengthBonus, "C₀ = (C_min + InitialStrengthBonus) / K(order).");
-      // 
-      // _tbCrxInitialStrengthBonus
-      // 
-      this._tbCrxInitialStrengthBonus.Location = new System.Drawing.Point(244, 20);
-      this._tbCrxInitialStrengthBonus.Name = "_tbCrxInitialStrengthBonus";
-      this._tbCrxInitialStrengthBonus.Size = new System.Drawing.Size(64, 20);
-      this._tbCrxInitialStrengthBonus.TabIndex = 1;
-      this._tbCrxInitialStrengthBonus.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      this._ttpStageEvolution.SetToolTip(this._tbCrxInitialStrengthBonus, "C₀ = (C_min + InitialStrengthBonus) / K(order).");
-      this._tbCrxInitialStrengthBonus.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
-      // 
-      // rngCrxInitialStrengthBonus
-      // 
-      this.rngCrxInitialStrengthBonus.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.rngCrxInitialStrengthBonus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxInitialStrengthBonus.Location = new System.Drawing.Point(310, 21);
-      this.rngCrxInitialStrengthBonus.Name = "rngCrxInitialStrengthBonus";
-      this.rngCrxInitialStrengthBonus.Size = new System.Drawing.Size(66, 18);
-      this.rngCrxInitialStrengthBonus.TabIndex = 2;
-      this.rngCrxInitialStrengthBonus.Text = "(0.0 – 1.0)";
-      this.rngCrxInitialStrengthBonus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.rngCrxInitialStrengthBonus, "C₀ = (C_min + InitialStrengthBonus) / K(order).");
-      // 
-      // lblCrxAuthoritativeStrength
-      // 
-      this.lblCrxAuthoritativeStrength.Location = new System.Drawing.Point(8, 45);
-      this.lblCrxAuthoritativeStrength.Name = "lblCrxAuthoritativeStrength";
-      this.lblCrxAuthoritativeStrength.Size = new System.Drawing.Size(232, 18);
-      this.lblCrxAuthoritativeStrength.TabIndex = 3;
-      this.lblCrxAuthoritativeStrength.Text = "Крепость авторитарной записи:";
-      this.lblCrxAuthoritativeStrength.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.lblCrxAuthoritativeStrength, "Крепость при ручной записи оператора, до понижения по порядку: C₀ = Authoritative" +
+            // 
+            // grpCrxStart
+            // 
+            this.grpCrxStart.Controls.Add(this.lblCrxInitialStrengthBonus);
+            this.grpCrxStart.Controls.Add(this._tbCrxInitialStrengthBonus);
+            this.grpCrxStart.Controls.Add(this.rngCrxInitialStrengthBonus);
+            this.grpCrxStart.Controls.Add(this.lblCrxAuthoritativeStrength);
+            this.grpCrxStart.Controls.Add(this._tbCrxAuthoritativeStrength);
+            this.grpCrxStart.Controls.Add(this.rngCrxAuthoritativeStrength);
+            this.grpCrxStart.Controls.Add(this.lblCrxEstablishedStrengthThreshold);
+            this.grpCrxStart.Controls.Add(this._tbCrxEstablishedStrengthThreshold);
+            this.grpCrxStart.Controls.Add(this.rngCrxEstablishedStrengthThreshold);
+            this.grpCrxStart.Controls.Add(this.lblCrxActivationReinforcementFraction);
+            this.grpCrxStart.Controls.Add(this._tbCrxActivationReinforcementFraction);
+            this.grpCrxStart.Controls.Add(this.rngCrxActivationReinforcementFraction);
+            this.grpCrxStart.Controls.Add(this.lblCrxMaxLifetimePulsesCap);
+            this.grpCrxStart.Controls.Add(this._tbCrxMaxLifetimePulsesCap);
+            this.grpCrxStart.Controls.Add(this.rngCrxMaxLifetimePulsesCap);
+            this.grpCrxStart.Location = new System.Drawing.Point(392, 82);
+            this.grpCrxStart.Name = "grpCrxStart";
+            this.grpCrxStart.Size = new System.Drawing.Size(380, 144);
+            this.grpCrxStart.TabIndex = 0;
+            this.grpCrxStart.TabStop = false;
+            this.grpCrxStart.Text = "Начальная крепость и установление";
+            // 
+            // lblCrxInitialStrengthBonus
+            // 
+            this.lblCrxInitialStrengthBonus.Location = new System.Drawing.Point(8, 21);
+            this.lblCrxInitialStrengthBonus.Name = "lblCrxInitialStrengthBonus";
+            this.lblCrxInitialStrengthBonus.Size = new System.Drawing.Size(232, 18);
+            this.lblCrxInitialStrengthBonus.TabIndex = 0;
+            this.lblCrxInitialStrengthBonus.Text = "Прибавка к стартовой крепости:";
+            this.lblCrxInitialStrengthBonus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.lblCrxInitialStrengthBonus, "C₀ = (C_min + InitialStrengthBonus) / K(order).");
+            // 
+            // _tbCrxInitialStrengthBonus
+            // 
+            this._tbCrxInitialStrengthBonus.Location = new System.Drawing.Point(244, 20);
+            this._tbCrxInitialStrengthBonus.Name = "_tbCrxInitialStrengthBonus";
+            this._tbCrxInitialStrengthBonus.Size = new System.Drawing.Size(64, 20);
+            this._tbCrxInitialStrengthBonus.TabIndex = 1;
+            this._tbCrxInitialStrengthBonus.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this._ttpStageEvolution.SetToolTip(this._tbCrxInitialStrengthBonus, "C₀ = (C_min + InitialStrengthBonus) / K(order).");
+            this._tbCrxInitialStrengthBonus.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
+            // 
+            // rngCrxInitialStrengthBonus
+            // 
+            this.rngCrxInitialStrengthBonus.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.rngCrxInitialStrengthBonus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
+            this.rngCrxInitialStrengthBonus.Location = new System.Drawing.Point(310, 21);
+            this.rngCrxInitialStrengthBonus.Name = "rngCrxInitialStrengthBonus";
+            this.rngCrxInitialStrengthBonus.Size = new System.Drawing.Size(66, 18);
+            this.rngCrxInitialStrengthBonus.TabIndex = 2;
+            this.rngCrxInitialStrengthBonus.Text = "(0.0 – 1.0)";
+            this.rngCrxInitialStrengthBonus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.rngCrxInitialStrengthBonus, "C₀ = (C_min + InitialStrengthBonus) / K(order).");
+            // 
+            // lblCrxAuthoritativeStrength
+            // 
+            this.lblCrxAuthoritativeStrength.Location = new System.Drawing.Point(8, 45);
+            this.lblCrxAuthoritativeStrength.Name = "lblCrxAuthoritativeStrength";
+            this.lblCrxAuthoritativeStrength.Size = new System.Drawing.Size(232, 18);
+            this.lblCrxAuthoritativeStrength.TabIndex = 3;
+            this.lblCrxAuthoritativeStrength.Text = "Крепость авторитарной записи:";
+            this.lblCrxAuthoritativeStrength.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.lblCrxAuthoritativeStrength, "Крепость при ручной записи оператора, до понижения по порядку: C₀ = Authoritative" +
         "Strength / K(order).");
-      // 
-      // _tbCrxAuthoritativeStrength
-      // 
-      this._tbCrxAuthoritativeStrength.Location = new System.Drawing.Point(244, 44);
-      this._tbCrxAuthoritativeStrength.Name = "_tbCrxAuthoritativeStrength";
-      this._tbCrxAuthoritativeStrength.Size = new System.Drawing.Size(64, 20);
-      this._tbCrxAuthoritativeStrength.TabIndex = 4;
-      this._tbCrxAuthoritativeStrength.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      this._ttpStageEvolution.SetToolTip(this._tbCrxAuthoritativeStrength, "Крепость при ручной записи оператора, до понижения по порядку: C₀ = Authoritative" +
+            // 
+            // _tbCrxAuthoritativeStrength
+            // 
+            this._tbCrxAuthoritativeStrength.Location = new System.Drawing.Point(244, 44);
+            this._tbCrxAuthoritativeStrength.Name = "_tbCrxAuthoritativeStrength";
+            this._tbCrxAuthoritativeStrength.Size = new System.Drawing.Size(64, 20);
+            this._tbCrxAuthoritativeStrength.TabIndex = 4;
+            this._tbCrxAuthoritativeStrength.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this._ttpStageEvolution.SetToolTip(this._tbCrxAuthoritativeStrength, "Крепость при ручной записи оператора, до понижения по порядку: C₀ = Authoritative" +
         "Strength / K(order).");
-      this._tbCrxAuthoritativeStrength.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
-      // 
-      // rngCrxAuthoritativeStrength
-      // 
-      this.rngCrxAuthoritativeStrength.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.rngCrxAuthoritativeStrength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxAuthoritativeStrength.Location = new System.Drawing.Point(310, 45);
-      this.rngCrxAuthoritativeStrength.Name = "rngCrxAuthoritativeStrength";
-      this.rngCrxAuthoritativeStrength.Size = new System.Drawing.Size(66, 18);
-      this.rngCrxAuthoritativeStrength.TabIndex = 5;
-      this.rngCrxAuthoritativeStrength.Text = "(0.0 – 1.0)";
-      this.rngCrxAuthoritativeStrength.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.rngCrxAuthoritativeStrength, "Крепость при ручной записи оператора, до понижения по порядку: C₀ = Authoritative" +
+            this._tbCrxAuthoritativeStrength.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
+            // 
+            // rngCrxAuthoritativeStrength
+            // 
+            this.rngCrxAuthoritativeStrength.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.rngCrxAuthoritativeStrength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
+            this.rngCrxAuthoritativeStrength.Location = new System.Drawing.Point(310, 45);
+            this.rngCrxAuthoritativeStrength.Name = "rngCrxAuthoritativeStrength";
+            this.rngCrxAuthoritativeStrength.Size = new System.Drawing.Size(66, 18);
+            this.rngCrxAuthoritativeStrength.TabIndex = 5;
+            this.rngCrxAuthoritativeStrength.Text = "(0.0 – 1.0)";
+            this.rngCrxAuthoritativeStrength.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.rngCrxAuthoritativeStrength, "Крепость при ручной записи оператора, до понижения по порядку: C₀ = Authoritative" +
         "Strength / K(order).");
-      // 
-      // lblCrxEstablishedStrengthThreshold
-      // 
-      this.lblCrxEstablishedStrengthThreshold.Location = new System.Drawing.Point(8, 69);
-      this.lblCrxEstablishedStrengthThreshold.Name = "lblCrxEstablishedStrengthThreshold";
-      this.lblCrxEstablishedStrengthThreshold.Size = new System.Drawing.Size(232, 18);
-      this.lblCrxEstablishedStrengthThreshold.TabIndex = 6;
-      this.lblCrxEstablishedStrengthThreshold.Text = "Порог «установившегося» рефлекса:";
-      this.lblCrxEstablishedStrengthThreshold.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.lblCrxEstablishedStrengthThreshold, "MaxAchievedStrength выше этого значения ⇒ рефлекс считается установившимся (IsEst" +
+            // 
+            // lblCrxEstablishedStrengthThreshold
+            // 
+            this.lblCrxEstablishedStrengthThreshold.Location = new System.Drawing.Point(8, 69);
+            this.lblCrxEstablishedStrengthThreshold.Name = "lblCrxEstablishedStrengthThreshold";
+            this.lblCrxEstablishedStrengthThreshold.Size = new System.Drawing.Size(232, 18);
+            this.lblCrxEstablishedStrengthThreshold.TabIndex = 6;
+            this.lblCrxEstablishedStrengthThreshold.Text = "Порог «установившегося» рефлекса:";
+            this.lblCrxEstablishedStrengthThreshold.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.lblCrxEstablishedStrengthThreshold, "MaxAchievedStrength выше этого значения ⇒ рефлекс считается установившимся (IsEst" +
         "ablished).");
-      // 
-      // _tbCrxEstablishedStrengthThreshold
-      // 
-      this._tbCrxEstablishedStrengthThreshold.Location = new System.Drawing.Point(244, 68);
-      this._tbCrxEstablishedStrengthThreshold.Name = "_tbCrxEstablishedStrengthThreshold";
-      this._tbCrxEstablishedStrengthThreshold.Size = new System.Drawing.Size(64, 20);
-      this._tbCrxEstablishedStrengthThreshold.TabIndex = 7;
-      this._tbCrxEstablishedStrengthThreshold.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      this._ttpStageEvolution.SetToolTip(this._tbCrxEstablishedStrengthThreshold, "MaxAchievedStrength выше этого значения ⇒ рефлекс считается установившимся (IsEst" +
+            // 
+            // _tbCrxEstablishedStrengthThreshold
+            // 
+            this._tbCrxEstablishedStrengthThreshold.Location = new System.Drawing.Point(244, 68);
+            this._tbCrxEstablishedStrengthThreshold.Name = "_tbCrxEstablishedStrengthThreshold";
+            this._tbCrxEstablishedStrengthThreshold.Size = new System.Drawing.Size(64, 20);
+            this._tbCrxEstablishedStrengthThreshold.TabIndex = 7;
+            this._tbCrxEstablishedStrengthThreshold.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this._ttpStageEvolution.SetToolTip(this._tbCrxEstablishedStrengthThreshold, "MaxAchievedStrength выше этого значения ⇒ рефлекс считается установившимся (IsEst" +
         "ablished).");
-      this._tbCrxEstablishedStrengthThreshold.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
-      // 
-      // rngCrxEstablishedStrengthThreshold
-      // 
-      this.rngCrxEstablishedStrengthThreshold.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.rngCrxEstablishedStrengthThreshold.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxEstablishedStrengthThreshold.Location = new System.Drawing.Point(310, 69);
-      this.rngCrxEstablishedStrengthThreshold.Name = "rngCrxEstablishedStrengthThreshold";
-      this.rngCrxEstablishedStrengthThreshold.Size = new System.Drawing.Size(66, 18);
-      this.rngCrxEstablishedStrengthThreshold.TabIndex = 8;
-      this.rngCrxEstablishedStrengthThreshold.Text = "(0.0 – 1.0)";
-      this.rngCrxEstablishedStrengthThreshold.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.rngCrxEstablishedStrengthThreshold, "MaxAchievedStrength выше этого значения ⇒ рефлекс считается установившимся (IsEst" +
+            this._tbCrxEstablishedStrengthThreshold.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
+            // 
+            // rngCrxEstablishedStrengthThreshold
+            // 
+            this.rngCrxEstablishedStrengthThreshold.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.rngCrxEstablishedStrengthThreshold.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
+            this.rngCrxEstablishedStrengthThreshold.Location = new System.Drawing.Point(310, 69);
+            this.rngCrxEstablishedStrengthThreshold.Name = "rngCrxEstablishedStrengthThreshold";
+            this.rngCrxEstablishedStrengthThreshold.Size = new System.Drawing.Size(66, 18);
+            this.rngCrxEstablishedStrengthThreshold.TabIndex = 8;
+            this.rngCrxEstablishedStrengthThreshold.Text = "(0.0 – 1.0)";
+            this.rngCrxEstablishedStrengthThreshold.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.rngCrxEstablishedStrengthThreshold, "MaxAchievedStrength выше этого значения ⇒ рефлекс считается установившимся (IsEst" +
         "ablished).");
-      // 
-      // lblCrxActivationReinforcementFraction
-      // 
-      this.lblCrxActivationReinforcementFraction.Location = new System.Drawing.Point(8, 93);
-      this.lblCrxActivationReinforcementFraction.Name = "lblCrxActivationReinforcementFraction";
-      this.lblCrxActivationReinforcementFraction.Size = new System.Drawing.Size(232, 18);
-      this.lblCrxActivationReinforcementFraction.TabIndex = 9;
-      this.lblCrxActivationReinforcementFraction.Text = "Доля α при подкреплении активацией:";
-      this.lblCrxActivationReinforcementFraction.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.lblCrxActivationReinforcementFraction, "α_rein = LearningRate · ActivationReinforcementFraction / K(order).");
-      // 
-      // _tbCrxActivationReinforcementFraction
-      // 
-      this._tbCrxActivationReinforcementFraction.Location = new System.Drawing.Point(244, 92);
-      this._tbCrxActivationReinforcementFraction.Name = "_tbCrxActivationReinforcementFraction";
-      this._tbCrxActivationReinforcementFraction.Size = new System.Drawing.Size(64, 20);
-      this._tbCrxActivationReinforcementFraction.TabIndex = 10;
-      this._tbCrxActivationReinforcementFraction.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      this._ttpStageEvolution.SetToolTip(this._tbCrxActivationReinforcementFraction, "α_rein = LearningRate · ActivationReinforcementFraction / K(order).");
-      this._tbCrxActivationReinforcementFraction.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
-      // 
-      // rngCrxActivationReinforcementFraction
-      // 
-      this.rngCrxActivationReinforcementFraction.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.rngCrxActivationReinforcementFraction.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxActivationReinforcementFraction.Location = new System.Drawing.Point(310, 93);
-      this.rngCrxActivationReinforcementFraction.Name = "rngCrxActivationReinforcementFraction";
-      this.rngCrxActivationReinforcementFraction.Size = new System.Drawing.Size(66, 18);
-      this.rngCrxActivationReinforcementFraction.TabIndex = 11;
-      this.rngCrxActivationReinforcementFraction.Text = "(0.0 – 1.0)";
-      this.rngCrxActivationReinforcementFraction.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.rngCrxActivationReinforcementFraction, "α_rein = LearningRate · ActivationReinforcementFraction / K(order).");
-      // 
-      // lblCrxMaxLifetimePulsesCap
-      // 
-      this.lblCrxMaxLifetimePulsesCap.Location = new System.Drawing.Point(8, 117);
-      this.lblCrxMaxLifetimePulsesCap.Name = "lblCrxMaxLifetimePulsesCap";
-      this.lblCrxMaxLifetimePulsesCap.Size = new System.Drawing.Size(232, 18);
-      this.lblCrxMaxLifetimePulsesCap.TabIndex = 12;
-      this.lblCrxMaxLifetimePulsesCap.Text = "Потолок TTL при удвоении (пульсы):";
-      this.lblCrxMaxLifetimePulsesCap.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.lblCrxMaxLifetimePulsesCap, "Ограничение удвоения LifetimePulses при активации/успехе.");
-      // 
-      // _tbCrxMaxLifetimePulsesCap
-      // 
-      this._tbCrxMaxLifetimePulsesCap.Location = new System.Drawing.Point(244, 116);
-      this._tbCrxMaxLifetimePulsesCap.Name = "_tbCrxMaxLifetimePulsesCap";
-      this._tbCrxMaxLifetimePulsesCap.Size = new System.Drawing.Size(64, 20);
-      this._tbCrxMaxLifetimePulsesCap.TabIndex = 13;
-      this._tbCrxMaxLifetimePulsesCap.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      this._ttpStageEvolution.SetToolTip(this._tbCrxMaxLifetimePulsesCap, "Ограничение удвоения LifetimePulses при активации/успехе.");
-      this._tbCrxMaxLifetimePulsesCap.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
-      // 
-      // rngCrxMaxLifetimePulsesCap
-      // 
-      this.rngCrxMaxLifetimePulsesCap.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.rngCrxMaxLifetimePulsesCap.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxMaxLifetimePulsesCap.Location = new System.Drawing.Point(310, 117);
-      this.rngCrxMaxLifetimePulsesCap.Name = "rngCrxMaxLifetimePulsesCap";
-      this.rngCrxMaxLifetimePulsesCap.Size = new System.Drawing.Size(66, 18);
-      this.rngCrxMaxLifetimePulsesCap.TabIndex = 14;
-      this.rngCrxMaxLifetimePulsesCap.Text = "(≥ начального)";
-      this.rngCrxMaxLifetimePulsesCap.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.rngCrxMaxLifetimePulsesCap, "Ограничение удвоения LifetimePulses при активации/успехе.");
-      // 
-      // grpCrxSens
-      // 
-      this.grpCrxSens.Controls.Add(this.lblCrxSensoryDecayPeriodPulses);
-      this.grpCrxSens.Controls.Add(this._tbCrxSensoryDecayPeriodPulses);
-      this.grpCrxSens.Controls.Add(this.rngCrxSensoryDecayPeriodPulses);
-      this.grpCrxSens.Controls.Add(this.lblCrxSensoryStrengthFloor);
-      this.grpCrxSens.Controls.Add(this._tbCrxSensoryStrengthFloor);
-      this.grpCrxSens.Controls.Add(this.rngCrxSensoryStrengthFloor);
-      this.grpCrxSens.Controls.Add(this.lblCrxSensoryHighStrengthThreshold);
-      this.grpCrxSens.Controls.Add(this._tbCrxSensoryHighStrengthThreshold);
-      this.grpCrxSens.Controls.Add(this.rngCrxSensoryHighStrengthThreshold);
-      this.grpCrxSens.Controls.Add(this.lblCrxSensoryHighStrengthDecayRate);
-      this.grpCrxSens.Controls.Add(this._tbCrxSensoryHighStrengthDecayRate);
-      this.grpCrxSens.Controls.Add(this.rngCrxSensoryHighStrengthDecayRate);
-      this.grpCrxSens.Controls.Add(this.lblCrxSensoryMidStrengthThreshold);
-      this.grpCrxSens.Controls.Add(this._tbCrxSensoryMidStrengthThreshold);
-      this.grpCrxSens.Controls.Add(this.rngCrxSensoryMidStrengthThreshold);
-      this.grpCrxSens.Location = new System.Drawing.Point(392, 230);
-      this.grpCrxSens.Name = "grpCrxSens";
-      this.grpCrxSens.Size = new System.Drawing.Size(380, 144);
-      this.grpCrxSens.TabIndex = 0;
-      this.grpCrxSens.TabStop = false;
-      this.grpCrxSens.Text = "Сенсорные ассоциации CS↔CS";
-      // 
-      // lblCrxSensoryDecayPeriodPulses
-      // 
-      this.lblCrxSensoryDecayPeriodPulses.Location = new System.Drawing.Point(8, 21);
-      this.lblCrxSensoryDecayPeriodPulses.Name = "lblCrxSensoryDecayPeriodPulses";
-      this.lblCrxSensoryDecayPeriodPulses.Size = new System.Drawing.Size(232, 18);
-      this.lblCrxSensoryDecayPeriodPulses.TabIndex = 0;
-      this.lblCrxSensoryDecayPeriodPulses.Text = "Период затухания CS↔CS (пульсы):";
-      this.lblCrxSensoryDecayPeriodPulses.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.lblCrxSensoryDecayPeriodPulses, "Период затухания сенсорных связей CS↔CS в пульсах (ApplyDecay срабатывает на крат" +
+            // 
+            // lblCrxActivationReinforcementFraction
+            // 
+            this.lblCrxActivationReinforcementFraction.Location = new System.Drawing.Point(8, 93);
+            this.lblCrxActivationReinforcementFraction.Name = "lblCrxActivationReinforcementFraction";
+            this.lblCrxActivationReinforcementFraction.Size = new System.Drawing.Size(232, 18);
+            this.lblCrxActivationReinforcementFraction.TabIndex = 9;
+            this.lblCrxActivationReinforcementFraction.Text = "Доля α при подкреплении активацией:";
+            this.lblCrxActivationReinforcementFraction.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.lblCrxActivationReinforcementFraction, "α_rein = LearningRate · ActivationReinforcementFraction / K(order).");
+            // 
+            // _tbCrxActivationReinforcementFraction
+            // 
+            this._tbCrxActivationReinforcementFraction.Location = new System.Drawing.Point(244, 92);
+            this._tbCrxActivationReinforcementFraction.Name = "_tbCrxActivationReinforcementFraction";
+            this._tbCrxActivationReinforcementFraction.Size = new System.Drawing.Size(64, 20);
+            this._tbCrxActivationReinforcementFraction.TabIndex = 10;
+            this._tbCrxActivationReinforcementFraction.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this._ttpStageEvolution.SetToolTip(this._tbCrxActivationReinforcementFraction, "α_rein = LearningRate · ActivationReinforcementFraction / K(order).");
+            this._tbCrxActivationReinforcementFraction.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
+            // 
+            // rngCrxActivationReinforcementFraction
+            // 
+            this.rngCrxActivationReinforcementFraction.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.rngCrxActivationReinforcementFraction.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
+            this.rngCrxActivationReinforcementFraction.Location = new System.Drawing.Point(310, 93);
+            this.rngCrxActivationReinforcementFraction.Name = "rngCrxActivationReinforcementFraction";
+            this.rngCrxActivationReinforcementFraction.Size = new System.Drawing.Size(66, 18);
+            this.rngCrxActivationReinforcementFraction.TabIndex = 11;
+            this.rngCrxActivationReinforcementFraction.Text = "(0.0 – 1.0)";
+            this.rngCrxActivationReinforcementFraction.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.rngCrxActivationReinforcementFraction, "α_rein = LearningRate · ActivationReinforcementFraction / K(order).");
+            // 
+            // lblCrxMaxLifetimePulsesCap
+            // 
+            this.lblCrxMaxLifetimePulsesCap.Location = new System.Drawing.Point(8, 117);
+            this.lblCrxMaxLifetimePulsesCap.Name = "lblCrxMaxLifetimePulsesCap";
+            this.lblCrxMaxLifetimePulsesCap.Size = new System.Drawing.Size(232, 18);
+            this.lblCrxMaxLifetimePulsesCap.TabIndex = 12;
+            this.lblCrxMaxLifetimePulsesCap.Text = "Потолок TTL при удвоении (пульсы):";
+            this.lblCrxMaxLifetimePulsesCap.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.lblCrxMaxLifetimePulsesCap, "Ограничение удвоения LifetimePulses при активации/успехе.");
+            // 
+            // _tbCrxMaxLifetimePulsesCap
+            // 
+            this._tbCrxMaxLifetimePulsesCap.Location = new System.Drawing.Point(244, 116);
+            this._tbCrxMaxLifetimePulsesCap.Name = "_tbCrxMaxLifetimePulsesCap";
+            this._tbCrxMaxLifetimePulsesCap.Size = new System.Drawing.Size(64, 20);
+            this._tbCrxMaxLifetimePulsesCap.TabIndex = 13;
+            this._tbCrxMaxLifetimePulsesCap.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this._ttpStageEvolution.SetToolTip(this._tbCrxMaxLifetimePulsesCap, "Ограничение удвоения LifetimePulses при активации/успехе.");
+            this._tbCrxMaxLifetimePulsesCap.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
+            // 
+            // rngCrxMaxLifetimePulsesCap
+            // 
+            this.rngCrxMaxLifetimePulsesCap.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.rngCrxMaxLifetimePulsesCap.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
+            this.rngCrxMaxLifetimePulsesCap.Location = new System.Drawing.Point(310, 117);
+            this.rngCrxMaxLifetimePulsesCap.Name = "rngCrxMaxLifetimePulsesCap";
+            this.rngCrxMaxLifetimePulsesCap.Size = new System.Drawing.Size(66, 18);
+            this.rngCrxMaxLifetimePulsesCap.TabIndex = 14;
+            this.rngCrxMaxLifetimePulsesCap.Text = "(≥ начального)";
+            this.rngCrxMaxLifetimePulsesCap.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.rngCrxMaxLifetimePulsesCap, "Ограничение удвоения LifetimePulses при активации/успехе.");
+            // 
+            // grpCrxSens
+            // 
+            this.grpCrxSens.Controls.Add(this.lblCrxSensoryDecayPeriodPulses);
+            this.grpCrxSens.Controls.Add(this._tbCrxSensoryDecayPeriodPulses);
+            this.grpCrxSens.Controls.Add(this.rngCrxSensoryDecayPeriodPulses);
+            this.grpCrxSens.Controls.Add(this.lblCrxSensoryStrengthFloor);
+            this.grpCrxSens.Controls.Add(this._tbCrxSensoryStrengthFloor);
+            this.grpCrxSens.Controls.Add(this.rngCrxSensoryStrengthFloor);
+            this.grpCrxSens.Controls.Add(this.lblCrxSensoryHighStrengthThreshold);
+            this.grpCrxSens.Controls.Add(this._tbCrxSensoryHighStrengthThreshold);
+            this.grpCrxSens.Controls.Add(this.rngCrxSensoryHighStrengthThreshold);
+            this.grpCrxSens.Controls.Add(this.lblCrxSensoryHighStrengthDecayRate);
+            this.grpCrxSens.Controls.Add(this._tbCrxSensoryHighStrengthDecayRate);
+            this.grpCrxSens.Controls.Add(this.rngCrxSensoryHighStrengthDecayRate);
+            this.grpCrxSens.Controls.Add(this.lblCrxSensoryMidStrengthThreshold);
+            this.grpCrxSens.Controls.Add(this._tbCrxSensoryMidStrengthThreshold);
+            this.grpCrxSens.Controls.Add(this.rngCrxSensoryMidStrengthThreshold);
+            this.grpCrxSens.Location = new System.Drawing.Point(392, 230);
+            this.grpCrxSens.Name = "grpCrxSens";
+            this.grpCrxSens.Size = new System.Drawing.Size(380, 144);
+            this.grpCrxSens.TabIndex = 0;
+            this.grpCrxSens.TabStop = false;
+            this.grpCrxSens.Text = "Сенсорные ассоциации CS↔CS";
+            // 
+            // lblCrxSensoryDecayPeriodPulses
+            // 
+            this.lblCrxSensoryDecayPeriodPulses.Location = new System.Drawing.Point(8, 21);
+            this.lblCrxSensoryDecayPeriodPulses.Name = "lblCrxSensoryDecayPeriodPulses";
+            this.lblCrxSensoryDecayPeriodPulses.Size = new System.Drawing.Size(232, 18);
+            this.lblCrxSensoryDecayPeriodPulses.TabIndex = 0;
+            this.lblCrxSensoryDecayPeriodPulses.Text = "Период затухания CS↔CS (пульсы):";
+            this.lblCrxSensoryDecayPeriodPulses.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.lblCrxSensoryDecayPeriodPulses, "Период затухания сенсорных связей CS↔CS в пульсах (ApplyDecay срабатывает на крат" +
         "ных).");
-      // 
-      // _tbCrxSensoryDecayPeriodPulses
-      // 
-      this._tbCrxSensoryDecayPeriodPulses.Location = new System.Drawing.Point(244, 20);
-      this._tbCrxSensoryDecayPeriodPulses.Name = "_tbCrxSensoryDecayPeriodPulses";
-      this._tbCrxSensoryDecayPeriodPulses.Size = new System.Drawing.Size(64, 20);
-      this._tbCrxSensoryDecayPeriodPulses.TabIndex = 1;
-      this._tbCrxSensoryDecayPeriodPulses.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      this._ttpStageEvolution.SetToolTip(this._tbCrxSensoryDecayPeriodPulses, "Период затухания сенсорных связей CS↔CS в пульсах (ApplyDecay срабатывает на крат" +
+            // 
+            // _tbCrxSensoryDecayPeriodPulses
+            // 
+            this._tbCrxSensoryDecayPeriodPulses.Location = new System.Drawing.Point(244, 20);
+            this._tbCrxSensoryDecayPeriodPulses.Name = "_tbCrxSensoryDecayPeriodPulses";
+            this._tbCrxSensoryDecayPeriodPulses.Size = new System.Drawing.Size(64, 20);
+            this._tbCrxSensoryDecayPeriodPulses.TabIndex = 1;
+            this._tbCrxSensoryDecayPeriodPulses.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this._ttpStageEvolution.SetToolTip(this._tbCrxSensoryDecayPeriodPulses, "Период затухания сенсорных связей CS↔CS в пульсах (ApplyDecay срабатывает на крат" +
         "ных).");
-      this._tbCrxSensoryDecayPeriodPulses.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
-      // 
-      // rngCrxSensoryDecayPeriodPulses
-      // 
-      this.rngCrxSensoryDecayPeriodPulses.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.rngCrxSensoryDecayPeriodPulses.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxSensoryDecayPeriodPulses.Location = new System.Drawing.Point(310, 21);
-      this.rngCrxSensoryDecayPeriodPulses.Name = "rngCrxSensoryDecayPeriodPulses";
-      this.rngCrxSensoryDecayPeriodPulses.Size = new System.Drawing.Size(66, 18);
-      this.rngCrxSensoryDecayPeriodPulses.TabIndex = 2;
-      this.rngCrxSensoryDecayPeriodPulses.Text = "(1 – 86400)";
-      this.rngCrxSensoryDecayPeriodPulses.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.rngCrxSensoryDecayPeriodPulses, "Период затухания сенсорных связей CS↔CS в пульсах (ApplyDecay срабатывает на крат" +
+            this._tbCrxSensoryDecayPeriodPulses.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
+            // 
+            // rngCrxSensoryDecayPeriodPulses
+            // 
+            this.rngCrxSensoryDecayPeriodPulses.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.rngCrxSensoryDecayPeriodPulses.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
+            this.rngCrxSensoryDecayPeriodPulses.Location = new System.Drawing.Point(310, 21);
+            this.rngCrxSensoryDecayPeriodPulses.Name = "rngCrxSensoryDecayPeriodPulses";
+            this.rngCrxSensoryDecayPeriodPulses.Size = new System.Drawing.Size(66, 18);
+            this.rngCrxSensoryDecayPeriodPulses.TabIndex = 2;
+            this.rngCrxSensoryDecayPeriodPulses.Text = "(1 – 86400)";
+            this.rngCrxSensoryDecayPeriodPulses.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.rngCrxSensoryDecayPeriodPulses, "Период затухания сенсорных связей CS↔CS в пульсах (ApplyDecay срабатывает на крат" +
         "ных).");
-      // 
-      // lblCrxSensoryStrengthFloor
-      // 
-      this.lblCrxSensoryStrengthFloor.Location = new System.Drawing.Point(8, 45);
-      this.lblCrxSensoryStrengthFloor.Name = "lblCrxSensoryStrengthFloor";
-      this.lblCrxSensoryStrengthFloor.Size = new System.Drawing.Size(232, 18);
-      this.lblCrxSensoryStrengthFloor.TabIndex = 3;
-      this.lblCrxSensoryStrengthFloor.Text = "Нижний предел крепости CS↔CS:";
-      this.lblCrxSensoryStrengthFloor.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.lblCrxSensoryStrengthFloor, "Нижний порог эффективной крепости для расчёта кривой затухания CS↔CS.");
-      // 
-      // _tbCrxSensoryStrengthFloor
-      // 
-      this._tbCrxSensoryStrengthFloor.Location = new System.Drawing.Point(244, 44);
-      this._tbCrxSensoryStrengthFloor.Name = "_tbCrxSensoryStrengthFloor";
-      this._tbCrxSensoryStrengthFloor.Size = new System.Drawing.Size(64, 20);
-      this._tbCrxSensoryStrengthFloor.TabIndex = 4;
-      this._tbCrxSensoryStrengthFloor.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      this._ttpStageEvolution.SetToolTip(this._tbCrxSensoryStrengthFloor, "Нижний порог эффективной крепости для расчёта кривой затухания CS↔CS.");
-      this._tbCrxSensoryStrengthFloor.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
-      // 
-      // rngCrxSensoryStrengthFloor
-      // 
-      this.rngCrxSensoryStrengthFloor.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.rngCrxSensoryStrengthFloor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxSensoryStrengthFloor.Location = new System.Drawing.Point(310, 45);
-      this.rngCrxSensoryStrengthFloor.Name = "rngCrxSensoryStrengthFloor";
-      this.rngCrxSensoryStrengthFloor.Size = new System.Drawing.Size(66, 18);
-      this.rngCrxSensoryStrengthFloor.TabIndex = 5;
-      this.rngCrxSensoryStrengthFloor.Text = "(0.0 – 1.0)";
-      this.rngCrxSensoryStrengthFloor.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.rngCrxSensoryStrengthFloor, "Нижний порог эффективной крепости для расчёта кривой затухания CS↔CS.");
-      // 
-      // lblCrxSensoryHighStrengthThreshold
-      // 
-      this.lblCrxSensoryHighStrengthThreshold.Location = new System.Drawing.Point(8, 69);
-      this.lblCrxSensoryHighStrengthThreshold.Name = "lblCrxSensoryHighStrengthThreshold";
-      this.lblCrxSensoryHighStrengthThreshold.Size = new System.Drawing.Size(232, 18);
-      this.lblCrxSensoryHighStrengthThreshold.TabIndex = 6;
-      this.lblCrxSensoryHighStrengthThreshold.Text = "Верхняя зона крепости CS↔CS:";
-      this.lblCrxSensoryHighStrengthThreshold.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.lblCrxSensoryHighStrengthThreshold, "Выше порога связь считается устойчивой и точится по SensoryHighStrengthDecayRate " +
+            // 
+            // lblCrxSensoryStrengthFloor
+            // 
+            this.lblCrxSensoryStrengthFloor.Location = new System.Drawing.Point(8, 45);
+            this.lblCrxSensoryStrengthFloor.Name = "lblCrxSensoryStrengthFloor";
+            this.lblCrxSensoryStrengthFloor.Size = new System.Drawing.Size(232, 18);
+            this.lblCrxSensoryStrengthFloor.TabIndex = 3;
+            this.lblCrxSensoryStrengthFloor.Text = "Нижний предел крепости CS↔CS:";
+            this.lblCrxSensoryStrengthFloor.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.lblCrxSensoryStrengthFloor, "Нижний порог эффективной крепости для расчёта кривой затухания CS↔CS.");
+            // 
+            // _tbCrxSensoryStrengthFloor
+            // 
+            this._tbCrxSensoryStrengthFloor.Location = new System.Drawing.Point(244, 44);
+            this._tbCrxSensoryStrengthFloor.Name = "_tbCrxSensoryStrengthFloor";
+            this._tbCrxSensoryStrengthFloor.Size = new System.Drawing.Size(64, 20);
+            this._tbCrxSensoryStrengthFloor.TabIndex = 4;
+            this._tbCrxSensoryStrengthFloor.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this._ttpStageEvolution.SetToolTip(this._tbCrxSensoryStrengthFloor, "Нижний порог эффективной крепости для расчёта кривой затухания CS↔CS.");
+            this._tbCrxSensoryStrengthFloor.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
+            // 
+            // rngCrxSensoryStrengthFloor
+            // 
+            this.rngCrxSensoryStrengthFloor.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.rngCrxSensoryStrengthFloor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
+            this.rngCrxSensoryStrengthFloor.Location = new System.Drawing.Point(310, 45);
+            this.rngCrxSensoryStrengthFloor.Name = "rngCrxSensoryStrengthFloor";
+            this.rngCrxSensoryStrengthFloor.Size = new System.Drawing.Size(66, 18);
+            this.rngCrxSensoryStrengthFloor.TabIndex = 5;
+            this.rngCrxSensoryStrengthFloor.Text = "(0.0 – 1.0)";
+            this.rngCrxSensoryStrengthFloor.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.rngCrxSensoryStrengthFloor, "Нижний порог эффективной крепости для расчёта кривой затухания CS↔CS.");
+            // 
+            // lblCrxSensoryHighStrengthThreshold
+            // 
+            this.lblCrxSensoryHighStrengthThreshold.Location = new System.Drawing.Point(8, 69);
+            this.lblCrxSensoryHighStrengthThreshold.Name = "lblCrxSensoryHighStrengthThreshold";
+            this.lblCrxSensoryHighStrengthThreshold.Size = new System.Drawing.Size(232, 18);
+            this.lblCrxSensoryHighStrengthThreshold.TabIndex = 6;
+            this.lblCrxSensoryHighStrengthThreshold.Text = "Верхняя зона крепости CS↔CS:";
+            this.lblCrxSensoryHighStrengthThreshold.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.lblCrxSensoryHighStrengthThreshold, "Выше порога связь считается устойчивой и точится по SensoryHighStrengthDecayRate " +
         "независимо от γ.");
-      // 
-      // _tbCrxSensoryHighStrengthThreshold
-      // 
-      this._tbCrxSensoryHighStrengthThreshold.Location = new System.Drawing.Point(244, 68);
-      this._tbCrxSensoryHighStrengthThreshold.Name = "_tbCrxSensoryHighStrengthThreshold";
-      this._tbCrxSensoryHighStrengthThreshold.Size = new System.Drawing.Size(64, 20);
-      this._tbCrxSensoryHighStrengthThreshold.TabIndex = 7;
-      this._tbCrxSensoryHighStrengthThreshold.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      this._ttpStageEvolution.SetToolTip(this._tbCrxSensoryHighStrengthThreshold, "Выше порога связь считается устойчивой и точится по SensoryHighStrengthDecayRate " +
+            // 
+            // _tbCrxSensoryHighStrengthThreshold
+            // 
+            this._tbCrxSensoryHighStrengthThreshold.Location = new System.Drawing.Point(244, 68);
+            this._tbCrxSensoryHighStrengthThreshold.Name = "_tbCrxSensoryHighStrengthThreshold";
+            this._tbCrxSensoryHighStrengthThreshold.Size = new System.Drawing.Size(64, 20);
+            this._tbCrxSensoryHighStrengthThreshold.TabIndex = 7;
+            this._tbCrxSensoryHighStrengthThreshold.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this._ttpStageEvolution.SetToolTip(this._tbCrxSensoryHighStrengthThreshold, "Выше порога связь считается устойчивой и точится по SensoryHighStrengthDecayRate " +
         "независимо от γ.");
-      this._tbCrxSensoryHighStrengthThreshold.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
-      // 
-      // rngCrxSensoryHighStrengthThreshold
-      // 
-      this.rngCrxSensoryHighStrengthThreshold.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.rngCrxSensoryHighStrengthThreshold.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxSensoryHighStrengthThreshold.Location = new System.Drawing.Point(310, 69);
-      this.rngCrxSensoryHighStrengthThreshold.Name = "rngCrxSensoryHighStrengthThreshold";
-      this.rngCrxSensoryHighStrengthThreshold.Size = new System.Drawing.Size(66, 18);
-      this.rngCrxSensoryHighStrengthThreshold.TabIndex = 8;
-      this.rngCrxSensoryHighStrengthThreshold.Text = "(0.0 – 1.0)";
-      this.rngCrxSensoryHighStrengthThreshold.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.rngCrxSensoryHighStrengthThreshold, "Выше порога связь считается устойчивой и точится по SensoryHighStrengthDecayRate " +
+            this._tbCrxSensoryHighStrengthThreshold.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
+            // 
+            // rngCrxSensoryHighStrengthThreshold
+            // 
+            this.rngCrxSensoryHighStrengthThreshold.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.rngCrxSensoryHighStrengthThreshold.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
+            this.rngCrxSensoryHighStrengthThreshold.Location = new System.Drawing.Point(310, 69);
+            this.rngCrxSensoryHighStrengthThreshold.Name = "rngCrxSensoryHighStrengthThreshold";
+            this.rngCrxSensoryHighStrengthThreshold.Size = new System.Drawing.Size(66, 18);
+            this.rngCrxSensoryHighStrengthThreshold.TabIndex = 8;
+            this.rngCrxSensoryHighStrengthThreshold.Text = "(0.0 – 1.0)";
+            this.rngCrxSensoryHighStrengthThreshold.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.rngCrxSensoryHighStrengthThreshold, "Выше порога связь считается устойчивой и точится по SensoryHighStrengthDecayRate " +
         "независимо от γ.");
-      // 
-      // lblCrxSensoryHighStrengthDecayRate
-      // 
-      this.lblCrxSensoryHighStrengthDecayRate.Location = new System.Drawing.Point(8, 93);
-      this.lblCrxSensoryHighStrengthDecayRate.Name = "lblCrxSensoryHighStrengthDecayRate";
-      this.lblCrxSensoryHighStrengthDecayRate.Size = new System.Drawing.Size(232, 18);
-      this.lblCrxSensoryHighStrengthDecayRate.TabIndex = 9;
-      this.lblCrxSensoryHighStrengthDecayRate.Text = "Эфф. коэфф. затухания устойчивых CS↔CS:";
-      this.lblCrxSensoryHighStrengthDecayRate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.lblCrxSensoryHighStrengthDecayRate, "Эффективный коэффициент затухания для устойчивых (высоких) связей CS↔CS.");
-      // 
-      // _tbCrxSensoryHighStrengthDecayRate
-      // 
-      this._tbCrxSensoryHighStrengthDecayRate.Location = new System.Drawing.Point(244, 92);
-      this._tbCrxSensoryHighStrengthDecayRate.Name = "_tbCrxSensoryHighStrengthDecayRate";
-      this._tbCrxSensoryHighStrengthDecayRate.Size = new System.Drawing.Size(64, 20);
-      this._tbCrxSensoryHighStrengthDecayRate.TabIndex = 10;
-      this._tbCrxSensoryHighStrengthDecayRate.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      this._ttpStageEvolution.SetToolTip(this._tbCrxSensoryHighStrengthDecayRate, "Эффективный коэффициент затухания для устойчивых (высоких) связей CS↔CS.");
-      this._tbCrxSensoryHighStrengthDecayRate.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
-      // 
-      // rngCrxSensoryHighStrengthDecayRate
-      // 
-      this.rngCrxSensoryHighStrengthDecayRate.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.rngCrxSensoryHighStrengthDecayRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxSensoryHighStrengthDecayRate.Location = new System.Drawing.Point(310, 93);
-      this.rngCrxSensoryHighStrengthDecayRate.Name = "rngCrxSensoryHighStrengthDecayRate";
-      this.rngCrxSensoryHighStrengthDecayRate.Size = new System.Drawing.Size(66, 18);
-      this.rngCrxSensoryHighStrengthDecayRate.TabIndex = 11;
-      this.rngCrxSensoryHighStrengthDecayRate.Text = "(0.9 – 1.0)";
-      this.rngCrxSensoryHighStrengthDecayRate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.rngCrxSensoryHighStrengthDecayRate, "Эффективный коэффициент затухания для устойчивых (высоких) связей CS↔CS.");
-      // 
-      // lblCrxSensoryMidStrengthThreshold
-      // 
-      this.lblCrxSensoryMidStrengthThreshold.Location = new System.Drawing.Point(8, 117);
-      this.lblCrxSensoryMidStrengthThreshold.Name = "lblCrxSensoryMidStrengthThreshold";
-      this.lblCrxSensoryMidStrengthThreshold.Size = new System.Drawing.Size(232, 18);
-      this.lblCrxSensoryMidStrengthThreshold.TabIndex = 12;
-      this.lblCrxSensoryMidStrengthThreshold.Text = "Средняя зона крепости CS↔CS:";
-      this.lblCrxSensoryMidStrengthThreshold.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.lblCrxSensoryMidStrengthThreshold, "От этого порога до верхней — затухание по γ^C, ниже — по γ^√C. Должна быть меньше" +
+            // 
+            // lblCrxSensoryHighStrengthDecayRate
+            // 
+            this.lblCrxSensoryHighStrengthDecayRate.Location = new System.Drawing.Point(8, 93);
+            this.lblCrxSensoryHighStrengthDecayRate.Name = "lblCrxSensoryHighStrengthDecayRate";
+            this.lblCrxSensoryHighStrengthDecayRate.Size = new System.Drawing.Size(232, 18);
+            this.lblCrxSensoryHighStrengthDecayRate.TabIndex = 9;
+            this.lblCrxSensoryHighStrengthDecayRate.Text = "Эфф. коэфф. затухания устойчивых CS↔CS:";
+            this.lblCrxSensoryHighStrengthDecayRate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.lblCrxSensoryHighStrengthDecayRate, "Эффективный коэффициент затухания для устойчивых (высоких) связей CS↔CS.");
+            // 
+            // _tbCrxSensoryHighStrengthDecayRate
+            // 
+            this._tbCrxSensoryHighStrengthDecayRate.Location = new System.Drawing.Point(244, 92);
+            this._tbCrxSensoryHighStrengthDecayRate.Name = "_tbCrxSensoryHighStrengthDecayRate";
+            this._tbCrxSensoryHighStrengthDecayRate.Size = new System.Drawing.Size(64, 20);
+            this._tbCrxSensoryHighStrengthDecayRate.TabIndex = 10;
+            this._tbCrxSensoryHighStrengthDecayRate.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this._ttpStageEvolution.SetToolTip(this._tbCrxSensoryHighStrengthDecayRate, "Эффективный коэффициент затухания для устойчивых (высоких) связей CS↔CS.");
+            this._tbCrxSensoryHighStrengthDecayRate.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
+            // 
+            // rngCrxSensoryHighStrengthDecayRate
+            // 
+            this.rngCrxSensoryHighStrengthDecayRate.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.rngCrxSensoryHighStrengthDecayRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
+            this.rngCrxSensoryHighStrengthDecayRate.Location = new System.Drawing.Point(310, 93);
+            this.rngCrxSensoryHighStrengthDecayRate.Name = "rngCrxSensoryHighStrengthDecayRate";
+            this.rngCrxSensoryHighStrengthDecayRate.Size = new System.Drawing.Size(66, 18);
+            this.rngCrxSensoryHighStrengthDecayRate.TabIndex = 11;
+            this.rngCrxSensoryHighStrengthDecayRate.Text = "(0.9 – 1.0)";
+            this.rngCrxSensoryHighStrengthDecayRate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.rngCrxSensoryHighStrengthDecayRate, "Эффективный коэффициент затухания для устойчивых (высоких) связей CS↔CS.");
+            // 
+            // lblCrxSensoryMidStrengthThreshold
+            // 
+            this.lblCrxSensoryMidStrengthThreshold.Location = new System.Drawing.Point(8, 117);
+            this.lblCrxSensoryMidStrengthThreshold.Name = "lblCrxSensoryMidStrengthThreshold";
+            this.lblCrxSensoryMidStrengthThreshold.Size = new System.Drawing.Size(232, 18);
+            this.lblCrxSensoryMidStrengthThreshold.TabIndex = 12;
+            this.lblCrxSensoryMidStrengthThreshold.Text = "Средняя зона крепости CS↔CS:";
+            this.lblCrxSensoryMidStrengthThreshold.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.lblCrxSensoryMidStrengthThreshold, "От этого порога до верхней — затухание по γ^C, ниже — по γ^√C. Должна быть меньше" +
         " верхней зоны.");
-      // 
-      // _tbCrxSensoryMidStrengthThreshold
-      // 
-      this._tbCrxSensoryMidStrengthThreshold.Location = new System.Drawing.Point(244, 116);
-      this._tbCrxSensoryMidStrengthThreshold.Name = "_tbCrxSensoryMidStrengthThreshold";
-      this._tbCrxSensoryMidStrengthThreshold.Size = new System.Drawing.Size(64, 20);
-      this._tbCrxSensoryMidStrengthThreshold.TabIndex = 13;
-      this._tbCrxSensoryMidStrengthThreshold.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      this._ttpStageEvolution.SetToolTip(this._tbCrxSensoryMidStrengthThreshold, "От этого порога до верхней — затухание по γ^C, ниже — по γ^√C. Должна быть меньше" +
+            // 
+            // _tbCrxSensoryMidStrengthThreshold
+            // 
+            this._tbCrxSensoryMidStrengthThreshold.Location = new System.Drawing.Point(244, 116);
+            this._tbCrxSensoryMidStrengthThreshold.Name = "_tbCrxSensoryMidStrengthThreshold";
+            this._tbCrxSensoryMidStrengthThreshold.Size = new System.Drawing.Size(64, 20);
+            this._tbCrxSensoryMidStrengthThreshold.TabIndex = 13;
+            this._tbCrxSensoryMidStrengthThreshold.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this._ttpStageEvolution.SetToolTip(this._tbCrxSensoryMidStrengthThreshold, "От этого порога до верхней — затухание по γ^C, ниже — по γ^√C. Должна быть меньше" +
         " верхней зоны.");
-      this._tbCrxSensoryMidStrengthThreshold.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
-      // 
-      // rngCrxSensoryMidStrengthThreshold
-      // 
-      this.rngCrxSensoryMidStrengthThreshold.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.rngCrxSensoryMidStrengthThreshold.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
-      this.rngCrxSensoryMidStrengthThreshold.Location = new System.Drawing.Point(310, 117);
-      this.rngCrxSensoryMidStrengthThreshold.Name = "rngCrxSensoryMidStrengthThreshold";
-      this.rngCrxSensoryMidStrengthThreshold.Size = new System.Drawing.Size(66, 18);
-      this.rngCrxSensoryMidStrengthThreshold.TabIndex = 14;
-      this.rngCrxSensoryMidStrengthThreshold.Text = "(0.0 – 1.0)";
-      this.rngCrxSensoryMidStrengthThreshold.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this._ttpStageEvolution.SetToolTip(this.rngCrxSensoryMidStrengthThreshold, "От этого порога до верхней — затухание по γ^C, ниже — по γ^√C. Должна быть меньше" +
+            this._tbCrxSensoryMidStrengthThreshold.LostFocus += new System.EventHandler(this.CrxTextBox_LostFocus);
+            // 
+            // rngCrxSensoryMidStrengthThreshold
+            // 
+            this.rngCrxSensoryMidStrengthThreshold.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.rngCrxSensoryMidStrengthThreshold.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(102)))), ((int)(((byte)(102)))), ((int)(((byte)(102)))));
+            this.rngCrxSensoryMidStrengthThreshold.Location = new System.Drawing.Point(310, 117);
+            this.rngCrxSensoryMidStrengthThreshold.Name = "rngCrxSensoryMidStrengthThreshold";
+            this.rngCrxSensoryMidStrengthThreshold.Size = new System.Drawing.Size(66, 18);
+            this.rngCrxSensoryMidStrengthThreshold.TabIndex = 14;
+            this.rngCrxSensoryMidStrengthThreshold.Text = "(0.0 – 1.0)";
+            this.rngCrxSensoryMidStrengthThreshold.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this._ttpStageEvolution.SetToolTip(this.rngCrxSensoryMidStrengthThreshold, "От этого порога до верхней — затухание по γ^C, ниже — по γ^√C. Должна быть меньше" +
         " верхней зоны.");
-      // 
-      // _lblStage2SearchPlayStyleIds
-      // 
-      this._lblStage2SearchPlayStyleIds.Location = new System.Drawing.Point(3, 260);
-      this._lblStage2SearchPlayStyleIds.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblStage2SearchPlayStyleIds.Name = "_lblStage2SearchPlayStyleIds";
-      this._lblStage2SearchPlayStyleIds.Size = new System.Drawing.Size(169, 13);
-      this._lblStage2SearchPlayStyleIds.TabIndex = 4;
-      this._lblStage2SearchPlayStyleIds.Text = "Коды стилей Поиск/Игра (ст. 2):";
-      this._lblStage2SearchPlayStyleIds.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // _tbStage2SearchPlayStyleIds
-      // 
-      this._tbStage2SearchPlayStyleIds.Location = new System.Drawing.Point(180, 257);
-      this._tbStage2SearchPlayStyleIds.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-      this._tbStage2SearchPlayStyleIds.Name = "_tbStage2SearchPlayStyleIds";
-      this._tbStage2SearchPlayStyleIds.Size = new System.Drawing.Size(150, 20);
-      this._tbStage2SearchPlayStyleIds.TabIndex = 5;
-      this._tbStage2SearchPlayStyleIds.TextChanged += new System.EventHandler(this.Stage2StyleIds_TextChanged);
-      // 
-      // _btnCancel
-      // 
-      this._btnCancel.AutoSize = true;
-      this._btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this._btnCancel.Location = new System.Drawing.Point(740, 337);
-      this._btnCancel.Name = "_btnCancel";
-      this._btnCancel.Size = new System.Drawing.Size(75, 25);
-      this._btnCancel.TabIndex = 3;
-      this._btnCancel.Text = "Отмена";
-      this._btnCancel.UseVisualStyleBackColor = true;
-      // 
-      // _btnSave
-      // 
-      this._btnSave.AutoSize = true;
-      this._btnSave.Location = new System.Drawing.Point(600, 337);
-      this._btnSave.Name = "_btnSave";
-      this._btnSave.Size = new System.Drawing.Size(137, 25);
-      this._btnSave.TabIndex = 2;
-      this._btnSave.Text = "Сохранить настройки";
-      this._btnSave.UseVisualStyleBackColor = true;
-      this._btnSave.Click += new System.EventHandler(this.OnSaveClick);
-      // 
-      // _lblStageEvolution
-      // 
-      this._lblStageEvolution.Location = new System.Drawing.Point(13, 335);
-      this._lblStageEvolution.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
-      this._lblStageEvolution.Name = "_lblStageEvolution";
-      this._lblStageEvolution.Size = new System.Drawing.Size(154, 20);
-      this._lblStageEvolution.TabIndex = 4;
-      this._lblStageEvolution.Text = "Стадия развития агента:";
-      this._lblStageEvolution.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
-      // stage_evolution
-      // 
-      this.stage_evolution.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.stage_evolution.Location = new System.Drawing.Point(203, 336);
-      this.stage_evolution.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
-      this.stage_evolution.Name = "stage_evolution";
-      this.stage_evolution.Size = new System.Drawing.Size(150, 21);
-      this.stage_evolution.TabIndex = 5;
-      // 
-      // _pnlStageBusyOverlay
-      // 
-      this._pnlStageBusyOverlay.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
-      this._pnlStageBusyOverlay.Controls.Add(this._lblStageBusy);
-      this._pnlStageBusyOverlay.Dock = System.Windows.Forms.DockStyle.Fill;
-      this._pnlStageBusyOverlay.Location = new System.Drawing.Point(0, 0);
-      this._pnlStageBusyOverlay.Name = "_pnlStageBusyOverlay";
-      this._pnlStageBusyOverlay.Size = new System.Drawing.Size(824, 371);
-      this._pnlStageBusyOverlay.TabIndex = 6;
-      this._pnlStageBusyOverlay.Visible = false;
-      // 
-      // _lblStageBusy
-      // 
-      this._lblStageBusy.Dock = System.Windows.Forms.DockStyle.Fill;
-      this._lblStageBusy.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this._lblStageBusy.Location = new System.Drawing.Point(0, 0);
-      this._lblStageBusy.Name = "_lblStageBusy";
-      this._lblStageBusy.Size = new System.Drawing.Size(824, 371);
-      this._lblStageBusy.TabIndex = 0;
-      this._lblStageBusy.Text = "Сброс данных при смене стадии…";
-      this._lblStageBusy.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-      // 
-      // VelumProjectSettingsForm
-      // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.CancelButton = this._btnCancel;
-      this.ClientSize = new System.Drawing.Size(824, 371);
-      this.Controls.Add(this.tabControl1);
-      this.Controls.Add(this._lblStageEvolution);
-      this.Controls.Add(this.stage_evolution);
-      this.Controls.Add(this._btnSave);
-      this.Controls.Add(this._btnCancel);
-      this.Controls.Add(this._pnlStageBusyOverlay);
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-      this.Name = "VelumProjectSettingsForm";
-      this.Text = "Настройки проекта";
-      this.tabControl1.ResumeLayout(false);
-      this.tabPage1.ResumeLayout(false);
-      this.tabPage1.PerformLayout();
-      this.tabPage2.ResumeLayout(false);
-      this.tabPage2.PerformLayout();
-      this.tabPage3.ResumeLayout(false);
-      this.tabPage3.PerformLayout();
-      this.tabPageAdapter.ResumeLayout(false);
-      this.tabPageAdapter.PerformLayout();
-      this.tabPageDocuments.ResumeLayout(false);
-      this.tabPageDocuments.PerformLayout();
-      this.tabPageReflexes.ResumeLayout(false);
-      this.grpCrxMain.ResumeLayout(false);
-      this.grpCrxMain.PerformLayout();
-      this.grpCrxDecay.ResumeLayout(false);
-      this.grpCrxDecay.PerformLayout();
-      this.grpCrxComp.ResumeLayout(false);
-      this.grpCrxComp.PerformLayout();
-      this.grpCrxStart.ResumeLayout(false);
-      this.grpCrxStart.PerformLayout();
-      this.grpCrxSens.ResumeLayout(false);
-      this.grpCrxSens.PerformLayout();
-      this._pnlStageBusyOverlay.ResumeLayout(false);
-      this.ResumeLayout(false);
-      this.PerformLayout();
+            // 
+            // _lblStage2SearchPlayStyleIds
+            // 
+            this._lblStage2SearchPlayStyleIds.Location = new System.Drawing.Point(3, 260);
+            this._lblStage2SearchPlayStyleIds.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblStage2SearchPlayStyleIds.Name = "_lblStage2SearchPlayStyleIds";
+            this._lblStage2SearchPlayStyleIds.Size = new System.Drawing.Size(169, 13);
+            this._lblStage2SearchPlayStyleIds.TabIndex = 4;
+            this._lblStage2SearchPlayStyleIds.Text = "Коды стилей Поиск/Игра (ст. 2):";
+            this._lblStage2SearchPlayStyleIds.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // _tbStage2SearchPlayStyleIds
+            // 
+            this._tbStage2SearchPlayStyleIds.Location = new System.Drawing.Point(180, 257);
+            this._tbStage2SearchPlayStyleIds.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._tbStage2SearchPlayStyleIds.Name = "_tbStage2SearchPlayStyleIds";
+            this._tbStage2SearchPlayStyleIds.Size = new System.Drawing.Size(150, 20);
+            this._tbStage2SearchPlayStyleIds.TabIndex = 5;
+            this._tbStage2SearchPlayStyleIds.TextChanged += new System.EventHandler(this.Stage2StyleIds_TextChanged);
+            // 
+            // _btnCancel
+            // 
+            this._btnCancel.AutoSize = true;
+            this._btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this._btnCancel.Location = new System.Drawing.Point(740, 337);
+            this._btnCancel.Name = "_btnCancel";
+            this._btnCancel.Size = new System.Drawing.Size(75, 25);
+            this._btnCancel.TabIndex = 3;
+            this._btnCancel.Text = "Отмена";
+            this._btnCancel.UseVisualStyleBackColor = true;
+            // 
+            // _btnSave
+            // 
+            this._btnSave.AutoSize = true;
+            this._btnSave.Location = new System.Drawing.Point(600, 337);
+            this._btnSave.Name = "_btnSave";
+            this._btnSave.Size = new System.Drawing.Size(137, 25);
+            this._btnSave.TabIndex = 2;
+            this._btnSave.Text = "Сохранить настройки";
+            this._btnSave.UseVisualStyleBackColor = true;
+            this._btnSave.Click += new System.EventHandler(this.OnSaveClick);
+            // 
+            // _lblStageEvolution
+            // 
+            this._lblStageEvolution.Location = new System.Drawing.Point(13, 335);
+            this._lblStageEvolution.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
+            this._lblStageEvolution.Name = "_lblStageEvolution";
+            this._lblStageEvolution.Size = new System.Drawing.Size(154, 20);
+            this._lblStageEvolution.TabIndex = 4;
+            this._lblStageEvolution.Text = "Стадия развития агента:";
+            this._lblStageEvolution.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // stage_evolution
+            // 
+            this.stage_evolution.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.stage_evolution.Location = new System.Drawing.Point(203, 336);
+            this.stage_evolution.Margin = new System.Windows.Forms.Padding(8, 2, 0, 0);
+            this.stage_evolution.Name = "stage_evolution";
+            this.stage_evolution.Size = new System.Drawing.Size(150, 21);
+            this.stage_evolution.TabIndex = 5;
+            // 
+            // _pnlStageBusyOverlay
+            // 
+            this._pnlStageBusyOverlay.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this._pnlStageBusyOverlay.Controls.Add(this._lblStageBusy);
+            this._pnlStageBusyOverlay.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._pnlStageBusyOverlay.Location = new System.Drawing.Point(0, 0);
+            this._pnlStageBusyOverlay.Name = "_pnlStageBusyOverlay";
+            this._pnlStageBusyOverlay.Size = new System.Drawing.Size(824, 371);
+            this._pnlStageBusyOverlay.TabIndex = 6;
+            this._pnlStageBusyOverlay.Visible = false;
+            // 
+            // _lblStageBusy
+            // 
+            this._lblStageBusy.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._lblStageBusy.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this._lblStageBusy.Location = new System.Drawing.Point(0, 0);
+            this._lblStageBusy.Name = "_lblStageBusy";
+            this._lblStageBusy.Size = new System.Drawing.Size(824, 371);
+            this._lblStageBusy.TabIndex = 0;
+            this._lblStageBusy.Text = "Сброс данных при смене стадии…";
+            this._lblStageBusy.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // VelumProjectSettingsForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this._btnCancel;
+            this.ClientSize = new System.Drawing.Size(824, 371);
+            this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this._lblStageEvolution);
+            this.Controls.Add(this.stage_evolution);
+            this.Controls.Add(this._btnSave);
+            this.Controls.Add(this._btnCancel);
+            this.Controls.Add(this._pnlStageBusyOverlay);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Name = "VelumProjectSettingsForm";
+            this.Text = "Настройки проекта";
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
+            this.tabPageAdapter.ResumeLayout(false);
+            this.tabPageAdapter.PerformLayout();
+            this.tabPageDocuments.ResumeLayout(false);
+            this.tabPageDocuments.PerformLayout();
+            this.tabPageReflexes.ResumeLayout(false);
+            this.grpCrxMain.ResumeLayout(false);
+            this.grpCrxMain.PerformLayout();
+            this.grpCrxDecay.ResumeLayout(false);
+            this.grpCrxDecay.PerformLayout();
+            this.grpCrxComp.ResumeLayout(false);
+            this.grpCrxComp.PerformLayout();
+            this.grpCrxStart.ResumeLayout(false);
+            this.grpCrxStart.PerformLayout();
+            this.grpCrxSens.ResumeLayout(false);
+            this.grpCrxSens.PerformLayout();
+            this._pnlStageBusyOverlay.ResumeLayout(false);
+            this.ResumeLayout(false);
+            this.PerformLayout();
 
     }
 

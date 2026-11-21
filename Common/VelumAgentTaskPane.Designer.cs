@@ -67,6 +67,8 @@ namespace Velum.UI
       this._btnViewVerbalPrimariesBuffer = new System.Windows.Forms.Button();
       this._txtMessageInput = new System.Windows.Forms.TextBox();
       this._pnlSendRow = new System.Windows.Forms.Panel();
+      this._btnPunish = new System.Windows.Forms.Button();
+      this._btnReward = new System.Windows.Forms.Button();
       this._btnSend = new System.Windows.Forms.Button();
       this._lblOutputCaption = new System.Windows.Forms.Label();
       this._txtAgentOutput = new System.Windows.Forms.TextBox();
@@ -707,6 +709,8 @@ namespace Velum.UI
       // 
       // _pnlSendRow
       // 
+      this._pnlSendRow.Controls.Add(this._btnPunish);
+      this._pnlSendRow.Controls.Add(this._btnReward);
       this._pnlSendRow.Controls.Add(this._btnSend);
       this._pnlSendRow.Location = new System.Drawing.Point(6, 322);
       this._pnlSendRow.Margin = new System.Windows.Forms.Padding(0);
@@ -714,14 +718,38 @@ namespace Velum.UI
       this._pnlSendRow.Size = new System.Drawing.Size(288, 30);
       this._pnlSendRow.TabIndex = 25;
       // 
+      // _btnPunish
+      // 
+      this._btnPunish.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this._btnPunish.Location = new System.Drawing.Point(2, 2);
+      this._btnPunish.Margin = new System.Windows.Forms.Padding(0);
+      this._btnPunish.Name = "_btnPunish";
+      this._btnPunish.Size = new System.Drawing.Size(68, 24);
+      this._btnPunish.TabIndex = 0;
+      this._btnPunish.Text = "Наказать";
+      this._btnPunish.UseVisualStyleBackColor = false;
+      this._btnPunish.BackColor = System.Drawing.Color.MistyRose;
+      // 
+      // _btnReward
+      // 
+      this._btnReward.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this._btnReward.Location = new System.Drawing.Point(72, 2);
+      this._btnReward.Margin = new System.Windows.Forms.Padding(0);
+      this._btnReward.Name = "_btnReward";
+      this._btnReward.Size = new System.Drawing.Size(68, 24);
+      this._btnReward.TabIndex = 1;
+      this._btnReward.Text = "Поощрить";
+      this._btnReward.UseVisualStyleBackColor = false;
+      this._btnReward.BackColor = System.Drawing.Color.Honeydew;
+      // 
       // _btnSend
       // 
       this._btnSend.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this._btnSend.Location = new System.Drawing.Point(2, 2);
+      this._btnSend.Location = new System.Drawing.Point(142, 2);
       this._btnSend.Margin = new System.Windows.Forms.Padding(0);
       this._btnSend.Name = "_btnSend";
-      this._btnSend.Size = new System.Drawing.Size(284, 24);
-      this._btnSend.TabIndex = 0;
+      this._btnSend.Size = new System.Drawing.Size(144, 24);
+      this._btnSend.TabIndex = 2;
       this._btnSend.Text = "Отправить";
       this._btnSend.UseVisualStyleBackColor = true;
       // 
@@ -888,6 +916,8 @@ namespace Velum.UI
     private System.Windows.Forms.Button _btnViewVerbalPrimariesBuffer;
     private System.Windows.Forms.TextBox _txtMessageInput;
     private System.Windows.Forms.Panel _pnlSendRow;
+    private System.Windows.Forms.Button _btnPunish;
+    private System.Windows.Forms.Button _btnReward;
     private System.Windows.Forms.Button _btnSend;
     private System.Windows.Forms.Label _lblOutputCaption;
     private System.Windows.Forms.TextBox _txtAgentOutput;

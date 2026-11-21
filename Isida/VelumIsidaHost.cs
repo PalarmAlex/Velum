@@ -105,6 +105,13 @@ namespace Velum.Isida
                 Velum.ReactiveCore.RecipeCatalog.ExistsByAdaptiveActionId);
           }
 
+          // Передаём в движок явные учительские воздействия (поощрить / наказать).
+          // Если оба 0 (не настроены) — автоматизмы создаются по всем триггерам.
+          // Если >0 — исключается создание автоматизма по этим ID.
+          AppGlobalState.SetTeacherInfluenceIds(
+              VelumAppConfig.RewardInfluenceId,
+              VelumAppConfig.PunishInfluenceId);
+
           VelumSolidEnvironmentBridge.HookAfterIsidaReady();
 
           // Не поднимаем стадию с 0 до 1 здесь: стадия 0 — валидное сохранённое состояние агента (файл свойств

@@ -160,6 +160,10 @@ namespace Velum.UI
       _ttpStageEvolution.SetToolTip(_cmbDocumentColorAssembly, "Цвет зрительного канала образа восприятия при активном документе «сборка». Различает контекст у-рефлексов по типу документа; «Белый» — контекст не ограничен.");
       _ttpStageEvolution.SetToolTip(_cmbDocumentColorDrawing, "Цвет зрительного канала образа восприятия при активном документе «чертёж». Различает контекст у-рефлексов по типу документа; «Белый» — контекст не ограничен.");
 
+      // Вкладка «Документы»: воздействия-триггеры для кнопок пульта «Поощрить» / «Наказать»
+      _ttpStageEvolution.SetToolTip(_tbRewardReflexId, "ID воздействия-триггера, применяемого кнопкой «Поощрить» на пульте агента. По клику это воздействие отправляется как стимул, запуская привязанный к нему б/у рефлекс. 0 — кнопка не настроена.");
+      _ttpStageEvolution.SetToolTip(_tbPunishReflexId, "ID воздействия-триггера, применяемого кнопкой «Наказать» на пульте агента. По клику это воздействие отправляется как стимул, запуская привязанный к нему б/у рефлекс. 0 — кнопка не настроена.");
+
       // Стадия 2: коды стилей Поиск/Игра
       _ttpStageEvolution.SetToolTip(_tbStage2SearchPlayStyleIds, "Через запятую укажите ID стилей поведения, используемых на стадии 2 (Поиск/Игра). Например: 3,5,7");
 
@@ -394,6 +398,10 @@ namespace Velum.UI
       _chkNeedDxfDefault.Checked = VelumAppConfig.NeedDxfDefault;
       _chkNeedPdfDefault.Checked = VelumAppConfig.NeedPdfDefault;
       _chkNeedDrawingDefault.Checked = VelumAppConfig.NeedDrawingDefault;
+
+      // Вкладка «Документы»: воздействия-триггеры для кнопок пульта «Поощрить» / «Наказать»
+      _tbRewardReflexId.Text = VelumAppConfig.RewardInfluenceId.ToString(CultureInfo.InvariantCulture);
+      _tbPunishReflexId.Text = VelumAppConfig.PunishInfluenceId.ToString(CultureInfo.InvariantCulture);
 
       // Стадия 2: коды стилей Поиск/Игра
       var stage2StyleIds = VelumAppConfig.Stage2SearchPlayStyleIds;
@@ -715,6 +723,23 @@ namespace Velum.UI
       int docColorAssembly = GetComboId(_cmbDocumentColorAssembly);
       int docColorDrawing = GetComboId(_cmbDocumentColorDrawing);
 
+      // Вкладка «Документы»: воздействия-триггеры для кнопок пульта «Поощрить» / «Наказать».
+      // Допустимо 0 — кнопка не настроена; пустое поле трактуется как 0.
+      string rewardInfluenceText = _tbRewardReflexId.Text.Trim();
+      string punishInfluenceText = _tbPunishReflexId.Text.Trim();
+      int rewardInfluenceId;
+      int punishInfluenceId;
+      if (!int.TryParse(rewardInfluenceText.Length == 0 ? "0" : rewardInfluenceText, out rewardInfluenceId) || rewardInfluenceId < 0)
+      {
+        MessageBox.Show(this, "Воздействие для кнопки «Поощрить» должно быть целым числом не меньше 0 (0 — кнопка не настроена).", "Проверка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        return false;
+      }
+      if (!int.TryParse(punishInfluenceText.Length == 0 ? "0" : punishInfluenceText, out punishInfluenceId) || punishInfluenceId < 0)
+      {
+        MessageBox.Show(this, "Воздействие для кнопки «Наказать» должно быть целым числом не меньше 0 (0 — кнопка не настроена).", "Проверка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        return false;
+      }
+
 
       // Стадия 2: коды стилей Поиск/Игра
       var stage2StyleIdsText = _tbStage2SearchPlayStyleIds.Text.Trim();
@@ -786,6 +811,10 @@ namespace Velum.UI
       VelumAppConfig.SetSetting("DocumentColorPart", docColorPart.ToString(CultureInfo.InvariantCulture));
       VelumAppConfig.SetSetting("DocumentColorAssembly", docColorAssembly.ToString(CultureInfo.InvariantCulture));
       VelumAppConfig.SetSetting("DocumentColorDrawing", docColorDrawing.ToString(CultureInfo.InvariantCulture));
+
+      // Вкладка «Документы»: воздействия-триггеры для кнопок пульта «Поощрить» / «Наказать»
+      VelumAppConfig.SetSetting("RewardInfluenceId", rewardInfluenceId.ToString(CultureInfo.InvariantCulture));
+      VelumAppConfig.SetSetting("PunishInfluenceId", punishInfluenceId.ToString(CultureInfo.InvariantCulture));
 
       // Пути
       VelumAppConfig.SetSetting("SettingsPath", _tbSettingsPath.Text.Trim());
