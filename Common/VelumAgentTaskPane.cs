@@ -2098,13 +2098,20 @@ namespace Velum.UI
 
     /// <summary>
     /// Обработчик события Enter в поле ввода — дубль кнопки «Отправить».
-    /// Перехватывается через WndProc (WM_CHAR), так как в нативной петле
+    /// Перехватывается через WndProc (WM_KEYUP), так как в нативной петле
     /// SolidWorks ProcessCmdKey/PreviewKeyDown не срабатывают.
+    /// Пустое поле не отправляем: Enter, пришедший с кнопки «ОК» открытого
+    /// диалога (например, подтверждения экспорта DXF/PDF), не должен порождать
+    /// сообщение «Нет текста для отправки».
     /// </summary>
     private void OnMessageInputEnterRequested(object sender, EventArgs e)
     {
-      if (_txtMessageInput != null)
-        OnSendMessageClick(_txtMessageInput, EventArgs.Empty);
+      if (_txtMessageInput == null)
+        return;
+      if (string.IsNullOrWhiteSpace(_txtMessageInput.Text))
+        return;
+
+      OnSendMessageClick(_txtMessageInput, EventArgs.Empty);
     }
 
     /// <summary>
