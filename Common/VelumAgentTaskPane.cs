@@ -128,6 +128,8 @@ namespace Velum.UI
       _flowHeaderHomeoButtons.Controls.Add(_btnHeaderHelp);
       ConfigureLogsButton();
       Load += VelumAgentTaskPane_Load;
+      if (_txtMessageInput != null)
+        _txtMessageInput.EnterRequested += OnMessageInputEnterRequested;
     }
 
     /// <summary>
@@ -138,6 +140,8 @@ namespace Velum.UI
     {
       if (_btnSend != null)
         _btnSend.Click -= OnSendMessageClick;
+      if (_txtMessageInput != null)
+        _txtMessageInput.EnterRequested -= OnMessageInputEnterRequested;
       if (_btnReward != null)
         _btnReward.Click -= OnRewardInfluenceClick;
       if (_btnPunish != null)
@@ -2090,6 +2094,17 @@ namespace Velum.UI
       if (combo != null && combo.SelectedItem is KeyValuePair<int, string> kvp)
         return kvp.Key;
       return 0;
+    }
+
+    /// <summary>
+    /// Обработчик события Enter в поле ввода — дубль кнопки «Отправить».
+    /// Перехватывается через WndProc (WM_CHAR), так как в нативной петле
+    /// SolidWorks ProcessCmdKey/PreviewKeyDown не срабатывают.
+    /// </summary>
+    private void OnMessageInputEnterRequested(object sender, EventArgs e)
+    {
+      if (_txtMessageInput != null)
+        OnSendMessageClick(_txtMessageInput, EventArgs.Empty);
     }
 
     /// <summary>

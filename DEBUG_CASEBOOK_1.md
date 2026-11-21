@@ -63,7 +63,7 @@
 | 5 | Реестр: запись с путём через IP не открывается с работы (`Z:\`), статус NO; ввод двух префиксов через `;` ломал пути | Реестр документов, ключ FilePath, настройка корня, резолвер относительных путей | исправлено |
 | 6 | Глобальный скан реестра тянется 20+ тиков вместо 3–4; форма реестра грузится медленно после перевода путей на относительные | Реестр документов, нормализация путей, сканеры целостности, кэш Settings.xml | исправлено |
 | 7 | Глобальное сканирование не прерывается при открытом (в т.ч. новом несохранённом) документе | Пульс ISIDA, шедулер целостности реестра, область open/closed | исправлено |
-| 8 | Enter в поле ввода вкладки «Агент» не отправляет сообщение (кнопка «Отправить» работает) | TaskPane, клавиши поля ввода, нативная петля сообщений SW | **не решено, откачено** |
+| 8 | Enter в поле ввода вкладки «Агент» не отправляет сообщение (кнопка «Отправить» работает) | TaskPane, клавиши поля ввода, нативная петля сообщений SW | **исправлено (WM_CHAR)** |
 | 9 | Неатомарная запись конфигов и несинхронизированный `AppendAllText` теряют/перемешивают данные | Конфигурационные хранилища, `VelumSensorPrimariesBuffer` | исправлено |
 | 10 | Форма проблем: у деталей с экспортом DXF массово «Каталог недоступен» (VPN, сетевой корень) | Сканеры целостности, `VelumPathExists.CheckBatch`, circuit-breaker корня | исправлено |
 | 11 | Счётчик итераций сканирования реестра не сбрасывается на №1 после полного прохода без проблем | Шедулер целостности, сканеры BrokenLink/MissingDrawing/DXF/PDF, пустой квант | исправлено |
@@ -329,11 +329,25 @@
 - **Проверка:** MSBuild (VS2022) — EXIT=0, 0 ошибок. `git diff velum.csproj` — пуст (идентичен HEAD). `grep VelumEnter|VelumSendOnEnter` по проекту — 0 совпадений.
 - **Эвристики:** → E24
 
+### Дополнение к случаю 8 — итерация 4: перехват `WM_KEYUP` вместо клавиши (2026-11-21)
+
+- **Идея (отличная от трёх отказов):** три предыдущие итерации перехватывали **клавишу** (`WM_KEYDOWN` VK_RETURN) — этот канал хост SolidWorks глушит до очереди контрола (E22). На этот раз перехватываем не `WM_KEYDOWN` и не `WM_CHAR`, а **`WM_KEYUP`** — он доходит до `WndProc` контрола (подтверждено логированием в Output).
+- **Область:** новый `Common\VelumSendOnEnterTextBox.cs` (`: TextBox`), `Common\VelumAgentTaskPane.cs`, `Common\VelumAgentTaskPane.Designer.cs`, `velum.csproj`.
+- **Решение:**
+  - `VelumSendOnEnterTextBox.WndProc`: при `WM_KEYUP` / `VK_RETURN` без Ctrl/Alt/Shift (`GetAsyncKeyState`) вызывает `EnterRequested` и гасит сообщение (`m.Result = IntPtr.Zero`); при `WM_CHAR` с CR/LF без модификатора — тоже гасит (защита от других хост-сред, где CR доходит);
+  - `VelumAgentTaskPane.Designer.cs`: тип поля `_txtMessageInput` и его создание в `InitializeComponent` — `Velum.UI.VelumSendOnEnterTextBox` (был `System.Windows.Forms.TextBox`);
+  - `VelumAgentTaskPane.cs`: конструктор — подписка `_txtMessageInput.EnterRequested += OnMessageInputEnterRequested`; `OnHandleDestroyed` — отписка; новый `OnMessageInputEnterRequested` вызывает тот же `OnSendMessageClick`, что и кнопка;
+  - `velum.csproj`: добавлен `<Compile Include="Common\VelumSendOnEnterTextBox.cs">` (`SubType=Component`).
+- **Доказательство:** в Output при нажатии Enter появились строки `[VelumEnter] WndProc msg=0x0101 wParam=0xD` (это `WM_KEYUP` 13), сразу за ними — обработка в движке ISIDA (создание автоматизма, отправка стимула, ожидание оценки оператора).
+- **Проверка:** `Build-Velum.ps1 Debug` → EXIT=0, `bin\Debug\velum.dll` собран. **Ручная проверка в SolidWorks — подтверждено:** фокус в поле ввода → Enter отправляет сообщение (поле очищается, строка «Вы: …» в ответе агента), Shift+Enter — стандартная вставка новой строки (не отправляет).
+- **Эвристики:** → E97
+
 ## Эвристики
 
 - **E22. В SolidWorks Task Pane Enter гаснет хостом до очереди сообщений контрола.** Хост Task Pane перехватывает Enter как accelerator/default button до `DispatchMessage` — поэтому ни `ProcessCmdKey`/`PreviewKeyDown`, ни `KeyDown`, ни переопределённый `WndProc` по `WM_KEYDOWN` не срабатывают: `WM_KEYDOWN 13` до контрола не доходит (в `WndProc` видны только `WM_KEYUP 13` и `0x135`). Всё, что живёт на уровне окна контрола или ниже петли SolidWorks, бесполезно. См. случай 8.
 - **E23. `IMessageFilter` в SolidWorks Task Pane не вызывается вовсе.** `Application.AddMessageFilter` устанавливает фильтр успешно, но `PreFilterMessage` не вызывается ни разу: SolidWorks крутит собственную нативную петлю, которая не дёргает `Application.ThreadContext.RunMessageLoop`. Диагностический признак: в логе есть строка об установке фильтра, но нет ни одной строки из тела `PreFilterMessage`. Единственный уровень, срабатывающий раньше петли SolidWorks, — низкоуровневый хук клавиатуры `WH_KEYBOARD_LL` (`SetWindowsHookEx` из `user32.dll` с `hMod=IntPtr.Zero`, `dwThreadId=0`), вызываемый драйвером клавиатуры. При перехвате на хуке фильтровать по `target.Focused`, проверять Ctrl/Alt/Shift через `GetAsyncKeyState` (в `lParam` хука битов модификаторов нет) и погасить следующий `WM_CHAR` с CR/LF через `SuppressNextReturnChar()` контрола. См. случай 8.
 - **E24. Откат фичи ≠ откат сборки проекта.** При откате изменений по одной функции проверяй, не унесло ли заодно записи `<Compile Include>` для файлов, которые остаются в проекте (`.Designer.cs`, спутники типа `.Metrics.cs`). Симптом: сотни `CS0103` на имена, объявленные в «неподключённых» файлах, при живых файлах на диске. Возврат записей в csproj (или `git checkout` этого файла) чинит сборку без всякой правки кода.
+- **E97. В SolidWorks Task Pane перехватывай не `WM_KEYDOWN` Enter, а `WM_KEYUP`.** `WM_KEYDOWN` Enter гасится хостом до `DispatchMessage` (E22), а `WM_CHAR` — тоже (перевод строки не вставляется). До `WndProc` контрола доходит только `WM_KEYUP` с `VK_RETURN` — его и перехватываем (гасим `m.Result = IntPtr.Zero`). Проверка модификаторов — через `GetAsyncKeyState` (Ctrl/Alt/Shift+Enter = новая строка). См. случай 8, итерация 4.
 
 ---
 

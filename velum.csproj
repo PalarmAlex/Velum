@@ -244,6 +244,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Common\Reflex\VelumConditionedReflexSettingsStore.cs" />
+    <Compile Include="Common\VelumSendOnEnterTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Common\VelumAgentTaskPane.cs">
       <SubType>UserControl</SubType>
     </Compile>

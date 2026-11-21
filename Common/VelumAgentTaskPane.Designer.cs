@@ -65,7 +65,7 @@ namespace Velum.UI
       this._lblInputCaption = new System.Windows.Forms.Label();
       this._lblInputAuthoritativeHint = new System.Windows.Forms.Label();
       this._btnViewVerbalPrimariesBuffer = new System.Windows.Forms.Button();
-      this._txtMessageInput = new System.Windows.Forms.TextBox();
+      this._txtMessageInput = new Velum.UI.VelumSendOnEnterTextBox();
       this._pnlSendRow = new System.Windows.Forms.Panel();
       this._btnPunish = new System.Windows.Forms.Button();
       this._btnReward = new System.Windows.Forms.Button();
@@ -914,7 +914,7 @@ namespace Velum.UI
     private System.Windows.Forms.FlowLayoutPanel _flowInputCaption;
     private System.Windows.Forms.Label _lblInputAuthoritativeHint;
     private System.Windows.Forms.Button _btnViewVerbalPrimariesBuffer;
-    private System.Windows.Forms.TextBox _txtMessageInput;
+    private Velum.UI.VelumSendOnEnterTextBox _txtMessageInput;
     private System.Windows.Forms.Panel _pnlSendRow;
     private System.Windows.Forms.Button _btnPunish;
     private System.Windows.Forms.Button _btnReward;
