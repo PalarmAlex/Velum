@@ -611,7 +611,10 @@ namespace Velum.SolidHomeostasis
       if (!IsSolidWorksEventsAllowed())
         return 0;
 
-      NotifyPartGeometryModifiedForCurrentDocument();
+      // Случай 59: RegenPostNotify2 — чистая перестройка (не правка геометрии).
+      // pending не пишем (geometryEdited = false), иначе regen сборки каскадом ложно
+      // зажигает «DXF устарел» и зацикливает экспорт.
+      NotifyPartGeometryModifiedForCurrentDocument(geometryEdited: false);
       VelumSolidProbeRefreshPlanner.MarkStale(RegenStaleCategories | VelumSolidProbeCategory.ExportDocumentation);
 
       // Принудительное обновление штампов вне пульсации
@@ -625,11 +628,12 @@ namespace Velum.SolidHomeostasis
       if (!IsSolidWorksEventsAllowed())
         return 0;
 
-      NotifyPartGeometryModifiedForCurrentDocument();
-      // «Обновить» (ForceRebuild) сборки: дожать pending изменённых компонентов —
-      // события правки в контексте приходят на сборку, а edit-target получает pending
-      // только для текущей редактируемой детали.
-      StampDirtyAssemblyComponentsForSave();
+      // Случай 59: regen сборки — перестройка компонентов каскадом, не правка геометрии.
+      // pending не пишем (geometryEdited = false) и не обходим дерево компонентов:
+      // «Обновить» поднимает GetUpdateStamp у всех деталей, а форс pending (Случай 56)
+      // превратил бы это в ложное устаревание и бесконечный цикл. Genuine-правка в
+      // контексте сборки покрыта Modify (edit-target) и Save-обходом (Случай 41).
+      NotifyPartGeometryModifiedForCurrentDocument(geometryEdited: false);
       VelumSolidProbeRefreshPlanner.MarkStale(RegenStaleCategories | VelumSolidProbeCategory.ExportDocumentation);
       return 0;
     }
@@ -639,7 +643,7 @@ namespace Velum.SolidHomeostasis
       if (!IsSolidWorksEventsAllowed())
         return 0;
 
-      NotifyPartGeometryModifiedForCurrentDocument();
+      NotifyPartGeometryModifiedForCurrentDocument(geometryEdited: true);
       VelumSolidProbeRefreshPlanner.MarkStale(ModifyStaleCategories);
 
       // Принудительное обновление штампов вне пульсации
@@ -653,7 +657,7 @@ namespace Velum.SolidHomeostasis
       if (!IsSolidWorksEventsAllowed())
         return 0;
 
-      NotifyPartGeometryModifiedForCurrentDocument();
+      NotifyPartGeometryModifiedForCurrentDocument(geometryEdited: true);
       VelumSolidProbeRefreshPlanner.MarkStale(ModifyStaleCategories);
       return 0;
     }
@@ -977,11 +981,16 @@ namespace Velum.SolidHomeostasis
       return 0;
     }
 
-    private static void NotifyPartGeometryModifiedForCurrentDocument()
+    /// <summary>
+    /// Перенаправляет событие Modify/Regen на активную деталь (или edit-target сборки).
+    /// <paramref name="geometryEdited"/> — true для Modify (genuine-правка, pending пишем),
+    /// false для Regen (чистая перестройка, pending не пишем — Случай 59).
+    /// </summary>
+    private static void NotifyPartGeometryModifiedForCurrentDocument(bool geometryEdited)
     {
       if (_part != null)
       {
-        VelumExportDocumentationGeometryStampHelper.NotifyPartGeometryModified(_part as ModelDoc2);
+        VelumExportDocumentationGeometryStampHelper.NotifyPartGeometryModified(_part as ModelDoc2, geometryEdited);
         return;
       }
 
@@ -992,7 +1001,7 @@ namespace Velum.SolidHomeostasis
       {
         object target = _assy.GetEditTarget();
         if (target is ModelDoc2 targetMd)
-          VelumExportDocumentationGeometryStampHelper.NotifyPartGeometryModified(targetMd);
+          VelumExportDocumentationGeometryStampHelper.NotifyPartGeometryModified(targetMd, geometryEdited);
       }
       catch
       {

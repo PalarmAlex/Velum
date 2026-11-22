@@ -199,8 +199,23 @@ namespace Velum.ReactiveCore
     /// <summary>
     /// Вызывается из Modify/Regen: записывает pending-штамп в свойство активной конфигурации SLDPRT.
     /// Свернуть/развернуть развёртку листовой детали не считается правкой DXF.
+    /// <para>
+    /// Случай 59: <paramref name="geometryEdited"/> различает источник события. Pending
+    /// («DXF устарел») пишем только при genuine-правке (<c>ModifyNotify</c>). Чистая
+    /// перестройка (<c>RegenPostNotify2</c> — «Обновить», regen сборки каскадом, regen при
+    /// открытии детали в контексте сборки) геометрию не меняет, но SolidWorks поднимает
+    /// <c>GetUpdateStamp</c> и помечает деталь грязной; форс pending из Случая 56
+    /// превращал это в ложное устаревание и зацикливал экспорт (regen сборки → regen детали
+    /// → pending → «устарел» → …). Regen переснимает baseline и сбрасывает absorb regen-после-Save,
+    /// но pending не пишет.
+    /// </para>
     /// </summary>
-    internal static void NotifyPartGeometryModified(ModelDoc2 modelDoc)
+    /// <param name="modelDoc">Деталь, для которой пришло событие Modify/Regen.</param>
+    /// <param name="geometryEdited">
+    /// true — genuine-правка геометрии (<c>ModifyNotify</c>), pending писать можно;
+    /// false — чистая перестройка (<c>RegenPostNotify2</c>), pending не пишем.
+    /// </param>
+    internal static void NotifyPartGeometryModified(ModelDoc2 modelDoc, bool geometryEdited)
     {
       if (modelDoc == null || IsGeometryPendingStampSyncSuppressed)
         return;
@@ -218,11 +233,14 @@ namespace Velum.ReactiveCore
         // 2D-эскизов: запись свойств его не меняет, добавление/изменение элемента — меняет.
         // Если токен сдвинулся относительно снимка на ArmAfterDxfExport — это реальная
         // правка, ломаем absorb и проваливаемся к записи pending (не дожидаясь Save).
+        // Случай 59: ломаем absorb только при genuine-правке (Modify); regen-всплеск
+        // геометрию эскиза не меняет и не должен снимать absorb.
         long currentGeometryToken = ComputePartGeometryToken(modelDoc);
-        if (!VelumDxfGeometryStampRules.ShouldBreakDxfExportAbsorbOnGeometryChange(
+        if (!geometryEdited ||
+            !VelumDxfGeometryStampRules.ShouldBreakDxfExportAbsorbOnGeometryChange(
                 _dxfGeometryTokenAtExportArm, currentGeometryToken))
         {
-          // Dirty от записи пути/штампов после DXF: Regen/Modify до Save не пишут pending.
+          // Dirty от записи пути/штампов после DXF (или regen-всплеск): до Save pending не пишем.
           CaptureFlatPatternFoldSignature(modelDoc);
           return;
         }
@@ -238,6 +256,16 @@ namespace Velum.ReactiveCore
       {
         // Save сам поднимает GetUpdateStamp и шлёт Regen — это не смена геометрии DXF.
         _absorbPartSaveRebuild = false;
+        CaptureFlatPatternFoldSignature(modelDoc);
+        return;
+      }
+
+      // Случай 59: чистая перестройка (regen) геометрию не меняет — pending не пишем.
+      // Переснимаем baseline (fold/config), чтобы следующий Modify не выглядел как правка
+      // из-за сдвига счётчика regen-ом.
+      if (!geometryEdited)
+      {
+        TryAbsorbActiveConfigurationChange(modelDoc);
         CaptureFlatPatternFoldSignature(modelDoc);
         return;
       }
