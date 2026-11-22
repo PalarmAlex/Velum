@@ -1035,6 +1035,29 @@
 - **Проверка:** `dotnet test tests\Velum.ReactiveCore.Tests.csproj --no-restore` → **503/503** (новые 6 тестов `ShouldWriteDxfPendingAfterSave`: genuine→true; absorbing/fold-only/config-only/not-dirty→false; комбинации). `MSBuild velum.csproj -p:Configuration=Debug` → EXIT=0. Ручная (SolidWorks): деталь «Нужен dxf=Да», DXF выгружен → изменить толщину → **«Сохранить»** (с авто-rebuild) → метрика «DXF устарел» загорается без ручного «Обновить»; после переэкспорта DXF → погасает; Save чистого (не изменённого) документа pending не плодит.
 - **Эвристики:** → E96
 
+## Случай 58. «DXF устарел» не загорается после редактирования эскиза до первого Save, но загорается при повторном открытии/закрытии эскиза
+
+- **Дата / сборка:** 2026-11-22, `bin\Debug\velum.dll`.
+- **Симптом:** деталь «Нужен dxf=Да», DXF успешно выгружен → открыть эскиз, добавить элемент, закрыть → метрика «DXF устарел» молчит. Жму «Обновить» — молчит. Жму «Сохранить» — молчит (в логе: `NotifyPartSaved:539 Velum DXF stamps after save (no content change since export)`). Снова открыть эскиз (ничего не делать) и закрыть — метрика загорается.
+- **Область:** `ReactiveCore\Export\VelumExportDocumentationGeometryStampHelper.cs` (`ArmAfterDxfExport`, `IsAbsorbingDxfExportPropertyDirty`, `NotifyPartGeometryModified`), `VelumDxfGeometryStampRules`.
+- **Гипотезы и проверки:**
+  1. *ModifyNotify не приходит при закрытии эскиза* — **ОТВЕРГНУТО**: `OnPartModifyNotify` вызывается, но код уходит в ветку absorb.
+  2. *Save не дожимает pending* — **КОРЕНЬ (частичный)**: да, но не из-за Case 57 (fold/config), а из-за ветки `wasAbsorbing`.
+- **Корень:** двухуровневый. (A) `ArmAfterDxfExport` ставит флаг absorb `_absorbDxfExportPropertyDirtyUntilSave = true` — «глотать» dirty от записи свойств экспорта до Save. Но `NotifyPartGeometryModified` не различает шум от свойств и genuine-правка эскиза: `if (IsAbsorbingDxfExportPropertyDirty(...)) { return; }` глушит **любой** ModifyNotify. (B) При Save `NotifyPartSaved` видит `wasAbsorbing == true` и уходит в ветку `if (wasAbsorbing) { перифинализация export-штампов; return; }` — **активно утопляет правку**, подтягивая `export = текущий GetUpdateStamp` и стирая pending. Строка лога `no content change since export` подтверждает: система приняла правку эскиза за «шум от свойств экспорта». (C) При повторном открытии/закрытии эскиза absorb уже сброшен предыдущим Save, и срабатывает форс pending из Случая 56 (`currentStamp <= exportStamp` → `pending = exportStamp + 1`).
+- **Доказательство:** лог `NotifyPartSaved:539 Velum DXF stamps after save (no content change since export)` — это ветка `if (wasAbsorbing) { finalized = TryResyncPerConfigDxfGeometryStampsCore(...) ... Logger.Info("...no content change since export") }`.
+- **Исправление:**
+  - новое поле `_dxfGeometryTokenAtExportArm` — снимает токен геометрии 2D-эскизов на `ArmAfterDxfExport`;
+  - `NotifyPartGeometryModified` в absorb-ветке вычисляет текущий токен и проверяет `ShouldBreakDxfExportAbsorbOnGeometryChange(tokenAtArm, currentToken)`: если сдвинулся — absorb ломаем (`_absorbDxfExportPropertyDirtyUntilSave = false`), проваливаемся к записи pending; если нет — глушим как раньше (шум от свойств);
+  - чистое правило `VelumDxfGeometryStampRules.ShouldBreakDxfExportAbsorbOnGeometryChange(tokenAtArm, currentToken)` — токен геометрии эскизов: запись свойств его не меняет, добавление элемента — меняет;
+  - `ComputePartGeometryToken` — рекурсивный обход дерева фич, хеш координат точек всех 2D-эскизов (использует существующий `HashSketch`);
+  - регрессионный тест: 4 теста (`tokenShifted→true`, `tokenUnchanged→false`, `baselineNotCaptured→false`, `bothZero→false`).
+- **Проверка:** `MSBuild velum.csproj -p:Configuration=Debug` → EXIT=0, 0 ошибок, 0 предупреждений. `dotnet test tests\Velum.ReactiveCore.Tests.csproj --no-restore` → **528/528** (новые 4 теста `ShouldBreakDxfExportAbsorbOnGeometryChange`). Ручная (SolidWorks): деталь «Нужен dxf=Да», DXF выгружен → добавить элемент в эскиз → закрыть → метрика «DXF устарел» загорается сразу, без ручного «Обновить»/«Сохранить»; Save после правки эскиза не перифинализирует штампы (pending сохраняется); без правки эскиза — absorb держится до Save (шум от свойств не ломает absorb).
+- **Эвристики:** → E98
+
+## Эвристики (случай 58)
+
+- **E98. Если absorb-окно глушит live-события, добавьте токен контента для различения «шум» vs genuine-правка.** Запись свойств (каталог, имя, fingerprint, штампы) меняет dirty-флаг, но не меняет геометрию. Если absorb-окно не различает шум от правки — genuine-правка «съедается», а Save воспринимает её как шум и перифинализирует штампы, стирая pending. Решение: захватить токен контента (геометрия эскизов, аннотации чертежа) на момент установки absorb и сравнить с текущим токеном при каждом live-событии. Если токен сдвинулся — absorb ломаем, иначе глушим. Симптом-признак: «работает после второго пустого open/close (absorb сброшен), не работает после первого реального изменения до Save». См. случай 58, PDF-вариант (token vs `_contentTokenAtPdfExportArm`).
+
 ## Эвристики (случай 57)
 
 - **E96. Если genuine-действие выполняется внутри «подавляющего» контура, его нельзя детектировать по live-событию — фиксируйте признак ДО входа в контур и дожимайте ПОСЛЕ.** Save детали оборачивает rebuild в save-контур (`_partSaveDepth`), где live-запись pending намеренно подавлена (чтобы свойства/сохранение не зажигали ложное устаревание). Следствие — правка, подтверждённая «Сохранить», теряется, и ловится только отдельным «Обновить» вне контура. Правило: дискриминатор genuine-правки (`GetSaveFlag()`) снимать в pre-save (`FileSaveNotify`), а дожим делать в post-save (`FileSavePostNotify`), исключив ложные причины dirty (экспорт-свойства, fold/unfold, смена конфигурации). Симптом-признак: «работает после Обновить, не работает после Сохранить». См. случай 57, случай 56, E38.

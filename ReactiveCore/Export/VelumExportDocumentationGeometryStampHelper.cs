@@ -88,6 +88,14 @@ namespace Velum.ReactiveCore
     private static bool _absorbDxfExportPropertyDirtyUntilSave;
 
     /// <summary>
+    /// Токен геометрии 2D-эскизов детали на момент <see cref="ArmAfterDxfExport"/>.
+    /// Запись свойств экспорта его не меняет, а правка эскиза — меняет. Дискриминатор
+    /// «шум от свойств vs genuine-правка» внутри absorb-окна DXF (Случай 58): если токен
+    /// сдвинулся — absorb ломаем и пишем pending, не дожидаясь Save.
+    /// </summary>
+    private static long _dxfGeometryTokenAtExportArm;
+
+    /// <summary>
     /// Regen/Modify сразу после Save детали — это сдвиг GetUpdateStamp, не правка геометрии.
     /// </summary>
     private static bool _absorbPartSaveRebuild;
@@ -205,9 +213,25 @@ namespace Velum.ReactiveCore
 
       if (IsAbsorbingDxfExportPropertyDirty(modelDoc))
       {
-        // Dirty от записи пути/штампов после DXF: Regen/Modify до Save не пишут pending.
-        CaptureFlatPatternFoldSignature(modelDoc);
-        return;
+        // Случай 58: absorb-окно DXF-экспорта «глотает» dirty от записи свойств до Save,
+        // но не должно глушить genuine-правка эскиза. Дискриминатор — токен геометрии
+        // 2D-эскизов: запись свойств его не меняет, добавление/изменение элемента — меняет.
+        // Если токен сдвинулся относительно снимка на ArmAfterDxfExport — это реальная
+        // правка, ломаем absorb и проваливаемся к записи pending (не дожидаясь Save).
+        long currentGeometryToken = ComputePartGeometryToken(modelDoc);
+        if (!VelumDxfGeometryStampRules.ShouldBreakDxfExportAbsorbOnGeometryChange(
+                _dxfGeometryTokenAtExportArm, currentGeometryToken))
+        {
+          // Dirty от записи пути/штампов после DXF: Regen/Modify до Save не пишут pending.
+          CaptureFlatPatternFoldSignature(modelDoc);
+          return;
+        }
+
+        // Genuine-правка эскиза внутри absorb-окна: снимаем absorb, чтобы Save не
+        // перифинализировал штампы (иначе правка потеряется), и пишем pending ниже.
+        _absorbDxfExportPropertyDirtyUntilSave = false;
+        _dxfGeometryTokenAtExportArm = 0;
+        Logger.Info("Velum DXF pending: sketch geometry changed after export (absorb broken before save)");
       }
 
       if (_absorbPartSaveRebuild)
@@ -402,6 +426,8 @@ namespace Velum.ReactiveCore
 
     /// <summary>
     /// После успешного DXF-экспорта: «глотаем» dirty от записи свойств до Save.
+    /// Снимает токен геометрии 2D-эскизов — для различения «шум от свойств» и
+    /// genuine-правки эскиза внутри absorb-окна (Случай 58).
     /// </summary>
     internal static void ArmAfterDxfExport(ModelDoc2 modelDoc)
     {
@@ -410,6 +436,7 @@ namespace Velum.ReactiveCore
 
       _trackedPartDocKey = TryGetDocumentKey(modelDoc);
       _absorbDxfExportPropertyDirtyUntilSave = true;
+      _dxfGeometryTokenAtExportArm = ComputePartGeometryToken(modelDoc);
       CaptureFlatPatternFoldSignature(modelDoc);
     }
 
@@ -1063,6 +1090,75 @@ _trackedDrawingDocKey = null;
 
       _trackedDrawingSheetName = current;
       return true;
+    }
+
+    /// <summary>
+    /// Токен геометрии 2D-эскизов детали (дерево фич). Без GetUpdateStamp — запись
+    /// свойств экспорта его не «сдвигает». Ловит добавление/удаление/изменение элемента
+    /// эскиза внутри absorb-окна DXF-экспорта (Случай 58).
+    /// </summary>
+    private static long ComputePartGeometryToken(ModelDoc2 modelDoc)
+    {
+      unchecked
+      {
+        long hash = 17L;
+        if (modelDoc == null)
+          return hash;
+
+        try
+        {
+          // Рекурсивный обход дерева фич, извлечение Sketch, хеш координат точек эскиза.
+          Feature feat = modelDoc.FirstFeature() as Feature;
+          int guard = 0;
+          while (feat != null && guard++ < 512)
+          {
+            hash = hash * 31L + HashSketchGeometry(feat);
+            feat = feat.GetNextFeature() as Feature;
+          }
+        }
+        catch
+        {
+        }
+
+        return hash;
+      }
+    }
+
+    /// <summary>
+    /// Рекурсивный обход дерева фич: если spec — Sketch, хешируем его геометрию;
+    /// иначе — рекурсивно спускаемся в подфичи (вложенные эскизы, паттерны).
+    /// </summary>
+    private static long HashSketchGeometry(Feature feature)
+    {
+      unchecked
+      {
+        long hash = 0L;
+        if (feature == null)
+          return hash;
+
+        try
+        {
+          object spec = feature.GetSpecificFeature2();
+          if (spec is Sketch sketch)
+          {
+            return HashSketch(sketch);
+          }
+
+          // Подфичи (вложенные эскизы, паттерны, тела и т.д.)
+          Feature sub = feature.GetFirstSubFeature() as Feature;
+          int guard = 0;
+          while (sub != null && guard++ < 256)
+          {
+            hash = hash * 31L + HashSketchGeometry(sub);
+            sub = sub.GetNextSubFeature() as Feature;
+          }
+        }
+        catch
+        {
+        }
+
+        return hash;
+      }
     }
 
     /// <summary>

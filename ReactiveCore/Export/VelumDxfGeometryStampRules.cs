@@ -18,6 +18,12 @@ namespace Velum.ReactiveCore.Export
   /// (Случай 18 / E38).
   /// </para>
   /// </para>
+  /// <para>
+  /// Проблема absorb-окна (Случай 58): после DXF-экспорта документ «глотают»
+  /// до первого Save, но absorb не различает шум от записи свойств и genuine-
+  /// правку эскиза. Если токен геометрии эскизов сдвинулся — absorb ломаем,
+  /// даже если Save ещё не было.
+  /// </para>
   /// </summary>
   internal static class VelumDxfGeometryStampRules
   {
@@ -96,6 +102,26 @@ namespace Velum.ReactiveCore.Export
         return false;
 
       return true;
+    }
+
+    /// <summary>
+    /// Нужно ли прервать absorb-окно DXF-экспорта, если токен геометрии 2D-эскизов
+    /// сдвинулся относительно снимка на момент <c>ArmAfterDxfExport</c> (Случай 58).
+    /// <para>
+    /// Запись свойств экспорта (каталог, имя, fingerprint, штампы) не меняет геометрию
+    /// эскизов — токен остаётся неизменным. Добавление/удаление/изменение элемента эскиза
+    /// меняет токен — это genuine-правка, absorb нужно сломать и написать pending
+    /// даже до первого Save.
+    /// </para>
+    /// </summary>
+    /// <param name="tokenAtArm">Токен геометрии эскизов, зафиксированный на ArmAfterDxfExport.</param>
+    /// <param name="currentToken">Текущий токен геометрии эскизов.</param>
+    /// <returns>
+    /// true, если токен сдвинулся — absorb ломаем и пишем pending.
+    /// </returns>
+    internal static bool ShouldBreakDxfExportAbsorbOnGeometryChange(long tokenAtArm, long currentToken)
+    {
+      return tokenAtArm != 0 && tokenAtArm != currentToken;
     }
   }
 }

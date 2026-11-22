@@ -163,5 +163,39 @@ namespace Velum.ReactiveCore.Tests
           isFlatPatternFoldOnlyChange: true,
           isActiveConfigurationOnlyChange: false));
     }
+
+    // --- ShouldBreakDxfExportAbsorbOnGeometryChange (Случай 58) ---
+
+    [Fact]
+    public void BreakAbsorb_TokenShifted_ReturnsTrue()
+    {
+      // Правка эскиза после экспорта: токен геометрии сдвинулся — absorb ломаем, pending пишем.
+      Assert.True(VelumDxfGeometryStampRules.ShouldBreakDxfExportAbsorbOnGeometryChange(
+          tokenAtArm: 123456, currentToken: 654321));
+    }
+
+    [Fact]
+    public void BreakAbsorb_TokenUnchanged_ReturnsFalse()
+    {
+      // Запись свойств экспорта не меняет геометрию эскизов — absorb держим.
+      Assert.False(VelumDxfGeometryStampRules.ShouldBreakDxfExportAbsorbOnGeometryChange(
+          tokenAtArm: 123456, currentToken: 123456));
+    }
+
+    [Fact]
+    public void BreakAbsorb_BaselineNotCaptured_ReturnsFalse()
+    {
+      // Baseline (tokenAtArm == 0) не зафиксирован — не ломаем (первый контакт, консервативно).
+      Assert.False(VelumDxfGeometryStampRules.ShouldBreakDxfExportAbsorbOnGeometryChange(
+          tokenAtArm: 0, currentToken: 654321));
+    }
+
+    [Fact]
+    public void BreakAbsorb_BothZero_ReturnsFalse()
+    {
+      // Нет baseline и нет геометрии — не ломаем.
+      Assert.False(VelumDxfGeometryStampRules.ShouldBreakDxfExportAbsorbOnGeometryChange(
+          tokenAtArm: 0, currentToken: 0));
+    }
   }
 }
