@@ -82,6 +82,44 @@ namespace Velum.ReactiveCore
     private static string _partDirtyBeforeSaveKey;
 
     /// <summary>
+    /// Приходил ли regen («Обновить», <c>RegenPostNotify2</c> с <c>geometryEdited == false</c>)
+    /// ИЗВНЕ save-контура с момента последнего Save детали. Regen помечает деталь dirty
+    /// (<c>GetSaveFlag()</c>) без изменения геометрии, поэтому post-save дожим Случая 57
+    /// не должен срабатывать, когда dirty объяснён именно regen-ом (Случай 60).
+    /// Genuine-правка (<c>ModifyNotify</c>) вне save-контура сбрасывает этот флаг: правка
+    /// уже записала live pending, regen её не «отменяет».
+    /// </summary>
+    private static bool _partRegenSinceLastSave;
+
+    /// <summary>Ключ детали, для которого зафиксирован <see cref="_partRegenSinceLastSave"/>.</summary>
+    private static string _partRegenSinceLastSaveKey;
+
+    /// <summary>
+    /// Baseline комбинированного отпечатка геометрии (эскизы + квантованный объём) детали.
+    /// Снимается на Save/экспорте и после фактической записи pending. Live-гейтpending
+    /// пишет только когда текущий отпечаток отличается от baseline (Случай 62): regen-шум
+    /// («Обновить» в детали, regen-каскад сборки через edit-target) геометрию не меняет —
+    /// отпечаток равен baseline, pending не пишем.
+    /// </summary>
+    private static long _partGeometryFingerprintBaseline;
+
+    /// <summary>Есть ли зафиксированный baseline отпечатка (<see cref="_partGeometryFingerprintBaseline"/>).</summary>
+    private static bool _partGeometryFingerprintBaselineKnown;
+
+    /// <summary>Ключ детали, для которого зафиксирован baseline отпечатка геометрии.</summary>
+    private static string _partGeometryFingerprintKey;
+
+    /// <summary>
+    /// Кэш <c>GetUpdateStamp</c>, на котором последний раз пересчитывали отпечаток геометрии.
+    /// При неизменном штампе объём и эскизы не могли измениться — отпечаток не пересчитываем
+    /// (Случай 62, кэш дорогого COM-обхода; regen-серии с одним штампом не платят дважды).
+    /// </summary>
+    private static int _partGeometryFingerprintStamp;
+
+    /// <summary>Кэш текущего отпечатка геометрии, соответствующий <see cref="_partGeometryFingerprintStamp"/>.</summary>
+    private static long _partGeometryFingerprintCached;
+
+    /// <summary>
     /// После записи свойств DXF-экспорта документ dirty: не считать Save/Regen «правкой»,
     /// пока не будет реальной смены геометрии (не fold/unfold развёртки).
     /// </summary>
@@ -220,6 +258,22 @@ namespace Velum.ReactiveCore
       if (modelDoc == null || IsGeometryPendingStampSyncSuppressed)
         return;
 
+      // Случай 60: regen-щит ставится/снимается В НАЧАЛЕ метода, до absorb- и save-rebuild-
+      // веток. Нужен post-save дожиму Случая 57 (NotifyPartSaved), чтобы отличить dirty от
+      // regen «Обновить» от dirty от genuine-правки. Regen извне (geometryEdited == false)
+      // ставит флаг, genuine-правка (Modify) снимает. Regen ВНУТРИ save-контура сюда не
+      // доходит (IsGeometryPendingStampSyncSuppressed отсекает выше) — Случай 57 цел.
+      if (geometryEdited)
+      {
+        _partRegenSinceLastSave = false;
+        _partRegenSinceLastSaveKey = null;
+      }
+      else
+      {
+        _partRegenSinceLastSave = true;
+        _partRegenSinceLastSaveKey = TryGetDocumentKey(modelDoc);
+      }
+
       if (IsFlatPatternFoldOnlyChange(modelDoc))
       {
         CaptureFlatPatternFoldSignature(modelDoc);
@@ -228,28 +282,24 @@ namespace Velum.ReactiveCore
 
       if (IsAbsorbingDxfExportPropertyDirty(modelDoc))
       {
-        // Случай 58: absorb-окно DXF-экспорта «глотает» dirty от записи свойств до Save,
-        // но не должно глушить genuine-правка эскиза. Дискриминатор — токен геометрии
-        // 2D-эскизов: запись свойств его не меняет, добавление/изменение элемента — меняет.
-        // Если токен сдвинулся относительно снимка на ArmAfterDxfExport — это реальная
+        // Случай 58 + 62: absorb-окно DXF-экспорта «глотает» dirty от записи свойств до Save,
+        // но не должно глушить genuine-правку. Дискриминатор — отпечаток геометрии
+        // (эскизы + квантованный объём): запись свойств его не меняет, правка — меняет.
+        // Если отпечаток разошёлся с baseline, снятым на ArmAfterDxfExport, — это реальная
         // правка, ломаем absorb и проваливаемся к записи pending (не дожидаясь Save).
-        // Случай 59: ломаем absorb только при genuine-правке (Modify); regen-всплеск
-        // геометрию эскиза не меняет и не должен снимать absorb.
-        long currentGeometryToken = ComputePartGeometryToken(modelDoc);
-        if (!geometryEdited ||
-            !VelumDxfGeometryStampRules.ShouldBreakDxfExportAbsorbOnGeometryChange(
-                _dxfGeometryTokenAtExportArm, currentGeometryToken))
+        // Regen-всплеск геометрию не меняет и absorb не снимает.
+        if (!ShouldWritePendingByGeometryFingerprint(modelDoc))
         {
           // Dirty от записи пути/штампов после DXF (или regen-всплеск): до Save pending не пишем.
           CaptureFlatPatternFoldSignature(modelDoc);
           return;
         }
 
-        // Genuine-правка эскиза внутри absorb-окна: снимаем absorb, чтобы Save не
+        // Genuine-правка внутри absorb-окна: снимаем absorb, чтобы Save не
         // перифинализировал штампы (иначе правка потеряется), и пишем pending ниже.
         _absorbDxfExportPropertyDirtyUntilSave = false;
         _dxfGeometryTokenAtExportArm = 0;
-        Logger.Info("Velum DXF pending: sketch geometry changed after export (absorb broken before save)");
+        Logger.Info("Velum DXF pending: geometry changed after export (absorb broken before save)");
       }
 
       if (_absorbPartSaveRebuild)
@@ -260,21 +310,33 @@ namespace Velum.ReactiveCore
         return;
       }
 
-      // Случай 59: чистая перестройка (regen) геометрию не меняет — pending не пишем.
-      // Переснимаем baseline (fold/config), чтобы следующий Modify не выглядел как правка
-      // из-за сдвига счётчика regen-ом.
-      if (!geometryEdited)
+      // Переключение активной конфигурации поднимает GetUpdateStamp и шлёт Regen/Modify,
+      // но DXF-геометрию активной конфигурации не меняет — не пишем pending.
+      if (TryAbsorbActiveConfigurationChange(modelDoc))
       {
-        TryAbsorbActiveConfigurationChange(modelDoc);
         CaptureFlatPatternFoldSignature(modelDoc);
         return;
       }
 
-      // Переключение активной конфигурации поднимает GetUpdateStamp и шлёт Regen/Modify,
-      // но геометрию не меняет — не пишем pending в новую активную конфигурацию.
-      if (TryAbsorbActiveConfigurationChange(modelDoc))
+      // Случай 62 — надёжный live-гейт. Решает НЕ geometryEdited, а расхождение отпечатка
+      // геометрии (эскизы + квантованный объём) с baseline, снятым на Save/экспорте:
+      //  - «Обновить» в детали и regen-каскад сборки через edit-target геометрию не меняют —
+      //    отпечаток равен baseline, pending не пишем (снимает обе фазы бага);
+      //  - genuine-правка (эскиз/перемещение/радиус/толщина) меняет отпечаток — пишем pending.
+      // Add-правка радиуса/толщины (Случай 56): Modify приходит ДО rebuild со СТАРЫМ
+      // отпечатком — гейт не пропускает, но regen ПОСЛЕ rebuild даёт новый объём →
+      // отпечаток расходится → pending запишется здесь же (regen-ветка больше не «слепая»).
+      if (!ShouldWritePendingByGeometryFingerprint(modelDoc))
       {
+        // Чистая перестройка (regen) без смены геометрии: переснимаем fold/config baseline,
+        // чтобы следующий Modify не выглядел правкой из-за сдвига счётчика regen-ом.
         CaptureFlatPatternFoldSignature(modelDoc);
+
+        // Случай 62: отпечаток совпал с baseline — это regen-шум. Новый pending не пишем,
+        // но СТАРЫЙ pending от прошлого цикла (pending > export) снимаем: геометрия
+        // не менялась, «устарел» — ложь. Иначе метрика горит вечно на старом pending.
+        ClearDxfPendingIfStale(modelDoc);
+
         return;
       }
 
@@ -294,6 +356,62 @@ namespace Velum.ReactiveCore
         if (_geometryPendingStampSyncDepth > 0)
           _geometryPendingStampSyncDepth--;
       }
+
+      // Pending записан — отпечаток теперь актуален как новый baseline: иначе следующая
+      // regen-серия с тем же отпечатком снова пыталась бы писать pending (COM-шум).
+      CapturePartGeometryFingerprintBaseline(modelDoc);
+    }
+
+    /// <summary>
+    /// Случай 62: снимает устаревший pending-штамп DXF-конфигурации, если геометрия
+    /// не менялась (regen-шум). pending &gt; export, но отпечаток == baseline — метрика
+    /// «устарел» ложна, старый pending от прошлого цикла должен быть очищен.
+    /// </summary>
+    private static void ClearDxfPendingIfStale(ModelDoc2 modelDoc)
+    {
+        if (modelDoc == null)
+            return;
+
+        string key = TryGetDocumentKey(modelDoc);
+        if (string.IsNullOrEmpty(key) || string.Equals(key, "no_doc", StringComparison.Ordinal))
+            return;
+
+        string configName =
+            VelumDxfArtifactResolver.TryResolveDefaultExportConfigurationName(modelDoc);
+        if (string.IsNullOrWhiteSpace(configName))
+            return;
+
+        // Нет pending — снимать нечего.
+        if (!TryReadStoredUpdateStamp(
+                modelDoc,
+                VelumExportDocumentationProperties.DxfGeometryPendingStamp,
+                configName,
+                out int pendingStamp) ||
+            pendingStamp <= 0)
+            return;
+
+        // pending не больше export — метрика и так молчит.
+        TryReadStoredUpdateStamp(
+            modelDoc,
+            VelumExportDocumentationProperties.DxfGeometryUpdateStamp,
+            configName,
+            out int exportStamp);
+        if (exportStamp > 0 && pendingStamp <= exportStamp)
+            return;
+
+        RunWithGeometryPendingStampSyncSuppressed(() =>
+        {
+            TryClearGeometryStamp(
+                modelDoc,
+                VelumExportDocumentationProperties.DxfGeometryPendingStamp,
+                configName,
+                out _);
+        });
+
+        Logger.Info(
+            "Velum DXF pending cleared on regen-noise (fingerprint == baseline) pending=" +
+            pendingStamp.ToString(CultureInfo.InvariantCulture) +
+            " export=" + exportStamp.ToString(CultureInfo.InvariantCulture));
     }
 
     /// <summary>
@@ -466,6 +584,10 @@ namespace Velum.ReactiveCore
       _absorbDxfExportPropertyDirtyUntilSave = true;
       _dxfGeometryTokenAtExportArm = ComputePartGeometryToken(modelDoc);
       CaptureFlatPatternFoldSignature(modelDoc);
+
+      // Случай 62: фиксируем baseline отпечатка геометрии на момент экспорта — live-гейт
+      // в absorb-окне и после него пишет pending только при расхождении с этим baseline.
+      CapturePartGeometryFingerprintBaseline(modelDoc);
     }
 
     /// <summary>true, пока dirty после DXF-экспорта ещё не сохранён.</summary>
@@ -547,72 +669,104 @@ namespace Velum.ReactiveCore
     /// После FileSave детали. Если после DXF-экспорта не было правки геометрии —
     /// дожимает export-штампы (Save раньше давал «DXF устарел»).
     /// <para>
-    /// Если документ был изменён ДО Save (Случай 57), genuine rebuild («обновить перед
-    /// сохранением») пришёл внутри save-контура, где live-запись pending подавлена, а
+    /// Если документ был изменен ДО Save (Случай 57), genuine rebuild («обновить перед
+    /// сохранением») пришел внутри save-контура, где live-запись pending подавлена, а
     /// ModifyNotify на правку толщины/радиуса не доходит. Post-save regen глотается
     /// <c>_absorbPartSaveRebuild</c> — метрика молчала до ручного «Обновить». Дожимает
     /// DXF pending по <c>GetSaveFlag()</c>, зафиксированному в <see cref="BeginPartSave"/>,
-    /// исключая fold/unfold и смену активной конфигурации (не DXF-геометрия, E38-щиты).
+    /// исключая fold/unfold, смену активной конфигурации и regen-шум извне («Обновить»
+    /// без правки, Случай 60): если dirty объяснён regen-ом (<see cref="_partRegenSinceLastSave"/>),
+    /// pending не дожимается.
     /// </para>
     /// </summary>
     /// <returns>true, если штампы перефинализированы или дописан pending (нужен MarkStale Export).</returns>
     internal static bool NotifyPartSaved(ModelDoc2 modelDoc)
     {
-      if (modelDoc == null)
-        return false;
+        if (modelDoc == null)
+            return false;
 
-      string key = TryGetDocumentKey(modelDoc);
-      bool sameDoc = string.Equals(key, _trackedPartDocKey, StringComparison.Ordinal);
-      bool wasAbsorbing = sameDoc && _absorbDxfExportPropertyDirtyUntilSave;
+        string key = TryGetDocumentKey(modelDoc);
+        bool sameDoc = string.Equals(key, _trackedPartDocKey, StringComparison.Ordinal);
+        bool wasAbsorbing = sameDoc && _absorbDxfExportPropertyDirtyUntilSave;
 
-      // Genuine-правка геометрии, подавленная save-контуром: GetSaveFlag() был true ДО save.
-      // Сравниваем fold/config ДО пересъёма baseline (CaptureFlatPatternFoldSignature ниже).
-      bool wasDirtyBeforeSave =
-          string.Equals(key, _partDirtyBeforeSaveKey, StringComparison.Ordinal) &&
-          _partDirtyBeforeSave;
-      bool foldOnlyChange = IsFlatPatternFoldOnlyChange(modelDoc);
-      bool configOnlyChange = TryAbsorbActiveConfigurationChange(modelDoc);
+        // Genuine-правка геометрии, подавленная save-контуром: GetSaveFlag() был true ДО save.
+        // Сравниваем fold/config ДО пересъёма baseline (CaptureFlatPatternFoldSignature ниже).
+        bool wasDirtyBeforeSave =
+            string.Equals(key, _partDirtyBeforeSaveKey, StringComparison.Ordinal) &&
+            _partDirtyBeforeSave;
+        // Случай 60: regen ИЗВНЕ save-контура («Обновить») тоже поднимает GetSaveFlag() без
+        // правки геометрии. Если dirty объяснён regen-ом — post-save дожим Случая 57 не нужен
+        // (и дал бы ложное устаревание). Genuine-правка (Modify) вне save-контура сбрасывает
+        // этот флаг и пишет live pending, поэтому Случай 57 остаётся покрытым.
+        bool regenSinceSave =
+            _partRegenSinceLastSave &&
+            string.Equals(key, _partRegenSinceLastSaveKey, StringComparison.Ordinal);
+        bool foldOnlyChange = IsFlatPatternFoldOnlyChange(modelDoc);
+        bool configOnlyChange = TryAbsorbActiveConfigurationChange(modelDoc);
 
-      _partDirtyBeforeSave = false;
-      _partDirtyBeforeSaveKey = null;
-      _absorbDxfExportPropertyDirtyUntilSave = false;
-      _absorbPartSaveRebuild = true;
+        // Случай 62: запоминаем расхождение отпечатка ДО пересъёма baseline, иначе baseline
+        // обновится на текущее состояние и post-save гейт всегда даст false (регресс Случая 57).
+        bool geometryChangedBeforeSave = ShouldWritePendingByGeometryFingerprint(modelDoc);
 
-      if (!sameDoc)
-        _trackedPartDocKey = key;
+        _partDirtyBeforeSave = false;
+        _partDirtyBeforeSaveKey = null;
+        _partRegenSinceLastSave = false;
+        _partRegenSinceLastSaveKey = null;
+        _absorbDxfExportPropertyDirtyUntilSave = false;
+        _absorbPartSaveRebuild = true;
 
-      CaptureFlatPatternFoldSignature(modelDoc);
+        if (!sameDoc)
+            _trackedPartDocKey = key;
 
-      if (wasAbsorbing)
-      {
-        bool finalized = false;
-        RunWithGeometryPendingStampSyncSuppressed(() =>
+        CaptureFlatPatternFoldSignature(modelDoc);
+
+        // Случай 62: после Save деталь чиста — текущий отпечаток геометрии становится новым
+        // baseline. Следующий regen-каскад сборки («Обновить» при возврате в сборку, фаза 2)
+        // сравнит отпечаток с этим baseline: геометрия та же → pending не пишем.
+        CapturePartGeometryFingerprintBaseline(modelDoc);
+
+        if (wasAbsorbing)
         {
-          IReadOnlyList<string> configs = VelumDxfArtifactResolver.TryGetConfigurationNames(modelDoc);
-          TryResyncPerConfigDxfGeometryStampsCore(modelDoc, configs);
-          finalized = true;
-          Logger.Info("Velum DXF stamps after save (no content change since export)");
-        });
+            bool finalized = false;
+            RunWithGeometryPendingStampSyncSuppressed(() =>
+            {
+                IReadOnlyList<string> configs = VelumDxfArtifactResolver.TryGetConfigurationNames(modelDoc);
+                TryResyncPerConfigDxfGeometryStampsCore(modelDoc, configs);
+                finalized = true;
+                Logger.Info("Velum DXF stamps after save (no content change since export)");
+            });
 
-        return finalized;
-      }
+            return finalized;
+        }
 
-      // Не DXF-экспорт: если была genuine-правка геометрии — дожать pending.
-      bool needPending = VelumDxfGeometryStampRules.ShouldWriteDxfPendingAfterSave(
-          wasAbsorbingExportDirty: false,
-          wasDirtyBeforeSave: wasDirtyBeforeSave,
-          isFlatPatternFoldOnlyChange: foldOnlyChange,
-          isActiveConfigurationOnlyChange: configOnlyChange);
+        // Не DXF-экспорт: если была genuine-правка геометрии — дожать pending.
+        bool needPending = VelumDxfGeometryStampRules.ShouldWriteDxfPendingAfterSave(
+            wasAbsorbingExportDirty: false,
+            wasDirtyBeforeSave: wasDirtyBeforeSave,
+            isFlatPatternFoldOnlyChange: foldOnlyChange,
+            isActiveConfigurationOnlyChange: configOnlyChange,
+            regenFromUpdateCommand: regenSinceSave);
 
-      if (!needPending)
-        return false;
+        if (!needPending)
+            return false;
 
-      string dxfConfigName =
-          VelumDxfArtifactResolver.TryResolveDefaultExportConfigurationName(modelDoc);
-      RunWithGeometryPendingStampSyncSuppressed(() =>
-          TrySyncPendingGeometryStamp(modelDoc, dxfConfigName, out _));
-      Logger.Info("Velum DXF pending after save (geometry changed before save, suppressed in save contour)");
-      return true;
+        // Случай 62: post-save контур тоже не должен писать pending на regen-шуме.
+        // _partRegenSinceLastSave сбрасывается на Modify (geometryEdited=true), а regen
+        // «Обновить» приходит именно как Modify — поэтому флага недостаточно. Проверяем
+        // отпечаток геометрии (снят ДО пересъёма baseline выше).
+        if (!geometryChangedBeforeSave)
+        {
+            Logger.Info("Velum DXF pending after save skipped (fingerprint == baseline, regen-noise)");
+            return false;
+        }
+
+        string dxfConfigName =
+            VelumDxfArtifactResolver.TryResolveDefaultExportConfigurationName(modelDoc);
+        RunWithGeometryPendingStampSyncSuppressed(() =>
+            TrySyncPendingGeometryStamp(modelDoc, dxfConfigName, out _));
+
+        Logger.Info("Velum DXF pending after save (geometry changed before save, suppressed in save contour)");
+        return true;
     }
 
     /// <summary>
@@ -1121,6 +1275,40 @@ _trackedDrawingDocKey = null;
     }
 
     /// <summary>
+    /// Объём детали через <c>ModelDoc2.Extension.CreateMassProperty()</c> →
+    /// <c>IMassProperty.Volume</c> (СИ модели). Входит в комбинированный отпечаток
+    /// геометрии (<see cref="ComputePartGeometryFingerprint"/>) как дискриминатор
+    /// add-правки радиуса/толщины, которую токен эскизов не ловит (Случай 56/62).
+    /// Объём читается через <c>InvokeMember</c> и целиком в <c>try/catch</c>: сбой COM
+    /// возвращает NaN (отпечаток тогда опирается только на эскизы), на поток событий
+    /// не влияет.
+    /// </summary>
+    private static double TryReadPartVolume(ModelDoc2 modelDoc)
+    {
+      try
+      {
+        object ext = modelDoc?.Extension;
+        if (ext == null)
+          return double.NaN;
+
+        if (!VelumSolidComDispatchHelper.TryInvokeMethod(
+                "DXF_FINGERPRINT", ext, "CreateMassProperty", new object[0], out object mp) ||
+            mp == null)
+          return double.NaN;
+
+        if (!VelumSolidComDispatchHelper.TryGetProperty(
+                "DXF_FINGERPRINT", mp, "Volume", out object volObj))
+          return double.NaN;
+
+        return Convert.ToDouble(volObj, CultureInfo.InvariantCulture);
+      }
+      catch
+      {
+        return double.NaN;
+      }
+    }
+
+    /// <summary>
     /// Токен геометрии 2D-эскизов детали (дерево фич). Без GetUpdateStamp — запись
     /// свойств экспорта его не «сдвигает». Ловит добавление/удаление/изменение элемента
     /// эскиза внутри absorb-окна DXF-экспорта (Случай 58).
@@ -1150,6 +1338,105 @@ _trackedDrawingDocKey = null;
 
         return hash;
       }
+    }
+
+    /// <summary>
+    /// Комбинированный отпечаток геометрии детали (Случай 62) — эскизы + квантованный объём.
+    /// Токен эскизов ловит перемещение/изменение элементов; квантованный объём дополняет его
+    /// для add-правки радиуса/толщины, которая эскизы не меняет, но меняет mass-property.
+    /// Объём квантуется грубо (<c>volume * 1e9</c>), чтобы не ложно срабатывать на COM-шум
+    /// regen при неизменной геометрии (на regen «Обновить» объём постоянен).
+    /// Только для одной детали / edit-target — дерево сборки не обходится.
+    /// </summary>
+    private static long ComputePartGeometryFingerprint(ModelDoc2 modelDoc)
+    {
+      unchecked
+      {
+        long hash = ComputePartGeometryToken(modelDoc);
+
+        double volume = TryReadPartVolume(modelDoc);
+        long volumeBucket =
+            double.IsNaN(volume) || double.IsInfinity(volume)
+                ? 0L
+                : (long)Math.Round(volume * 1e9);
+
+        return hash * 31L + volumeBucket;
+      }
+    }
+
+    /// <summary>
+    /// Возвращает текущий отпечаток геометрии детали с кэшем по <c>GetUpdateStamp</c>
+    /// (Случай 62). Пересчитывает дорогой COM-обход (эскизы + mass-property) только когда
+    /// штамп вырос относительно последнего замера по этой же детали — regen-серии с одним
+    /// штампом не платят COM дважды. При смене детали кэш сбрасывается и пересчёт обязателен.
+    /// </summary>
+    private static long GetOrRefreshGeometryFingerprint(ModelDoc2 modelDoc, string key, int currentStamp)
+    {
+      bool sameDoc = string.Equals(key, _partGeometryFingerprintKey, StringComparison.Ordinal);
+      if (sameDoc &&
+          !VelumDxfGeometryStampRules.ShouldRecomputeGeometryFingerprint(
+              _partGeometryFingerprintStamp, currentStamp))
+      {
+        return _partGeometryFingerprintCached;
+      }
+
+      long fingerprint = ComputePartGeometryFingerprint(modelDoc);
+      _partGeometryFingerprintKey = key;
+      _partGeometryFingerprintStamp = currentStamp;
+      _partGeometryFingerprintCached = fingerprint;
+      return fingerprint;
+    }
+
+    /// <summary>
+    /// Снимает baseline отпечатка геометрии детали на текущем <c>GetUpdateStamp</c>
+    /// (Случай 62): вызывается на Save/экспорте и после фактической записи pending.
+    /// Первый контакт (baseline не был известен) тоже фиксирует baseline, не порождая pending.
+    /// </summary>
+    private static void CapturePartGeometryFingerprintBaseline(ModelDoc2 modelDoc)
+    {
+      if (modelDoc == null)
+        return;
+
+      string key = TryGetDocumentKey(modelDoc);
+      if (string.IsNullOrEmpty(key) || string.Equals(key, "no_doc", StringComparison.Ordinal))
+        return;
+
+      TryGetCurrentUpdateStamp(modelDoc, out int currentStamp);
+      long fingerprint = ComputePartGeometryFingerprint(modelDoc);
+
+      _partGeometryFingerprintKey = key;
+      _partGeometryFingerprintStamp = currentStamp;
+      _partGeometryFingerprintCached = fingerprint;
+      _partGeometryFingerprintBaseline = fingerprint;
+      _partGeometryFingerprintBaselineKnown = true;
+    }
+
+    /// <summary>
+    /// Надёжный live-гейт (Случай 62): писать ли pending по текущему событию Modify/Regen
+    /// над деталью. Переснимает baseline при первом контакте и возвращает false (не писать).
+    /// Иначе пишет pending только когда отпечаток геометрии разошёлся с baseline — regen-шум
+    /// («Обновить», regen-каскад сборки через edit-target) отпечаток не меняет → false.
+    /// </summary>
+    private static bool ShouldWritePendingByGeometryFingerprint(ModelDoc2 modelDoc)
+    {
+      string key = TryGetDocumentKey(modelDoc);
+      TryGetCurrentUpdateStamp(modelDoc, out int currentStamp);
+
+      bool baselineKnown =
+          _partGeometryFingerprintBaselineKnown &&
+          string.Equals(key, _partGeometryFingerprintKey, StringComparison.Ordinal);
+
+      if (!baselineKnown)
+      {
+        CapturePartGeometryFingerprintBaseline(modelDoc);
+        return false;
+      }
+
+      long current = GetOrRefreshGeometryFingerprint(modelDoc, key, currentStamp);
+      return VelumDxfGeometryStampRules.ShouldWriteDxfPendingOnGeometryFingerprint(
+          baselineKnown: true,
+          baselineFingerprint: _partGeometryFingerprintBaseline,
+          currentFingerprint: current);
     }
 
     /// <summary>

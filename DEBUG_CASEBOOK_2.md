@@ -1089,3 +1089,93 @@
 ## Эвристики (случай 59)
 
 - **E99. Regen/«Обновить» — НЕ правка геометрии: pending от него нельзя форсировать.** Если один и тот же обработчик (`NotifyPartGeometryModified`) вызывается и из Modify-события (genuine-правка), и из Regen-события (пересчёт после Save/«Обновить»), форс pending из случая 56 начинает срабатывать на regen: regen поднимает `GetUpdateStamp` и делает модель dirty **без изменения геометрии** → ложное `pending > export` → следующий Save даёт regen → снова pending → **замкнутый цикл устаревания**. Признак-симптом: «метрика возвращается после Save сборки / «Обновить», хотя ничего не правил», чаще на медленном томе/VPN (тайминг regen). Правило: различать источник **событием** (`geometryEdited`: Modify=true, Regen=false); для regen — только переснимать baseline (fold/конфигурация) и сбрасывать save-rebuild-флаг, pending НЕ писать; regen-контекст сборки не должен дожимать pending в дочерних деталях. См. случай 59, случай 56 (форс pending), случай 57 (save-контур), случай 58 (токен геометрии в absorb).
+
+## Случай 60. «DXF устарел» зажигается после «Обновить» → «Сохранить», хотя геометрия не менялась
+
+- **Дата / сборка:** 2026-11-22, `bin\Debug\velum.dll`. Продолжение случая 57 (post-save дожим).
+- **Симптом:** деталь «Нужен dxf=Да», DXF успешно выгружен (метрика погасла) → жму в меню SolidWorks **«Обновить»** → **«Сохранить»** → метрика «DXF устарел» **загорается снова**, хотя геометрию детали никто не правил. Смотрю свойства — появился «Штамп изменения геометрии dxf». Лог: `NotifyPartSaved:614 Velum DXF pending after save (geometry changed before save, suppressed in save contour)`.
+- **Область:** `ReactiveCore\Export\VelumExportDocumentationGeometryStampHelper.cs` (`NotifyPartSaved`, `NotifyPartGeometryModified`), `ReactiveCore\Export\VelumDxfGeometryStampRules.cs` (`ShouldWriteDxfPendingAfterSave`).
+- **Гипотезы и проверки:**
+  1. *Виноват токен геометрии из Случая 58* — **ОТВЕРГНУТО**: токен ломает только absorb-окно DXF-экспорта; в этом сценарии absorb уже сброшен первым Save.
+  2. *Виноват `GetSaveFlag()` из Случая 57* — **КОРЕНЬ**.
+- **Корень:** двухуровневый. (A) Случай 57 фиксировал `GetSaveFlag()` ДО сохранения, чтобы поймать правку внутри save-контура. Но `GetSaveFlag()` поднимается **и от команды «Обновить»** (regen), и от реальной правки геометрии. (B) Сценарий: DXF экспортирован → «Обновить» (regen) → деталь dirty (`GetSaveFlag()=true`, геометрия не менялась) → Save: `wasAbsorbing=false` (сбросился на предыдущем Save), `wasDirtyBeforeSave=true` (от regen) → дожим Case 57 пишет ложный pending. (C) Лог подтверждает: `NotifyPartSaved:655 Velum DXF pending after save (geometry changed before save, suppressed in save contour)`.
+- **Исправление:** дискриминатор — не «была ли genuine-правка» (флаг genuine-Modify ловит и regen-шум), а **«был ли regen извне»**:
+  - новый флаг `_partRegenSinceLastSave` + ключ `_partRegenSinceLastSaveKey` (защита от переноса состояния между деталями);
+  - ставится в regen-ветке `NotifyPartGeometryModified` (`geometryEdited == false`) **после** фильтра `IsGeometryPendingStampSyncSuppressed` — regen ВНУТРИ save-контура («обновить перед сохранением», Случай 57) сюда не доходит и флаг НЕ ставит;
+  - genuine Modify (live-запись pending) вне save-контура **сбрасывает** regen-щит (правка уже поймана live);
+  - `NotifyPartSaved` передаёт в `ShouldWriteDxfPendingAfterSave` новый параметр `regenFromUpdateCommand` (был regen извне → pending не дожимаем), сохранив прежний `wasDirtyBeforeSave` (Случай 57 цел);
+  - чистый предикат `ShouldWriteDxfPendingAfterSave(wasAbsorbingExportDirty, wasDirtyBeforeSave, isFlatPatternFoldOnlyChange, isActiveConfigurationOnlyChange, regenFromUpdateCommand)` — линкуется в тесты;
+  - регрессионный тест: `AfterSave_RegenFromUpdateCommand_DoesNotWritePending` (dirty от regen → false) + сохранённые тесты Случая 57 (dirty без regen → true).
+- **Отклонённая альтернатива (DeepSeek):** форс `pending = export+1` → `max(current,export)+1` **не требуется** — `ComputeForcedPendingStamp` ветку `+1` берёт только при `current <= export`, где `export+1` заведомо больше обоих; при прыжке current (+99) возвращается `current`. `pending > export` гарантирован уже. Холостая запись `DxfGeometryUpdateStamp old=new` в реестре — **следствие** ложного pending, а не причина; устранение источника ложного pending снимает и её.
+- **Проверка:** `Build-Velum.ps1 Debug` → EXIT=0. `dotnet test tests\Velum.ReactiveCore.Tests.csproj --no-restore` → **529/529**. Ручная (SolidWorks): деталь «Нужен dxf=Да», DXF выгружен → «Обновить» → «Сохранить» → метрика «DXF устарел» **не** загорается; genuine-правка (радиус/толщина/эскиз) → «Сохранить» → метрика загорается (Случай 57 цел).
+- **Эвристики:** → E100
+
+## Эвристики (случай 60)
+
+- **E100. Если post-save дожим опирается на `GetSaveFlag()` — он ловит и regen («Обновить»), который помечает деталь dirty без изменения геометрии.** `GetSaveFlag()` не различает «шум» от перестройки и genuine-правку. Дискриминатор — не «была ли genuine-правка» (флаг genuine-Modify ставится и на regen-шум), а **«был ли regen извне save-контура»**: regen-ветка (`geometryEdited == false`) **после** фильтра suppression ставит `_partRegenSinceLastSave`; genuine Modify его сбрасывает (правка уже поймана live pending); post-save дожим пропускается, если dirty объяснён regen-ом. Regen ВНУТРИ save-контура («обновить перед сохранением», Случай 57) фильтрацией suppression не ставит флаг — Случай 57 остаётся покрытым. Признак-симптом: «работает после правки → Сохранить, но ложно срабатывает после Обновить → Сохранить». **Важно:** флаг нельзя ставить ДО фильтра `IsGeometryPendingStampSyncSuppressed` — запись штампов (перифинализация при Save) порождает ModifyNotify/Regen и ложно взводит флаг. См. случай 60, случай 57 (save-контур), случай 59 (дифференциация Modify/Regen).
+
+## Случай 61. Регресс Случая 60 через сборку: «Обновить→Сохранить» в детали → Save сборки → при повторном открытии детали метрика DXF вспыхивает
+
+- **Дата / сборка:** 2026-11-22, `bin\Debug\velum.dll`. Проявился после правки Случая 60 (regen-щит), при сценарии через сборку.
+- **Симптом:** деталь открыта из сборки, DXF экспортирован (метрика погасла) → в детали «Обновить → Сохранить → Обновить → Сохранить» — метрика НЕ загорается (Случай 60 вроде цел) → закрыть деталь, вернуться в сборку → «Обновить → Сохранить» (диалог «компоненты изменены» → сохранить) → снова открыть деталь из сборки → **метрика DXF вспыхивает сразу при открытии**.
+- **Область:** `ReactiveCore\Export\VelumExportDocumentationGeometryStampHelper.cs` (`NotifyPartGeometryModified`, `NotifyPartSaved`, `TryIsPerConfigDxfOutdated`), `SolidHomeostasis\VelumSolidWorksEventsConnector.cs` (`OnPartRegenPostNotify2`).
+- **Гипотезы и проверки:**
+  1. *Регресс Случая 59 (regen сборки каскадом пишет pending в деталь)* — **ОТВЕРГНУТО**: regen сборки не вызывает pending в детали напрямую; ложный pending записан РАНЬШЕ — на Save#2 самой детали.
+  2. *Save сборки / `StampDirtyAssemblyComponents` дожимает pending в детали* — **ОТВЕРГНУТО**: сборка — переносчик; pending в файле детали уже был ложным до Save сборки.
+  3. *regen «Обновить» между Save#1 и Save#2 попал в ветку, делающую return до выставления regen-щита* — **КОРЕНЬ**.
+- **Корень:** в Случае 60 regen-щит `_partRegenSinceLastSave` выставлялся в regen-ветке `if (!geometryEdited)` **после** absorb- и `_absorbPartSaveRebuild`-веток. В сценарии «экспорт → Обновить → Сохранить → **Обновить** → Сохранить» второй regen «Обновить» (между Save#1 и Save#2) попадает в ветку `_absorbPartSaveRebuild` (сразу после Save#1 она активна) и делает `return` **до** выставления флага. На Save#2: `wasDirtyBeforeSave=true` (regen сделал деталь dirty), `regenSinceSave=false` (флаг не выставлен) → `ShouldWriteDxfPendingAfterSave` возвращает true → ложный pending `NotifyPartSaved:662`. Save сборки сохраняет pending в файл; при повторном открытии `TryIsPerConfigDxfOutdated` видит `pending > export` → метрика вспыхивает. Лог: `NotifyPartSaved:662 pending after save`, затем реестр `:336 pending > export old=3240 new=3240`.
+- **Доказательство:** `NotifyPartSaved:662` между двумя Save детали без genuine-правок; regen «Обновить» перед Save#2 не выставил щит, т.к. ушёл в `_absorbPartSaveRebuild`-return.
+- **Исправление:** выставление/сброс regen-щита перенесён в **самое начало** `NotifyPartGeometryModified` — сразу после `if (modelDoc == null || IsGeometryPendingStampSyncSuppressed) return;` и ДО absorb-/save-rebuild-/config-веток:
+  - `geometryEdited == true` (Modify) → `_partRegenSinceLastSave = false` (правка ловится live, щит не нужен);
+  - `geometryEdited == false` (Regen) → `_partRegenSinceLastSave = true` + ключ;
+  - дублирующие выставления в regen-ветке и genuine-ветке ниже убраны (логика в одном месте);
+  - regen ВНУТРИ save-контура по-прежнему отсекается suppression-фильтром на первой строке — Случай 57 цел (правка + авто-rebuild «обновить перед сохранением»).
+- **Проверка:** `Build-Velum.ps1 Debug` → EXIT=0. `dotnet test tests\Velum.ReactiveCore.Tests.csproj --no-restore` → **529/529**. Ручная (SolidWorks): деталь из сборки → DXF → «Обновить→Сохранить→Обновить→Сохранить» → закрыть → сборка «Обновить→Сохранить» → открыть деталь → метрика DXF **не** вспыхивает; genuine-правка (Случай 57/58) по-прежнему ловится.
+- **Регресс-тест:** чистая часть (`ShouldWriteDxfPendingAfterSave` с `regenFromUpdateCommand`) покрыта Случаем 60. Сам перенос выставления флага — маршрутизация COM-события относительно absorb/save-rebuild-веток, в чистую функцию не выносится (требует SolidWorks-хост). Обоснование по AGENTS.md — зафиксировано здесь.
+- **Эвристики:** → E101
+
+## Эвристики (случай 61)
+
+- **E101. Флаг-дискриминатор источника события (Modify vs Regen) выставляй ДО всех веток раннего return, иначе absorb- и save-rebuild-контуры «съедят» событие и флаг не взведётся.** Если обработчик события имеет несколько `return`-веток (absorb-окно, save-rebuild-поглощение, смена конфигурации) и в конце — выставление служебного флага, то событие, ушедшее в раннюю `return`-ветку, флаг не выставит. Следствие: post-save дожим увидит `dirty=true` без щита и запишет ложный pending, который Save сборки перенесёт в файл и метрика вспыхнет при повторном открытии. Правило: семантический признак источника (genuine Modify vs regen) — вычислять в самом начале метода, сразу после guard-условий (null / suppression), ДО любых веток с ранним return. См. случай 61, случай 60 (regen-щит), случай 57 (save-контур).
+
+## Случай 62. «DXF устарел» зажигается по regen-каскаду сборки: `ModifyNotify` приходит без правки геометрии (сценарий «открыть деталь из сборки → экспорт → сохранить → закрыть → сборка → Обновить → метрика горит»)
+
+- **Дата / сборка:** 2026-11-22, `bin\Debug\velum.dll`. Продолжение случаев 59/60/61; закрытие линии «regen ложно зажигает DXF» через три согласованных контура.
+- **Симптом:** открыть деталь из сборки → метрика горит → экспорт DXF → сохранить деталь → закрыть → вернуться в сборку → «Обновить» → **загорается метрика «DXF устарел»**, хотя деталь не правилась. Предыдущие дискриминаторы (Случай 60/61 regen-щит по `geometryEdited`) этот путь не покрыли.
+- **Область:** `ReactiveCore\Export\VelumExportDocumentationGeometryStampHelper.cs` (`NotifyPartGeometryModified`, `NotifyPartSaved`, `ArmAfterDxfExport`, `ClearDxfPendingIfStale`), `ReactiveCore\Export\VelumDxfGeometryStampRules.cs` (чистые правила гейта), `Common\ProductRegistry\VelumProductRegistryExportMetaSync.cs` (`TryApplySnapshot`), `SolidHomeostasis\VelumSolidWorksEventsConnector.cs` (`OnPartModifyNotify`/`OnAssyModifyNotify`/`OnAssyRegenPostNotify2`).
+- **Тех-логи (решающее доказательство):** `LogGeometryModifiedDiagnostics` (удалены после диагноза) показали: `volume=3.520199E-005` константа во всех строках — `ModifyNotify` приходит и на «Обновить» без правки. Фаза 2: `Regen stamp=4271` → `Modify stamp=4271` — rebuild уже прошёл, геометрия та же, но `Modify` ловится live-веткой.
+- **Гипотезы и проверки:**
+  1. *Гейт по объёму (изменился ли объём вообще)* — **опровергнуто**: объём константа, но genuine-правки в сценарии нет; нужен **baseline**, а не «изменился ли».
+  2. *Гейт только по токену эскизов* — **опровергнуто**: не ловит add-радиус/толщину (Случай 56).
+  3. *Гейт только по объёму (≠ baseline)* — **опровергнуто**: не ловит перемещение элемента.
+  4. *Комбинированный отпечаток (эскизы + квантованный объём) ≠ baseline* — **подтверждено**.
+- **Корень:** live-ветка писала pending по `geometryEdited==true`, но `ModifyNotify` приходит и на regen-шум (edit-target детали при regen-каскаде сборки). Отдельный пост-save дожим (Случай 57) ловил `GetSaveFlag()`, но тот тоже поднимается от «Обновить» — ложный pending после Save.
+- **Исправление (три контура):**
+
+  **Контур 1 — Live-гейт** (`NotifyPartGeometryModified`):
+  - отпечаток `ComputePartGeometryFingerprint` = `токен_эскизов ⊕ квантованный_объём(volume*1e9)` — покрывает перемещение эскиза и add-радиус/толщину;
+  - baseline снимается на `ArmAfterDxfExport`, `NotifyPartSaved`, после записи pending;
+  - `ShouldWritePendingByGeometryFingerprint` — пишет pending **только при расхождении отпечатка с baseline**;
+  - кэш по `GetUpdateStamp` — COM-обход пересчитывается только при росте штампа;
+  - вызывается только над ОДНОЙ `ModelDoc2` (деталь или `GetEditTarget()` сборки) — дерево не сканируется;
+  - при `fingerprint == baseline` (regen-шум) — снимает старый pending (`ClearDxfPendingIfStale`): `pending > export` от прошлого цикла — ложь, нужно очистить.
+
+  **Контур 2 — Post-save гейт** (`NotifyPartSaved`):
+  - запоминает `geometryChangedBeforeSave` **ДО** пересъёма baseline (иначе baseline обновится на текущее состояние и гейт всегда даст false — регресс Случая 57);
+  - если `fingerprint == baseline` — `pending after save skipped (fingerprint == baseline, regen-noise)`, не дожимает;
+  - `_partRegenSinceLastSave` сохранён для post-save дожима (нужен, чтобы отличить regen извне от regen внутри save-контура).
+
+  **Контур 3 — Fix реестра** (`TryApplySnapshot`):
+  - раньше писал `DxfGeometryUpdateStamp = ModelGeometryStamp` при `pending > export` — холостая запись `old == new`, рассинхрон файл/реестр;
+  - теперь: зеркалит файл как есть (`fileExport`/`filePending`), без попыток «починить» — снятие ложного pending — задача `ClearDxfPendingIfStale` в момент события.
+
+- **Проверка:** `Build-Velum.ps1 Debug` → EXIT=0. `dotnet test tests\Velum.ReactiveCore.Tests.csproj --no-restore` → **535/535**. Ручная (SolidWorks): деталь из сборки → экспорт DXF → сохранить → закрыть → сборка «Обновить» → метрика **не** загорается (лог: `ClearDxfPendingIfStale: pending cleared on regen-noise pending=4677 export=4627`); post-save: `Velum DXF pending after save skipped (fingerprint == baseline, regen-noise)`; genuine-правка → метрика загорается (Случай 56/57/58 целы).
+- **Эвристики:** → E102, E103, E104, E105, E106
+
+## Эвристики (случай 62)
+
+- **E102. Дискриминатор «genuine-правка vs regen-шум» обязан быть по факту изменения данных, а не по типу события.** SolidWorks шлёт `ModifyNotify` (`geometryEdited==true`) и на реальную правку, и на regen-каскад сборки (edit-target получает Modify без изменения геометрии). Любой гейт, решающий «писать pending или нет» по типу события, ложно срабатывает на regen. Правило: сравнивай **отпечаток состояния** (что реально могло измениться) с **baseline**, снятым на последнем «чистом» якорном событии (Save/экспорт), а не тип колбэка. См. случай 62, случай 59/60/61 (все пытались различить Modify/Regen по флагу).
+- **E103. Единый отпечаток геометрии = токен структуры + квантованный физический размер.** Токен эскизов ловит перемещение/изменение элементов, но не add-радиус/толщину; объём ловит радиус/толщину, но не перемещение (масса та же). Ни один по отдельности не полон; объединение в один хеш (`токен*31 + round(volume*1e9)`) покрывает оба класса правок. Квантование объёма грубое — чтобы COM-шум regen при неизменной геометрии не давал ложного расхождения. См. случай 62, случай 56, случай 58.
+- **E104. Разреши «фоновому» событию (regen) записывать результат, если гейт — по состоянию, а не по типу события.** Прежняя «слепая» regen-ветка (никогда не пишет pending) была верна только при гейте по типу события. При гейте по расхождению отпечатка regen обязан уметь писать pending: add-правка приходит Modify ДО rebuild со СТАРЫМ отпечатком (гейт не пропускает), а regen ПОСЛЕ rebuild даёт НОВЫЙ объём → расхождение → pending пишется там. Если regen оставить слепым — Случай 56 (радиус/толщина) регрессирует. Кэш по `GetUpdateStamp` и пересъём baseline сразу после записи не дают regen-серии зациклить запись. См. случай 62, случай 56, случай 57.
+- **E105. Live-гейт обязан не только предотвращать новую запись, но и снимать устаревший pending.** Гейт по отпечатку предотвращает запись **нового** pending на regen-шуме, но не снимает pending, оставшийся от прошлого цикла (он `> export` → метрика горит). В ветке `if (!ShouldWritePendingByGeometryFingerprint(...))` нужно не просто `return`, а `ClearDxfPendingIfStale`: если `pending > export` и `fingerprint == baseline`, старый pending — ложь, его нужно очистить (`TryClearGeometryStamp`). Симптом: метрика загорается сразу после открытия детали из сборки, хотя геометрия не менялась. См. случай 62, случай 60.
+- **E106. Post-save гейт обязан вычисляться ДО пересъёма baseline.** Если post-save гейт сравнивает отпечаток с baseline, но baseline снимается на той же строке до гейта — baseline уже равен текущему состоянию (post-Save) и гейт всегда даёт false. Это регресс Случая 57: genuine-правка, подавленная save-контуром, перестаёт дожиматься. Правило: вычислять `geometryChangedBeforeSave = ShouldWritePendingByGeometryFingerprint(modelDoc)` **до** `CapturePartGeometryFingerprintBaseline(modelDoc)` и использовать сохранённый булевый флаг. Симптом: `pending after save skipped (fingerprint == baseline, regen-noise)` на реальную правку. См. случай 62, случай 57.

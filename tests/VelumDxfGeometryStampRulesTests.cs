@@ -96,17 +96,18 @@ namespace Velum.ReactiveCore.Tests
           currentStamp: 100, exportStamp: int.MaxValue - 1));
     }
 
-    // --- ShouldWriteDxfPendingAfterSave (Случай 57) ---
+    // --- ShouldWriteDxfPendingAfterSave (Случай 57, уточнён Случаем 60) ---
 
     [Fact]
     public void AfterSave_GenuineEdit_WritesPending()
     {
-      // Правка толщины/радиуса: dirty до Save, не fold, не смена конфигурации → пишем pending.
+      // Правка толщины/радиуса: dirty до Save, не fold, не смена конфигурации, нет regen → пишем pending.
       Assert.True(VelumDxfGeometryStampRules.ShouldWriteDxfPendingAfterSave(
           wasAbsorbingExportDirty: false,
           wasDirtyBeforeSave: true,
           isFlatPatternFoldOnlyChange: false,
-          isActiveConfigurationOnlyChange: false));
+          isActiveConfigurationOnlyChange: false,
+          regenFromUpdateCommand: false));
     }
 
     [Fact]
@@ -117,18 +118,21 @@ namespace Velum.ReactiveCore.Tests
           wasAbsorbingExportDirty: true,
           wasDirtyBeforeSave: true,
           isFlatPatternFoldOnlyChange: false,
-          isActiveConfigurationOnlyChange: false));
+          isActiveConfigurationOnlyChange: false,
+          regenFromUpdateCommand: false));
     }
 
     [Fact]
-    public void AfterSave_NotDirtyBeforeSave_DoesNotWritePending()
+    public void AfterSave_RegenFromUpdateCommand_DoesNotWritePending()
     {
-      // Документ не менялся до Save — правки геометрии не было, pending не нужен.
+      // Случай 60: команда «Обновить» (regen) поднимает GetSaveFlag() без изменения геометрии.
+      // Если dirty объяснён regen-ом — post-save дожим даёт ложное устаревание.
       Assert.False(VelumDxfGeometryStampRules.ShouldWriteDxfPendingAfterSave(
           wasAbsorbingExportDirty: false,
-          wasDirtyBeforeSave: false,
+          wasDirtyBeforeSave: true,
           isFlatPatternFoldOnlyChange: false,
-          isActiveConfigurationOnlyChange: false));
+          isActiveConfigurationOnlyChange: false,
+          regenFromUpdateCommand: true));
     }
 
     [Fact]
@@ -139,7 +143,8 @@ namespace Velum.ReactiveCore.Tests
           wasAbsorbingExportDirty: false,
           wasDirtyBeforeSave: true,
           isFlatPatternFoldOnlyChange: true,
-          isActiveConfigurationOnlyChange: false));
+          isActiveConfigurationOnlyChange: false,
+          regenFromUpdateCommand: false));
     }
 
     [Fact]
@@ -150,18 +155,32 @@ namespace Velum.ReactiveCore.Tests
           wasAbsorbingExportDirty: false,
           wasDirtyBeforeSave: true,
           isFlatPatternFoldOnlyChange: false,
-          isActiveConfigurationOnlyChange: true));
+          isActiveConfigurationOnlyChange: true,
+          regenFromUpdateCommand: false));
     }
 
     [Fact]
-    public void AfterSave_NotDirtyAndFoldOnly_DoesNotWritePending()
+    public void AfterSave_NotDirtyBeforeSave_DoesNotWritePending()
     {
-      // Комбинация «не грязный» + fold-only — тем более не пишем.
+      // Документ не менялся до Save — правки геометрии не было, pending не нужен.
+      Assert.False(VelumDxfGeometryStampRules.ShouldWriteDxfPendingAfterSave(
+          wasAbsorbingExportDirty: false,
+          wasDirtyBeforeSave: false,
+          isFlatPatternFoldOnlyChange: false,
+          isActiveConfigurationOnlyChange: false,
+          regenFromUpdateCommand: false));
+    }
+
+    [Fact]
+    public void AfterSave_RegenAndFoldOnly_DoesNotWritePending()
+    {
+      // Комбинация «нет Modify» + fold-only — тем более не пишем.
       Assert.False(VelumDxfGeometryStampRules.ShouldWriteDxfPendingAfterSave(
           wasAbsorbingExportDirty: false,
           wasDirtyBeforeSave: false,
           isFlatPatternFoldOnlyChange: true,
-          isActiveConfigurationOnlyChange: false));
+          isActiveConfigurationOnlyChange: false,
+          regenFromUpdateCommand: true));
     }
 
     // --- ShouldBreakDxfExportAbsorbOnGeometryChange (Случай 58) ---
@@ -196,6 +215,60 @@ namespace Velum.ReactiveCore.Tests
       // Нет baseline и нет геометрии — не ломаем.
       Assert.False(VelumDxfGeometryStampRules.ShouldBreakDxfExportAbsorbOnGeometryChange(
           tokenAtArm: 0, currentToken: 0));
+    }
+
+    // --- ShouldWriteDxfPendingOnGeometryFingerprint (Случай 62) ---
+
+    [Fact]
+    public void Fingerprint_RegenNoise_SameAsBaseline_DoesNotWritePending()
+    {
+      // «Обновить» в детали / regen-каскад сборки через edit-target: геометрия не изменилась,
+      // отпечаток равен baseline (в тех-логах volume константа) — pending не пишем.
+      Assert.False(VelumDxfGeometryStampRules.ShouldWriteDxfPendingOnGeometryFingerprint(
+          baselineKnown: true, baselineFingerprint: 987654321L, currentFingerprint: 987654321L));
+    }
+
+    [Fact]
+    public void Fingerprint_GenuineEdit_DiffersFromBaseline_WritesPending()
+    {
+      // Genuine-правка (эскиз/перемещение/радиус/толщина) меняет отпечаток относительно
+      // baseline Save/экспорта — пишем pending.
+      Assert.True(VelumDxfGeometryStampRules.ShouldWriteDxfPendingOnGeometryFingerprint(
+          baselineKnown: true, baselineFingerprint: 987654321L, currentFingerprint: 123456789L));
+    }
+
+    [Fact]
+    public void Fingerprint_BaselineUnknown_DoesNotWritePending()
+    {
+      // Первый контакт (baseline не зафиксирован) — только фиксируем, pending не пишем.
+      Assert.False(VelumDxfGeometryStampRules.ShouldWriteDxfPendingOnGeometryFingerprint(
+          baselineKnown: false, baselineFingerprint: 0L, currentFingerprint: 123456789L));
+    }
+
+    // --- ShouldRecomputeGeometryFingerprint (Случай 62, кэш COM-обхода) ---
+
+    [Fact]
+    public void Recompute_StampGrew_ReturnsTrue()
+    {
+      // GetUpdateStamp вырос — геометрия могла измениться, отпечаток пересчитываем.
+      Assert.True(VelumDxfGeometryStampRules.ShouldRecomputeGeometryFingerprint(
+          cachedStamp: 4116, currentStamp: 4117));
+    }
+
+    [Fact]
+    public void Recompute_StampUnchanged_ReturnsFalse()
+    {
+      // Штамп не менялся — объём и эскизы не могли измениться, COM-обход не повторяем.
+      Assert.False(VelumDxfGeometryStampRules.ShouldRecomputeGeometryFingerprint(
+          cachedStamp: 4271, currentStamp: 4271));
+    }
+
+    [Fact]
+    public void Recompute_NoCacheYet_ReturnsTrue()
+    {
+      // Кэша нет (cachedStamp == 0) — первый замер обязателен.
+      Assert.True(VelumDxfGeometryStampRules.ShouldRecomputeGeometryFingerprint(
+          cachedStamp: 0, currentStamp: 4271));
     }
   }
 }

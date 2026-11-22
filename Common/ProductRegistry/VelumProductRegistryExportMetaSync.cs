@@ -312,32 +312,31 @@ namespace Velum.UI.ProductRegistry
       if (item == null)
         return VelumProductRegistryExportMetaSyncOutcome.NotInRegistry;
 
-      // Если pending > export — геометрия изменилась, но export-штамп не обновился
-      // (race condition между записью pending и синхронизацией реестра).
-      // Обновляем export-штамп до ModelGeometryStamp детали.
+      // Диагностика: файл сообщает «устарел» (pending > export) — зеркалим как есть.
+      // Снятие ложного pending — задача ClearDxfPendingIfStale в NotifyPartGeometryModified
+      // (момент события, есть отпечаток геометрии). Здесь только зеркало, без «починок».
       if (snap.ApplyDxfMeta && snap.Configs != null && item.ExportMetaConfigs != null)
       {
         for (int i = 0; i < snap.Configs.Count; i++)
         {
           var cfg = snap.Configs[i];
-          if (cfg == null || cfg.DxfGeometryPendingStamp == null)
-            continue;
+          if (cfg == null ||
+              !cfg.DxfGeometryPendingStamp.HasValue ||
+              !cfg.DxfGeometryUpdateStamp.HasValue)
+              continue;
 
-          var existing = item.ExportMetaConfigs
-              .FirstOrDefault(c => string.Equals(c?.ConfigName, cfg.ConfigName, StringComparison.OrdinalIgnoreCase));
-          if (existing == null)
-            continue;
-
-          if (cfg.DxfGeometryPendingStamp > cfg.DxfGeometryUpdateStamp &&
-              snap.ModelGeometryStamp.HasValue &&
-              snap.ModelGeometryStamp.Value > cfg.DxfGeometryUpdateStamp)
+          if (cfg.DxfGeometryPendingStamp.Value > cfg.DxfGeometryUpdateStamp.Value)
           {
-            cfg.DxfGeometryUpdateStamp = snap.ModelGeometryStamp.Value;
+            var existing = item.ExportMetaConfigs
+                .FirstOrDefault(c => string.Equals(c?.ConfigName, cfg.ConfigName, StringComparison.OrdinalIgnoreCase));
             Logger.Info(
-                "Velum registry export-meta: DxfGeometryUpdateStamp updated due to pending > export" +
-                " config=" + cfg.ConfigName + " old=" + cfg.DxfGeometryUpdateStamp +
-                " new=" + snap.ModelGeometryStamp.Value);
-          }
+                "Velum registry export-meta: file reports outdated DXF (pending > export), mirroring as-is" +
+                " config=" + cfg.ConfigName +
+                " fileExport=" + cfg.DxfGeometryUpdateStamp.Value +
+                " filePending=" + cfg.DxfGeometryPendingStamp.Value +
+                " registryExport=" + (existing?.DxfGeometryUpdateStamp?.ToString() ?? "null") +
+                " registryPending=" + (existing?.DxfGeometryPendingStamp?.ToString() ?? "null"));
+            }
         }
       }
 
