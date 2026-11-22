@@ -121,26 +121,6 @@ namespace Velum.ReactiveCore.Export
     }
 
     /// <summary>
-    /// Нужно ли прервать absorb-окно DXF-экспорта, если токен геометрии 2D-эскизов
-    /// сдвинулся относительно снимка на момент <c>ArmAfterDxfExport</c> (Случай 58).
-    /// <para>
-    /// Запись свойств экспорта (каталог, имя, fingerprint, штампы) не меняет геометрию
-    /// эскизов — токен остаётся неизменным. Добавление/удаление/изменение элемента эскиза
-    /// меняет токен — это genuine-правка, absorb нужно сломать и написать pending
-    /// даже до первого Save.
-    /// </para>
-    /// </summary>
-    /// <param name="tokenAtArm">Токен геометрии эскизов, зафиксированный на ArmAfterDxfExport.</param>
-    /// <param name="currentToken">Текущий токен геометрии эскизов.</param>
-    /// <returns>
-    /// true, если токен сдвинулся — absorb ломаем и пишем pending.
-    /// </returns>
-    internal static bool ShouldBreakDxfExportAbsorbOnGeometryChange(long tokenAtArm, long currentToken)
-    {
-      return tokenAtArm != 0 && tokenAtArm != currentToken;
-    }
-
-    /// <summary>
     /// Надёжный live-гейт записи DXF pending-штампа (Случай 62): писать pending только если
     /// комбинированный отпечаток геометрии (эскизы + квантованный объём) отличается от
     /// baseline, снятого на последнем Save/экспорте.

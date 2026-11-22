@@ -1053,6 +1053,7 @@
   - регрессионный тест: 4 теста (`tokenShifted→true`, `tokenUnchanged→false`, `baselineNotCaptured→false`, `bothZero→false`).
 - **Проверка:** `MSBuild velum.csproj -p:Configuration=Debug` → EXIT=0, 0 ошибок, 0 предупреждений. `dotnet test tests\Velum.ReactiveCore.Tests.csproj --no-restore` → **528/528** (новые 4 теста `ShouldBreakDxfExportAbsorbOnGeometryChange`). Ручная (SolidWorks): деталь «Нужен dxf=Да», DXF выгружен → добавить элемент в эскиз → закрыть → метрика «DXF устарел» загорается сразу, без ручного «Обновить»/«Сохранить»; Save после правки эскиза не перифинализирует штампы (pending сохраняется); без правки эскиза — absorb держится до Save (шум от свойств не ломает absorb).
 - **Эвристики:** → E98
+- **Примечание (2026-11-23, мёртвый код удалён):** дискриминатор по токену эскизов (`_dxfGeometryTokenAtExportArm` + чистое правило `ShouldBreakDxfExportAbsorbOnGeometryChange` + 4 теста) выведен из живого пути случаем 62: absorb-окно теперь гасит шум и ловит genuine-правку **комбинированным отпечатком геометрии** (`ComputePartGeometryFingerprint` = токен эскизов + квантованный объём) через `ShouldWriteDxfPendingByGeometryFingerprint`. Поле и правило остались незадействованными (поле только записывалось/сбрасывалось, ни разу не читалось) — удалены вместе с тестами; `ComputePartGeometryToken` сохранён, т.к. входит в состав живого отпечатка. Тесты после удаления: **531/531**. Разбор случая 58 оставлен как история поиска корня.
 
 ## Эвристики (случай 58)
 

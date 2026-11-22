@@ -126,14 +126,6 @@ namespace Velum.ReactiveCore
     private static bool _absorbDxfExportPropertyDirtyUntilSave;
 
     /// <summary>
-    /// Токен геометрии 2D-эскизов детали на момент <see cref="ArmAfterDxfExport"/>.
-    /// Запись свойств экспорта его не меняет, а правка эскиза — меняет. Дискриминатор
-    /// «шум от свойств vs genuine-правка» внутри absorb-окна DXF (Случай 58): если токен
-    /// сдвинулся — absorb ломаем и пишем pending, не дожидаясь Save.
-    /// </summary>
-    private static long _dxfGeometryTokenAtExportArm;
-
-    /// <summary>
     /// Regen/Modify сразу после Save детали — это сдвиг GetUpdateStamp, не правка геометрии.
     /// </summary>
     private static bool _absorbPartSaveRebuild;
@@ -298,7 +290,6 @@ namespace Velum.ReactiveCore
         // Genuine-правка внутри absorb-окна: снимаем absorb, чтобы Save не
         // перифинализировал штампы (иначе правка потеряется), и пишем pending ниже.
         _absorbDxfExportPropertyDirtyUntilSave = false;
-        _dxfGeometryTokenAtExportArm = 0;
         Logger.Info("Velum DXF pending: geometry changed after export (absorb broken before save)");
       }
 
@@ -572,8 +563,6 @@ namespace Velum.ReactiveCore
 
     /// <summary>
     /// После успешного DXF-экспорта: «глотаем» dirty от записи свойств до Save.
-    /// Снимает токен геометрии 2D-эскизов — для различения «шум от свойств» и
-    /// genuine-правки эскиза внутри absorb-окна (Случай 58).
     /// </summary>
     internal static void ArmAfterDxfExport(ModelDoc2 modelDoc)
     {
@@ -582,7 +571,6 @@ namespace Velum.ReactiveCore
 
       _trackedPartDocKey = TryGetDocumentKey(modelDoc);
       _absorbDxfExportPropertyDirtyUntilSave = true;
-      _dxfGeometryTokenAtExportArm = ComputePartGeometryToken(modelDoc);
       CaptureFlatPatternFoldSignature(modelDoc);
 
       // Случай 62: фиксируем baseline отпечатка геометрии на момент экспорта — live-гейт
