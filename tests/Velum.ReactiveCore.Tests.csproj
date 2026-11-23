@@ -49,6 +49,8 @@
     <Compile Include="..\ReactiveCore\RecipeExecutor\RecipeStepExecutionResult.cs" Link="src\RecipeStepExecutionResult.cs" />
     <Compile Include="..\ReactiveCore\VelumChainStepOutcomeRules.cs" Link="src\VelumChainStepOutcomeRules.cs" />
     <Compile Include="..\ReactiveCore\VelumRunSwCommandEchoRules.cs" Link="src\VelumRunSwCommandEchoRules.cs" />
+    <Compile Include="..\ReactiveCore\VelumRecipeVariableResolver.cs" Link="src\VelumRecipeVariableResolver.cs" />
+    <Compile Include="..\ReactiveCore\VelumRecipeGeometryRules.cs" Link="src\VelumRecipeGeometryRules.cs" />
     <Compile Include="..\Common\Reflex\VelumReflexForbidTargetRules.cs" Link="src\VelumReflexForbidTargetRules.cs" />
     <Compile Include="..\Common\Reflex\VelumInfluenceButtonRules.cs" Link="src\VelumInfluenceButtonRules.cs" />
     <Compile Include="..\Common\ListFilter\VelumListFilterFormatter.cs" Link="src\VelumListFilterFormatter.cs" />
@@ -110,6 +112,8 @@
     <Compile Include="VelumConditionedReflexSettingsStoreTests.cs" />
     <Compile Include="VelumChainStepOutcomeRulesTests.cs" />
     <Compile Include="VelumRunSwCommandEchoRulesTests.cs" />
+    <Compile Include="VelumRecipeVariableResolverTests.cs" />
+    <Compile Include="VelumRecipeGeometryRulesTests.cs" />
     <Compile Include="VelumReflexForbidTargetRulesTests.cs" />
     <Compile Include="VelumInfluenceButtonRulesTests.cs" />
     <Compile Include="VelumListFilterFormatterTests.cs" />

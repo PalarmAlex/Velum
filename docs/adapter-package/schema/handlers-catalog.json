@@ -231,6 +231,45 @@
       ]
     },
     {
+      "id": "sketch_extrude_plate",
+      "label": "Пластина: эскиз прямоугольника + вытяжка",
+      "description": "Рисует прямоугольник на базовой плоскости и вытягивает в пластину (SketchManager/FeatureManager). Размеры в мм, допускают шаблоны {NAME} и переменные психики {V:имя}. Только SLDPRT.",
+      "argsSchema": [
+        {
+          "key": "width",
+          "label": "Ширина, мм",
+          "type": "string",
+          "required": true,
+          "editorHint": "template_placeholder"
+        },
+        {
+          "key": "height",
+          "label": "Высота, мм",
+          "type": "string",
+          "required": true,
+          "editorHint": "template_placeholder"
+        },
+        {
+          "key": "depth",
+          "label": "Толщина, мм",
+          "type": "string",
+          "required": true,
+          "editorHint": "template_placeholder"
+        },
+        {
+          "key": "plane",
+          "label": "Базовая плоскость",
+          "type": "enum",
+          "defaultValue": "front",
+          "values": [
+            { "key": "front", "label": "Спереди (Front)" },
+            { "key": "top", "label": "Сверху (Top)" },
+            { "key": "right", "label": "Справа (Right)" }
+          ]
+        }
+      ]
+    },
+    {
       "id": "run_macro",
       "label": "Выполнить макрос",
       "description": "Запуск макроса SolidWorks через RunMacro2 (VBA .swp или VSTA .dll). Укажите файл, модуль и процедуру (для VBA обычно Module1 / main).",

@@ -44,6 +44,14 @@ namespace Velum.ReactiveCore
     public IReadOnlyDictionary<string, string> TemplateContext { get; }
 
     /// <summary>
+    /// Переменные психики для плейсхолдеров <c>{V:имя}</c> (параметры гомеостаза, активные
+    /// адаптивные действия). Пустой словарь, если ISIDA недоступна. Заполняется в
+    /// <see cref="RecipeExecutor"/> на UI-потоке SolidWorks.
+    /// </summary>
+    public IReadOnlyDictionary<string, string> PsychicVariables { get; internal set; }
+        = new Dictionary<string, string>();
+
+    /// <summary>
     /// Источник активации действия, из-за которого исполняется рецепт
     /// (безусловный рефлекс, условный рефлекс, автоматизм).
     /// </summary>

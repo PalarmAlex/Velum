@@ -79,7 +79,8 @@
         { t: "Логи агента", h: "forms/logs.html" },
         { t: "Метрики среды", h: "forms/environment-metrics.html" },
         { t: "Воздействия оператора", h: "forms/operator-influences.html" },
-        { t: "Буфер команд", h: "forms/sensor-buffer.html" }
+        { t: "Буфер команд", h: "forms/sensor-buffer.html" },
+        { t: "Моторные действия и параметры", h: "forms/motor-handlers.html" }
       ]}
     ];
   }

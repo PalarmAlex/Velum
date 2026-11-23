@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta charset="utf-8" />
+  <title>Моторные действия и параметры — Справка Velum</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="layout">
+    <div id="velum-nav" class="nav" data-base="../"></div>
+    <div class="content">
+      <h1>Моторные действия (handler'ы) и параметры</h1>
+      <p class="lead">Мотор — это действие помощника в SOLIDWORKS. Каждое действие рецепта описывается <strong>handler'ом</strong> (командой исполнения) и его <strong>параметрами</strong>. Здесь перечислены доступные handler'ы, как задаются параметры и как помощник (психика) может сам менять числовые значения мотора через <strong>переменные психики</strong> <code>{V:имя}</code>.</p>
+      <p class="meta">Раздел: <code>motor-handlers</code> · Файл рецептов: <code>%ProgramData%\VELUM\…\EnvironmentRecipes.yaml</code></p>
+
+      <div class="note">
+        Это не обязательное чтение для ежедневной работы. Раздел полезен, если вы настраиваете или обучаете помощника и хотите понять, какие действия он умеет и как задать им размеры/параметры.
+      </div>
+
+      <h2>Как устроен шаг рецепта</h2>
+      <p>Рецепт состоит из шагов. Рабочий шаг имеет вид <code>type: invoke</code> и указывает <code>handler</code> — что делать — и набор параметров этого handler'а (плоские ключи рядом с <code>handler</code>):</p>
+      <pre><code>- type: invoke
+  handler: sketch_extrude_plate
+  width: "100"
+  height: "60"
+  depth: "10"
+  plane: front</code></pre>
+      <p>Служебные поля <code>type</code> и <code>handler</code> зарезервированы; всё остальное — параметры конкретного handler'а. Строковый <code>args</code> в один рядок не поддерживается — параметры задаются отдельными ключами.</p>
+
+      <h2>Доступные handler'ы</h2>
+      <table>
+        <thead><tr><th>Handler</th><th>Что делает</th><th>Ключевые параметры</th></tr></thead>
+        <tbody>
+          <tr><td><code>run_sw_command</code></td><td>Запускает команду SOLIDWORKS по её числовому коду (например, «Сохранить» = 2).</td><td><code>command_id</code> (число, обязателен)</td></tr>
+          <tr><td><code>run_macro</code></td><td>Выполняет макрос SOLIDWORKS (VBA <code>.swp</code> или VSTA <code>.dll</code>).</td><td><code>path</code> (обязателен), <code>module</code>, <code>procedure</code></td></tr>
+          <tr><td><code>rebuild</code></td><td>Перестраивает активную модель (<code>EditRebuild3</code>).</td><td>—</td></tr>
+          <tr><td><code>sketch_extrude_plate</code></td><td>Рисует прямоугольник на базовой плоскости и вытягивает его в пластину (прямые вызовы SketchManager/FeatureManager, не через команду).</td><td><code>width</code>, <code>height</code>, <code>depth</code> (мм), <code>plane</code> (front/top/right)</td></tr>
+          <tr><td><code>set_custom_property</code><br /><code>set_custom_property_if_part</code><br /><code>set_custom_property_if_part_or_assembly</code></td><td>Записывает свойство документа (с вариантами фильтра по типу документа).</td><td><code>name</code>, <code>template</code>, <code>config</code>, <code>overwrite</code>, <code>property_type</code></td></tr>
+          <tr><td><code>save_file_name</code></td><td>Подставляет следующее имя по обученной на «Сохранить» схеме.</td><td>—</td></tr>
+          <tr><td><code>assign_session_material</code></td><td>Назначает выученный материал детали.</td><td>—</td></tr>
+          <tr><td><code>ensure_blank_size_property_links</code></td><td>Чинит живые ссылки свойств заготовки (Толщина/Длина/Ширина) для листовой.</td><td><code>config</code>, <code>overwrite</code></td></tr>
+          <tr><td><code>export_documentation_dialog</code> / <code>export_drawing_pdf_dialog</code> / <code>bom_exchange_show_dialog</code> / <code>product_registry_show_problems</code></td><td>Открывают соответствующий диалог/окно.</td><td>см. <a href="dialog-recipes.html">Диалоговые рецепты</a></td></tr>
+          <tr><td><code>log</code></td><td>Пишет сообщение в лог Velum.</td><td><code>message</code>, <code>level</code></td></tr>
+        </tbody>
+      </table>
+
+      <h2>Команда SOLIDWORKS: почему параметры не через run_sw_command</h2>
+      <div class="warn">
+        <strong>Важно.</strong> <code>run_sw_command</code> запускает команду <em>без параметров</em>. В использованном интерфейсе SOLIDWORKS у метода запуска команды второй аргумент — это имя нового документа (<code>NewTitle</code>), а не набор параметров команды; отдельного «командного» метода с параметрами в нём нет. Поэтому параметрическую геометрию (пластины, отверстия и т.п.) помощник выполняет <strong>прямой последовательностью вызовов</strong> эскиза и операции, а не «командой с параметрами». Для пластины это handler <code>sketch_extrude_plate</code>.
+      </div>
+
+      <h2>Параметры-размеры: единицы и шаблоны</h2>
+      <p>Числовые параметры геометрии задаются в <strong>миллиметрах</strong> (интерфейс SOLIDWORKS внутри работает в метрах — перевод выполняется автоматически). Значение параметра — это <strong>шаблон</strong>, в котором могут встречаться:</p>
+      <ul>
+        <li><strong>число</strong> — например <code>"100"</code> или <code>"12.5"</code> (точка или запятая как разделитель);</li>
+        <li><strong>плейсхолдеры окружения</strong> — <code>{DOCUMENT_PATH}</code>, <code>{FILE_NAME}</code>, <code>{DISCIPLINE}</code>, <code>{SEQ:n}</code>, <code>{FOLDER:n}</code>, имена свойств документа (см. ниже);</li>
+        <li><strong>переменные психики</strong> — <code>{V:имя}</code> (см. следующий раздел).</li>
+      </ul>
+      <p>Плейсхолдеры окружения берут значение из текущего документа и пути к нему. Они пригодны и в текстовых параметрах (например, <code>template</code> у свойств), и в числовых (где после подстановки должно получиться корректное число).</p>
+
+      <h2>Переменные психики <code>{V:имя}</code>: помощник сам меняет параметры</h2>
+      <p>Плейсхолдер <code>{V:имя}</code> — это значение из <strong>реестра параметров мотора</strong> вида «идентификатор : значение», а не из документа и не из витал гомеостаза. Он позволяет одному и тому же мотору подставлять разные числа в зависимости от решения помощника — и менять эти числа <strong>без правки рецепта</strong>.</p>
+      <p>Как это работает:</p>
+      <ol>
+        <li>Рецепт хранит параметр как шаблон с именем переменной: <code>width: "{V:ГабаритX}"</code>.</li>
+        <li><strong>Ментальный автоматизм</strong> (цикл мышления / правило реакции) записывает в реестр пару <c>id → значение</c>: <code>"ГабаритX" → "120"</code>.</li>
+        <li>При запуске мотора Velum берёт снимок реестра и подставляет значения в <code>{V:...}</code> каждого шага.</li>
+      </ol>
+      <p>Так психика управляет <strong>параметрами команд</strong> отдельным, чистым каналом: реестр «id:значение» не смешивается с виталами и стилями гомеостаза (те описывают самочувствие агента, а не размеры детали).</p>
+      <p>Пример: мотор «пластина» с размерами из реестра психики</p>
+      <pre><code>- type: invoke
+  handler: sketch_extrude_plate
+  width: "{V:ГабаритX}"
+  height: "{V:ГабаритY}"
+  depth: "{V:Толщина}"
+  plane: front</code></pre>
+      <p>Меняя значения <code>ГабаритX</code>, <code>ГабаритY</code>, <code>Толщина</code> в реестре, помощник сам подстраивает размеры пластины — текст рецепта при этом не трогается.</p>
+
+      <div class="note">
+        <strong>Статус.</strong> Запись в реестр из ментальных автоматизмов ISIDA — <strong>следующий шаг</strong>: сейчас реестр доступен из Velum (чтение/снимок для моторов), но движок ещё не пишет в него (нет готового API ментального действия с параметром). Пока реестр пуст, переменная не находится, токен <code>{V:…}</code> остаётся неразрешённым. Для числовых параметров это ошибка шага (<code>unresolved_token</code>) — мотор не выполняет действие с мусорным значением. Поэтому в демонстрационном рецепте размеры заданы числами, а <code>{V:…}</code> подключают, когда ментальные автоматизмы начнут писать в реестр.
+      </div>
+
+      <h2>Защита от задвоения команды оператора</h2>
+      <p>Если мотор запущен тем же нажатием команды в SOLIDWORKS (например, вы сами нажали «Сохранить»), шаг <code>run_sw_command</code> с этим же кодом команды <strong>пропускается</strong> — иначе действие выполнилось бы дважды. Сравнение идёт <strong>только по числовому коду команды</strong>; параметры (для геометрии) на это не влияют.</p>
+
+      <div class="seealso">
+        <h2>См. также</h2>
+        <ul>
+          <li><a href="dialog-recipes.html">Диалоговые рецепты и моторные исходы</a></li>
+          <li><a href="../shared/automatisms.html">Автоматизмы</a> — как помощник выучивает мотор</li>
+          <li><a href="environment-metrics.html">Метрики среды</a> — что давит на параметры гомеостаза</li>
+          <li><a href="operator-influences.html">Воздействия оператора</a> — ручной канал изменения состояния</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <script src="../shared/nav.js"></script>
+</body>
+</html>

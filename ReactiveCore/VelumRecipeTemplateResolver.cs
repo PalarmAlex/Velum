@@ -104,6 +104,27 @@ namespace Velum.ReactiveCore
     }
 
     /// <summary>
+    /// Разрешает шаблон с подстановкой плейсхолдеров окружения <c>{NAME}</c> и переменных
+    /// психики <c>{V:имя}</c>. Окружение берётся из <paramref name="context"/>, переменные —
+    /// из <paramref name="psychicVariables"/> (см. <see cref="VelumRecipeVariableResolver"/>).
+    /// </summary>
+    /// <param name="template">Исходный шаблон.</param>
+    /// <param name="context">Контекст подстановки окружения.</param>
+    /// <param name="psychicVariables">Переменные психики для <c>{V:имя}</c> (может быть <c>null</c>).</param>
+    /// <returns>Строка с подставленными значениями.</returns>
+    public static string Resolve(
+        string template,
+        IReadOnlyDictionary<string, string> context,
+        IReadOnlyDictionary<string, string> psychicVariables)
+    {
+      string resolved = Resolve(template, context);
+      if (string.IsNullOrEmpty(resolved) || !VelumRecipeVariableResolver.ContainsVariableTokens(resolved))
+        return resolved;
+
+      return VelumRecipeVariableResolver.Resolve(resolved, psychicVariables);
+    }
+
+    /// <summary>
     /// Разрешает шаблон с подстановкой плейсхолдеров.
     /// </summary>
     /// <param name="template">Исходный шаблон.</param>

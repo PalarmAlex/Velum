@@ -24,6 +24,7 @@ namespace Velum.ReactiveCore
       Register("run_sw_command", ExecuteRunSwCommand);
       Register("run_macro", ExecuteRunMacro);
       Register("rebuild", ExecuteRebuild);
+      Register(RecipeExecutorHandlersGeometry.ExtrudePlateHandlerId, ExecuteSketchExtrudePlate);
       Register("log", ExecuteLog);
       Register("set_custom_property_if_part", ExecuteSetCustomPropertyIfPart);
       Register("set_custom_property_if_part_or_assembly", ExecuteSetCustomPropertyIfPartOrAssembly);
@@ -160,6 +161,20 @@ namespace Velum.ReactiveCore
           context.StepIndex,
           args,
           context.Sw,
+          out result);
+    }
+
+    private static bool ExecuteSketchExtrudePlate(
+        RecipeStepExecutionContext context,
+        IReadOnlyDictionary<string, string> args,
+        out RecipeStepExecutionResult result)
+    {
+      return RecipeExecutorHandlersGeometry.TryExecuteExtrudePlate(
+          context.StepIndex,
+          args,
+          context.ModelDoc,
+          context.TemplateContext,
+          context.PsychicVariables,
           out result);
     }
 

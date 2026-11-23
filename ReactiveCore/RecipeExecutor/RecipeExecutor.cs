@@ -165,6 +165,11 @@ namespace Velum.ReactiveCore
             IReadOnlyDictionary<string, string> templateContext =
                 VelumRecipeTemplateResolver.BuildContext(executedSnapshot, modelDoc);
 
+            // Переменные психики {V:имя}: снимок реестра motor-параметров (id→value),
+            // который пишут ментальные автоматизмы; собирается один раз на проход рецепта,
+            // чтобы все шаги видели согласованные значения.
+            IReadOnlyDictionary<string, string> psychicVariables = VelumRecipeMotorParameters.Snapshot();
+
             IReadOnlyList<RecipeStepDefinition> steps = recipe.Steps;
             for (int i = 0; i < steps.Count; i++)
             {
@@ -183,7 +188,8 @@ namespace Velum.ReactiveCore
                   templateContext,
                   activationSource)
               {
-                CommandPatternId = commandPatternId
+                CommandPatternId = commandPatternId,
+                PsychicVariables = psychicVariables
               };
 
               if (!TryExecuteStep(step, context, out RecipeStepExecutionResult stepResult))

@@ -105,6 +105,7 @@
     <Compile Include="ReactiveCore\RecipeExecutor\RecipeExecutorHandlersBlankSize.cs" />
     <Compile Include="ReactiveCore\RecipeExecutor\RecipeExecutorHandlersRegistry.cs" />
     <Compile Include="ReactiveCore\RecipeExecutor\RecipeExecutorHandlersBomExport.cs" />
+    <Compile Include="ReactiveCore\RecipeExecutor\RecipeExecutorHandlersGeometry.cs" />
     <Compile Include="ReactiveCore\Export\VelumDxfProjectionView.cs" />
     <Compile Include="ReactiveCore\Export\VelumSolidSheetMetalHelper.cs" />
     <Compile Include="ReactiveCore\Export\VelumDxfPartGeometryHelper.cs" />
@@ -164,6 +165,9 @@
     <Compile Include="ReactiveCore\VelumEnginePulseBridge.cs" />
     <Compile Include="ReactiveCore\VelumRecipeSeqAllocator.cs" />
     <Compile Include="ReactiveCore\VelumRecipeTemplateResolver.cs" />
+    <Compile Include="ReactiveCore\VelumRecipeVariableResolver.cs" />
+    <Compile Include="ReactiveCore\VelumRecipeGeometryRules.cs" />
+    <Compile Include="ReactiveCore\VelumRecipeMotorParameters.cs" />
     <Compile Include="ReactiveCore\VelumRecipeSolidWorksCustomProperties.cs" />
     <Compile Include="ReactiveCore\VelumSolidCustomPropertyTypes.cs" />
     <Compile Include="ReactiveCore\VelumDocumentPropertyTypeDisplayRules.cs" />
