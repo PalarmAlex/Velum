@@ -1189,27 +1189,26 @@ namespace Velum.UI.ProductRegistry
     private static void VerifyWrittenTempFile(string tempPath, string expectedJson)
     {
       ReadTextResult verify = VelumPathExists.ReadAllTextWithStatus(tempPath);
-      bool isEmpty = !verify.Success || string.IsNullOrWhiteSpace(verify.Content);
-      bool matches = !isEmpty
-          && string.Equals(verify.Content, expectedJson, StringComparison.Ordinal);
 
-      // Десериализация как страховка от «валидной длины, но битого содержимого».
-      bool parses = false;
-      if (matches)
-      {
-        try
-        {
-          JsonConvert.DeserializeObject(verify.Content, JsonSettings);
-          parses = true;
-        }
-        catch
-        {
-          parses = false;
-        }
-      }
-
-      if (!VelumReadTextOutcomeRules.ShouldReplaceWithTemp(
-              verify.Outcome, isEmpty, matches, parses))
+      // Вычисление признаков целостности (isEmpty/matches/parses) и вердикт замены
+      // вынесены в чистое правило, чтобы фолт-инъекция «сбой сети усёк .tmp»
+      // покрывалась регресс-тестом без реального IO (случай 53, канал 2).
+      if (!VelumReadTextOutcomeRules.IsTempContentIntact(
+              verify.Outcome,
+              expectedJson,
+              verify.Content,
+              content =>
+              {
+                try
+                {
+                  JsonConvert.DeserializeObject(content, JsonSettings);
+                  return true;
+                }
+                catch
+                {
+                  return false;
+                }
+              }))
       {
         throw new IOException(
             "Временный файл реестра записан неполностью или повреждён (сбой сети): " +

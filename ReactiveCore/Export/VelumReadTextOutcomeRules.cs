@@ -108,5 +108,38 @@ namespace Velum.ReactiveCore.Export
           && contentMatchesWritten
           && contentParses;
     }
+
+    /// <summary>
+    /// Фолт-инъекционный гейт канала записи (CASEBOOK-2 случай 53): по фактическим
+    /// строкам «что записали» (<paramref name="writtenContent"/>) и «что перечиталось
+    /// из .tmp» (<paramref name="rereadContent"/>) вычисляет те же три признака
+    /// целостности, что инлайнил <c>VerifyWrittenTempFile</c>, и возвращает вердикт
+    /// замены. Позволяет в тесте воспроизвести «<c>WriteAllText</c> вернул успех, но на
+    /// оборванной шаре .tmp усечён/пуст» без реального IO: достаточно подать
+    /// reread-строку короче written. Логика вычислена идентично исходному inline-коду
+    /// (isEmpty ⟹ matches=false ⟹ parses=false).
+    /// </summary>
+    /// <param name="readOutcome">Исход перечитывания временного файла.</param>
+    /// <param name="writtenContent">Точное содержимое, которое записывали в .tmp.</param>
+    /// <param name="rereadContent">Содержимое, реально перечитанное из .tmp (может быть усечено).</param>
+    /// <param name="contentParses">Делегат проверки разбора содержимого (десериализация); null = не проверять.</param>
+    /// <returns>true, если живой файл можно заменить этим временным.</returns>
+    internal static bool IsTempContentIntact(
+        ReadTextOutcome readOutcome,
+        string writtenContent,
+        string rereadContent,
+        Func<string, bool> contentParses)
+    {
+      bool isEmpty = readOutcome != ReadTextOutcome.Success
+          || string.IsNullOrWhiteSpace(rereadContent);
+      bool matches = !isEmpty
+          && string.Equals(rereadContent, writtenContent, StringComparison.Ordinal);
+      bool parses = !isEmpty
+          && matches
+          && contentParses != null
+          && contentParses(rereadContent);
+
+      return ShouldReplaceWithTemp(readOutcome, isEmpty, matches, parses);
+    }
   }
 }

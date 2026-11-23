@@ -110,5 +110,62 @@ namespace Velum.ReactiveCore.Tests
       Assert.False(VelumReadTextOutcomeRules.ShouldReplaceWithTemp(
           (ReadTextOutcome)outcome, contentIsEmpty, contentMatchesWritten, contentParses));
     }
+
+    // --- Фолт-инъекция канала записи (случай 53, раздел 4.3 REVISION) ---
+    // Имитация: WriteAllText вернул успех, но на оборванной шаре .tmp перечитался
+    // усечённым/пустым — IsTempContentIntact обязан отказать в подмене живого файла.
+    private const string FullJson = "{\"NextId\":3,\"Folders\":[{\"Id\":1,\"Name\":\"Изделия\"}]}";
+    private static bool AlwaysParses(string _) => true;
+
+    [Fact]
+    public void IsTempContentIntact_FullReread_True()
+    {
+      // Норма: перечиталось ровно то, что записали, и разбирается.
+      Assert.True(VelumReadTextOutcomeRules.IsTempContentIntact(
+          ReadTextOutcome.Success, FullJson, FullJson, AlwaysParses));
+    }
+
+    [Fact]
+    public void IsTempContentIntact_TruncatedTmp_False()
+    {
+      // Сбой сети: .tmp усечён (запись вернула success, сброс кэша обрезал файл).
+      string truncated = FullJson.Substring(0, FullJson.Length / 2);
+      Assert.False(VelumReadTextOutcomeRules.IsTempContentIntact(
+          ReadTextOutcome.Success, FullJson, truncated, AlwaysParses));
+    }
+
+    [Fact]
+    public void IsTempContentIntact_EmptyTmp_False()
+    {
+      // Сбой сети: .tmp перечитался пустым.
+      Assert.False(VelumReadTextOutcomeRules.IsTempContentIntact(
+          ReadTextOutcome.Success, FullJson, "", AlwaysParses));
+      Assert.False(VelumReadTextOutcomeRules.IsTempContentIntact(
+          ReadTextOutcome.Success, FullJson, "   ", AlwaysParses));
+    }
+
+    [Fact]
+    public void IsTempContentIntact_RereadFailed_False()
+    {
+      // .tmp вообще не перечитался (обрыв до чтения) — Outcome.Failed.
+      Assert.False(VelumReadTextOutcomeRules.IsTempContentIntact(
+          ReadTextOutcome.Failed, FullJson, null, AlwaysParses));
+    }
+
+    [Fact]
+    public void IsTempContentIntact_RereadMissing_False()
+    {
+      // .tmp исчез между записью и проверкой.
+      Assert.False(VelumReadTextOutcomeRules.IsTempContentIntact(
+          ReadTextOutcome.FileMissing, FullJson, null, AlwaysParses));
+    }
+
+    [Fact]
+    public void IsTempContentIntact_ValidLengthButBrokenJson_False()
+    {
+      // Страховка от «валидной длины, но битого содержимого»: совпадает, но не парсится.
+      Assert.False(VelumReadTextOutcomeRules.IsTempContentIntact(
+          ReadTextOutcome.Success, FullJson, FullJson, _ => false));
+    }
   }
 }
