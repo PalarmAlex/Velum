@@ -1,3 +1,4 @@
+using System;
 using Velum.ReactiveCore;
 using Xunit;
 
@@ -97,6 +98,62 @@ namespace Velum.ReactiveCore.Tests
     public void ContainsUnresolvedToken_DetectsPlaceholders(string value, bool expected)
     {
       Assert.Equal(expected, VelumRecipeGeometryRules.ContainsUnresolvedToken(value));
+    }
+
+    #endregion
+
+    #region TryInscribedDiameterToCircumRadius (многоугольник «под ключ»)
+
+    [Theory]
+    [InlineData(100, 6, 57.735026918962576)] // гексагон: 50 / cos(30°)
+    [InlineData(100, 3, 100.0)]               // треугольник: 50 / cos(60°) = 100
+    [InlineData(100, 4, 70.710678118654752)] // квадрат: 50 / cos(45°)
+    [InlineData(80, 6, 46.188021535170061)]  // масштаб: 40 / cos(30°)
+    public void TryInscribedDiameterToCircumRadius_KnownPolygons_ReturnsCircumRadius(
+        double inscribedDiameterMm, int sides, double expectedCircumMm)
+    {
+      Assert.True(VelumRecipeGeometryRules.TryInscribedDiameterToCircumRadius(
+          inscribedDiameterMm, sides, out double circumMm, out string error));
+      Assert.True(string.IsNullOrEmpty(error));
+      Assert.Equal(expectedCircumMm, circumMm, 9);
+    }
+
+    [Theory]
+    [InlineData(100, 3)]
+    [InlineData(100, 6)]
+    [InlineData(100, 8)]
+    [InlineData(37.5, 5)]
+    public void TryInscribedDiameterToCircumRadius_Invariant_ApothemEqualsHalfDiameter(
+        double inscribedDiameterMm, int sides)
+    {
+      // Регрессия на исходный баг: раньше вписанная Ø выходила diameter·cos(π/sides) (86.6 вместо 100).
+      // Инвариант: circumRadius·cos(π/sides) == inscribedDiameter/2 (апофема = радиус вписанной).
+      Assert.True(VelumRecipeGeometryRules.TryInscribedDiameterToCircumRadius(
+          inscribedDiameterMm, sides, out double circumMm, out _));
+
+      double apothem = circumMm * Math.Cos(Math.PI / sides);
+      Assert.Equal(inscribedDiameterMm / 2.0, apothem, 9);
+    }
+
+    [Theory]
+    [InlineData(0, 6)]
+    [InlineData(-10, 6)]
+    public void TryInscribedDiameterToCircumRadius_NonPositiveDiameter_Fails(double diameter, int sides)
+    {
+      Assert.False(VelumRecipeGeometryRules.TryInscribedDiameterToCircumRadius(
+          diameter, sides, out _, out string error));
+      Assert.StartsWith("non_positive_diameter:", error);
+    }
+
+    [Theory]
+    [InlineData(100, 2)]
+    [InlineData(100, 0)]
+    [InlineData(100, -3)]
+    public void TryInscribedDiameterToCircumRadius_TooFewSides_Fails(double diameter, int sides)
+    {
+      Assert.False(VelumRecipeGeometryRules.TryInscribedDiameterToCircumRadius(
+          diameter, sides, out _, out string error));
+      Assert.StartsWith("sides_min_3:", error);
     }
 
     #endregion

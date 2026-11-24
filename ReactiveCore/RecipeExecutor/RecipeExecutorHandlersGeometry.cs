@@ -24,6 +24,18 @@ namespace Velum.ReactiveCore
     /// <summary>Идентификатор handler'а рисования линии.</summary>
     public const string SketchLineHandlerId = "sketch_line";
 
+    /// <summary>Идентификатор handler'а «прямоугольник из центра».</summary>
+    public const string CenteredRectangleHandlerId = "sketch_centered_rectangle";
+
+    /// <summary>Идентификатор handler'а «окружность».</summary>
+    public const string CircleHandlerId = "sketch_circle";
+
+    /// <summary>Идентификатор handler'а «правильный многоугольник».</summary>
+    public const string PolygonHandlerId = "sketch_polygon";
+
+    /// <summary>Идентификатор handler'а «многоугольник по вписанной окружности».</summary>
+    public const string PolygonInscribedHandlerId = "sketch_polygon_inscribed";
+
     private const string SelectTypePlane = "PLANE"; // Тип выбора SelectByID2 для базовой плоскости.
     private const string RefPlaneTypeName = "RefPlane"; // GetTypeName2() базовой плоскости (не локализуется).
 
@@ -90,6 +102,8 @@ namespace Velum.ReactiveCore
           sketchMgr.InsertSketch(true);
           return Fail(index, "create_rectangle_failed", out result);
         }
+
+        TryFullyDefineSketch(modelDoc); // Полностью определить эскиз (проставить размеры) до выхода.
 
         sketchMgr.InsertSketch(true); // Выход из эскиза.
 
@@ -243,7 +257,12 @@ namespace Velum.ReactiveCore
         }
 
         if (!alreadyInSketch)
+        {
+          // Полностью определить эскиз только когда создали свой; в чужой активный эскиз
+          // (alreadyInSketch) не лезем — там пользователь рисует сам.
+          TryFullyDefineSketch(modelDoc);
           sketchMgr.InsertSketch(true); // Выход из созданного эскиза.
+        }
 
         string summary =
             "mode=" + (alreadyInSketch ? "append" : "new_sketch") +
@@ -268,6 +287,373 @@ namespace Velum.ReactiveCore
         Logger.Warning("Velum Recipe sketch_line FAIL: " + ex.Message);
         return false;
       }
+    }
+
+    /// <summary>
+    /// Исполняет шаг <c>sketch_centered_rectangle</c>: рисует прямоугольник с центром в
+    /// (<c>cx</c>,<c>cy</c>) и габаритом <c>width</c>×<c>height</c> (мм, шаблоны <c>{NAME}</c>/
+    /// <c>{V:имя}</c>). Прямоугольник строится через <c>CreateCenterRectangle</c>. Эскиз создаётся
+    /// на плоскости <c>plane</c> (по умолчанию front), если ещё не открыт; в уже открытом эскизе
+    /// оператора фигура дорисовывается без создания/закрытия эскиза. Перед закрытием созданного
+    /// эскиза он полностью определяется (проставляются размеры). Только SLDPRT.
+    /// </summary>
+    public static bool TryExecuteCenteredRectangle(
+        int index,
+        IReadOnlyDictionary<string, string> args,
+        ModelDoc2 modelDoc,
+        IReadOnlyDictionary<string, string> templateContext,
+        IReadOnlyDictionary<string, string> psychicVariables,
+        out RecipeStepExecutionResult result)
+    {
+      if (!TryResolveDimension(args, "width", templateContext, psychicVariables, out double widthM, out string widthErr))
+        return FailSketch(index, CenteredRectangleHandlerId, "width:" + widthErr, out result);
+      if (!TryResolveDimension(args, "height", templateContext, psychicVariables, out double heightM, out string heightErr))
+        return FailSketch(index, CenteredRectangleHandlerId, "height:" + heightErr, out result);
+      if (!TryResolveCoordinate(args, "cx", 0, templateContext, psychicVariables, out double cxM, out string cxErr))
+        return FailSketch(index, CenteredRectangleHandlerId, "cx:" + cxErr, out result);
+      if (!TryResolveCoordinate(args, "cy", 0, templateContext, psychicVariables, out double cyM, out string cyErr))
+        return FailSketch(index, CenteredRectangleHandlerId, "cy:" + cyErr, out result);
+
+      double halfW = widthM / 2.0;
+      double halfH = heightM / 2.0;
+
+      return RunSketchPrimitive(index, CenteredRectangleHandlerId, args, modelDoc, templateContext, psychicVariables,
+          (ISketchManager ism, out string summary) =>
+          {
+            // CreateCenterRectangle: центр (cx,cy,0) и точка угла (cx+½W, cy+½H, 0), метры.
+            object rect = ism.CreateCenterRectangle(cxM, cyM, 0, cxM + halfW, cyM + halfH, 0);
+            if (rect == null)
+            {
+              summary = null;
+              return "create_centered_rectangle_failed";
+            }
+
+            summary = "width_mm=" + ToStr(widthM / VelumRecipeGeometryRules.MillimetersToMeters) +
+                " height_mm=" + ToStr(heightM / VelumRecipeGeometryRules.MillimetersToMeters) +
+                " cx_mm=" + ToStr(cxM / VelumRecipeGeometryRules.MillimetersToMeters) +
+                " cy_mm=" + ToStr(cyM / VelumRecipeGeometryRules.MillimetersToMeters);
+            return null;
+          },
+          out result);
+    }
+
+    /// <summary>
+    /// Исполняет шаг <c>sketch_circle</c>: рисует окружность с центром (<c>cx</c>,<c>cy</c>) и
+    /// диаметром <c>diameter</c> (мм, шаблоны <c>{NAME}</c>/<c>{V:имя}</c>) через
+    /// <c>CreateCircle</c> (центр + точка на окружности). Эскиз создаётся на плоскости
+    /// <c>plane</c> (по умолчанию front), если ещё не открыт; в уже открытом эскизе оператора
+    /// окружность дорисовывается без создания/закрытия эскиза. Перед закрытием созданного эскиза
+    /// он полностью определяется. Только SLDPRT.
+    /// </summary>
+    public static bool TryExecuteCircle(
+        int index,
+        IReadOnlyDictionary<string, string> args,
+        ModelDoc2 modelDoc,
+        IReadOnlyDictionary<string, string> templateContext,
+        IReadOnlyDictionary<string, string> psychicVariables,
+        out RecipeStepExecutionResult result)
+    {
+      if (!TryResolveDimension(args, "diameter", templateContext, psychicVariables, out double diameterM, out string diaErr))
+        return FailSketch(index, CircleHandlerId, "diameter:" + diaErr, out result);
+      if (!TryResolveCoordinate(args, "cx", 0, templateContext, psychicVariables, out double cxM, out string cxErr))
+        return FailSketch(index, CircleHandlerId, "cx:" + cxErr, out result);
+      if (!TryResolveCoordinate(args, "cy", 0, templateContext, psychicVariables, out double cyM, out string cyErr))
+        return FailSketch(index, CircleHandlerId, "cy:" + cyErr, out result);
+
+      double radiusM = diameterM / 2.0;
+
+      return RunSketchPrimitive(index, CircleHandlerId, args, modelDoc, templateContext, psychicVariables,
+          (ISketchManager ism, out string summary) =>
+          {
+            // CreateCircle: центр (cx,cy,0) и точка на окружности (cx+R, cy, 0), метры.
+            object circle = ism.CreateCircle(cxM, cyM, 0, cxM + radiusM, cyM, 0);
+            if (circle == null)
+            {
+              summary = null;
+              return "create_circle_failed";
+            }
+
+            summary = "diameter_mm=" + ToStr(diameterM / VelumRecipeGeometryRules.MillimetersToMeters) +
+                " cx_mm=" + ToStr(cxM / VelumRecipeGeometryRules.MillimetersToMeters) +
+                " cy_mm=" + ToStr(cyM / VelumRecipeGeometryRules.MillimetersToMeters);
+            return null;
+          },
+          out result);
+    }
+
+    /// <summary>
+    /// Исполняет шаг <c>sketch_polygon</c>: рисует правильный многоугольник с центром
+    /// (<c>cx</c>,<c>cy</c>), числом сторон <c>sides</c> и <b>вписанной</b> окружностью диаметра
+    /// <c>diameter</c> (мм, шаблоны <c>{NAME}</c>/<c>{V:имя}</c>) через <c>CreatePolygon</c>.
+    /// Флаг <c>inscribed=false</c> (многоугольник описан вокруг окружности) — тогда опорная точка
+    /// задаёт апофему = радиус вписанной окружности, поэтому заданный <c>diameter</c> совпадает с
+    /// диаметром вписанной окружности. Эскиз создаётся на плоскости <c>plane</c> (по умолчанию
+    /// front), если ещё не открыт; в уже открытом эскизе оператора фигура дорисовывается без
+    /// создания/закрытия эскиза. Перед закрытием созданного эскиза он полностью определяется.
+    /// Только SLDPRT.
+    /// </summary>
+    public static bool TryExecutePolygon(
+        int index,
+        IReadOnlyDictionary<string, string> args,
+        ModelDoc2 modelDoc,
+        IReadOnlyDictionary<string, string> templateContext,
+        IReadOnlyDictionary<string, string> psychicVariables,
+        out RecipeStepExecutionResult result)
+    {
+      if (!TryResolveInt(args, "sides", templateContext, psychicVariables, out int sides, out string sidesErr))
+        return FailSketch(index, PolygonHandlerId, "sides:" + sidesErr, out result);
+      if (sides < 3)
+        return FailSketch(index, PolygonHandlerId, "sides_min_3:" + sides, out result);
+      if (!TryResolveDimension(args, "diameter", templateContext, psychicVariables, out double diameterM, out string diaErr))
+        return FailSketch(index, PolygonHandlerId, "diameter:" + diaErr, out result);
+      if (!TryResolveCoordinate(args, "cx", 0, templateContext, psychicVariables, out double cxM, out string cxErr))
+        return FailSketch(index, PolygonHandlerId, "cx:" + cxErr, out result);
+      if (!TryResolveCoordinate(args, "cy", 0, templateContext, psychicVariables, out double cyM, out string cyErr))
+        return FailSketch(index, PolygonHandlerId, "cy:" + cyErr, out result);
+
+      // Вписанная окружность Ø=diameter: радиус (апофема) = diameter/2. Опорная точка задаёт
+      // апофему (середину стороны) при inscribed=false — иначе (inscribed=true) точка трактуется
+      // как вершина (радиус описанной окружности) и вписанная Ø выходит diameter·cos(π/sides)
+      // (для гексагона 100 → 86.60).
+      double apothemM = diameterM / 2.0;
+
+      return RunSketchPrimitive(index, PolygonHandlerId, args, modelDoc, templateContext, psychicVariables,
+          (ISketchManager ism, out string summary) =>
+          {
+            // CreatePolygon: центр, опорная точка на середине стороны (апофема), число сторон,
+            // inscribed=false (полигон описан вокруг вписанной окружности заданного диаметра).
+            object poly = ism.CreatePolygon(cxM, cyM, 0, cxM + apothemM, cyM, 0, sides, false);
+            if (poly == null)
+            {
+              summary = null;
+              return "create_polygon_failed";
+            }
+
+            summary = "sides=" + sides +
+                " diameter_mm=" + ToStr(diameterM / VelumRecipeGeometryRules.MillimetersToMeters) +
+                " cx_mm=" + ToStr(cxM / VelumRecipeGeometryRules.MillimetersToMeters) +
+                " cy_mm=" + ToStr(cyM / VelumRecipeGeometryRules.MillimetersToMeters);
+            return null;
+          },
+          out result);
+    }
+
+    /// <summary>
+    /// Исполняет шаг <c>sketch_polygon_inscribed</c>: рисует правильный многоугольник с центром
+    /// (<c>cx</c>,<c>cy</c>), числом сторон <c>sides</c> и <b>вписанной</b> окружностью диаметра
+    /// <c>diameter</c> (стороны касаются окружности Ø=diameter). В отличие от <c>sketch_polygon</c>
+    /// (где <c>diameter</c> — описанная окружность через вершины), здесь опорная точка отодвигается
+    /// на радиус описанной окружности <c>(diameter/2)/cos(π/sides)</c>, чтобы апофема (расстояние
+    /// центр→середина стороны) стала ровно <c>diameter/2</c>. Чистая математика — в
+    /// <see cref="VelumRecipeGeometryRules.TryInscribedDiameterToCircumRadius"/>. Эскиз создаётся на
+    /// плоскости <c>plane</c> (по умолчанию front), если ещё не открыт; в уже открытом эскизе
+    /// фигура дорисовывается без создания/закрытия. Перед закрытием — полное определение размеров.
+    /// Только SLDPRT.
+    /// </summary>
+    public static bool TryExecutePolygonInscribed(
+        int index,
+        IReadOnlyDictionary<string, string> args,
+        ModelDoc2 modelDoc,
+        IReadOnlyDictionary<string, string> templateContext,
+        IReadOnlyDictionary<string, string> psychicVariables,
+        out RecipeStepExecutionResult result)
+    {
+      if (!TryResolveInt(args, "sides", templateContext, psychicVariables, out int sides, out string sidesErr))
+        return FailSketch(index, PolygonInscribedHandlerId, "sides:" + sidesErr, out result);
+      if (sides < 3)
+        return FailSketch(index, PolygonInscribedHandlerId, "sides_min_3:" + sides, out result);
+      if (!TryResolveDimension(args, "diameter", templateContext, psychicVariables, out double diameterM, out string diaErr))
+        return FailSketch(index, PolygonInscribedHandlerId, "diameter:" + diaErr, out result);
+      if (!TryResolveCoordinate(args, "cx", 0, templateContext, psychicVariables, out double cxM, out string cxErr))
+        return FailSketch(index, PolygonInscribedHandlerId, "cx:" + cxErr, out result);
+      if (!TryResolveCoordinate(args, "cy", 0, templateContext, psychicVariables, out double cyM, out string cyErr))
+        return FailSketch(index, PolygonInscribedHandlerId, "cy:" + cyErr, out result);
+
+      double diameterMm = diameterM / VelumRecipeGeometryRules.MillimetersToMeters;
+      if (!VelumRecipeGeometryRules.TryInscribedDiameterToCircumRadius(diameterMm, sides, out double circumRadiusMm, out string geoErr))
+        return FailSketch(index, PolygonInscribedHandlerId, "geometry:" + geoErr, out result);
+
+      // Опорная точка на расстоянии радиуса описанной окружности (вершина) — тогда вписанная Ø=diameter.
+      double circumRadiusM = circumRadiusMm * VelumRecipeGeometryRules.MillimetersToMeters;
+
+      return RunSketchPrimitive(index, PolygonInscribedHandlerId, args, modelDoc, templateContext, psychicVariables,
+          (ISketchManager ism, out string summary) =>
+          {
+            object poly = ism.CreatePolygon(cxM, cyM, 0, cxM + circumRadiusM, cyM, 0, sides, true);
+            if (poly == null)
+            {
+              summary = null;
+              return "create_polygon_inscribed_failed";
+            }
+
+            summary = "sides=" + sides +
+                " inscribed_diameter_mm=" + ToStr(diameterMm) +
+                " circum_radius_mm=" + ToStr(circumRadiusMm) +
+                " cx_mm=" + ToStr(cxM / VelumRecipeGeometryRules.MillimetersToMeters) +
+                " cy_mm=" + ToStr(cyM / VelumRecipeGeometryRules.MillimetersToMeters);
+            return null;
+          },
+          out result);
+    }
+
+    /// <summary>
+    /// Общий каркас примитива эскиза: проверяет часть, определяет режим (дорисовать в открытом
+    /// эскизе оператора или создать новый на плоскости <c>plane</c>), вызывает
+    /// <paramref name="draw"/>, а для созданного эскиза — полностью определяет его и закрывает.
+    /// В открытом чужом эскизе определение/закрытие НЕ выполняются (пользователь рисует сам).
+    /// </summary>
+    /// <param name="index">Индекс шага в рецепте.</param>
+    /// <param name="handlerLabel">Id handler'а (для логов).</param>
+    /// <param name="args">Параметры шага.</param>
+    /// <param name="modelDoc">Активный документ.</param>
+    /// <param name="templateContext">Контекст окружения для шаблонов.</param>
+    /// <param name="psychicVariables">Переменные психики для <c>{V:...}</c>.</param>
+    /// <param name="draw">Рисование примитива; возвращает текст ошибки или <c>null</c> при успехе,
+    /// в <c>summary</c> — строку параметров для лога.</param>
+    /// <param name="result">Результат шага.</param>
+    /// <returns><c>true</c>, если шаг обработан без исключения (в т.ч. пропущен).</returns>
+    private static bool RunSketchPrimitive(
+        int index,
+        string handlerLabel,
+        IReadOnlyDictionary<string, string> args,
+        ModelDoc2 modelDoc,
+        IReadOnlyDictionary<string, string> templateContext,
+        IReadOnlyDictionary<string, string> psychicVariables,
+        SketchDrawAction draw,
+        out RecipeStepExecutionResult result)
+    {
+      result = null;
+
+      if (modelDoc == null)
+      {
+        result = new RecipeStepExecutionResult(index, "invoke", false, false, "model_doc_null");
+        return false;
+      }
+
+      if (!(modelDoc is PartDoc))
+      {
+        result = new RecipeStepExecutionResult(index, "invoke", true, true, "skipped_not_part");
+        Logger.Info("Velum Recipe " + handlerLabel + " skipped (not a part)");
+        return true;
+      }
+
+      SketchManager sketchMgr = modelDoc.SketchManager;
+      if (sketchMgr == null)
+        return FailSketch(index, handlerLabel, "sketch_manager_null", out result);
+
+      ISketchManager ism = sketchMgr as ISketchManager;
+      if (ism == null)
+        return FailSketch(index, handlerLabel, "sketch_manager_not_isketchmanager", out result);
+
+      bool alreadyInSketch = DetectInSketch(modelDoc, sketchMgr);
+
+      string planeName = null;
+      if (!alreadyInSketch)
+      {
+        string plane = (RecipeArgsParser.Get(args, "plane") ?? string.Empty).Trim().ToLowerInvariant();
+        if (string.IsNullOrEmpty(plane))
+          plane = "front";
+        if (!TryResolvePlane(modelDoc, plane, out planeName, out string planeErr))
+          return FailSketch(index, handlerLabel, "plane:" + planeErr, out result);
+
+        bool selected = modelDoc.Extension.SelectByID2(
+            planeName, SelectTypePlane, 0, 0, 0, false, 0, null, 0);
+        if (!selected)
+          return FailSketch(index, handlerLabel, "plane_select_failed:" + planeName, out result);
+
+        sketchMgr.InsertSketch(true); // Вход в эскиз.
+        modelDoc.ClearSelection2(true); // Снять выделение — иначе Create* вернёт null (как в sketch_line).
+      }
+
+      try
+      {
+        string drawErr = draw(ism, out string drawSummary);
+        if (drawErr != null)
+        {
+          if (!alreadyInSketch)
+            sketchMgr.InsertSketch(true); // Закрыть созданный эскиз при неудаче.
+          return FailSketch(index, handlerLabel, drawErr, out result);
+        }
+
+        if (!alreadyInSketch)
+        {
+          TryFullyDefineSketch(modelDoc); // Определяем только свой эскиз.
+          sketchMgr.InsertSketch(true);   // Выход из созданного эскиза.
+          modelDoc.EditRebuild3();
+        }
+
+        string summary = "mode=" + (alreadyInSketch ? "append" : "new_sketch") +
+            (planeName != null ? " plane=" + planeName : string.Empty) +
+            (string.IsNullOrEmpty(drawSummary) ? string.Empty : " " + drawSummary);
+        result = new RecipeStepExecutionResult(index, "invoke", true, false, summary);
+        Logger.Info("Velum Recipe " + handlerLabel + " OK " + summary);
+        return true;
+      }
+      catch (Exception ex)
+      {
+        if (!alreadyInSketch)
+        {
+          try { sketchMgr.InsertSketch(true); }
+          catch { }
+        }
+        result = new RecipeStepExecutionResult(index, "invoke", false, false, ex.Message);
+        Logger.Warning("Velum Recipe " + handlerLabel + " FAIL: " + ex.Message);
+        return false;
+      }
+    }
+
+    /// <summary>Делегат рисования примитива в открытом эскизе (возвращает ошибку или <c>null</c>).</summary>
+    /// <param name="ism">Интерфейс <c>ISketchManager</c> активного эскиза.</param>
+    /// <param name="summary">Строка параметров для лога (при успехе).</param>
+    /// <returns>Текст ошибки или <c>null</c>, если нарисовано.</returns>
+    private delegate string SketchDrawAction(ISketchManager ism, out string summary);
+
+    /// <summary>
+    /// Резолвит целочисленный параметр (например число сторон), допуская шаблоны <c>{NAME}</c>/
+    /// <c>{V:имя}</c> и десятичный ввод с запятой. Пустой параметр → <c>0</c> (вызывающий валидирует).
+    /// </summary>
+    private static bool TryResolveInt(
+        IReadOnlyDictionary<string, string> args,
+        string key,
+        IReadOnlyDictionary<string, string> templateContext,
+        IReadOnlyDictionary<string, string> psychicVariables,
+        out int value,
+        out string error)
+    {
+      value = 0;
+      error = string.Empty;
+
+      string raw = RecipeArgsParser.Get(args, key);
+      if (string.IsNullOrWhiteSpace(raw))
+      {
+        error = "missing_" + key;
+        return false;
+      }
+
+      string resolved = VelumRecipeTemplateResolver.Resolve(raw, templateContext, psychicVariables);
+      if (VelumRecipeGeometryRules.ContainsUnresolvedToken(resolved))
+      {
+        error = "unresolved_token:" + resolved;
+        return false;
+      }
+
+      string norm = resolved.Trim().Replace(',', '.');
+      if (!double.TryParse(norm, NumberStyles.Any, CultureInfo.InvariantCulture, out double d))
+      {
+        error = "not_a_number:" + resolved;
+        return false;
+      }
+
+      value = (int)Math.Round(d);
+      return true;
+    }
+
+    /// <summary>Фиксирует падение шага примитива эскиза с указанием handler'а в логе.</summary>
+    private static bool FailSketch(int index, string handlerLabel, string message, out RecipeStepExecutionResult result)
+    {
+      result = new RecipeStepExecutionResult(index, "invoke", false, false, message);
+      Logger.Warning("Velum Recipe " + handlerLabel + " FAIL: " + message);
+      return false;
     }
 
     /// <summary>
@@ -374,6 +760,80 @@ namespace Velum.ReactiveCore
       catch { }
 
       return false;
+    }
+
+    /// <summary>
+    /// Вызывает <c>SketchManager.FullyDefineSketch</c> — «Полностью определить эскиз» (проставляет
+    /// размеры/связи, чтобы эскиз стал полностью определённым). Вызывается ДО выхода из эскиза.
+    /// <para>
+    /// Метод объявлен в PIA-интерфейсе <c>ISketchManager</c> (10 параметров), но отсутствует в
+    /// <c>SketchManager</c>, который возвращает <c>ModelDoc2.SketchManager</c>, — поэтому COM-объект
+    /// приводится к <c>ISketchManager</c> и вызывается напрямую (null для Object-параметров маршалер
+    /// передаёт как Nothing, как в VBA-макросе). Best-effort: сбой определения эскиза не валит шаг —
+    /// эскиз нарисован, просто остаётся не полностью определённым.
+    /// </para>
+    /// <para>
+    /// Аргументы соответствуют макросу-эталону:
+    /// <c>(true, true, 1023, true, 1, null, 1, null, -1, -1)</c> — EntitiesToFullyDefine, UseRelations,
+    /// RelationsToApply (битовая маска swSketchRelationTypes, 1023 = все), UseDimensions,
+    /// HorizontalDimScheme, HorizontalDatumDisp (null = авто), VerticalDimScheme, VerticalDatumDisp,
+    /// HorizontalDimPlacement (-1 = авто), VerticalDimPlacement (-1 = авто).
+    /// </para>
+    /// </summary>
+    /// <param name="modelDoc">Активный документ (часть, в открытом эскизе).</param>
+    private static void TryFullyDefineSketch(ModelDoc2 modelDoc)
+    {
+      try
+      {
+        // Метод FullyDefineSketch объявлен в PIA-интерфейсе ISketchManager (10 параметров), но
+        // НЕ в SketchManager, который возвращает ModelDoc2.SketchManager. Живой COM-объект
+        // реализует ISketchManager — приводим и вызываем напрямую: маршалер передаёт null для
+        // Object-параметров как VT_DISPATCH/Nothing (как в VBA-макросе). Через InvokeMember
+        // тот же null шёл бы как VT_ERROR (Type.Missing) и SolidWorks отвечал DISP_E_TYPEMISMATCH.
+        ISketchManager ism = modelDoc.SketchManager as ISketchManager;
+        if (ism == null)
+        {
+          Logger.Warning("Velum Recipe FullyDefineSketch SKIP: SketchManager не ISketchManager");
+          return;
+        }
+
+        ism.FullyDefineSketch(
+            true,  // EntitiesToFullyDefine — определять ВСЕ сущности эскиза (не только выделенные)
+            true,  // UseRelations — проставить геометрические связи
+            1023,  // RelationsToApply — маска swSketchRelation (все типы связей)
+            true,  // UseDimensions — проставить размеры
+            1,     // HorizontalDimScheme — схема горизонтальных размеров
+            null,  // HorizontalDatumDisp — базовая линия: null (Nothing) = авто
+            1,     // VerticalDimScheme — схема вертикальных размеров
+            null,  // VerticalDatumDisp — базовая линия: null (Nothing) = авто
+            -1,    // HorizontalDimPlacement — размещение (авто)
+            -1);   // VerticalDimPlacement — размещение (авто)
+      }
+      catch (Exception ex)
+      {
+        // Не критично: эскиз нарисован, просто может остаться не полностью определённым.
+        Logger.Warning("Velum Recipe FullyDefineSketch FAIL (ignored): " + DescribeComFailure(ex));
+      }
+    }
+
+    /// <summary>
+    /// Разворачивает цепочку исключений от <c>InvokeMember</c> в читаемую строку: для
+    /// <see cref="System.Reflection.TargetInvocationException"/> берёт <c>InnerException</c>, а для
+    /// <see cref="System.Runtime.InteropServices.COMException"/> дополнительно печатает HResult
+    /// (обычно <c>0x800...</c>) — без него COM-ошибку SolidWorks невозможно диагностировать.
+    /// </summary>
+    /// <param name="ex">Перехваченное исключение (обёртка или сама COM-ошибка).</param>
+    /// <returns>Строка с типом, HResult и текстом глубочайшего исключения.</returns>
+    private static string DescribeComFailure(Exception ex)
+    {
+      Exception root = ex;
+      while (root.InnerException != null)
+        root = root.InnerException;
+
+      string hr = (root is System.Runtime.InteropServices.COMException com)
+          ? " HRESULT=0x" + com.HResult.ToString("X8")
+          : string.Empty;
+      return root.GetType().Name + hr + ": " + root.Message;
     }
 
     /// <summary>Истинно, если концы отрезка совпадают (CreateLine для такого вернёт null).</summary>

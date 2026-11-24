@@ -129,3 +129,58 @@ recipes:
         z1: 0
         z2: 0
 
+  - id: sketch_centered_rectangle_demo
+    display_name: Прямоугольник из центра 100x100
+    description: "Рисует прямоугольник 100x100 мм с центром в начале координат (в текущем эскизе — дорисовывает, иначе создаёт эскиз на Front; перед закрытием определяет размеры)"
+    adaptive_action_id: 53
+    reactive_eligible: true
+    steps:
+      - type: invoke
+        handler: sketch_centered_rectangle
+        cx: 0
+        cy: 0
+        height: 100
+        plane: front
+        width: 100
+
+  - id: sketch_circle_demo
+    display_name: Окружность диаметром 100
+    description: "Рисует окружность диаметром 100 мм с центром в начале координат (в текущем эскизе — дорисовывает, иначе создаёт эскиз на Front; перед закрытием определяет размеры)"
+    adaptive_action_id: 54
+    reactive_eligible: true
+    steps:
+      - type: invoke
+        handler: sketch_circle
+        cx: 0
+        cy: 0
+        diameter: 100
+        plane: front
+
+  - id: sketch_polygon_demo
+    display_name: Шестигранник (вершины на Ø100)
+    description: "Рисует правильный шестиугольник с центром в начале координат, вершины на окружности Ø100 (в текущем эскизе — дорисовывает, иначе создаёт эскиз на Front; перед закрытием определяет размеры)"
+    adaptive_action_id: 55
+    reactive_eligible: true
+    steps:
+      - type: invoke
+        handler: sketch_polygon
+        cx: 0
+        cy: 0
+        diameter: 100
+        plane: front
+        sides: 6
+
+  - id: sketch_polygon_inscribed_demo
+    display_name: Шестигранник «под ключ» (вписанная Ø100)
+    description: "Рисует правильный шестиугольник с центром в начале координат и вписанной окружностью Ø100 (стороны касаются окружности; «под ключ» 100 мм). В текущем эскизе — дорисовывает, иначе создаёт эскиз на Front; перед закрытием определяет размеры"
+    adaptive_action_id: 56
+    reactive_eligible: true
+    steps:
+      - type: invoke
+        handler: sketch_polygon_inscribed
+        cx: 0
+        cy: 0
+        diameter: 100
+        plane: front
+        sides: 6
+

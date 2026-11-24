@@ -26,6 +26,10 @@ namespace Velum.ReactiveCore
       Register("rebuild", ExecuteRebuild);
       Register(RecipeExecutorHandlersGeometry.ExtrudePlateHandlerId, ExecuteSketchExtrudePlate);
       Register(RecipeExecutorHandlersGeometry.SketchLineHandlerId, ExecuteSketchLine);
+      Register(RecipeExecutorHandlersGeometry.CenteredRectangleHandlerId, ExecuteSketchCenteredRectangle);
+      Register(RecipeExecutorHandlersGeometry.CircleHandlerId, ExecuteSketchCircle);
+      Register(RecipeExecutorHandlersGeometry.PolygonHandlerId, ExecuteSketchPolygon);
+      Register(RecipeExecutorHandlersGeometry.PolygonInscribedHandlerId, ExecuteSketchPolygonInscribed);
       Register("log", ExecuteLog);
       Register("set_custom_property_if_part", ExecuteSetCustomPropertyIfPart);
       Register("set_custom_property_if_part_or_assembly", ExecuteSetCustomPropertyIfPartOrAssembly);
@@ -258,6 +262,62 @@ namespace Velum.ReactiveCore
         out RecipeStepExecutionResult result)
     {
       return RecipeExecutorHandlersGeometry.TryExecuteLine(
+          context.StepIndex,
+          args,
+          context.ModelDoc,
+          context.TemplateContext,
+          context.PsychicVariables,
+          out result);
+    }
+
+    private static bool ExecuteSketchCenteredRectangle(
+        RecipeStepExecutionContext context,
+        IReadOnlyDictionary<string, string> args,
+        out RecipeStepExecutionResult result)
+    {
+      return RecipeExecutorHandlersGeometry.TryExecuteCenteredRectangle(
+          context.StepIndex,
+          args,
+          context.ModelDoc,
+          context.TemplateContext,
+          context.PsychicVariables,
+          out result);
+    }
+
+    private static bool ExecuteSketchCircle(
+        RecipeStepExecutionContext context,
+        IReadOnlyDictionary<string, string> args,
+        out RecipeStepExecutionResult result)
+    {
+      return RecipeExecutorHandlersGeometry.TryExecuteCircle(
+          context.StepIndex,
+          args,
+          context.ModelDoc,
+          context.TemplateContext,
+          context.PsychicVariables,
+          out result);
+    }
+
+    private static bool ExecuteSketchPolygon(
+        RecipeStepExecutionContext context,
+        IReadOnlyDictionary<string, string> args,
+        out RecipeStepExecutionResult result)
+    {
+      return RecipeExecutorHandlersGeometry.TryExecutePolygon(
+          context.StepIndex,
+          args,
+          context.ModelDoc,
+          context.TemplateContext,
+          context.PsychicVariables,
+          out result);
+    }
+
+    private static bool ExecuteSketchPolygonInscribed(
+        RecipeStepExecutionContext context,
+        IReadOnlyDictionary<string, string> args,
+        out RecipeStepExecutionResult result)
+    {
+      return RecipeExecutorHandlersGeometry.TryExecutePolygonInscribed(
           context.StepIndex,
           args,
           context.ModelDoc,

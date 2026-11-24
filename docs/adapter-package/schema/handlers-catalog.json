@@ -334,6 +334,183 @@
       ]
     },
     {
+      "id": "sketch_centered_rectangle",
+      "label": "Прямоугольник из центра",
+      "description": "Рисует прямоугольник с центром (cx,cy) и габаритом width×height (SketchManager.CreateCenterRectangle). Если в активном документе уже открыт эскиз — фигура дорисовывается в текущий эскиз; иначе открывается новый на базовой плоскости. Перед закрытием созданного эскиза он полностью определяется (проставляются размеры). Размеры и центр в мм, допускают шаблоны {NAME} и переменные психики {V:имя}. Только SLDPRT.",
+      "argsSchema": [
+        {
+          "key": "width",
+          "label": "Ширина, мм",
+          "type": "string",
+          "required": true,
+          "editorHint": "template_placeholder"
+        },
+        {
+          "key": "height",
+          "label": "Высота, мм",
+          "type": "string",
+          "required": true,
+          "editorHint": "template_placeholder"
+        },
+        {
+          "key": "cx",
+          "label": "Центр X, мм",
+          "type": "string",
+          "defaultValue": "0",
+          "editorHint": "template_placeholder"
+        },
+        {
+          "key": "cy",
+          "label": "Центр Y, мм",
+          "type": "string",
+          "defaultValue": "0",
+          "editorHint": "template_placeholder"
+        },
+        {
+          "key": "plane",
+          "label": "Базовая плоскость (если эскиза нет)",
+          "type": "enum",
+          "defaultValue": "front",
+          "values": [
+            { "key": "front", "label": "Спереди (Front)" },
+            { "key": "top", "label": "Сверху (Top)" },
+            { "key": "right", "label": "Справа (Right)" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sketch_circle",
+      "label": "Окружность",
+      "description": "Рисует окружность с центром (cx,cy) и диаметром diameter (SketchManager.CreateCircle). Если в активном документе уже открыт эскиз — фигура дорисовывается в текущий эскиз; иначе открывается новый на базовой плоскости. Перед закрытием созданного эскиза он полностью определяется (проставляются размеры). Диаметр и центр в мм, допускают шаблоны {NAME} и переменные психики {V:имя}. Только SLDPRT.",
+      "argsSchema": [
+        {
+          "key": "diameter",
+          "label": "Диаметр, мм",
+          "type": "string",
+          "required": true,
+          "editorHint": "template_placeholder"
+        },
+        {
+          "key": "cx",
+          "label": "Центр X, мм",
+          "type": "string",
+          "defaultValue": "0",
+          "editorHint": "template_placeholder"
+        },
+        {
+          "key": "cy",
+          "label": "Центр Y, мм",
+          "type": "string",
+          "defaultValue": "0",
+          "editorHint": "template_placeholder"
+        },
+        {
+          "key": "plane",
+          "label": "Базовая плоскость (если эскиза нет)",
+          "type": "enum",
+          "defaultValue": "front",
+          "values": [
+            { "key": "front", "label": "Спереди (Front)" },
+            { "key": "top", "label": "Сверху (Top)" },
+            { "key": "right", "label": "Справа (Right)" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sketch_polygon",
+      "label": "Правильный многоугольник",
+      "description": "Рисует правильный многоугольник с центром (cx,cy), числом сторон sides и описанной окружностью диаметра diameter (через вершины). Если в активном документе уже открыт эскиз — фигура дорисовывается в текущий эскиз; иначе открывается новый на базовой плоскости. Перед закрытием созданного эскиза он полностью определяется (проставляются размеры). Диаметр и центр в мм, sides — целое ≥ 3; допускают шаблоны {NAME} и переменные психики {V:имя}. Только SLDPRT.",
+      "argsSchema": [
+        {
+          "key": "sides",
+          "label": "Число сторон",
+          "type": "string",
+          "required": true,
+          "editorHint": "template_placeholder"
+        },
+        {
+          "key": "diameter",
+          "label": "Диаметр описанной окружности (через вершины), мм",
+          "type": "string",
+          "required": true,
+          "editorHint": "template_placeholder"
+        },
+        {
+          "key": "cx",
+          "label": "Центр X, мм",
+          "type": "string",
+          "defaultValue": "0",
+          "editorHint": "template_placeholder"
+        },
+        {
+          "key": "cy",
+          "label": "Центр Y, мм",
+          "type": "string",
+          "defaultValue": "0",
+          "editorHint": "template_placeholder"
+        },
+        {
+          "key": "plane",
+          "label": "Базовая плоскость (если эскиза нет)",
+          "type": "enum",
+          "defaultValue": "front",
+          "values": [
+            { "key": "front", "label": "Спереди (Front)" },
+            { "key": "top", "label": "Сверху (Top)" },
+            { "key": "right", "label": "Справа (Right)" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sketch_polygon_inscribed",
+      "label": "Многоугольник по вписанной окружности",
+      "description": "Рисует правильный многоугольник с центром (cx,cy), числом сторон sides и вписанной окружностью диаметра diameter (стороны касаются окружности Ø=diameter; «под ключ»). В отличие от sketch_polygon (где diameter — диаметр через вершины), опорная точка отодвигается на радиус описанной окружности (diameter/2)/cos(π/sides), чтобы расстояние центр–середина стороны (апофема) стало diameter/2. Если в активном документе уже открыт эскиз — фигура дорисовывается в текущий эскиз; иначе открывается новый на базовой плоскости. Перед закрытием созданного эскиза он полностью определяется (проставляются размеры). Диаметр и центр в мм, sides — целое ≥ 3; допускают шаблоны {NAME} и переменные психики {V:имя}. Только SLDPRT.",
+      "argsSchema": [
+        {
+          "key": "sides",
+          "label": "Число сторон",
+          "type": "string",
+          "required": true,
+          "editorHint": "template_placeholder"
+        },
+        {
+          "key": "diameter",
+          "label": "Диаметр вписанной окружности (по сторонам), мм",
+          "type": "string",
+          "required": true,
+          "editorHint": "template_placeholder"
+        },
+        {
+          "key": "cx",
+          "label": "Центр X, мм",
+          "type": "string",
+          "defaultValue": "0",
+          "editorHint": "template_placeholder"
+        },
+        {
+          "key": "cy",
+          "label": "Центр Y, мм",
+          "type": "string",
+          "defaultValue": "0",
+          "editorHint": "template_placeholder"
+        },
+        {
+          "key": "plane",
+          "label": "Базовая плоскость (если эскиза нет)",
+          "type": "enum",
+          "defaultValue": "front",
+          "values": [
+            { "key": "front", "label": "Спереди (Front)" },
+            { "key": "top", "label": "Сверху (Top)" },
+            { "key": "right", "label": "Справа (Right)" }
+          ]
+        }
+      ]
+    },
+    {
       "id": "run_macro",
       "label": "Выполнить макрос",
       "description": "Запуск макроса SolidWorks через RunMacro2 (VBA .swp или VSTA .dll). Укажите файл, модуль и процедуру (для VBA обычно Module1 / main).",

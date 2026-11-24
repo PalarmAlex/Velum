@@ -103,6 +103,55 @@ namespace Velum.ReactiveCore
     }
 
     /// <summary>
+    /// Радиус описанной окружности (distance от центра до опорной точки-вершины) правильного
+    /// многоугольника, у которого задан диаметр <b>вписанной</b> окружности (апофема = d/2).
+    /// <para>
+    /// <c>CreatePolygon</c> SolidWorks строит полигон по опорной точке, трактуя расстояние
+    /// центр→точка как радиус описанной окружности (вершины на ней). Чтобы вписанная окружность
+    /// (касание сторон) была равна заданному <paramref name="inscribedDiameterMm"/>, опорную точку
+    /// нужно отодвинуть на <c>(d/2) / cos(π/sides)</c>: тогда апофема = circumRadius·cos(π/sides) = d/2.
+    /// Для гексагона (sides=6): cos(30°)=√3/2 → при d=100 получаем 57.735, апофема=50 (вписанная Ø100).
+    /// </para>
+    /// </summary>
+    /// <param name="inscribedDiameterMm">Диаметр вписанной окружности, мм (положительный).</param>
+    /// <param name="sides">Число сторон (должно быть ≥ 3).</param>
+    /// <param name="circumRadiusMm">Радиус описанной окружности, мм, при успехе; иначе 0.</param>
+    /// <param name="error">Код ошибки при неудаче (пусто при успехе).</param>
+    /// <returns><c>true</c>, если параметры корректны (d &gt; 0, sides ≥ 3).</returns>
+    public static bool TryInscribedDiameterToCircumRadius(
+        double inscribedDiameterMm,
+        int sides,
+        out double circumRadiusMm,
+        out string error)
+    {
+      circumRadiusMm = 0;
+      error = string.Empty;
+
+      if (inscribedDiameterMm <= 0 || double.IsNaN(inscribedDiameterMm) || double.IsInfinity(inscribedDiameterMm))
+      {
+        error = "non_positive_diameter:" + inscribedDiameterMm;
+        return false;
+      }
+
+      if (sides < 3)
+      {
+        error = "sides_min_3:" + sides;
+        return false;
+      }
+
+      double cosHalfCentral = Math.Cos(Math.PI / sides);
+      if (cosHalfCentral <= 0)
+      {
+        // Для sides ≥ 3 cos(π/sides) > 0; защита на случай переполнения/странных входов.
+        error = "invalid_cos_for_sides:" + sides;
+        return false;
+      }
+
+      circumRadiusMm = (inscribedDiameterMm / 2.0) / cosHalfCentral;
+      return true;
+    }
+
+    /// <summary>
     /// Есть ли в строке неразрешённые токены шаблона (<c>{...}</c> или <c>$PRP:</c>).
     /// Локальная копия признака из <c>VelumRecipeTemplateResolver</c>, чтобы класс оставался
     /// независимым от SolidWorks.
