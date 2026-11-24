@@ -24,7 +24,6 @@
   handler: sketch_extrude_plate
   width: "100"
   height: "60"
-  depth: "10"
   plane: front</code></pre>
       <p>Служебные поля <code>type</code> и <code>handler</code> зарезервированы; всё остальное — параметры конкретного handler'а. Строковый <code>args</code> в один рядок не поддерживается — параметры задаются отдельными ключами.</p>
 
@@ -35,7 +34,7 @@
           <tr><td><code>run_sw_command</code></td><td>Запускает команду SOLIDWORKS по её числовому коду (например, «Сохранить» = 2).</td><td><code>command_id</code> (число, обязателен)</td></tr>
           <tr><td><code>run_macro</code></td><td>Выполняет макрос SOLIDWORKS (VBA <code>.swp</code> или VSTA <code>.dll</code>).</td><td><code>path</code> (обязателен), <code>module</code>, <code>procedure</code></td></tr>
           <tr><td><code>rebuild</code></td><td>Перестраивает активную модель (<code>EditRebuild3</code>).</td><td>—</td></tr>
-          <tr><td><code>sketch_extrude_plate</code></td><td>Рисует прямоугольник на базовой плоскости и вытягивает его в пластину (прямые вызовы SketchManager/FeatureManager, не через команду).</td><td><code>width</code>, <code>height</code>, <code>depth</code> (мм), <code>plane</code> (front/top/right)</td></tr>
+          <tr><td><code>sketch_extrude_plate</code></td><td>Рисует прямоугольник на базовой плоскости (прямой вызов SketchManager, без вытяжки — только эскиз).</td><td><code>width</code>, <code>height</code> (мм), <code>plane</code> (front/top/right)</td></tr>
           <tr><td><code>set_custom_property</code><br /><code>set_custom_property_if_part</code><br /><code>set_custom_property_if_part_or_assembly</code></td><td>Записывает свойство документа (с вариантами фильтра по типу документа).</td><td><code>name</code>, <code>template</code>, <code>config</code>, <code>overwrite</code>, <code>property_type</code></td></tr>
           <tr><td><code>save_file_name</code></td><td>Подставляет следующее имя по обученной на «Сохранить» схеме.</td><td>—</td></tr>
           <tr><td><code>assign_session_material</code></td><td>Назначает выученный материал детали.</td><td>—</td></tr>

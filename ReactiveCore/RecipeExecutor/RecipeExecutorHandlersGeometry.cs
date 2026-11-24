@@ -7,15 +7,13 @@ using SolidWorks.Interop.sldworks;
 namespace Velum.ReactiveCore
 {
   /// <summary>
-  /// Handler <c>sketch_extrude_plate</c>: рисует прямоугольный эскиз на базовой плоскости и
-  /// вытягивает его в пластину прямыми вызовами <c>SketchManager</c>/<c>FeatureManager</c>
-  /// (не через <c>RunCommand</c>: у <c>ISldWorks.RunCommand</c> второй параметр — <c>NewTitle</c>,
-  /// а не параметры команды; параметрической загрузки команд в PIA нет — см. DEBUG-разбор).
+  /// Handler <c>sketch_extrude_plate</c>: рисует прямоугольный эскиз на базовой плоскости прямым
+  /// вызовом <c>SketchManager</c> (примитив эскиза, без операции выдавливания).
   /// <para>
   /// Параметры (значения — миллиметры, допускают шаблоны <c>{NAME}</c> и переменные психики
-  /// <c>{V:имя}</c>): <c>width</c>, <c>height</c> — габарит прямоугольника; <c>depth</c> —
-  /// глубина вытяжки; <c>plane</c> — базовая плоскость (<c>front</c>/<c>top</c>/<c>right</c>,
-  /// по умолчанию <c>front</c>). Прямоугольник строится от начала координат плоскости.
+  /// <c>{V:имя}</c>): <c>width</c>, <c>height</c> — габарит прямоугольника; <c>plane</c> —
+  /// базовая плоскость (<c>front</c>/<c>top</c>/<c>right</c>, по умолчанию <c>front</c>).
+  /// Прямоугольник строится от начала координат плоскости.
   /// </para>
   /// </summary>
   internal static class RecipeExecutorHandlersGeometry
@@ -26,16 +24,14 @@ namespace Velum.ReactiveCore
     /// <summary>Идентификатор handler'а рисования линии.</summary>
     public const string SketchLineHandlerId = "sketch_line";
 
-    // Числовые коды swconst (имена enum в разных PIA расходятся — константы с комментарием, см. AGENTS.md).
-    private const int SwEndCondBlind = 0;   // swEndConditions_e.swEndCondBlind — вытяжка на глубину.
     private const string SelectTypePlane = "PLANE"; // Тип выбора SelectByID2 для базовой плоскости.
     private const string RefPlaneTypeName = "RefPlane"; // GetTypeName2() базовой плоскости (не локализуется).
 
     /// <summary>
-    /// Исполняет шаг <c>sketch_extrude_plate</c> на UI-потоке SolidWorks.
+    /// Исполняет шаг <c>sketch_extrude_plate</c> на UI-потоке SolidWorks: создаёт эскиз прямоугольника.
     /// </summary>
     /// <param name="index">Индекс шага в рецепте.</param>
-    /// <param name="args">Параметры шага (width/height/depth/plane).</param>
+    /// <param name="args">Параметры шага (width/height/plane).</param>
     /// <param name="modelDoc">Активный документ (должен быть частью).</param>
     /// <param name="templateContext">Контекст окружения для шаблонов.</param>
     /// <param name="psychicVariables">Переменные психики для <c>{V:...}</c>.</param>
@@ -66,8 +62,6 @@ namespace Velum.ReactiveCore
         return Fail(index, "width:" + widthErr, out result);
       if (!TryResolveDimension(args, "height", templateContext, psychicVariables, out double heightM, out string heightErr))
         return Fail(index, "height:" + heightErr, out result);
-      if (!TryResolveDimension(args, "depth", templateContext, psychicVariables, out double depthM, out string depthErr))
-        return Fail(index, "depth:" + depthErr, out result);
 
       string plane = (RecipeArgsParser.Get(args, "plane") ?? string.Empty).Trim().ToLowerInvariant();
       if (string.IsNullOrEmpty(plane))
@@ -99,46 +93,11 @@ namespace Velum.ReactiveCore
 
         sketchMgr.InsertSketch(true); // Выход из эскиза.
 
-        FeatureManager featMgr = modelDoc.FeatureManager;
-        if (featMgr == null)
-          return Fail(index, "feature_manager_null", out result);
-
-        // Слепая вытяжка на глубину (FeatureExtrusion3, 23 параметра — сигнатура подтверждена
-        // рефлексией PIA 32.x и 27.5, идентична в обеих).
-        Feature plate = featMgr.FeatureExtrusion3(
-            true,   // Sd — сквозное направление одно
-            false,  // Flip
-            false,  // Dir
-            SwEndCondBlind, // T1 — blind
-            0,      // T2
-            depthM, // D1 — глубина (метры)
-            0,      // D2
-            false,  // Dchk1
-            false,  // Dchk2
-            false,  // Ddir1
-            false,  // Ddir2
-            0,      // Dang1
-            0,      // Dang2
-            false,  // OffsetReverse1
-            false,  // OffsetReverse2
-            false,  // TranslateSurface1
-            false,  // TranslateSurface2
-            true,   // Merge — объединять с телом
-            false,  // UseFeatScope
-            true,   // UseAutoSelect — использовать текущий эскиз
-            0,      // T0
-            0,      // StartOffset
-            false); // FlipStartOffset
-
-        if (plate == null)
-          return Fail(index, "extrude_failed", out result);
-
         modelDoc.EditRebuild3();
 
         string summary =
             "width_mm=" + ToStr(widthM / VelumRecipeGeometryRules.MillimetersToMeters) +
             " height_mm=" + ToStr(heightM / VelumRecipeGeometryRules.MillimetersToMeters) +
-            " depth_mm=" + ToStr(depthM / VelumRecipeGeometryRules.MillimetersToMeters) +
             " plane=" + planeName;
         result = new RecipeStepExecutionResult(index, "invoke", true, false, summary);
         Logger.Info("Velum Recipe sketch_extrude_plate OK " + summary);

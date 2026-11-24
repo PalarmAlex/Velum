@@ -232,8 +232,8 @@
     },
     {
       "id": "sketch_extrude_plate",
-      "label": "Пластина: эскиз прямоугольника + вытяжка",
-      "description": "Рисует прямоугольник на базовой плоскости и вытягивает в пластину (SketchManager/FeatureManager). Размеры в мм, допускают шаблоны {NAME} и переменные психики {V:имя}. Только SLDPRT.",
+      "label": "Пластина: эскиз прямоугольника",
+      "description": "Рисует прямоугольник на базовой плоскости. Размеры в мм, допускают шаблоны {NAME} и переменные психики {V:имя}. Только SLDPRT.",
       "argsSchema": [
         {
           "key": "width",
@@ -245,13 +245,6 @@
         {
           "key": "height",
           "label": "Высота, мм",
-          "type": "string",
-          "required": true,
-          "editorHint": "template_placeholder"
-        },
-        {
-          "key": "depth",
-          "label": "Толщина, мм",
           "type": "string",
           "required": true,
           "editorHint": "template_placeholder"

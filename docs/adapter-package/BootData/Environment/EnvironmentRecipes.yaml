@@ -101,41 +101,31 @@ recipes:
         handler: run_sw_command
         command_id: 2
 
-  # Пластина из прямоугольного эскиза: эскиз + вытяжка прямыми вызовами
-  # SketchManager.CreateCornerRectangle + FeatureManager.FeatureExtrusion3 (не через RunCommand).
-  # Размеры в мм. Значение — шаблон: число, плейсхолдер окружения {NAME} или переменная психики
-  # {V:имя} из реестра «id:значение», который пишут ментальные автоматизмы (параметры мотора,
-  # НЕ виталы гомеостаза). Пример с переменными:
-  #   width: "{V:ГабаритX}"   height: "{V:ГабаритY}"   depth: "{V:Толщина}"
-  # Здесь заданы константы, чтобы мотор отрабатывал, пока ментальные автоматизмы не пишут в реестр.
   - id: sketch_extrude_plate_demo
-    display_name: Пластина 100x60x10 (эскиз + вытяжка)
-    description: Рисует прямоугольник 100x60 мм на Front и вытягивает на 10 мм
-    adaptive_action_id: 51
-    reactive_eligible: true
-    steps:
-      - type: invoke
-        handler: sketch_extrude_plate
-        width: "100"
-        height: "60"
-        depth: "10"
-        plane: front
-
-  # Универсальный графический токен «линия». Режим выбирается сам:
-  #  - если в активном документе УЖЕ открыт эскиз — линия дописывается в текущий эскиз
-  #    (плоскость и InsertSketch НЕ трогаются, пользовательский режим эскиза сохраняется);
-  #  - если эскиза нет — открывается новый эскиз на плоскости plane, рисуется линия, эскиз закрывается.
-  # Координаты/размер в мм; допускают шаблоны {NAME} и переменные психики {V:имя}.
-  # Ниже — линия длиной 100 мм от начала координат вдоль оси X (angle=0).
-  - id: sketch_line_demo
-    display_name: Линия 100 мм вдоль оси X
-    description: Рисует отрезок длиной 100 мм (в текущем эскизе — дорисовывает, иначе создаёт эскиз на Front)
+    display_name: Прямоугольник 100x100
+    description: Рисует прямоугольник 100x100 мм (в текущем эскизе — дорисовывает, иначе создаёт эскиз на Front)
     adaptive_action_id: 52
     reactive_eligible: true
     steps:
       - type: invoke
-        handler: sketch_line
+        handler: sketch_extrude_plate
+        height: 100
         plane: front
-        length: "100"
-        angle: "0"
+        width: 100
+
+  - id: sketch_line_demo
+    display_name: Линия 100 мм вдоль оси X
+    description: "Рисует отрезок длиной 100 мм (в текущем эскизе — дорисовывает, иначе создаёт эскиз на Front)"
+    adaptive_action_id: 51
+    reactive_eligible: true
+    steps:
+      - type: invoke
+        handler: sketch_line
+        angle: 0
+        length: 100
+        plane: front
+        x1: 0
+        y1: 0
+        z1: 0
+        z2: 0
 
