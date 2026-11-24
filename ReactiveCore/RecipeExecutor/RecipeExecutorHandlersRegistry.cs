@@ -7,9 +7,9 @@ using Xarial.XCad.SolidWorks;
 namespace Velum.ReactiveCore
 {
   /// <summary>Handler'ы рецептов реестра изделий.</summary>
-  internal static class RecipeExecutorHandlersRegistry
-  {
-    public const string ShowProblemsHandlerId = "product_registry_show_problems";
+    internal static class RecipeExecutorHandlersRegistry
+    {
+      public const string ShowProblemsHandlerId = "product_registry_show_problems";
 
     /// <summary>product_registry_show_problems — список проблем кэша целостности.</summary>
     public static bool TryExecuteShowProblems(

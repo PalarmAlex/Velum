@@ -112,7 +112,7 @@ recipes:
     display_name: Пластина 100x60x10 (эскиз + вытяжка)
     description: Рисует прямоугольник 100x60 мм на Front и вытягивает на 10 мм
     adaptive_action_id: 51
-    reactive_eligible: false
+    reactive_eligible: true
     steps:
       - type: invoke
         handler: sketch_extrude_plate
@@ -120,4 +120,22 @@ recipes:
         height: "60"
         depth: "10"
         plane: front
+
+  # Универсальный графический токен «линия». Режим выбирается сам:
+  #  - если в активном документе УЖЕ открыт эскиз — линия дописывается в текущий эскиз
+  #    (плоскость и InsertSketch НЕ трогаются, пользовательский режим эскиза сохраняется);
+  #  - если эскиза нет — открывается новый эскиз на плоскости plane, рисуется линия, эскиз закрывается.
+  # Координаты/размер в мм; допускают шаблоны {NAME} и переменные психики {V:имя}.
+  # Ниже — линия длиной 100 мм от начала координат вдоль оси X (angle=0).
+  - id: sketch_line_demo
+    display_name: Линия 100 мм вдоль оси X
+    description: Рисует отрезок длиной 100 мм (в текущем эскизе — дорисовывает, иначе создаёт эскиз на Front)
+    adaptive_action_id: 52
+    reactive_eligible: true
+    steps:
+      - type: invoke
+        handler: sketch_line
+        plane: front
+        length: "100"
+        angle: "0"
 

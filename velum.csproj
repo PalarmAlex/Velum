@@ -133,6 +133,8 @@
     <Compile Include="ReactiveCore\Export\VelumDxfBatchScanner.cs" />
     <Compile Include="ReactiveCore\Export\VelumDxfBatchDocumentHelper.cs" />
     <Compile Include="ReactiveCore\Export\VelumDxfExportDialogHost.cs" />
+    <Compile Include="ReactiveCore\VelumMotorParamDialogRules.cs" />
+    <Compile Include="ReactiveCore\VelumMotorParamsDialogHost.cs" />
     <Compile Include="ReactiveCore\Export\VelumPdfFileNameHelper.cs" />
     <Compile Include="ReactiveCore\Export\VelumDrawingPathPropertyHelper.cs" />
     <Compile Include="ReactiveCore\Export\VelumDrawingPathSavePropagator.cs" />
@@ -297,6 +299,9 @@
       <DependentUpon>VelumOperatorInfluencesPickerForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Common\Export\VelumDxfExportDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\VelumMotorParamsDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Common\Reflex\VelumConditionedReflexForbidHelper.cs" />

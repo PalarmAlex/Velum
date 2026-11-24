@@ -170,7 +170,8 @@ namespace Velum.ReactiveCore
     }
 
     /// <summary>
-    /// Разрешает шаблон для имени файла на диске: после <see cref="Resolve"/> подставляет
+    /// Разрешает шаблон для имени файла на диске: после
+    /// <see cref="Resolve(string, IReadOnlyDictionary{string, string})"/> подставляет
     /// оставшиеся <c>$PRP:"…"</c> из свойств SW (в рецептах формулы часто остаются для SW).
     /// </summary>
     public static string ResolveForFileName(

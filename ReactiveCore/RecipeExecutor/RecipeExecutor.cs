@@ -112,6 +112,35 @@ namespace Velum.ReactiveCore
         int commandPatternId,
         out RecipeExecutionResult result)
     {
+      return TryExecute(recipe, probe, activationSource, commandPatternId, null, out result);
+    }
+
+    /// <summary>
+    /// Исполняет рецепт с источником активации, командным паттерном и параметрами моторного действия из образа.
+    /// </summary>
+    /// <param name="recipe">Исполняемый рецепт.</param>
+    /// <param name="probe">Зонд сессии SolidWorks.</param>
+    /// <param name="activationSource">
+    /// Источник активации (безусловный/условный рефлекс, автоматизм): влияет на то,
+    /// показывать ли пользовательские предупреждения при несовпадении типа документа.
+    /// </param>
+    /// <param name="commandPatternId">
+    /// ID паттерна Command-канала, запустившего рецепт (<c>AdaptiveAction.CommandPatternId</c>); 0 — не командный триггер.
+    /// </param>
+    /// <param name="imageParams">
+    /// Параметры моторного действия из образа (<c>AdaptiveAction.Params</c>, перенесённые из
+    /// <c>ActionsImage.Params</c>). Имеют приоритет над переменными психики <c>{V:имя}</c>:
+    /// при совпадении ключа значение образа перекрывает снимок реестра. <c>null</c>/пусто — без перекрытия.
+    /// </param>
+    /// <param name="result">Результат исполнения.</param>
+    public static bool TryExecute(
+        RecipeDefinition recipe,
+        ISolidWorksSessionProbe probe,
+        ISIDA.Actions.AdaptiveActionsSystem.ActionActivationSource activationSource,
+        int commandPatternId,
+        IReadOnlyDictionary<string, string> imageParams,
+        out RecipeExecutionResult result)
+    {
       result = null;
       if (recipe == null)
       {
@@ -170,6 +199,14 @@ namespace Velum.ReactiveCore
             // чтобы все шаги видели согласованные значения.
             IReadOnlyDictionary<string, string> psychicVariables = VelumRecipeMotorParameters.Snapshot();
 
+            // Параметры образа моторного действия (ActionsImage.Params) имеют приоритет над {V:имя}:
+            // если ключ присутствует в обоих — берётся значение из образа (опущенный параметр = отсутствие ключа).
+            // Тот же семантики слияния (base + overrides, пустое значение overrides удаляет ключ)
+            // придерживается VelumMotorParamDialogRules.MergeOverrides — переиспользуем её.
+            IReadOnlyDictionary<string, string> resolvedPsychicVariables = psychicVariables;
+            if (imageParams != null && imageParams.Count > 0)
+              resolvedPsychicVariables = VelumMotorParamDialogRules.MergeOverrides(psychicVariables, imageParams);
+
             IReadOnlyList<RecipeStepDefinition> steps = recipe.Steps;
             for (int i = 0; i < steps.Count; i++)
             {
@@ -189,7 +226,8 @@ namespace Velum.ReactiveCore
                   activationSource)
               {
                 CommandPatternId = commandPatternId,
-                PsychicVariables = psychicVariables
+                PsychicVariables = resolvedPsychicVariables,
+                ImageParams = imageParams
               };
 
               if (!TryExecuteStep(step, context, out RecipeStepExecutionResult stepResult))

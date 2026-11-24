@@ -48,6 +48,7 @@
     <Compile Include="..\Common\Reflex\VelumConditionedReflexSettingsStore.cs" Link="src\VelumConditionedReflexSettingsStore.cs" />
     <Compile Include="..\ReactiveCore\RecipeExecutor\RecipeStepExecutionResult.cs" Link="src\RecipeStepExecutionResult.cs" />
     <Compile Include="..\ReactiveCore\VelumChainStepOutcomeRules.cs" Link="src\VelumChainStepOutcomeRules.cs" />
+    <Compile Include="..\ReactiveCore\VelumMotorParamDialogRules.cs" Link="src\VelumMotorParamDialogRules.cs" />
     <Compile Include="..\ReactiveCore\VelumRunSwCommandEchoRules.cs" Link="src\VelumRunSwCommandEchoRules.cs" />
     <Compile Include="..\ReactiveCore\VelumRecipeVariableResolver.cs" Link="src\VelumRecipeVariableResolver.cs" />
     <Compile Include="..\ReactiveCore\VelumRecipeGeometryRules.cs" Link="src\VelumRecipeGeometryRules.cs" />
@@ -111,6 +112,7 @@
     <Compile Include="VelumReadTextOutcomeRulesTests.cs" />
     <Compile Include="VelumConditionedReflexSettingsStoreTests.cs" />
     <Compile Include="VelumChainStepOutcomeRulesTests.cs" />
+    <Compile Include="VelumMotorParamDialogRulesTests.cs" />
     <Compile Include="VelumRunSwCommandEchoRulesTests.cs" />
     <Compile Include="VelumRecipeVariableResolverTests.cs" />
     <Compile Include="VelumRecipeGeometryRulesTests.cs" />

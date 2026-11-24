@@ -25,6 +25,7 @@ namespace Velum.ReactiveCore
       Register("run_macro", ExecuteRunMacro);
       Register("rebuild", ExecuteRebuild);
       Register(RecipeExecutorHandlersGeometry.ExtrudePlateHandlerId, ExecuteSketchExtrudePlate);
+      Register(RecipeExecutorHandlersGeometry.SketchLineHandlerId, ExecuteSketchLine);
       Register("log", ExecuteLog);
       Register("set_custom_property_if_part", ExecuteSetCustomPropertyIfPart);
       Register("set_custom_property_if_part_or_assembly", ExecuteSetCustomPropertyIfPartOrAssembly);
@@ -80,8 +81,81 @@ namespace Velum.ReactiveCore
       }
 
       IReadOnlyDictionary<string, string> args = ExtractHandlerArgs(stepParameters);
+
+      // Флаг confirm на шаге: при ручном запуске просим оператора подтвердить/поправить параметры.
+      // Автономный прогон психики (автоматизмы, вербальные ответы, эхо) окно не показывает.
+      VelumMotorParamDialogRules.ConfirmMode confirmMode =
+          VelumMotorParamDialogRules.ParseConfirmMode(RecipeArgsParser.Get(stepParameters, "confirm"));
+      int activationSource = context != null ? (int)context.ActivationSource : 0;
+      if (context != null &&
+          VelumMotorParamDialogRules.ShouldAskDialog(confirmMode, activationSource))
+      {
+        string title = context?.Recipe?.DisplayName;
+        if (string.IsNullOrWhiteSpace(title))
+          title = handlerId;
+
+        bool confirmed;
+        IReadOnlyDictionary<string, string> merged;
+        VelumMotorParamsDialogHost.TryShow(
+            title,
+            BuildParamFields(args),
+            args,
+            out merged,
+            out confirmed);
+
+        if (!confirmed)
+        {
+          // Оператор отменил: действие не выполняем, но шаг формально обработан.
+          // Confirmed=false исключает шаг из «выполненных» (HasPerformedStep) и даёт
+          // цепочке рефлексов оценку «стоп» (VelumChainStepOutcomeRules.Evaluate).
+          result = new RecipeStepExecutionResult(
+              context?.StepIndex ?? 0,
+              "invoke",
+              true,
+              false,
+              "motor_params_cancelled",
+              false);
+          return true;
+        }
+
+        args = merged;
+      }
+
       return handler(context, args, out result);
     }
+
+    /// <summary>
+    /// Строит поля диалога из фактических параметров шага: рендерятся только реально
+    /// присутствующие ключи (значения из рецепта/переменных — как стартовые).
+    /// Типы параметров (справочник <c>paramId→type</c>) приходят из ISIDA позже; сейчас
+    /// все поля — свободный текст, необязательные (обратная совместимость с рецептами без схем).
+    /// </summary>
+    private static IReadOnlyList<VelumMotorParamField> BuildParamFields(
+        IReadOnlyDictionary<string, string> args)
+    {
+      var fields = new List<VelumMotorParamField>();
+      if (args == null)
+        return fields;
+
+      foreach (KeyValuePair<string, string> kv in args)
+      {
+        if (string.IsNullOrWhiteSpace(kv.Key))
+          continue;
+        fields.Add(new VelumMotorParamField(
+            kv.Key,
+            kv.Key,
+            "text",
+            kv.Value,
+            required: false,
+            enumValues: null));
+      }
+
+      return fields;
+    }
+
+    /// <summary>Служебные ключи шага, не являющиеся аргументами handler'а.</summary>
+    private static readonly HashSet<string> NonArgKeys =
+        new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "handler", "confirm" };
 
     private static IReadOnlyDictionary<string, string> ExtractHandlerArgs(
         IReadOnlyDictionary<string, string> stepParameters)
@@ -92,7 +166,7 @@ namespace Velum.ReactiveCore
 
       foreach (KeyValuePair<string, string> kv in stepParameters)
       {
-        if (string.Equals(kv.Key, "handler", StringComparison.OrdinalIgnoreCase))
+        if (NonArgKeys.Contains(kv.Key))
           continue;
         args[kv.Key] = kv.Value;
       }
@@ -170,6 +244,20 @@ namespace Velum.ReactiveCore
         out RecipeStepExecutionResult result)
     {
       return RecipeExecutorHandlersGeometry.TryExecuteExtrudePlate(
+          context.StepIndex,
+          args,
+          context.ModelDoc,
+          context.TemplateContext,
+          context.PsychicVariables,
+          out result);
+    }
+
+    private static bool ExecuteSketchLine(
+        RecipeStepExecutionContext context,
+        IReadOnlyDictionary<string, string> args,
+        out RecipeStepExecutionResult result)
+    {
+      return RecipeExecutorHandlersGeometry.TryExecuteLine(
           context.StepIndex,
           args,
           context.ModelDoc,

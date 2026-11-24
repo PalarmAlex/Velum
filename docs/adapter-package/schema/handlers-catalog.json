@@ -270,6 +270,77 @@
       ]
     },
     {
+      "id": "sketch_line",
+      "label": "Линия в эскизе (универсальный токен)",
+      "description": "Рисует отрезок (SketchManager.CreateLine). Если в активном документе уже открыт эскиз — линия дописывается в текущий эскиз без создания нового; иначе выбирается базовая плоскость и открывается новый эскиз. Координаты в мм, допускают шаблоны {NAME} и переменные психики {V:имя}. Задают либо x1/y1(/z1) и x2/y2(/z2), либо length (+ необязательный angle от оси X, град). Только SLDPRT.",
+      "argsSchema": [
+        {
+          "key": "plane",
+          "label": "Базовая плоскость (если эскиза нет)",
+          "type": "enum",
+          "defaultValue": "front",
+          "values": [
+            { "key": "front", "label": "Спереди (Front)" },
+            { "key": "top", "label": "Сверху (Top)" },
+            { "key": "right", "label": "Справа (Right)" }
+          ]
+        },
+        {
+          "key": "x1",
+          "label": "X начала, мм",
+          "type": "string",
+          "defaultValue": "0",
+          "editorHint": "template_placeholder"
+        },
+        {
+          "key": "y1",
+          "label": "Y начала, мм",
+          "type": "string",
+          "defaultValue": "0",
+          "editorHint": "template_placeholder"
+        },
+        {
+          "key": "z1",
+          "label": "Z начала, мм",
+          "type": "string",
+          "defaultValue": "0",
+          "editorHint": "template_placeholder"
+        },
+        {
+          "key": "x2",
+          "label": "X конца, мм",
+          "type": "string",
+          "editorHint": "template_placeholder"
+        },
+        {
+          "key": "y2",
+          "label": "Y конца, мм",
+          "type": "string",
+          "editorHint": "template_placeholder"
+        },
+        {
+          "key": "z2",
+          "label": "Z конца, мм",
+          "type": "string",
+          "defaultValue": "0",
+          "editorHint": "template_placeholder"
+        },
+        {
+          "key": "length",
+          "label": "Длина, мм (если нет x2/y2)",
+          "type": "string",
+          "editorHint": "template_placeholder"
+        },
+        {
+          "key": "angle",
+          "label": "Угол от оси X, град",
+          "type": "string",
+          "defaultValue": "0",
+          "editorHint": "template_placeholder"
+        }
+      ]
+    },
+    {
       "id": "run_macro",
       "label": "Выполнить макрос",
       "description": "Запуск макроса SolidWorks через RunMacro2 (VBA .swp или VSTA .dll). Укажите файл, модуль и процедуру (для VBA обычно Module1 / main).",

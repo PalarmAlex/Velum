@@ -122,7 +122,7 @@ namespace Velum.ReactiveCore
       // run_sw_command с той же командой не задвоил действие оператора (см. VelumCommandIdResolver).
       int commandPatternId = action.CommandPatternId;
 
-      if (!RecipeExecutor.TryExecute(recipe, DefaultProbe, action.ActivationSource, commandPatternId, out RecipeExecutionResult result))
+      if (!RecipeExecutor.TryExecute(recipe, DefaultProbe, action.ActivationSource, commandPatternId, action.Params, out RecipeExecutionResult result))
       {
         LogDispatchFailure(recipe, adaptiveActionId, pulse, activationPulse, result);
         RecipeMotorOutcomeNotifier.TryNotify(recipe, result);

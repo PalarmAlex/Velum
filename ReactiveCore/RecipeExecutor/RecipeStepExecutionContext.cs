@@ -66,6 +66,14 @@ namespace Velum.ReactiveCore
     public int CommandPatternId { get; internal set; }
 
     /// <summary>
+    /// Параметры моторного действия из образа (<see cref="ISIDA.Psychic.Automatism.ActionsImagesSystem.ActionsImage.Params"/>).
+    /// Приоритет над <see cref="PsychicVariables"/>: если ключ присутствует в обоих,
+    /// берётся значение из образа. Пустой словарь, если параметры не заданы.
+    /// </summary>
+    public IReadOnlyDictionary<string, string> ImageParams { get; internal set; }
+        = new Dictionary<string, string>();
+
+    /// <summary>
     /// Рецепт запущен условным рефлексом: при несовпадении типа документа интерактивные
     /// шаги должны тихо пропускаться без пользовательского MessageBox (оператор не просил действие).
     /// </summary>
