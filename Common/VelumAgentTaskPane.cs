@@ -730,21 +730,24 @@ namespace Velum.UI
       int gap = 2;
       int btnH = SendButtonHeightPx - 2;
 
-      // Кнопки «Наказать» и «Поощрить» — по 1/4 ширины панели, «Отправить» — остальное.
+      // Строка кнопок разбита на 4 равных столбца: 1 — «Наказать», 2 — «Поощрить»,
+      // 3 — пустой (визуальный отступ), 4 — «Отправить». Так «Отправить» по ширине
+      // равна «Наказать»/«Поощрить», а между ними сохранён пробел.
       // Если Designer не создал кнопки奖惩 (защита от partial-сборок) — «Отправить» на всю ширину.
       int avail = innerW - 2 * pad;
       if (_btnPunish != null && _btnReward != null)
       {
-        avail -= 2 * gap;
+        avail -= 3 * gap;
         int quarter = Math.Max(1, avail / 4);
-        int sendW = Math.Max(1, avail - 2 * quarter);
+        int colStep = quarter + gap;
 
         int cx = pad;
         _btnPunish.SetBounds(cx, pad, quarter, btnH);
-        cx += quarter + gap;
+        cx += colStep;
         _btnReward.SetBounds(cx, pad, quarter, btnH);
-        cx += quarter + gap;
-        _btnSend.SetBounds(cx, pad, sendW, btnH);
+        cx += colStep; // пропускаем 3-й (пустой) столбец
+        cx += colStep;
+        _btnSend.SetBounds(cx, pad, quarter, btnH);
       }
       else
       {
