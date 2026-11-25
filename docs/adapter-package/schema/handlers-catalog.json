@@ -259,6 +259,12 @@
             { "key": "top", "label": "Сверху (Top)" },
             { "key": "right", "label": "Справа (Right)" }
           ]
+        },
+        {
+          "key": "close_sketch",
+          "label": "Закрыть эскиз",
+          "type": "bool",
+          "defaultValue": "false"
         }
       ]
     },
@@ -330,6 +336,12 @@
           "type": "string",
           "defaultValue": "0",
           "editorHint": "template_placeholder"
+        },
+        {
+          "key": "close_sketch",
+          "label": "Закрыть эскиз",
+          "type": "bool",
+          "defaultValue": "false"
         }
       ]
     },
@@ -376,6 +388,12 @@
             { "key": "top", "label": "Сверху (Top)" },
             { "key": "right", "label": "Справа (Right)" }
           ]
+        },
+        {
+          "key": "close_sketch",
+          "label": "Закрыть эскиз",
+          "type": "bool",
+          "defaultValue": "false"
         }
       ]
     },
@@ -415,6 +433,12 @@
             { "key": "top", "label": "Сверху (Top)" },
             { "key": "right", "label": "Справа (Right)" }
           ]
+        },
+        {
+          "key": "close_sketch",
+          "label": "Закрыть эскиз",
+          "type": "bool",
+          "defaultValue": "false"
         }
       ]
     },
@@ -461,6 +485,12 @@
             { "key": "top", "label": "Сверху (Top)" },
             { "key": "right", "label": "Справа (Right)" }
           ]
+        },
+        {
+          "key": "close_sketch",
+          "label": "Закрыть эскиз",
+          "type": "bool",
+          "defaultValue": "false"
         }
       ]
     },
@@ -507,6 +537,12 @@
             { "key": "top", "label": "Сверху (Top)" },
             { "key": "right", "label": "Справа (Right)" }
           ]
+        },
+        {
+          "key": "close_sketch",
+          "label": "Закрыть эскиз",
+          "type": "bool",
+          "defaultValue": "false"
         }
       ]
     },

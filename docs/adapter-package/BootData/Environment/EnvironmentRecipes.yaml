@@ -101,7 +101,7 @@ recipes:
         handler: run_sw_command
         command_id: 2
 
-  - id: sketch_extrude_plate_demo
+  - id: sketch_extrude_plate
     display_name: Прямоугольник 100x100
     description: Рисует прямоугольник 100x100 мм (в текущем эскизе — дорисовывает, иначе создаёт эскиз на Front)
     adaptive_action_id: 52
@@ -113,7 +113,7 @@ recipes:
         plane: front
         width: 100
 
-  - id: sketch_line_demo
+  - id: sketch_line
     display_name: Линия 100 мм вдоль оси X
     description: "Рисует отрезок длиной 100 мм (в текущем эскизе — дорисовывает, иначе создаёт эскиз на Front)"
     adaptive_action_id: 51
@@ -129,7 +129,7 @@ recipes:
         z1: 0
         z2: 0
 
-  - id: sketch_centered_rectangle_demo
+  - id: sketch_centered_rectangle
     display_name: Прямоугольник из центра 100x100
     description: "Рисует прямоугольник 100x100 мм с центром в начале координат (в текущем эскизе — дорисовывает, иначе создаёт эскиз на Front; перед закрытием определяет размеры)"
     adaptive_action_id: 53
@@ -143,7 +143,7 @@ recipes:
         plane: front
         width: 100
 
-  - id: sketch_circle_demo
+  - id: sketch_circle
     display_name: Окружность диаметром 100
     description: "Рисует окружность диаметром 100 мм с центром в начале координат (в текущем эскизе — дорисовывает, иначе создаёт эскиз на Front; перед закрытием определяет размеры)"
     adaptive_action_id: 54
@@ -156,7 +156,7 @@ recipes:
         diameter: 100
         plane: front
 
-  - id: sketch_polygon_demo
+  - id: sketch_polygon
     display_name: Шестигранник (вершины на Ø100)
     description: "Рисует правильный шестиугольник с центром в начале координат, вершины на окружности Ø100 (в текущем эскизе — дорисовывает, иначе создаёт эскиз на Front; перед закрытием определяет размеры)"
     adaptive_action_id: 55
@@ -170,7 +170,7 @@ recipes:
         plane: front
         sides: 6
 
-  - id: sketch_polygon_inscribed_demo
+  - id: sketch_polygon_inscribed
     display_name: Шестигранник «под ключ» (вписанная Ø100)
     description: "Рисует правильный шестиугольник с центром в начале координат и вписанной окружностью Ø100 (стороны касаются окружности; «под ключ» 100 мм). В текущем эскизе — дорисовывает, иначе создаёт эскиз на Front; перед закрытием определяет размеры"
     adaptive_action_id: 56

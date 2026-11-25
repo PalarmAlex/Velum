@@ -81,6 +81,9 @@ namespace Velum.ReactiveCore
       if (!TryResolvePlane(modelDoc, plane, out string planeName, out string planeErr))
         return Fail(index, "plane:" + planeErr, out result);
 
+      // close_sketch (флажок «Закрыть эскиз», по умолчанию false) — выход из эскиза только при флаге.
+      bool closeSketch = ReadCloseSketch(args);
+
       try
       {
         // Выбор базовой плоскости и вход в эскиз.
@@ -99,20 +102,26 @@ namespace Velum.ReactiveCore
         object rect = sketchMgr.CreateCornerRectangle(0, 0, 0, widthM, heightM, 0);
         if (rect == null)
         {
-          sketchMgr.InsertSketch(true);
+          if (closeSketch)
+            sketchMgr.InsertSketch(true);
           return Fail(index, "create_rectangle_failed", out result);
         }
 
-        TryFullyDefineSketch(modelDoc); // Полностью определить эскиз (проставить размеры) до выхода.
+        // Полное определение + выход + rebuild — только при close_sketch; иначе эскиз остаётся открытым.
+        if (closeSketch)
+        {
+          TryFullyDefineSketch(modelDoc); // Полностью определить эскиз (проставить размеры) до выхода.
 
-        sketchMgr.InsertSketch(true); // Выход из эскиза.
+          sketchMgr.InsertSketch(true); // Выход из эскиза.
 
-        modelDoc.EditRebuild3();
+          modelDoc.EditRebuild3();
+        }
 
         string summary =
             "width_mm=" + ToStr(widthM / VelumRecipeGeometryRules.MillimetersToMeters) +
             " height_mm=" + ToStr(heightM / VelumRecipeGeometryRules.MillimetersToMeters) +
-            " plane=" + planeName;
+            " plane=" + planeName +
+            " close_sketch=" + (closeSketch ? "true" : "false");
         result = new RecipeStepExecutionResult(index, "invoke", true, false, summary);
         Logger.Info("Velum Recipe sketch_extrude_plate OK " + summary);
         return true;
@@ -174,6 +183,10 @@ namespace Velum.ReactiveCore
       // спрашиваем ModelDoc2.GetInSketch() (через рефлексию — сигнатура есть не во всех PIA),
       // иначе InsertSketch(true) для уже открытого эскиза выйдет из него, и CreateLine вернёт null.
       bool alreadyInSketch = DetectInSketch(modelDoc, sketchMgr);
+
+      // close_sketch (флажок «Закрыть эскиз», по умолчанию false): выходим из созданного эскиза
+      // только при установленном флаге. В чужой открытый эскиз не лезем независимо от флага.
+      bool closeSketch = ReadCloseSketch(args);
 
       // Начало отрезка (по умолчанию 0,0,0).
       if (!TryResolveCoordinate(args, "x1", 0, templateContext, psychicVariables, out double x1M, out string x1Err))
@@ -242,7 +255,7 @@ namespace Velum.ReactiveCore
         // CreateLine не рисует вырожденный отрезок (совпадающие точки) — вернёт null.
         if (IsDegenerateSegment(x1M, y1M, z1M, x2M, y2M, z2M))
         {
-          if (!alreadyInSketch)
+          if (!alreadyInSketch && closeSketch)
             sketchMgr.InsertSketch(true);
           return FailLine(index, "degenerate_segment", out result);
         }
@@ -251,12 +264,12 @@ namespace Velum.ReactiveCore
         if (line == null)
         {
           string diag = BuildLineDiag(alreadyInSketch, planeName, x1M, y1M, z1M, x2M, y2M, z2M);
-          if (!alreadyInSketch)
+          if (!alreadyInSketch && closeSketch)
             sketchMgr.InsertSketch(true); // Закрыть созданный эскиз даже при неудаче.
           return FailLine(index, "create_line_failed " + diag, out result);
         }
 
-        if (!alreadyInSketch)
+        if (!alreadyInSketch && closeSketch)
         {
           // Полностью определить эскиз только когда создали свой; в чужой активный эскиз
           // (alreadyInSketch) не лезем — там пользователь рисует сам.
@@ -267,6 +280,7 @@ namespace Velum.ReactiveCore
         string summary =
             "mode=" + (alreadyInSketch ? "append" : "new_sketch") +
             (planeName != null ? " plane=" + planeName : string.Empty) +
+            (alreadyInSketch ? string.Empty : " close_sketch=" + (closeSketch ? "true" : "false")) +
             " x1_mm=" + ToStr(x1M / VelumRecipeGeometryRules.MillimetersToMeters) +
             " y1_mm=" + ToStr(y1M / VelumRecipeGeometryRules.MillimetersToMeters) +
             " x2_mm=" + ToStr(x2M / VelumRecipeGeometryRules.MillimetersToMeters) +
@@ -278,7 +292,8 @@ namespace Velum.ReactiveCore
       catch (Exception ex)
       {
         // Если входили сами и бросило внутри — пробуем закрыть эскиз, не оставлять «висящий» режим.
-        if (!alreadyInSketch)
+        // При close_sketch=false эскиз остаётся открытым (ожидаемое состояние) — не выходим.
+        if (!alreadyInSketch && closeSketch)
         {
           try { sketchMgr.InsertSketch(true); }
           catch { }
@@ -547,6 +562,10 @@ namespace Velum.ReactiveCore
 
       bool alreadyInSketch = DetectInSketch(modelDoc, sketchMgr);
 
+      // close_sketch (флажок «Закрыть эскиз», по умолчанию false) управляет ТОЛЬКО эскизом,
+      // созданным этим шагом. В чужой открытый эскиз (alreadyInSketch) не лезем независимо от флага.
+      bool closeSketch = ReadCloseSketch(args);
+
       string planeName = null;
       if (!alreadyInSketch)
       {
@@ -570,20 +589,24 @@ namespace Velum.ReactiveCore
         string drawErr = draw(ism, out string drawSummary);
         if (drawErr != null)
         {
-          if (!alreadyInSketch)
-            sketchMgr.InsertSketch(true); // Закрыть созданный эскиз при неудаче.
+          // Эскиз закрываем при неудаче, только если этим шагом создан и стоит флаг закрытия.
+          if (!alreadyInSketch && closeSketch)
+            sketchMgr.InsertSketch(true);
           return FailSketch(index, handlerLabel, drawErr, out result);
         }
 
-        if (!alreadyInSketch)
+        // Полное определение + выход + rebuild — только для своего эскиза и только при close_sketch.
+        // Иначе эскиз остаётся открытым для дорисовки оператором/следующим шагом.
+        if (!alreadyInSketch && closeSketch)
         {
-          TryFullyDefineSketch(modelDoc); // Определяем только свой эскиз.
+          TryFullyDefineSketch(modelDoc);
           sketchMgr.InsertSketch(true);   // Выход из созданного эскиза.
           modelDoc.EditRebuild3();
         }
 
         string summary = "mode=" + (alreadyInSketch ? "append" : "new_sketch") +
             (planeName != null ? " plane=" + planeName : string.Empty) +
+            (alreadyInSketch ? string.Empty : " close_sketch=" + (closeSketch ? "true" : "false")) +
             (string.IsNullOrEmpty(drawSummary) ? string.Empty : " " + drawSummary);
         result = new RecipeStepExecutionResult(index, "invoke", true, false, summary);
         Logger.Info("Velum Recipe " + handlerLabel + " OK " + summary);
@@ -591,7 +614,8 @@ namespace Velum.ReactiveCore
       }
       catch (Exception ex)
       {
-        if (!alreadyInSketch)
+        // При close_sketch=false эскиз остаётся открытым (это ожидаемое состояние), не выходим из него.
+        if (!alreadyInSketch && closeSketch)
         {
           try { sketchMgr.InsertSketch(true); }
           catch { }
@@ -600,6 +624,23 @@ namespace Velum.ReactiveCore
         Logger.Warning("Velum Recipe " + handlerLabel + " FAIL: " + ex.Message);
         return false;
       }
+    }
+
+    /// <summary>
+    /// Читает флажок <c>close_sketch</c> («Закрыть эскиз»). Отсутствующий/пустой параметр → <c>false</c>
+    /// (эскиз остаётся открытым). Принимаются <c>true</c>/<c>false</c> (регистронезависимо) и <c>1</c>.
+    /// </summary>
+    private static bool ReadCloseSketch(IReadOnlyDictionary<string, string> args)
+    {
+      string raw = RecipeArgsParser.Get(args, "close_sketch");
+      if (string.IsNullOrWhiteSpace(raw))
+        return false;
+
+      string trimmed = raw.Trim();
+      if (bool.TryParse(trimmed, out bool parsed))
+        return parsed;
+
+      return trimmed == "1";
     }
 
     /// <summary>Делегат рисования примитива в открытом эскизе (возвращает ошибку или <c>null</c>).</summary>
