@@ -7,12 +7,86 @@ using System.Windows.Forms;
 using ISIDA.Actions;
 using ISIDA.Gomeostas;
 using Velum.Isida;
+using Velum.ReactiveCore.DocumentTemplates;
 using Velum.SolidHomeostasis;
+using Xarial.XCad;
 
 namespace Velum.UI
 {
   public sealed partial class VelumAgentTaskPane
   {
+    private Button _btnDocumentPerception;
+
+    /// <summary>
+    /// Создаёт кнопку «Документ» в строке заголовка метрик и подключает обработчик.
+    /// Вызывается из <c>VelumAgentTaskPane_Load</c>; кнопка открывается по активному документу
+    /// снимок восприятия (шаблон, confidence, параметры/зоны, болевые точки).
+    /// </summary>
+    private void EnsureDocumentPerceptionButton()
+    {
+      if (_btnDocumentPerception != null || _pnlParametersCaptionRow == null)
+        return;
+
+      _btnDocumentPerception = new Button
+      {
+        Name = "_btnDocumentPerception",
+        Text = "Документ",
+        FlatStyle = FlatStyle.Flat,
+        Font = new Font("Segoe UI", 8.25f, FontStyle.Regular, GraphicsUnit.Point, ((byte)(204))),
+        Size = new Size(64, 22),
+        Margin = new Padding(0, 1, 4, 0),
+        Anchor = AnchorStyles.Top | AnchorStyles.Right,
+        TabStop = false,
+        UseVisualStyleBackColor = true
+      };
+      _btnDocumentPerception.Click += OnDocumentPerceptionClick;
+      if (_parameterToolTip != null)
+        _parameterToolTip.SetToolTip(_btnDocumentPerception,
+            "Восприятие активного документа: шаблон, confidence, параметры и болевые точки");
+
+      // Вставляем правее кнопки метрик (та же правая привязка).
+      int right = _btnMetricsSettingsPick != null ? _btnMetricsSettingsPick.Left : _pnlParametersCaptionRow.Width;
+      _btnDocumentPerception.Left = Math.Max(0, right - _btnDocumentPerception.Width - 4);
+      _btnDocumentPerception.Top = _btnMetricsSettingsPick != null ? _btnMetricsSettingsPick.Top : 0;
+
+      _pnlParametersCaptionRow.Controls.Add(_btnDocumentPerception);
+      _btnDocumentPerception.BringToFront();
+    }
+
+    private void OnDocumentPerceptionClick(object sender, EventArgs e)
+    {
+      try
+      {
+        IXApplication app = VelumSolidEnvironmentBridge.TryGetSolidWorksApplication();
+        if (app == null || !app.IsAlive)
+        {
+          ShowDocumentPerception(null);
+          return;
+        }
+
+        // TaskPane живёт в UI-потоке SolidWorks — свежий COM-резолв и сбор снимка здесь допустимы.
+        VelumSolidDocumentEditContext ctx = VelumSolidDocumentEditContextResolver.ResolveFresh(app);
+        VelumDocumentSnapshot snapshot = VelumDocumentPerceptionService.Refresh(ctx?.ActiveModelDoc);
+        ShowDocumentPerception(snapshot);
+      }
+      catch
+      {
+        ShowDocumentPerception(null);
+      }
+    }
+
+    private void ShowDocumentPerception(VelumDocumentSnapshot snapshot)
+    {
+      Form owner = FindForm();
+      using (var dlg = new VelumDocumentPerceptionForm(snapshot))
+      {
+        if (owner != null)
+          dlg.ShowDialog(owner);
+        else
+          dlg.ShowDialog();
+      }
+    }
+
     private void ClearMosaic()
     {
       _metricSignature = string.Empty;

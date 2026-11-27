@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "3.2",
+  "schemaVersion": "3.3",
   "handlers": [
     {
       "id": "save_file_name",

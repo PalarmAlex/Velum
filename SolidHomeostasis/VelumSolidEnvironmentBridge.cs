@@ -8,6 +8,7 @@ using ISIDA.Gomeostas;
 using Velum.Configuration;
 using Velum.Isida;
 using Velum.ReactiveCore;
+using Velum.ReactiveCore.DocumentTemplates;
 using Velum.UI.ProductRegistry;
 using Xarial.XCad;
 using Xarial.XCad.Documents;
@@ -573,7 +574,25 @@ namespace Velum.SolidHomeostasis
       if (generation != Volatile.Read(ref _solidProbeRefreshGeneration))
         return;
 
-      IReadOnlyList<string> allProbeKeys = VelumSolidEnvironmentInfluenceComposer.EnumerateDistinctEnvironmentProbeKeys();
+      // Пересбор снимка восприятия документа (распознавание шаблона + значения параметров)
+      // на UI-потоке SolidWorks — здесь, а не в опросе проб: опрос читает только кэш.
+      // Выполняется, когда в наборе есть документные пробы данными.
+      if ((categories & VelumSolidProbeCategory.DocumentParameters) != 0)
+      {
+        try
+        {
+          VelumDocumentPerceptionService.Refresh(editContext?.ActiveModelDoc);
+        }
+        catch (Exception ex)
+        {
+          VelumSolidDiagLog.WriteError("Document perception refresh: " + VelumSolidDiagLog.FormatEx(ex));
+        }
+      }
+
+      // Документные пробы данными (параметры распознанного шаблона) динамические — их нет в
+      //EA-воздействиях. Объединяем статический набор с ключами текущего снимка восприятия.
+      IReadOnlyList<string> allProbeKeys = MergeProbeKeysWithSnapshot(
+          VelumSolidEnvironmentInfluenceComposer.EnumerateDistinctEnvironmentProbeKeys());
       if (allProbeKeys.Count == 0)
       {
         VelumSolidWorksMetricsCache.Clear();
@@ -684,6 +703,39 @@ namespace Velum.SolidHomeostasis
         VelumSolidDiagLog.WritePulseHost(
             $"pulseArg={pulseNumber} probe=empty merged={mergedValues.Count} (keep previous gate snapshot)");
       }
+    }
+
+    /// <summary>
+    /// Объединяет статический набор ключей проб (из EA-воздействий) с динамическими ключами
+    /// параметров текущего снимка восприятия. Дедупликация по <c>Ordinal</c>.
+    /// </summary>
+    private static IReadOnlyList<string> MergeProbeKeysWithSnapshot(IReadOnlyList<string> staticKeys)
+    {
+      List<string> snapshotKeys = new List<string>(
+          VelumDocumentPerceptionService.EnumerateProbeKeys(VelumDocumentPerceptionService.Current));
+
+      if (snapshotKeys.Count == 0)
+        return staticKeys ?? Array.Empty<string>();
+
+      var seen = new HashSet<string>(StringComparer.Ordinal);
+      var merged = new List<string>();
+
+      if (staticKeys != null)
+      {
+        foreach (string k in staticKeys)
+        {
+          if (!string.IsNullOrWhiteSpace(k) && seen.Add(k))
+            merged.Add(k);
+        }
+      }
+
+      foreach (string k in snapshotKeys)
+      {
+        if (seen.Add(k))
+          merged.Add(k);
+      }
+
+      return merged;
     }
 
     private static Dictionary<string, float> CopyPublishedSnapshotValues()
@@ -919,7 +971,8 @@ namespace Velum.SolidHomeostasis
       try
       {
         // Получаем все ключи проб
-        IReadOnlyList<string> allProbeKeys = VelumSolidEnvironmentInfluenceComposer.EnumerateDistinctEnvironmentProbeKeys();
+        IReadOnlyList<string> allProbeKeys = MergeProbeKeysWithSnapshot(
+            VelumSolidEnvironmentInfluenceComposer.EnumerateDistinctEnvironmentProbeKeys());
         if (allProbeKeys.Count == 0)
           return;
 

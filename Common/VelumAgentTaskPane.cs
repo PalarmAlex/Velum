@@ -233,6 +233,8 @@ namespace Velum.UI
       if (_btnMetricsSettingsPick != null)
         _btnMetricsSettingsPick.Click += OnMetricsSettingsPickClick;
 
+      EnsureDocumentPerceptionButton();
+
       VelumSolidEnvironmentBridge.SolidCommandBufferChanged += OnSolidCommandBufferChanged;
       VelumProductRegistryIntegrityScheduler.ScanStateChanged += OnRegistryScanStateChanged;
       RefreshHeaderHomeostasisTooltips();

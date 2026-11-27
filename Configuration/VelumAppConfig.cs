@@ -166,6 +166,94 @@ namespace Velum.Configuration
         Path.Combine(BaseDataPath, "AssemblyRegistry"));
 
     /// <summary>
+    /// Проектная библиотека шаблонов документов. По умолчанию — <c>&lt;DocumentRootPath&gt;\Templates</c>;
+    /// если корень документов не задан или проектной библиотеки нет, используется общая
+    /// <c>%ProgramData%\VELUM\Templates</c> (ставит инсталлятор). Резолвинг корня — в
+    /// <c>VelumDocumentTemplateCatalogRules</c>.
+    /// </summary>
+    public static string TemplatesFolderPath => GetExpandedSettingOrEmpty("TemplatesFolderPath");
+
+    /// <summary>Сохраняет путь к проектной библиотеке шаблонов документов.</summary>
+    /// <param name="folder">Каталог библиотеки; пусто — использовать корень документов/общую.</param>
+    public static void SetTemplatesFolderPath(string folder) =>
+        SetFolderSetting("TemplatesFolderPath", folder);
+
+    /// <summary>
+    /// Проектный корень библиотеки шаблонов по умолчанию:
+    /// <c>&lt;DocumentRootPath&gt;\Templates</c>. Пусто — корень документов не задан.
+    /// </summary>
+    public static string DefaultProjectTemplatesFolderPath
+    {
+      get
+      {
+        string root = GetDocumentRootPath();
+        if (string.IsNullOrWhiteSpace(root))
+          return string.Empty;
+
+        try
+        {
+          return Path.Combine(root, "Templates");
+        }
+        catch
+        {
+          return string.Empty;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Общая библиотека шаблонов документов (<c>%ProgramData%\VELUM\Templates</c>).
+    /// </summary>
+    public static string SharedTemplatesFolderPath => Path.Combine(BaseDataPath, "Templates");
+
+    /// <summary>
+    /// Каталог реестра экземпляров документов (по умолчанию %ProgramData%\VELUM\Documents).
+    /// </summary>
+    public static string DocumentsRegistryFolderPath => GetExpandedDataPathOrDefault(
+        "DocumentsRegistryFolderPath",
+        Path.Combine(BaseDataPath, "Documents"));
+
+    /// <summary>Вес совпадения обязательных уравнений при распознавании документа (0…1).</summary>
+    public static double DocumentRecognitionWeightEquations =>
+        GetFloatSetting("DocumentRecognition.WeightEquations", 0.50f);
+
+    /// <summary>Вес совпадения обязательных свойств при распознавании документа (0…1).</summary>
+    public static double DocumentRecognitionWeightProperties =>
+        GetFloatSetting("DocumentRecognition.WeightProperties", 0.25f);
+
+    /// <summary>Вес совпадения обязательных операций при распознавании документа (0…1).</summary>
+    public static double DocumentRecognitionWeightFeatures =>
+        GetFloatSetting("DocumentRecognition.WeightFeatures", 0.15f);
+
+    /// <summary>Базовый вес (совпадение типа документа) при распознавании (0…1).</summary>
+    public static double DocumentRecognitionWeightBase =>
+        GetFloatSetting("DocumentRecognition.WeightBase", 0.10f);
+
+    /// <summary>Минимальный confidence для принятия кандидата-шаблона (0…1).</summary>
+    public static double DocumentRecognitionMinConfidence =>
+        GetFloatSetting("DocumentRecognition.MinConfidence", 0.8f);
+
+    /// <summary>Минимальная разница первого и второго кандидата; меньше — неоднозначность.</summary>
+    public static double DocumentRecognitionAmbiguityDelta =>
+        GetFloatSetting("DocumentRecognition.AmbiguityDelta", 0.05f);
+
+    /// <summary>
+    /// Ширина полосы <c>warn</c> для зон допуска параметра документа (абсолютная величина
+    /// в единицах параметра). Значение вышло за допуск, но не дальше полосы — <c>warn</c>
+    /// (оценка 100…50); дальше — <c>bad</c> (50…0). При &lt;= 0 берётся доля от полуширины
+    /// допуска (см. <see cref="DocumentParameterWarnBandRatio"/>).
+    /// </summary>
+    public static double DocumentParameterWarnBand =>
+        GetFloatSetting("DocumentParameter.WarnBand", 0f);
+
+    /// <summary>
+    /// Доля полуширины допуска, используемая как полоса <c>warn</c>, когда
+    /// <see cref="DocumentParameterWarnBand"/> не задан (0…1).
+    /// </summary>
+    public static double DocumentParameterWarnBandRatio =>
+        GetFloatSetting("DocumentParameter.WarnBandRatio", 0.25f);
+
+    /// <summary>
     /// Путь к корневому каталогу документов на <b>этой</b> машине: <c>Z:\</c> либо
     /// <c>\server\dfs\</c>. Настройка локальная — дома по VPN указывается доступ по IP,
     /// на работе — буква общего диска. Пути в реестре и в свойствах документов хранятся

@@ -23,7 +23,8 @@ namespace Velum.SolidHomeostasis
       if (ctx.HasPartLevelProbeTarget)
       {
         categories |= VelumSolidProbeCategory.PartMaterial |
-                        VelumSolidProbeCategory.ExportDocumentation;
+                        VelumSolidProbeCategory.ExportDocumentation |
+                        VelumSolidProbeCategory.DocumentParameters;
       }
 
       return categories;

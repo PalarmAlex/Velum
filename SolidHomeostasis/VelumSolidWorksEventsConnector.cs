@@ -68,7 +68,8 @@ namespace Velum.SolidHomeostasis
 
     private static readonly VelumSolidProbeCategory ModifyStaleCategories =
         VelumSolidProbeCategory.PartMaterial |
-        VelumSolidProbeCategory.ExportDocumentation;
+        VelumSolidProbeCategory.ExportDocumentation |
+        VelumSolidProbeCategory.DocumentParameters;
 
     private static readonly VelumSolidProbeCategory DrawingChangeStaleCategories =
         VelumSolidProbeCategory.ExportDocumentation;
@@ -76,7 +77,8 @@ namespace Velum.SolidHomeostasis
     private static readonly VelumSolidProbeCategory SaveStaleCategories =
         VelumSolidProbeCategory.Document |
         VelumSolidProbeCategory.PartMaterial |
-        VelumSolidProbeCategory.ExportDocumentation;
+        VelumSolidProbeCategory.ExportDocumentation |
+        VelumSolidProbeCategory.DocumentParameters;
 
     /// <summary>true, если повешена подписка на события приложения.</summary>
     internal static bool IsEventSubscriptionActive => _sw != null;

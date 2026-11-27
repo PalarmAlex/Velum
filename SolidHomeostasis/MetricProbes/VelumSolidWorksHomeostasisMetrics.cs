@@ -9,6 +9,7 @@ using Xarial.XCad.Documents;
 using Xarial.XCad.Exceptions;
 using Xarial.XCad.SolidWorks;
 using Velum.ReactiveCore;
+using Velum.ReactiveCore.DocumentTemplates;
 using Velum.UI.ProductRegistry;
 
 namespace Velum.SolidHomeostasis
@@ -38,6 +39,8 @@ namespace Velum.SolidHomeostasis
         return VelumSolidProbeCategory.ExportDocumentation;
       if (VelumBlankSizeProperties.IsBlankSizeProbeKey(k))
         return VelumSolidProbeCategory.ExportDocumentation;
+      if (VelumDocumentProbeKeys.IsDocumentDataProbeKey(k))
+        return VelumSolidProbeCategory.DocumentParameters;
       if (VelumProductRegistryIntegrityProbes.IsRegistryProbeKey(k))
         return VelumSolidProbeCategory.HostGlobal;
       return VelumSolidProbeCategory.None;
@@ -113,10 +116,12 @@ namespace Velum.SolidHomeostasis
           return 1;
         case VelumSolidProbeCategory.PartMaterial:
           return 2;
+        case VelumSolidProbeCategory.DocumentParameters:
+          return 3;
         case VelumSolidProbeCategory.ExportDocumentation:
-          return 3;
+          return 4;
         default:
-          return 3;
+          return 4;
       }
     }
 
@@ -399,6 +404,7 @@ namespace Velum.SolidHomeostasis
         || string.Equals(k, ProbeKeyDocumentUnsavedNew, StringComparison.Ordinal)
         || VelumSolidExportDocumentationProbe.TryParseProbeKey(k, out _)
         || VelumBlankSizeProperties.IsBlankSizeProbeKey(k)
+        || VelumDocumentProbeKeys.IsDocumentDataProbeKey(k)
         || VelumProductRegistryIntegrityProbes.IsRegistryProbeKey(k);
 
     private static bool TrySampleSingleProbe(
@@ -417,6 +423,12 @@ namespace Velum.SolidHomeostasis
       IXDocument ixDoc = editContext?.ActiveDocument;
       if (ixDoc == null)
         return false;
+
+      // Документные пробы данными (параметр/свойство из библиотеки шаблонов) читаются из
+      // кэшированного снимка восприятия, а не из COM, и применимы к любому типу активного
+      // документа. Нераспознанный документ или отсутствующий параметр → проба неприменима.
+      if (VelumDocumentProbeKeys.IsDocumentDataProbeKey(key))
+        return VelumSolidDocumentParametersProbe.TryScore(key, out value, out detail);
 
       if (ixDoc is IXPart xp)
       {

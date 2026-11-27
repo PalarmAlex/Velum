@@ -3,6 +3,7 @@ using ISIDA.Psychic;
 using ISIDA.Gomeostas;
 using Velum.Isida;
 using Velum.ReactiveCore;
+using Velum.ReactiveCore.DocumentTemplates;
 
 namespace Velum.SolidHomeostasis
 {
@@ -25,6 +26,9 @@ namespace Velum.SolidHomeostasis
       // Смена эпизода: контекст документа в кэше устарел (активный документ/edit-target могли смениться).
       VelumSolidDocumentEditContextResolver.Invalidate();
       VelumSolidExportDocumentationProbe.ResetRefreshGate();
+
+      // Снимок восприятия привязан к doc.key — при смене/закрытии документа он невалиден.
+      VelumDocumentPerceptionService.Invalidate();
 
       // Сброс давления — всегда (нужен для корректного состояния gate)
       if (noActiveDocument)

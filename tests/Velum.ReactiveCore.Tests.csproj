@@ -28,6 +28,14 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
+  <!-- Чистые правила библиотеки шаблонов ссылаются на DTO/кодек контракта (net4.8 dll,
+       как в SymbiontEnv.Contract.Tests). -->
+  <ItemGroup>
+    <Reference Include="SymbiontEnv.Contract">
+      <HintPath>..\..\..\ISIDA\Programms\app\SymbiontEnv.Contract\bin\Debug\SymbiontEnv.Contract.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
   <!-- Linкуемые чистые классы из основного проекта (без SolidWorks / WinForms / isida.dll) -->
   <ItemGroup>
     <Compile Include="..\ReactiveCore\RecipeArgsParser.cs" Link="src\RecipeArgsParser.cs" />
@@ -67,6 +75,15 @@
     <Compile Include="..\ReactiveCore\VelumDocumentPropertyTypeDisplayRules.cs" Link="src\VelumDocumentPropertyTypeDisplayRules.cs" />
     <Compile Include="..\Common\DocumentProperties\VelumDocumentPropertyChoiceRules.cs" Link="src\VelumDocumentPropertyChoiceRules.cs" />
     <Compile Include="..\Common\ProductRegistry\VelumProductRegistryLinkFolderRules.cs" Link="src\VelumProductRegistryLinkFolderRules.cs" />
+    <Compile Include="..\ReactiveCore\DocumentTemplates\VelumDocumentIdentityRules.cs" Link="src\VelumDocumentIdentityRules.cs" />
+    <Compile Include="..\ReactiveCore\DocumentTemplates\VelumDocumentTemplateHashRules.cs" Link="src\VelumDocumentTemplateHashRules.cs" />
+    <Compile Include="..\ReactiveCore\DocumentTemplates\VelumDocumentContractRules.cs" Link="src\VelumDocumentContractRules.cs" />
+    <Compile Include="..\ReactiveCore\DocumentTemplates\VelumDocumentParameterValueRules.cs" Link="src\VelumDocumentParameterValueRules.cs" />
+    <Compile Include="..\ReactiveCore\DocumentTemplates\VelumDocumentFingerprintRules.cs" Link="src\VelumDocumentFingerprintRules.cs" />
+    <Compile Include="..\ReactiveCore\DocumentTemplates\VelumDocumentProbeKeys.cs" Link="src\VelumDocumentProbeKeys.cs" />
+    <Compile Include="..\ReactiveCore\DocumentTemplates\VelumDocumentParameterProbeRules.cs" Link="src\VelumDocumentParameterProbeRules.cs" />
+    <Compile Include="..\ReactiveCore\DocumentTemplates\VelumDocumentSnapshotRules.cs" Link="src\VelumDocumentSnapshotRules.cs" />
+    <Compile Include="..\ReactiveCore\DocumentTemplates\VelumDocumentTemplateCatalogRules.cs" Link="src\VelumDocumentTemplateCatalogRules.cs" />
   </ItemGroup>
 
   <!-- Конвейер «сканер → кэш проблем → снимок gate → плашка»: оригиналы без COM/WinForms -->
@@ -136,6 +153,15 @@
     <Compile Include="VelumDocumentPropertyTypeDisplayRulesTests.cs" />
     <Compile Include="VelumDocumentPropertyChoiceRulesTests.cs" />
     <Compile Include="VelumProductRegistryLinkFolderRulesTests.cs" />
+    <Compile Include="VelumDocumentIdentityRulesTests.cs" />
+    <Compile Include="VelumDocumentTemplateHashRulesTests.cs" />
+    <Compile Include="VelumDocumentContractRulesTests.cs" />
+    <Compile Include="VelumDocumentParameterValueRulesTests.cs" />
+    <Compile Include="VelumDocumentFingerprintRulesTests.cs" />
+    <Compile Include="VelumDocumentProbeKeysTests.cs" />
+    <Compile Include="VelumDocumentParameterProbeRulesTests.cs" />
+    <Compile Include="VelumDocumentSnapshotRulesTests.cs" />
+    <Compile Include="VelumDocumentTemplateCatalogRulesTests.cs" />
   </ItemGroup>
 
 </Project>

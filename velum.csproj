@@ -106,6 +106,7 @@
     <Compile Include="ReactiveCore\RecipeExecutor\RecipeExecutorHandlersRegistry.cs" />
     <Compile Include="ReactiveCore\RecipeExecutor\RecipeExecutorHandlersBomExport.cs" />
     <Compile Include="ReactiveCore\RecipeExecutor\RecipeExecutorHandlersGeometry.cs" />
+    <Compile Include="ReactiveCore\RecipeExecutor\RecipeExecutorHandlersDocumentTemplates.cs" />
     <Compile Include="ReactiveCore\Export\VelumDxfProjectionView.cs" />
     <Compile Include="ReactiveCore\Export\VelumSolidSheetMetalHelper.cs" />
     <Compile Include="ReactiveCore\Export\VelumDxfPartGeometryHelper.cs" />
@@ -183,6 +184,19 @@
     <Compile Include="ReactiveCore\VelumChainStepOutcomeRules.cs" />
     <Compile Include="ReactiveCore\VelumChainStepOutcomeReporter.cs" />
     <Compile Include="ReactiveCore\VelumReactiveCoreBootstrap.cs" />
+    <Compile Include="ReactiveCore\DocumentTemplates\VelumDocumentIdentityRules.cs" />
+    <Compile Include="ReactiveCore\DocumentTemplates\VelumDocumentTemplateHashRules.cs" />
+    <Compile Include="ReactiveCore\DocumentTemplates\VelumDocumentContractRules.cs" />
+    <Compile Include="ReactiveCore\DocumentTemplates\VelumDocumentParameterValueRules.cs" />
+    <Compile Include="ReactiveCore\DocumentTemplates\VelumDocumentFingerprintRules.cs" />
+    <Compile Include="ReactiveCore\DocumentTemplates\VelumDocumentProbeKeys.cs" />
+    <Compile Include="ReactiveCore\DocumentTemplates\VelumDocumentParameterProbeRules.cs" />
+    <Compile Include="ReactiveCore\DocumentTemplates\VelumDocumentSnapshotRules.cs" />
+    <Compile Include="ReactiveCore\DocumentTemplates\VelumDocumentPerceptionService.cs" />
+    <Compile Include="ReactiveCore\DocumentTemplates\VelumDocumentTemplateCatalogRules.cs" />
+    <Compile Include="ReactiveCore\DocumentTemplates\VelumDocumentTemplateCatalog.cs" />
+    <Compile Include="ReactiveCore\DocumentTemplates\VelumDocumentInstanceRegistry.cs" />
+    <Compile Include="ReactiveCore\DocumentTemplates\VelumDocumentParameterService.cs" />
     <Compile Include="Isida\VelumIsidaHost.cs" />
     <Compile Include="Isida\VelumProblemContextHint.cs" />
     <Compile Include="Isida\VelumAgentRuntimePreferences.cs" />
@@ -219,6 +233,7 @@
     <Compile Include="SolidHomeostasis\VelumSolidComDispatchHelper.cs" />
     <Compile Include="SolidHomeostasis\MetricProbes\VelumSolidExportDocumentationProbe.cs" />
     <Compile Include="SolidHomeostasis\MetricProbes\VelumSolidBlankSizeProbe.cs" />
+    <Compile Include="SolidHomeostasis\MetricProbes\VelumSolidDocumentParametersProbe.cs" />
     <Compile Include="SolidHomeostasis\VelumDxfBatchDiagnosticsSession.cs" />
     <Compile Include="SolidHomeostasis\VelumPdfBatchDiagnosticsSession.cs" />
     <Compile Include="SolidHomeostasis\VelumMaterialBatchRow.cs" />
@@ -561,6 +576,9 @@
       <DependentUpon>VelumDxfFileNameSuffixPickerForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Common\VelumAgentBrickDetailForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Common\VelumDocumentPerceptionForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Common\VelumAgentBrickDetailForm.Designer.cs">

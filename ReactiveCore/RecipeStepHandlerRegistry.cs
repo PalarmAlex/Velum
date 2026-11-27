@@ -40,6 +40,12 @@ namespace Velum.ReactiveCore
       Register("write_drawing_path", ExecuteWriteDrawingPath);
       Register("ensure_blank_size_property_links", ExecuteEnsureBlankSizePropertyLinks);
       Register(RecipeExecutorHandlersRegistry.ShowProblemsHandlerId, ExecuteProductRegistryShowProblems);
+      Register(RecipeExecutorHandlersDocumentTemplates.NewDocumentFromTemplateHandlerId, ExecuteNewDocumentFromTemplate);
+      Register(RecipeExecutorHandlersDocumentTemplates.CloneDocumentWithDefaultsHandlerId, ExecuteCloneDocumentWithDefaults);
+      Register(RecipeExecutorHandlersDocumentTemplates.ApplyDocumentParametersHandlerId, ExecuteApplyDocumentParameters);
+      Register(RecipeExecutorHandlersDocumentTemplates.ReadDocumentParametersHandlerId, ExecuteReadDocumentParameters);
+      Register(RecipeExecutorHandlersDocumentTemplates.WriteTemplateMarkerHandlerId, ExecuteWriteTemplateMarker);
+      Register(RecipeExecutorHandlersDocumentTemplates.ValidateDocumentContractHandlerId, ExecuteValidateDocumentContract);
       Register(RecipeExecutorHandlersBomExport.BomExportHandlerId, ExecuteBomExchangeExport);
       Register(RecipeExecutorHandlersBomExport.BomExchangeDialogHandlerId, ExecuteBomExchangeShowDialog);
     }
@@ -459,6 +465,84 @@ namespace Velum.ReactiveCore
           out result);
     }
 
+    private static bool ExecuteNewDocumentFromTemplate(
+        RecipeStepExecutionContext context,
+        IReadOnlyDictionary<string, string> args,
+        out RecipeStepExecutionResult result)
+    {
+      return RecipeExecutorHandlersDocumentTemplates.TryExecuteNewDocumentFromTemplate(
+          context.StepIndex,
+          args,
+          context.ModelDoc,
+          context.Sw,
+          out result);
+    }
+
+    private static bool ExecuteCloneDocumentWithDefaults(
+        RecipeStepExecutionContext context,
+        IReadOnlyDictionary<string, string> args,
+        out RecipeStepExecutionResult result)
+    {
+      return RecipeExecutorHandlersDocumentTemplates.TryExecuteCloneDocumentWithDefaults(
+          context.StepIndex,
+          args,
+          context.ModelDoc,
+          context.Sw,
+          out result);
+    }
+
+    private static bool ExecuteApplyDocumentParameters(
+        RecipeStepExecutionContext context,
+        IReadOnlyDictionary<string, string> args,
+        out RecipeStepExecutionResult result)
+    {
+      return RecipeExecutorHandlersDocumentTemplates.TryExecuteApplyDocumentParameters(
+          context.StepIndex,
+          args,
+          context.ModelDoc,
+          context.Sw,
+          out result);
+    }
+
+    private static bool ExecuteReadDocumentParameters(
+        RecipeStepExecutionContext context,
+        IReadOnlyDictionary<string, string> args,
+        out RecipeStepExecutionResult result)
+    {
+      return RecipeExecutorHandlersDocumentTemplates.TryExecuteReadDocumentParameters(
+          context.StepIndex,
+          args,
+          context.ModelDoc,
+          context.Sw,
+          out result);
+    }
+
+    private static bool ExecuteWriteTemplateMarker(
+        RecipeStepExecutionContext context,
+        IReadOnlyDictionary<string, string> args,
+        out RecipeStepExecutionResult result)
+    {
+      return RecipeExecutorHandlersDocumentTemplates.TryExecuteWriteTemplateMarker(
+          context.StepIndex,
+          args,
+          context.ModelDoc,
+          context.Sw,
+          out result);
+    }
+
+    private static bool ExecuteValidateDocumentContract(
+        RecipeStepExecutionContext context,
+        IReadOnlyDictionary<string, string> args,
+        out RecipeStepExecutionResult result)
+    {
+      return RecipeExecutorHandlersDocumentTemplates.TryExecuteValidateDocumentContract(
+          context.StepIndex,
+          args,
+          context.ModelDoc,
+          context.Sw,
+          out result);
+    }
+
     private static bool ExecuteBomExchangeExport(
         RecipeStepExecutionContext context,
         IReadOnlyDictionary<string, string> args,
@@ -502,6 +586,10 @@ namespace Velum.ReactiveCore
         if (string.Equals(handler, RecipeExecutorHandlersRegistry.ShowProblemsHandlerId, StringComparison.OrdinalIgnoreCase))
           continue;
         if (string.Equals(handler, RecipeExecutorHandlersBomExport.BomExchangeDialogHandlerId, StringComparison.OrdinalIgnoreCase))
+          continue;
+        if (string.Equals(handler, RecipeExecutorHandlersDocumentTemplates.NewDocumentFromTemplateHandlerId, StringComparison.OrdinalIgnoreCase))
+          continue;
+        if (string.Equals(handler, RecipeExecutorHandlersDocumentTemplates.CloneDocumentWithDefaultsHandlerId, StringComparison.OrdinalIgnoreCase))
           continue;
         return false;
       }
